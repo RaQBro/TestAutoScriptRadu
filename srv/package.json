@@ -1,0 +1,29 @@
+{
+	"dependencies": {
+		"@sap/xsenv": "latest",
+		"@sap/xsjs": "latest",
+		"@sap/xssec": "latest",
+		"@sap/hdbext": "7.0.1",
+		"@sap/cds": "latest",
+		"@sap/jobs-client": "latest",
+		"express": "latest",
+		"body-parser": "latest",
+		"express-list-endpoints": "latest",
+		"underscore": "latest",
+		"async": "latest",
+		"passport": "latest",
+		"http-status-codes": "latest"
+	},
+	"description": "Template Application",
+	"devDependencies": {},
+	"files": [],
+	"main": "server.js",
+	"name": "srv",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"engines": {
+		"node": "12.x"
+	},
+	"version": "1.0.0"
+}

@@ -1,0 +1,12 @@
+{
+	"name": "template_application-approuter",
+	"engines": {
+		"node": "12.x"
+	},
+	"dependencies": {
+		"@sap/approuter": "latest"
+	},
+	"scripts": {
+		"start": "node node_modules/@sap/approuter/approuter.js"
+	}
+}

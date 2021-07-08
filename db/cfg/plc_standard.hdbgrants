@@ -1,0 +1,20 @@
+{
+	"LOGICAL-PLC-STANDARD-GRANTOR": {
+		"object_owner": {
+			"container_roles": [
+				"sap.plc.authorizations.containerroles-xsa::data_select_plc_g#",
+				"sap.plc.authorizations.containerroles-xsa::data_insert_plc_g#",
+				"sap.plc.authorizations.containerroles-xsa::data_update_plc_g#",
+				"sap.plc.authorizations.containerroles-xsa::data_execute_plc_g#"
+			]
+		},
+		"application_user": {
+			"container_roles": [
+				"sap.plc.authorizations.containerroles-xsa::data_select_plc",
+				"sap.plc.authorizations.containerroles-xsa::data_insert_plc",
+				"sap.plc.authorizations.containerroles-xsa::data_update_plc",
+				"sap.plc.authorizations.containerroles-xsa::data_execute_plc"
+			]
+		}
+	}
+}

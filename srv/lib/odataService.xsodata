@@ -1,0 +1,7 @@
+service{
+	    //------------------------------------ /Get Default Values Data ------------------------------------
+		"basis.t_default_values" as "GetDefaultValues" keys ("FIELD_NAME")
+	    create forbidden
+	    update forbidden
+	    delete forbidden;
+}

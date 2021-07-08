@@ -1,0 +1,20 @@
+{
+	"sap.plc.db.authorization::privileges.v_project_read": {
+		"target": {
+			"object": "sap.plc.db.authorization::privileges.v_project_read",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+		"sap.plc.db.authorization::privileges.v_calculation_read": {
+		"target": {
+			"object": "sap.plc.db.authorization::privileges.v_calculation_read",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+		"sap.plc.db.authorization::privileges.v_calculation_version_read": {
+		"target": {
+			"object": "sap.plc.db.authorization::privileges.v_calculation_version_read",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	}
+}

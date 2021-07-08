@@ -1,0 +1,13 @@
+procedure "p_maintain_t_default_values" (
+    in INPUT_TABLE		"tt_default_values"
+)
+
+LANGUAGE SQLSCRIPT
+SQL SECURITY INVOKER
+as
+
+begin
+
+	upsert "basis.t_default_values" (FIELD_NAME, FIELD_VALUE) select distinct FIELD_NAME, FIELD_VALUE from :INPUT_TABLE;
+	    
+end

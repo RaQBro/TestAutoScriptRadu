@@ -1,0 +1,19 @@
+{
+	"format_version": 1,
+	"imports": [{
+		"target_table": "basis.t_default_values",
+		"source_data": {
+			"data_type": "CSV",
+			"file_name": "t_default_values.csv",
+			"has_header": true,
+			"dialect": "HANA",
+			"type_config": {
+				"delimiter": ","
+			}
+		},
+		"import_settings": {
+			"import_columns": ["FIELD_NAME", "FIELD_VALUE"],
+			"include_filter": []
+		}
+	}]
+}

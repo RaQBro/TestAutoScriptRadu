@@ -1,0 +1,132 @@
+{
+	"_version": "1.5.0",
+	"sap.app": {
+		"id": "template_application.ui",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{shellBarTitle}}",
+		"description": "{{shellBarSecondTitle}}",
+		"sourceTemplate": {
+			"id": "hanatemplates.basicSAPUI5ApplicationProject",
+			"version": "0.0.0"
+		}
+	},
+
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "img/favicon.ico",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_fiori_3"
+		]
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "template_application.ui.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.91.1",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.f": {},
+				"sap.ushell": {},
+				"sap.collaboration": {},
+				"sap.ui.comp": {},
+				"sap.uxap": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "template_application.ui.i18n.i18n"
+				}
+			}
+		},
+		"resources": {
+			"css": [{
+				"uri": "css/style.css"
+			}]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"async": true,
+				"viewPath": "template_application.ui.view",
+				"controlAggregation": "pages",
+				"controlId": "app"
+			},
+			"routes": [{
+				"name": "view",
+				"pattern": "view",
+				"target": ["view"]
+			}, {
+				"name": "defaultValues",
+				"pattern": "defaultValues",
+				"target": ["defaultValues"]
+			}, {
+				"name": "technicalUser",
+				"pattern": "technicalUser",
+				"target": ["technicalUser"]
+			}, {
+				"name": "error",
+				"pattern": "error/{item}",
+				"target": ["error"]
+			}],
+			"targets": {
+				"view": {
+					"viewId": "view",
+					"viewName": "View",
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true
+				},
+				"defaultValues": {
+					"viewId": "defaultValuesView",
+					"viewName": "DefaultValues",
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true
+				},
+				"technicalUser": {
+					"viewId": "technicalUserView",
+					"viewName": "TechnicalUser",
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true
+				},
+				"error": {
+					"viewId": "errorView",
+					"viewName": "Error",
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true
+				}
+			}
+		}
+	}
+}

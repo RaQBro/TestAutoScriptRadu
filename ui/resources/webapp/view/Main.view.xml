@@ -1,0 +1,26 @@
+<mvc:View id="mainView" controllerName="template_application.ui.controller.Main" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt" xmlns:l="sap.ui.layout">
+	<tnt:ToolPage id="toolPage">
+		<tnt:header>
+			<core:Fragment fragmentName="template_application.ui.view.fragment.Shellbar" type="XML"/>
+		</tnt:header>
+		<tnt:sideContent>
+			<tnt:SideNavigation id="sideNavigation" itemSelect="onViewChange" selectedKey="view">
+				<tnt:NavigationList >
+					<tnt:NavigationListItem text="{i18n>MainPage}" icon="sap-icon://provision" key="view"></tnt:NavigationListItem>
+				</tnt:NavigationList>
+				<tnt:fixedItem>
+					<tnt:NavigationList >
+						<tnt:NavigationListItem text="{i18n>Configuration}" icon="sap-icon://action-settings">
+							<tnt:NavigationListItem text="{i18n>DefaultValuesView}" icon="sap-icon://employee" key="defaultValues"/>
+							<tnt:NavigationListItem text="{i18n>TechnicalUser}" icon="sap-icon://building" key="technicalUser"/>
+						</tnt:NavigationListItem>
+					</tnt:NavigationList>
+				</tnt:fixedItem>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
+		<tnt:mainContents>
+			<App id="app"/>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>

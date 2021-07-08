@@ -1,0 +1,8 @@
+context basis {
+
+    entity t_default_values {
+        key FIELD_NAME  : String(500);
+            FIELD_VALUE : String(500);
+    };
+    
+};

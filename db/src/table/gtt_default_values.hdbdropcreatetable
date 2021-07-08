@@ -1,0 +1,4 @@
+COLUMN TABLE "gtt_default_values" ( 
+	FIELD_NAME					NVARCHAR(500),
+	FIELD_VALUE 				NVARCHAR(500)
+) 

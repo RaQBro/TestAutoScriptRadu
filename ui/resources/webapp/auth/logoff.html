@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+      <title>Template Application</title>
+      <style>
+         .bodyBg {
+         font-family: Arial;
+         width: 100%;
+         text-align: center;
+         background-image: url("/webapp/img/WebBG.png");
+         background-repeat: no-repeat;
+         background-attachment: fixed;
+         background-position: center;
+         background-size: 100% 100%;
+         position: absolute;
+         top: 0;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         overflow: hidden;
+         }
+         .parent_container {
+         position: absolute;
+         left: 50%;
+         top: 50%;
+         margin-left: -300px;
+         margin-top: -268.5px;
+         width: 600px;
+         }
+         #msgText {
+         font-size: 24px;
+         color:#365875;
+         }
+         #goodbyeText {
+         font-size: 115px;
+         color:#365875;
+         }
+         a:link, a:visited, a:hover, a:active {
+         font-style: normal;
+         font-family: Arial;
+         font-size: 21px;
+         color:#f37021;
+         line-height: 42px;
+         }
+      </style>
+   </head>
+   <body class="bodyBg" id="logoffBody">
+      <script>
+         // This function forces a reload of the destination page from the server. It does this by 
+         // supplying a unique argument value with each new invocation.
+         function refreshMain() {
+        	window.location.href = "/webapp/index.html";
+         }
+      </script>
+      <div class="parent_container">
+         <img width='378' src='/webapp/img/Clouds.png' class="clouds">
+         <div id="goodbyeText">Goodbye</div>
+         <div id="msgText">You have signed out.</div>
+         <a href="#" onclick="refreshMain()" id="linkText">Return to the application</a>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,3 @@
+<core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core">
+	<AvatarGroup id="avatarGroup" groupType="Individual" avatarDisplaySize="S" press="onIndividualPress" items="{path: 'items>/content'}"></AvatarGroup>
+</core:FragmentDefinition>

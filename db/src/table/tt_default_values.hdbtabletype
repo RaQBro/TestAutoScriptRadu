@@ -1,0 +1,4 @@
+TYPE "tt_default_values" AS TABLE ( 
+	FIELD_NAME					NVARCHAR(500),
+	FIELD_VALUE 				NVARCHAR(500)
+) 

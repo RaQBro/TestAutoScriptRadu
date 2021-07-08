@@ -1,0 +1,11 @@
+{
+	"sap.plc.db::basis.t_project": {},
+	"sap.plc.db::basis.t_calculation": {},
+	"sap.plc.db::basis.t_calculation_version": {},
+	"sap.plc.db::basis.t_open_calculation_versions": {},
+	"sap.plc.db::basis.t_item": {},
+	"sap.plc.db::basis.t_item_ext": {},
+	"sap.plc.db::basis.t_item_temporary": {},
+	"sap.plc.db::basis.t_session": {},
+	"sap.plc.db::auth.t_auth_project": {}
+}
