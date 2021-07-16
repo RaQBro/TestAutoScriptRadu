@@ -3,18 +3,15 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
 	"sap/m/MessagePopover",
-	"sap/m/MessageItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageStrip",
-	"sap/ui/core/MessageType",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/syncStyleClass"
+	"sap/ui/core/syncStyleClass",
+	"webapp/ui/core/connector/BackendConnector"
 
-], function (Controller, UIComponent, MessagePopover, MessageItem, JSONModel, MessageStrip, MessageType, Fragment,
-	syncStyleClass) {
+], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, syncStyleClass, BackendConnector) {
 	"use strict";
 
-	return Controller.extend("template_application.ui.controller.BaseController", {
+	return Controller.extend("webapp.ui.controller.BaseController", {
 		/**
 		 * @file BaseController is used to define basic functions or functions that will be reused in all other controllers
 		 */
@@ -28,7 +25,15 @@ sap.ui.define([
 		 * @type {array}
 		 * used globally for show meesages of the application
 		 */
+		mViewsData: {},
 		aMessages: [],
+
+		getResourceBundleText: function (text) {
+			if (this.bundle === undefined || this.bundle === null) {
+				this.bundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			}
+			return this.bundle.getText(text);
+		},
 
 		/** @function Used to get messages*/
 		getMessages: function () {
@@ -38,6 +43,17 @@ sap.ui.define([
 		getRouter: function () {
 			return UIComponent.getRouterFor(this);
 		},
+
+		/** 
+		 * function used to clear global messages on each hash change/navigation 
+		 * @param {string} sTarget The target name defined in the manifest
+		 * @param {Object} oParams containing key - value pairs for parameters
+		 */
+		navTo: function (sTarget, oParams) {
+			this.getRouter().navTo(sTarget, oParams);
+			this.aMessages.splice(0, this.aMessages.length);
+		},
+
 		/** @function Used to get model*/
 		getModel: function (sName) {
 			return this.getView().getModel(sName);
@@ -108,15 +124,14 @@ sap.ui.define([
 				this.oMessagePopover.openBy(oMessagePopoverBtn);
 			}
 
-			let sShowAllMessagesInPopover = _.find(sap.ui.getCore().aDefaultValues, (item) => {
+			var sShowAllMessagesInPopover = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "SHOW_ALL_MESSAGES_IN_POPOVER";
 			});
 			if (sShowAllMessagesInPopover) {
-				if (sShowAllMessagesInPopover.FIELD_VALUE === "true") {} else {
+				if (sShowAllMessagesInPopover.FIELD_VALUE !== "true") {
 					aMessages.length = 0;
 				}
 			}
-
 		},
 
 		/** @function Used to format the button type according to the message with the highest severity of the message popover
@@ -178,7 +193,7 @@ sap.ui.define([
 
 			if (!this._busyDialog) {
 				this._busyDialog = Fragment.load({
-					name: "template_application.ui.view.fragment.BusyDialog",
+					name: "webapp.ui.view.fragment.BusyDialog",
 					controller: this
 				}).then(function (oBusyDialog) {
 					oView.addDependent(oBusyDialog);
@@ -209,135 +224,174 @@ sap.ui.define([
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
-		handleControlEnabledVisible: function (controlId, state) {
+		handleControlVisibleState: function (controlId, state) {
 			this.byId(controlId).setVisible(state);
 		},
 		/** @function used to get the XCSRF token from PLC , returns the token in a global variable
 		 */
 		getXCSRFToken: function () {
-			if (this.XCSRFToken) {
-				return this.XCSRFToken;
-			}
-			var that = this;
-			$.ajax({
-				url: "/standard/plc/token",
-				type: "GET",
-				async: false,
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader("X-CSRF-Token", "Fetch");
+
+			BackendConnector.doGet({
+					constant: "AUTH_URL"
 				},
-				complete: function (response) {
-					that.XCSRFToken = response.getResponseHeader("X-CSRF-Token");
-					jQuery.ajaxSetup({
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader("X-CSRF-Token", that.XCSRFToken);
+				function (res, status, xhr) {
+					var sHeaderCsrfToken = "X-Csrf-Token";
+					var sCsrfToken = xhr.getResponseHeader(sHeaderCsrfToken);
+					// for POST, PUT, and DELETE requests, add the CSRF token to the header
+					$(document).ajaxSend(function (event, jqxhr, settings) {
+						if (settings.type === "POST" || settings.type === "PUT" || settings.type === "DELETE" || settings.type === "PATCH") {
+							jqxhr.setRequestHeader(sHeaderCsrfToken, sCsrfToken);
 						}
 					});
 				},
-				error: function () {}
-			});
-			return this.XCSRFToken;
+				null,
+				null,
+				null, {
+					"X-Csrf-Token": "fetch"
+				}
+			);
 		},
+
 		/** @function used to get the user details to show them on the ui
 		 */
 		getUserDetails: function () {
 			var that = this,
 				oUserDetails = {};
 
-			$.ajax({
-				type: "GET",
-				url: "/standard/plc/userDetails",
-				contentType: "application/json; charset=utf-8",
-				async: false,
-				success: function (oData) {
-					oUserDetails.Error = false;
-					oUserDetails.BODY = oData;
-					that.aUserDetails = oData;
-				},
-				error: function (oXHR, sTextStatus, sErrorThrown) {
-					oUserDetails.Error = true;
-					oUserDetails.BODY =
-						`User details could not bet loaded. If the error persists, please contact your administrator.  Error: ( ${sTextStatus} ; ${sErrorThrown} )`;
-				}
-			});
+			var onSuccess = function (response) {
+				oUserDetails.Error = false;
+				oUserDetails.BODY = response;
+				that.aUserDetails = response;
+			};
+			var onError = function (error) {
+				oUserDetails.Error = true;
+				oUserDetails.BODY =
+					`User details could not bet loaded. If the error persists, please contact your administrator.  Error: ( ${error} ; ${error} )`;
+			};
+			BackendConnector.doGet("GET_USER_DETAILS", onSuccess, onError, true);
+
 			return oUserDetails;
 		},
 		/** @function used to initialize the PLC session
 		 */
 		plcInitSession: function () {
-			let sMessage,
-				that = this;
+			var oController = this;
 
-			let sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aDefaultValues, (item) => {
+			var sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "INIT_SESSION_AT_OPEN_APP";
 			});
+
 			if (sInitSesstionAtOpenApp) {
 				if (sInitSesstionAtOpenApp.FIELD_VALUE === "true") {
-					$.ajax({
-						type: "GET",
-						url: "/standard/plc/initSession",
-						contentType: "application/json; charset=utf-8",
-						async: false,
-						success: function (oData) {},
-						error: function (oXHR, sTextStatus, sErrorThrown) {
-							sMessage = {
-								type: "Error",
-								title: that.oResourceBundle.getText("errorInitPLCSession"),
-								description: "",
-								groupName: ""
-							};
-							that.aMessages.unshift(sMessage);
-						}
-					});
+
+					var onSuccess = function () {};
+					var onError = function () {
+						var sMessage = {
+							type: "Error",
+							title: oController.getResourceBundleText("errorInitPLCSession"),
+							description: "",
+							groupName: ""
+						};
+						oController.aMessages.unshift(sMessage);
+					};
+					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
 				}
 			}
 		},
+
+		/** @function used to get configuration which are used in the configuration logic
+		 */
+		getConfiguration: function () {
+			var oController = this;
+
+			var onSuccess = function (oData) {
+				sap.ui.getCore().aConfiguration = oData.d.results;
+			};
+			var onError = function () {
+				var sMessage = {
+					type: "Error",
+					title: oController.getResourceBundleText("errorGetConfiguration"),
+					description: "",
+					groupName: ""
+				};
+				oController.aMessages.unshift(sMessage);
+			};
+			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError, true);
+		},
+
 		/** @function used to get default values which are used in the configuration logic
 		 */
 		getDefaultValues: function () {
-			var sMessage,
-				that = this;
-			$.ajax({
-				type: "GET",
-				url: "/odataService.xsodata/GetDefaultValues?$format=json",
-				contentType: "application/json; charset=utf-8",
-				async: false,
-				success: function (oData) {
-					sap.ui.getCore().aDefaultValues = oData.d.results;
-				},
-				error: function (oXHR, sTextStatus, sErrorThrown) {
-					sMessage = {
-						type: "Error",
-						title: that.oResourceBundle.getText("errorGetDefaultValues"),
-						description: "",
-						groupName: ""
-					};
-					that.aMessages.unshift(sMessage);
-				}
-			});
+			var oController = this;
+			var onSuccess = function (oData) {
+				sap.ui.getCore().aDefaultValues = oData.d.results;
+			};
+			var onError = function () {
+				var sMessage = {
+					type: "Error",
+					title: oController.getResourceBundleText("errorGetDefaultValues"),
+					description: "",
+					groupName: ""
+				};
+				oController.aMessages.unshift(sMessage);
+			};
+			BackendConnector.doGet("GET_DEFAULT_VALUES", onSuccess, onError, true);
 		},
+
+		/** @function used to get the technical user
+		 */
+		getTechnicalUser: function () {
+			var oController = this;
+			var onSuccess = function (oData) {
+				sap.ui.getCore().aTechnicalUser = oData.d.results;
+			};
+			var onError = function () {
+				var sMessage = {
+					type: "Error",
+					title: oController.getResourceBundleText("errorGetTechnicalUser"),
+					description: "",
+					groupName: ""
+				};
+				oController.aMessages.unshift(sMessage);
+			};
+			BackendConnector.doGet("GET_TECHNICAL_USER", onSuccess, onError, true);
+		},
+
+		/** @function used to get details of all existing jobs
+		 */
+		getAllJobs: function () {
+			var oController = this;
+			var onSuccess = function (oData) {
+				sap.ui.getCore().aAllJobs = oData.details.results;
+			};
+			var onError = function () {
+				var sMessage = {
+					type: "Error",
+					title: oController.getResourceBundleText("errorGetAllJobs"),
+					description: "",
+					groupName: ""
+				};
+				oController.aMessages.unshift(sMessage);
+			};
+			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
+		},
+
 		/** @function used to logout from PLC
 		 */
 		plcLogout: function () {
-			$.ajax({
-				type: "GET",
-				url: "/standard/plc/logoutSession",
-				contentType: "application/json; charset=utf-8",
-				async: false,
-				success: function (oData, sStatus) {},
-				error: function (oXHR, sTextStatus, sErrorThrown) {}
-			});
+			BackendConnector.doGet("LOGOUT_PLC", null, null, true);
 		},
 		/** @function used to add an eventlistener so when the window is closed, it triggers logout from PLC
 		 */
 		handleWindowClose: function () {
-			let sLogoutAtCloseApp = _.find(sap.ui.getCore().aDefaultValues, (item) => {
+			var that = this;
+			var sLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "LOGOUT_AT_CLOSE_APP";
 			});
 			if (sLogoutAtCloseApp) {
 				if (sLogoutAtCloseApp.FIELD_VALUE === "true") {
-					window.addEventListener('beforeunload', function (e) {
-						this.plcLogout();
+					window.addEventListener("beforeunload", function (e) {
+						that.plcLogout();
 					});
 				}
 			}

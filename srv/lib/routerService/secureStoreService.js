@@ -4,25 +4,47 @@
 const xsenv = require("@sap/xsenv");
 const hdbext = require("@sap/hdbext");
 
-const helpers = require(global.appRoot + "/lib/util/helpers");
+/**
+ * @fileOverview
+ * 
+ * List of all service implementations of Secure Store Routes
+ * 
+ * @name secureStoreService.js
+ */
 
-const Code = require(global.appRoot + "/lib/util/message").Code;
-const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
-class SecureStore {
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Code = MessageLibrary.Code;
+const Message = MessageLibrary.Message;
+const PlcException = MessageLibrary.PlcException;
 
-	// constructor
+/** @class
+ * @classdesc Secure store services
+ * @name SecureStoreService 
+ */
+class SecureStoreService {
+
 	constructor() {
 
 	}
 
+	/** @function
+	 * Used to retrieve from the secure store the password of technical user
+	 * Is also used in uaaToken.js file to generate an auth token based on the technical user + password
+	 * For web request the password is not returned due to security constrains
+	 * 
+	 * @param {string} sKey - technical user name
+	 * @param {boolean} bReturnValue - flag indicating if the password should be returned, if false info message is returned
+	 * @return {object} result / error - success message / the error
+	 */
 	async retrieveKey(sKey, bReturnValue) {
 
-		if (helpers.isUndefinedNullOrEmptyObject(sKey)) {
-			let sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=test";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo);
+		if (helpers.isUndefinedOrNull(sKey)) {
+			const sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=TECHNICAL_USER_NAME";
+			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
-		let oInputParams = {
+		const oInputParams = {
 			KEY: sKey,
 			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
 			FOR_XS_APPLICATIONUSER: true
@@ -32,15 +54,17 @@ class SecureStore {
 		return new Promise((resolve, reject) => {
 			hdbext.loadProcedure(client, "SYS", "USER_SECURESTORE_RETRIEVE", (err, sp) => {
 				if (err) {
-					// console.log(`Failed to retrieve key '${sKey}' from secure store!`);
-					reject(err);
+					const sDeveloperInfo = `Failed to retrieve key '${sKey}' from secure store!`;
+					const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, err);
+					reject(oPlcException);
 				}
 				sp(oInputParams, (error, parameters) => {
 					if (error) {
-						// console.log(`Failed to retrieve key '${sKey}' from secure store!`);
-						reject(error);
+						const sDeveloperInfo = `Failed to retrieve key '${sKey}' from secure store!`;
+						const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, error);
+						reject(oPlcException);
 					}
-					if (bReturnValue) {
+					if (bReturnValue === true) {
 						if (parameters.VALUE) {
 							resolve(parameters.VALUE.toString("utf8"));
 						} else {
@@ -48,9 +72,13 @@ class SecureStore {
 						}
 					} else {
 						if (parameters.VALUE) {
-							resolve(`Value of Key '${sKey}' exists into secure store!`);
+							const sMessageInfo = `Value of Key '${sKey}' exists into secure store!`;
+							const oMessage = new Message(sMessageInfo);
+							resolve(oMessage);
 						} else {
-							reject(`Key '${sKey}' not found into secure store!`);
+							const sDeveloperInfo = `Value of Key '${sKey}' not found into secure store!`;
+							const oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
+							reject(oPlcException);
 						}
 					}
 				});
@@ -58,17 +86,26 @@ class SecureStore {
 		});
 	}
 
+	/** @function
+	 * Used to insert into the secure store the password of technical user
+	 * 
+	 * @param {string} sKey - technical user name
+	 * @param {string} sValue - technical user password
+	 * @return {object} result / error - success message / the error
+	 */
 	async insertKey(sKey, sValue) {
 
-		if (helpers.isUndefinedNullOrEmptyObject(sKey)) {
-			let sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=test";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo);
+		if (helpers.isUndefinedOrNull(sKey)) {
+			const sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=TECHNICAL_USER_NAME";
+			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
-		if (helpers.isUndefinedNullOrEmptyObject(sValue) || sValue === "") {
-			let sDeveloperInfo = "Please provide a value into request body for provided parameter KEY. E.g.: ?KEY=test";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo);
+		if (helpers.isUndefinedNullOrEmptyString(sValue)) {
+			const sDeveloperInfo = "Please provide a value into request body. E.g.: " + JSON.stringify({
+				"VALUE": "password"
+			});
+			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
-		let oInputParams = {
+		const oInputParams = {
 			KEY: sKey,
 			VALUE: Buffer.from(sValue),
 			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
@@ -79,29 +116,38 @@ class SecureStore {
 		return new Promise((resolve, reject) => {
 			hdbext.loadProcedure(client, "SYS", "USER_SECURESTORE_INSERT", (err, sp) => {
 				if (err) {
-					// console.log(`Failed to insert key '${sKey}' into secure store!`);
-					reject(err);
+					const sDeveloperInfo = `Failed to insert key '${sKey}' into secure store!`;
+					const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, err);
+					reject(oPlcException);
 				}
 				sp(oInputParams, (error) => {
 					if (error) {
-						// console.log(`Failed to insert key '${sKey}' into secure store!`);
-						reject(error);
+						const sDeveloperInfo = `Failed to insert key '${sKey}' into secure store!`;
+						const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, error);
+						reject(oPlcException);
 					}
-					// console.log(`Value for key '${sKey}' saved with success into secure store!`);
-					resolve(`Value for key '${sKey}' saved with success into secure store!`);
+					const sMessageInfo = `Value for key '${sKey}' saved with success into secure store!`;
+					const oMessage = new Message(sMessageInfo);
+					resolve(oMessage);
 				});
 			});
 		});
 
 	}
 
+	/** @function
+	 * Used to delete the password of technical user from secure store
+	 * 
+	 * @param {string} sKey - technical user name
+	 * @return {object} result / error - success message / the error
+	 */
 	async deleteKey(sKey) {
 
-		if (helpers.isUndefinedNullOrEmptyObject(sKey)) {
-			let sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=test";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo);
+		if (helpers.isUndefinedOrNull(sKey)) {
+			const sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=TECHNICAL_USER_NAME";
+			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
-		let oInputParams = {
+		const oInputParams = {
 			KEY: sKey,
 			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
 			FOR_XS_APPLICATIONUSER: true
@@ -111,31 +157,42 @@ class SecureStore {
 		return new Promise((resolve, reject) => {
 			hdbext.loadProcedure(client, "SYS", "USER_SECURESTORE_DELETE", (err, sp) => {
 				if (err) {
-					// console.log(`Failed to delete key '${sKey}' from secure store!`);
+					const sDeveloperInfo = `Failed to delete key '${sKey}' from secure store!`;
+					const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, err);
+					reject(oPlcException);
 					reject(err);
 				}
 				sp(oInputParams, (error) => {
 					if (error) {
-						// console.log(`Failed to delete key '${sKey}' from secure store!`);
-						reject(error);
+						const sDeveloperInfo = `Failed to delete key '${sKey}' from secure store!`;
+						const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, error);
+						reject(oPlcException);
 					}
-					// console.log(`Value for key '${sKey}' was deleted with success from secure store!`);
-					resolve(`Value for key '${sKey}' was deleted with success from secure store!`);
+					const sMessageInfo = `Value for key '${sKey}' was deleted with success from secure store!`;
+					const oMessage = new Message(sMessageInfo);
+					resolve(oMessage);
 				});
 			});
 		});
 	}
 
+	/** @function
+	 * Used to get the secure store
+	 * 
+	 * @return {object} result / error - the secure store client / the error
+	 */
 	getSecureStore() {
 		return new Promise((resolve, reject) => {
-			let hanaOptions = xsenv.getServices({
+			const hanaOptions = xsenv.getServices({
 				secureStore: {
 					name: "secureStore"
 				}
 			});
 			hdbext.createConnection(hanaOptions.secureStore, (error, client) => {
 				if (error) {
-					reject(error);
+					const sDeveloperInfo = "Failed to get the secure store!";
+					const oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, error);
+					reject(oPlcException);
 				} else {
 					resolve(client);
 				}
@@ -144,4 +201,4 @@ class SecureStore {
 	}
 
 }
-exports.SecureStore = module.exports.Service = SecureStore;
+exports.SecureStoreService = module.exports.SecureStoreService = SecureStoreService;

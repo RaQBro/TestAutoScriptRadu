@@ -6,11 +6,11 @@
 		"logoutPage": "/webapp/auth/logoff.html"
 	},
 	"routes": [{
-		"source": "^/(.*).xsjs",
+		"source": "^/service/(.*).xsjs",
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
-		"source": "^/(.*).xsodata",
+		"source": "^/service/(.*).xsodata",
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"
 	}, {

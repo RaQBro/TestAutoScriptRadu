@@ -13,28 +13,48 @@ const passport = require("passport");
 const bodyParser = require("body-parser");
 const listEndpoints = require("express-list-endpoints");
 
+/**
+ * @fileOverview
+ * 
+ * Server configuration file:
+ *		- is adding to global variable the application root director used for import: require(global.appRoot + "/lib/...
+ *		- is adding to global variable the PLC endpoints defined into global environment variables and used in plcDispatcher.js
+ *		- imports the custom defined routers
+ *		- initialize xsjs server with HANA db, UAA, Secure Store configurations
+ *		- initialize express application with authentication module configuration XSA UAA
+ *		- is adding custom routes and xsjs server to express application
+ *		- starts the express application
+ *		- a token is generated (based on a technical user) and is checked if it's valid at a regular time interval
+ *		- creates the background job(s) at first run if defined in config.js file
+ * 
+ * @name server.js
+ */
+
 // general configurations
 global.appRoot = __dirname;
+global.plcWebUrl = process.env.SAP_PLC_WEB;
+global.plcXsjsUrl = process.env.SAP_PLC_XSJS;
+global.plcPublicApiUrl = process.env.SAP_PLC_PUBLIC_API;
 
 // extensibility plc router
-const extensibilityPlc = require(global.appRoot + "/lib/customRouter/extensibilityRouter.js");
-var extensibilityPlcRouter = new extensibilityPlc.ExtensibilityRouter();
-var routerExtensibilityPlc = extensibilityPlcRouter.getRouter();
+const ExtensibilityPlc = require(global.appRoot + "/lib/customRouter/extensibilityRouter.js");
+var ExtensibilityPlcRouter = new ExtensibilityPlc.ExtensibilityRouter();
+var RouterExtensibilityPlc = ExtensibilityPlcRouter.getRouter();
 
 // scheduler job router
-const jobScheduler = require(global.appRoot + "/lib/customRouter/jobSchedulerRouter.js");
-var jobSchedulerRouter = new jobScheduler.JobSchedulerRouter();
-var routerJobScheduler = jobSchedulerRouter.getRouter();
+const JobScheduler = require(global.appRoot + "/lib/customRouter/jobSchedulerRouter.js");
+var JobSchedulerRouter = new JobScheduler.JobSchedulerRouter();
+var RouterJobScheduler = JobSchedulerRouter.getRouter();
 
 // secure store router
-const secureStore = require(global.appRoot + "/lib/customRouter/secureStoreRouter.js");
-var secureStoreRouter = new secureStore.SecureStoreRouter();
-var routerSecureStore = secureStoreRouter.getRouter();
+const SecureStore = require(global.appRoot + "/lib/customRouter/secureStoreRouter.js");
+var SecureStoreRouter = new SecureStore.SecureStoreRouter();
+var RouterSecureStore = SecureStoreRouter.getRouter();
 
 // standard plc router
-const standardPlc = require(global.appRoot + "/lib/customRouter/standardPlcRouter.js");
-var standardPlcRouter = new standardPlc.StandardPlcRouter();
-var routerStandardPlc = standardPlcRouter.getRouter();
+const StandardPlc = require(global.appRoot + "/lib/customRouter/standardPlcRouter.js");
+var StandardPlcRouter = new StandardPlc.StandardPlcRouter();
+var RouterStandardPlc = StandardPlcRouter.getRouter();
 
 // xsjs configurations
 var options = {
@@ -42,19 +62,19 @@ var options = {
 	auditLog: {
 		logToConsole: true
 	}, // change to auditlog service for productive scenarios
-	redirectUrl: "/index.xsjs",
+	redirectUrl: "/service/index.xsjs",
 	customRouters: [{
 		"path": "/extensibility/plc",
-		"router": routerExtensibilityPlc
+		"router": RouterExtensibilityPlc
 	}, {
 		"path": "/scheduler/job",
-		"router": routerJobScheduler
+		"router": RouterJobScheduler
 	}, {
 		"path": "/secure/store",
-		"router": routerSecureStore
+		"router": RouterSecureStore
 	}, {
 		"path": "/standard/plc",
-		"router": routerStandardPlc
+		"router": RouterStandardPlc
 	}]
 };
 
@@ -120,28 +140,28 @@ expressApp.use(passport.authenticate("JWT", {
 expressApp.use(xsHDBConn.middleware(options.hana));
 
 // express app routing init (order is very IMPORTANT: custom hdb connection first and custom routes after)
-expressApp.use("/extensibility/plc", routerExtensibilityPlc);
-expressApp.use("/scheduler/job", routerJobScheduler);
-expressApp.use("/secure/store", routerSecureStore);
-expressApp.use("/standard/plc", routerStandardPlc);
+expressApp.use("/extensibility/plc", RouterExtensibilityPlc);
+expressApp.use("/scheduler/job", RouterJobScheduler);
+expressApp.use("/secure/store", RouterSecureStore);
+expressApp.use("/standard/plc", RouterStandardPlc);
 
 // add xsjs to express
 expressApp.use(xsjsApp);
 
+// start app listen
+expressApp.listen(port, function () {
+	console.log("Server listening on port %d", port);
+	// console.log(listEndpoints(expressApp));
+});
+
 // token lifecycle at 1 minute (get & refresh)
-var uaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
-var UAAToken = new uaaToken.UAAToken();
+var UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
+var UAAToken = new UaaToken.UAAToken();
 UAAToken.checkToken();
 setInterval(function () {
 	UAAToken.checkToken();
 }, 60 * 1000); // every minute
 
 // create job(s) at first run
-const JobSchedulerService = require(global.appRoot + "/lib/routerService/jobSchedulerService.js").JobScheduler;
-new JobSchedulerService().createJobs();
-
-// start app listen
-expressApp.listen(port, function () {
-	console.log("Server listening on port %d", port);
-	console.log(listEndpoints(expressApp));
-});
+const JobSchedulerUtil = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
+new JobSchedulerUtil().createJobs();

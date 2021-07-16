@@ -101,6 +101,18 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_account_group": {
+		"target": {
+			"object": "sap.plc.db::basis.t_account_group",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_account_group__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_account_group__text",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_activity_price": {
 		"target": {
 			"object": "sap.plc.db::basis.t_activity_price",

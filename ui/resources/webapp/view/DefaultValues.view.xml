@@ -1,11 +1,20 @@
-<mvc:View id="defaultValuesView" controllerName="template_application.ui.controller.DefaultValues" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+<mvc:View id="defaultValuesView" controllerName="webapp.ui.controller.DefaultValues" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt" xmlns:l="sap.ui.layout" displayBlock="true">
-	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="true" showSubHeader="false">
+	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
-			<Text text="config view"></Text>
+			<form:SimpleForm id="frmDefaultValues" editable="true" layout="ColumnLayout" title="{i18n>defaultValueTitle}">
+				<form:content>
+					<Label text="{i18n>noProjectsPerJob}"/>
+					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects"/>
+					<Label text="{i18n>noCalculationsPerJob}"/>
+					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS" change="onChangeNoCalculations"/>
+					<Label text="{i18n>noVersionsPerJob}"/>
+					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions"/>
+				</form:content>
+			</form:SimpleForm>
 		</content>
 		<footer>
-			<core:Fragment fragmentName="template_application.ui.view.fragment.MessagePopover" type="XML"/>
+			<core:Fragment fragmentName="webapp.ui.view.fragment.MessagePopover" type="XML"/>
 		</footer>
 	</Page>
 </mvc:View>

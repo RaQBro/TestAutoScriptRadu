@@ -2,7 +2,7 @@ sap.ui.define([
 	"./BaseController"
 ], function (Controller) {
 	"use strict";
-	return Controller.extend("template_application.ui.controller.View", {
+	return Controller.extend("webapp.ui.controller.View", {
 		/**
 		 * @file ViewController - ce sa si faca
 		 */
@@ -13,16 +13,14 @@ sap.ui.define([
 			this.openBusyDialog();
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this._mViewSettingsDialogs = {};
-			this.oResourceBundle = this.getResourceBundle();
 			this.createMessagePopover();
 			this.byId("saveBtn").setEnabled(false);
 
-			this.handleMessagePopover(this.getMessages());
 			this.closeBusyDialog();
 		},
 		/** @function called after onInit*/
 		onAfterRendering: function () {
-
+			this.handleMessagePopover(this.getMessages());
 		},
 		// unde folosim oare?
 		onExit: function () {

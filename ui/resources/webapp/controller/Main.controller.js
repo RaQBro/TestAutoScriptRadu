@@ -1,40 +1,41 @@
 sap.ui.define([
 	"./BaseController",
-	"sap/ui/core/Fragment"
-], function (BaseController, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/model/odata/v2/ODataModel"
+], function (BaseController, Fragment, ODataModel) {
 	"use strict";
 
-	return BaseController.extend("template_application.ui.controller.Main", {
+	return BaseController.extend("webapp.ui.controller.Main", {
 		/**
 		 * @file MainController - contains logic for the structure of the application
 		 */
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {
-			let sXCSRFToken = this.getXCSRFToken();
-			let oUserDetails = this.getUserDetails();
+			this.getXCSRFToken();
+			var oUserDetails = this.getUserDetails();
 
-			if (!sXCSRFToken) {
-				this.getRouter().navTo("error", {
-					item: `Something went wrong with application token, please try again. If the error persists, please contact your administrator.`
+			if (oUserDetails.Error === true) {
+				this.navTo("error", {
+					item: JSON.stringify(oUserDetails)
 				});
 			} else {
-				if (oUserDetails.Error === true) {
-					this.getRouter().navTo("error", {
-						item: JSON.stringify(oUserDetails)
-					});
-				} else {
-					this.getRouter().navTo("view");
-					this.oResourceBundle = this.getResourceBundle();
-					let avatarBtn = this.getView().byId("avatarBtn");
-					avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
-					//Get default configuration values
-					this.getDefaultValues();
-					//Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true
-					this.plcInitSession();
-					//Triggered to activate the event listener for logging out of PLC when LOGOUT_AT_CLOSE_APP is true. The logout will happen on window/browser close.
-					this.handleWindowClose();
-				}
+				this.navTo("view");
+				var avatarBtn = this.getView().byId("avatarBtn");
+				avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
+
+				// Get configuration
+				this.getConfiguration();
+				// Get default values
+				this.getDefaultValues();
+				// Get technical user
+				this.getTechnicalUser();
+				// Get all jobs
+				this.getAllJobs();
+				// Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true
+				this.plcInitSession();
+				// Triggered to activate the event listener for logging out of PLC when LOGOUT_AT_CLOSE_APP is true. The logout will happen on window/browser close.
+				this.handleWindowClose();
 			}
 
 		},
@@ -45,7 +46,7 @@ sap.ui.define([
 			var oAvatarBtn = this.getView().byId("avatarBtn");
 			if (!this._oIndividuaLPopover) {
 				Fragment.load({
-					name: "template_application.ui.view.fragment.IndividualPopover",
+					name: "webapp.ui.view.fragment.IndividualPopover",
 					controller: this
 				}).then(function (oPopover) {
 					this._oIndividuaLPopover = oPopover;
@@ -64,7 +65,7 @@ sap.ui.define([
 				oController = oView.getController();
 			// instantiate dialog
 			if (!oController._aboutDialog) {
-				oController._aboutDialog = sap.ui.xmlfragment("template_application.ui.view.fragment.AboutDialog", oController);
+				oController._aboutDialog = sap.ui.xmlfragment("webapp.ui.view.fragment.AboutDialog", oController);
 				oView.addDependent(this._aboutDialog);
 			}
 			// open dialog
@@ -94,7 +95,7 @@ sap.ui.define([
 		/** @function called when a view from the left list is selected and it's navigating to that specific view*/
 		onViewChange: function (oEvent) {
 			var item = oEvent.getParameter("item");
-			this.getRouter().navTo(item.getKey());
+			this.navTo(item.getKey());
 		}
 	});
 });

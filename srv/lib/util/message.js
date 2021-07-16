@@ -1,8 +1,26 @@
-var _ = require("lodash");
+/*eslint-env node, es6 */
+"use strict";
+
+const _ = require("underscore");
 
 /**
- * types of the messages code following naming pattern: <category>_<error_name>_<severity> =>
- * CALCULATION_UOM_NOT_FOUND_WARNING
+ * @fileOverview
+ * 
+ * Contains:
+ *		- a list of response status codes
+ *		- Messages and Errors classes with utility helpers
+ * The list of error messages is imported from standard PLC: sap.plc.xs.util.message.xsjslib
+ * @see {@ https://github.wdf.sap.corp/plc/hana-xsa/blob/development/xsjs/lib/xs/util/message.js Message}
+ * 
+ * @name message.js
+ */
+
+const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
+
+/**
+ * Object containing the response status codes that are used in case of an error
+ * This object is containg the error messages from standard PLC
+ * Is used in order to maintain a consistency with standard PLC backend services
  */
 var Code = Object.freeze({
 	GENERAL_VALIDATION_ERROR: {
@@ -461,13 +479,78 @@ var Code = Object.freeze({
 	}
 });
 
-/**
- * General error. It will be thrown from the the any layer of the application.
+/** @class
+ * @classdesc General success message class. Used from any layer of the application
+ * @name Message
  * 
- * @oCode {message_codes} Message code
- * @sMessage {string} message used for client log messages
- * @oDetails {JSON} object that will contain PLCCODE, PLCTYPE, MESSAGE and message_details
- * @oInnerException inner exception passed here
+ * @param {string} sMessage - message used for client messages
+ * @param {object} oDetails - object that will contain details if necessary
+ */
+function Message(sMessage, oDetails) {
+	this.message = sMessage;
+	this.details = oDetails;
+}
+Message.prototype = Object.create(Message.prototype);
+Message.prototype.constructor = Message;
+
+/** @function
+ * Used to save the message into HANA database table. Used from any layer of the application
+ * The message is saved only if the iJobId is defined
+ *
+ * @param {integer} iJobId - the job id
+ * @param {string} sMessage - the log message
+ * @param {string} sType - the type of the message: Error, Warning or Info/Message
+ * @param {object} oDetails - object that will contain details if necessary
+ */
+Message.addLog = async function (iJobId, sMessage, sType, oDetails) {
+
+	if (iJobId === undefined) {
+		return;
+	}
+
+	var sSeverity = "";
+	if (sType.toLowerCase() === "error") {
+		sSeverity = "Error";
+	}
+	if (sType.toLowerCase() === "warning") {
+		sSeverity = "Warning";
+	}
+	if (sType.toLowerCase() === "message" || sType.toLowerCase() === "info") {
+		sSeverity = "Info";
+	}
+	// details
+	var sTrimmedDetails = null;
+	const sDetails = oDetails !== undefined ? JSON.stringify(oDetails) : null;
+	if (sDetails !== null) {
+		sTrimmedDetails = sDetails.length > 5000 ? sDetails.substring(0, 5000 - 3) + "..." : sDetails;
+	}
+	// message
+	const sTrimmedMessage = sMessage.length > 5000 ? sMessage.substring(0, 5000 - 3) + "..." : sMessage;
+	// job id
+	const iJobIdToSave = iJobId !== undefined ? iJobId : null;
+
+	const hdbClient = await DatabaseClass.createConnection();
+	const connection = new DatabaseClass(hdbClient);
+
+	const statement = await connection.preparePromisified(
+		`
+			insert into "sap.plc.extensibility::template_application.t_messages"
+			( TIMESTAMP, JOB_ID, SEVERITY, TEXT, DETAILS ) values ( CURRENT_UTCTIMESTAMP, ?, ?, ?, ? );
+		`
+	);
+	await connection.statementExecPromisified(statement, [iJobIdToSave, sSeverity, sTrimmedMessage, sTrimmedDetails]);
+	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+
+};
+
+/** @class
+ * @classdesc General error message class. Thrown from any layer of the application
+ * @name PlcException
+ * 
+ * @param {object} oCode - error response status code
+ * @param {string} sMessage - message used for client messages
+ * @param {object} oDetails - object that will contain error details
+ * @param {object} oInnerException - inner exception passed here
  */
 function PlcException(oCode, sMessage, oDetails, oInnerException) {
 	this.code = oCode;
@@ -482,14 +565,36 @@ function PlcException(oCode, sMessage, oDetails, oInnerException) {
 PlcException.prototype = Object.create(Error.prototype);
 PlcException.prototype.constructor = PlcException;
 
-PlcException.createPlcException = function (oException) {
+/** @function
+ * Used to create new PlcException object based on the instance of error exception received
+ * The error is saved into the messages table
+ * Used from any layer of the application
+ * 
+ * @param {object} oException - the error exception
+ * @param {integer} iJobId - the job id needed to save the message
+ * @return {PlcException} oPlcException - the new PlcException error object 
+ */
+PlcException.createPlcException = function (oException, iJobId) {
+
+	var oPlcException, sLogMessage;
+
+	// create exception
 	if (oException instanceof PlcException) {
-		return new PlcException(oException.code, oException.message, oException.details, oException);
+		sLogMessage = oException.message;
+		oPlcException = new PlcException(oException.code, oException.message, oException.details, oException);
 	} else {
-		let sLogMessage = `Unexpected error occurred: ${oException.message || oException.msg || oException}`;
-		return new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sLogMessage, undefined, oException);
+		sLogMessage = `Unexpected error occurred: ${oException.message || oException.msg || oException}`;
+		oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sLogMessage, undefined, oException);
 	}
+
+	// save message log
+	Message.addLog(iJobId, sLogMessage, "error", oPlcException);
+
+	// return exception
+	return oPlcException;
+
 };
 
 module.exports.Code = Code;
+module.exports.Message = Message;
 module.exports.PlcException = PlcException;

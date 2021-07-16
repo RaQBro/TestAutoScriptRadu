@@ -1,7 +1,7 @@
 {
 	"_version": "1.5.0",
 	"sap.app": {
-		"id": "template_application.ui",
+		"id": "webapp.ui",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
@@ -37,13 +37,13 @@
 
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "template_application.ui.view.Main",
+			"viewName": "webapp.ui.view.Main",
 			"type": "XML",
 			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.91.1",
+			"minUI5Version": "1.89.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
@@ -62,7 +62,7 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "template_application.ui.i18n.i18n"
+					"bundleName": "webapp.ui.i18n.i18n"
 				}
 			}
 		},
@@ -76,7 +76,7 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"async": true,
-				"viewPath": "template_application.ui.view",
+				"viewPath": "webapp.ui.view",
 				"controlAggregation": "pages",
 				"controlId": "app"
 			},
@@ -92,6 +92,14 @@
 				"name": "technicalUser",
 				"pattern": "technicalUser",
 				"target": ["technicalUser"]
+			}, {
+				"name": "jobs",
+				"pattern": "jobs",
+				"target": ["jobs"]
+			}, {
+				"name": "messages",
+				"pattern": "messages/:jobID:",
+				"target": ["messages"]
 			}, {
 				"name": "error",
 				"pattern": "error/{item}",
@@ -115,6 +123,18 @@
 				"technicalUser": {
 					"viewId": "technicalUserView",
 					"viewName": "TechnicalUser",
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true
+				},
+				"jobs": {
+					"viewName": "Jobs",
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true
+				},
+				"messages": {
+					"viewName": "Messages",
 					"viewType": "XML",
 					"transition": "slide",
 					"clearAggregation": true

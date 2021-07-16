@@ -4,75 +4,90 @@
 
 const express = require("express");
 
-const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
-const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser").TechnicalUser;
-const SecureStoreService = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStore;
+/**
+ * @fileOverview
+ * 
+ * Secure Store Router
+ * Requests used to maintain into the TEMPLATE_APPLICATION_STORE secure store the password of technical user:
+ *		- GET /secure/store/retrieve?KEY=TECHNICAL_USER_NAME
+ *		- POST /secure/store/insert?KEY=TECHNICAL_USER_NAME + body data: { "VALUE": "password" }
+ *		- GET /secure/store/delete?KEY=TECHNICAL_USER_NAME
+ * 
+ * @name secureStoreRouter.js
+ */
 
+const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
+const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
+
+/** @class
+ * @classdesc Secure store router
+ * @name SecureStoreRouter 
+ */
 class SecureStoreRouter {
 
 	constructor() {
 
 		var router = express.Router();
 
-		// common function before all routes are processed
+		var SecureStoreService = new SecureStore();
+		var TechnicalUserUtil = new TechnicalUser();
+		const sContentType = "application/json";
+
+		/**
+		 * Common function before all routes are processed
+		 */
 		router.use(function (request, response, next) {
 			next();
 		});
 
-		// Secure Store Retrieve
 		router.get("/retrieve", function (request, response) {
-			let secureStoreService = new SecureStoreService();
 
-			let sKey = request.query.KEY;
+			const sKey = request.query.KEY;
 
-			secureStoreService.retrieveKey(sKey).then(function (result) {
-				response.type("application/json").status(200).send(JSON.stringify(result));
+			SecureStoreService.retrieveKey(sKey).then(function (result) {
+				response.type(sContentType).status(200).send(result);
 			}).catch(function (err) {
-				let oPlcException = PlcException.createPlcException(err);
-				response.type("application/json").status(oPlcException.code.responseCode).send(JSON.stringify(oPlcException));
+				const oPlcException = PlcException.createPlcException(err);
+				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
-		// Secure Store Insert
 		router.post("/insert", function (request, response) {
-			let secureStoreService = new SecureStoreService();
 
-			let sKey = request.query.KEY;
-			let sValue = request.body.VALUE;
+			const sKey = request.query.KEY;
+			const sValue = request.body.VALUE;
 
-			secureStoreService.insertKey(sKey, sValue).then(function (result) {
-				let technicalUser = new TechnicalUser();
+			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
 
-				technicalUser.upsertTechnicalUserIntoDefaultValuesTable(sKey).then(function () {
-					response.type("application/json").status(200).send(JSON.stringify(result));
+				TechnicalUserUtil.upsertTechnicalUserIntoTable(sKey).then(function () {
+					response.type(sContentType).status(200).send(result);
 				}).catch(function (err) {
-					let oPlcException = PlcException.createPlcException(err);
-					response.type("application/json").status(oPlcException.code.responseCode).send(JSON.stringify(oPlcException));
+					const oPlcException = PlcException.createPlcException(err);
+					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
 			}).catch(function (err) {
-				let oPlcException = PlcException.createPlcException(err);
-				response.type("application/json").status(oPlcException.code.responseCode).send(JSON.stringify(oPlcException));
+				const oPlcException = PlcException.createPlcException(err);
+				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
-		// Secure Store Delete
 		router.get("/delete", function (request, response) {
-			let secureStoreService = new SecureStoreService();
 
-			let sKey = request.query.KEY;
+			const sKey = request.query.KEY;
+			const sValue = null;
 
-			secureStoreService.deleteKey(sKey).then(function (result) {
-				let technicalUser = new TechnicalUser();
+			SecureStoreService.deleteKey(sKey).then(function (result) {
 
-				technicalUser.upsertTechnicalUserIntoDefaultValuesTable(null).then(function () {
-					response.type("application/json").status(200).send(JSON.stringify(result));
+				TechnicalUserUtil.upsertTechnicalUserIntoTable(sValue).then(function () {
+					response.type(sContentType).status(200).send(result);
 				}).catch(function (err) {
-					let oPlcException = PlcException.createPlcException(err);
-					response.type("application/json").status(oPlcException.code.responseCode).send(JSON.stringify(oPlcException));
+					const oPlcException = PlcException.createPlcException(err);
+					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
 			}).catch(function (err) {
-				let oPlcException = PlcException.createPlcException(err);
-				response.type("application/json").status(oPlcException.code.responseCode).send(JSON.stringify(oPlcException));
+				const oPlcException = PlcException.createPlcException(err);
+				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 

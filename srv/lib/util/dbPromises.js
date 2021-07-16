@@ -1,12 +1,28 @@
 /*eslint-env node, es6 */
 "use strict";
 
+/**
+ * @fileOverview
+ * 
+ * Helper functions used to:
+ *		- create database connection
+ *		- execute statements
+ *		- call procedures
+ * @see {@ https://github.com/SAP-samples/hana-xsa-opensap-hana7/blob/main/srv/utils/dbPromises.js DatabaseClass}
+ * 
+ * @name dbPromises.js
+ */
+
+/** @class
+ * @classdesc Database connection utility helpers
+ * @name DatabaseClass 
+ */
 module.exports = class {
 
 	static createConnection() {
 		return new Promise((resolve, reject) => {
 			const xsenv = require("@sap/xsenv");
-			let options = xsenv.getServices({
+			var options = xsenv.getServices({
 				hana: {
 					plan: "hdi-shared"
 				}
@@ -55,8 +71,9 @@ module.exports = class {
 							results: results[0]
 						});
 					} else {
-						let output = {};
-						output.outputScalar = outputScalar;
+						var output = {
+							"outputScalar": outputScalar
+						};
 						for (let i = 0; i < results.length; i++) {
 							output[`results${i}`] = results[i];
 						}

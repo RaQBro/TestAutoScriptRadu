@@ -1,10 +1,10 @@
 {
 	"format_version": 1,
 	"imports": [{
-		"target_table": "basis.t_default_values",
+		"target_table": "sap.plc.extensibility::template_application.t_configuration",
 		"source_data": {
 			"data_type": "CSV",
-			"file_name": "t_default_values.csv",
+			"file_name": "t_configuration.csv",
 			"has_header": true,
 			"dialect": "HANA",
 			"type_config": {

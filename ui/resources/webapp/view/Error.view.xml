@@ -1,7 +1,5 @@
-<mvc:View id="errorView" controllerName="template_application.ui.controller.Error" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	xmlns:l="sap.ui.layout">
+<mvc:View id="errorView" controllerName="webapp.ui.controller.Error" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">
 	<l:VerticalLayout class="sapUiContentPadding" id="oVerticalContent" width="100%">
-		<l:content>
-		</l:content>
+		<l:content></l:content>
 	</l:VerticalLayout>
 </mvc:View>

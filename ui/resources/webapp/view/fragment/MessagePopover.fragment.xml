@@ -3,6 +3,6 @@
 		<Button id="messagePopoverBtn" icon="{ path: '/', formatter: '.buttonIconFormatter' }"
 			type="{ path: '/', formatter: '.buttonTypeFormatter' }" press="handleMessagePopoverPress" activeIcon="sap-icon://message-information"/>
 		<ToolbarSpacer/>
-		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress"/>
+		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress" visible="true"/>
 	</OverflowToolbar>
 </core:FragmentDefinition>

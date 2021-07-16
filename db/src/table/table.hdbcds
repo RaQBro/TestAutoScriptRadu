@@ -1,8 +1,40 @@
-context basis {
+namespace sap.plc.extensibility;
 
-    entity t_default_values {
+context template_application {
+
+    entity t_configuration {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);
     };
-    
+
+    entity t_default_values {
+        key FIELD_NAME  : String(500);
+        key FIELD_VALUE : String(500);
+    };
+
+    entity t_technical_user {
+        key FIELD_NAME  : String(500);
+            FIELD_VALUE : String(500);
+    }
+
+    entity t_job_log {
+        key TIMESTAMP           : UTCTimestamp not null;
+            JOB_ID              : Integer64; // Negative if online mode / Positive if job
+            JOB_NAME            : String(500);
+            USER_ID             : String(256);
+            IS_ONLINE_MODE      : hana.TINYINT; // True - 1 if online mode / False - 0 if job
+            REQUEST_BODY        : hana.CLOB;
+            RESPONSE_BODY       : hana.CLOB;
+            SAP_JOB_ID          : Integer; // null for online mode
+            SAP_JOB_SCHEDULE_ID : String(500); // null for online mode
+            SAP_JOB_RUN_ID      : String(500); // null for online mode
+    };
+
+    entity t_messages {
+        key TIMESTAMP : UTCTimestamp not null;
+            JOB_ID    : Integer64; // Negative if online mode / Positive if job
+            SEVERITY  : String(50);
+            TEXT      : String(5000);
+            DETAILS   : String(5000);
+    };
 };

@@ -3,7 +3,7 @@
 		"@sap/xsenv": "latest",
 		"@sap/xsjs": "latest",
 		"@sap/xssec": "latest",
-		"@sap/hdbext": "7.0.1",
+		"@sap/hdbext": "latest",
 		"@sap/cds": "latest",
 		"@sap/jobs-client": "latest",
 		"express": "latest",
@@ -11,14 +11,13 @@
 		"express-list-endpoints": "latest",
 		"underscore": "latest",
 		"async": "latest",
-		"passport": "latest",
-		"http-status-codes": "latest"
+		"passport": "latest"
 	},
 	"description": "Template Application",
 	"devDependencies": {},
 	"files": [],
 	"main": "server.js",
-	"name": "srv",
+	"name": "tapp_srv",
 	"scripts": {
 		"start": "node server.js"
 	},

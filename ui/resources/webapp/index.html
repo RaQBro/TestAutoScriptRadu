@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
-<html>
+<html xml:lang="en">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta charset="UTF-8">
 
-		<title>Template Application Title</title>
+		<title>Template Application</title>
 		
 		<link rel="stylesheet" type="text/css" href="css/style.css"/>
 
-		<script src="https://underscorejs.org/underscore-min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/underscore@1.13.0/underscore-umd-min.js"></script>
 		
 		<script id="sap-ui-bootstrap"
 				src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
@@ -17,7 +17,7 @@
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-theme="sap_fiori_3"
 				data-sap-ui-compatVersion="edge"
-				data-sap-ui-resourceroots='{"template_application.ui": "./"}'>
+				data-sap-ui-resourceroots='{"webapp.ui": "./"}'>
 		</script>
 
 		<script>
@@ -26,7 +26,7 @@
 					appWidthLimited: false,
 					app: new sap.ui.core.ComponentContainer({
 						height : "100%",
-						name : "template_application.ui"
+						name : "webapp.ui"
 					}),
 					homeIcon: { favicon: "https://www.sap.com/favicon.ico"}
 				}).placeAt("content");

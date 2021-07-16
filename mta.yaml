@@ -1,6 +1,7 @@
 ID: template-application
 _schema-version: '2.1'
 version: 0.0.1
+
 modules:
   - name: tapp_db
     type: hdb
@@ -14,6 +15,7 @@ modules:
         properties:
           key: LOGICAL-PLC-STANDARD-GRANTOR
           service: '~{plc-standard-grantor-service}'
+          
   - name: tapp_srv
     type: nodejs
     path: srv
@@ -30,6 +32,7 @@ modules:
       - name: xsac-plc-uaa-service
       - name: jobScheduler
       - name: secureStore
+      
   - name: tapp_ui
     type: html5
     path: ui
@@ -41,22 +44,28 @@ modules:
           name: tapp_srv_api
           url: '~{url}'
           forwardAuthToken: true
+          
 resources:
   - name: tapp_hdi_db
     properties:
       hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
+    
   - name: plc_standard_grantor
     type: org.cloudfoundry.existing-service
     parameters:
       service-name: xsac-plc-db-service
     properties:
       plc-standard-grantor-service: '${service-name}'
+      
   - name: xsac-plc-uaa-service
     type: org.cloudfoundry.existing-service
+    
   - name: jobScheduler
-    type: com.sap.xs.job-scheduler
+    type: org.cloudfoundry.existing-service
+    
   - name: secureStore
     type: com.sap.xs.hana-securestore
     parameters:
       service-name: secureStore
+      

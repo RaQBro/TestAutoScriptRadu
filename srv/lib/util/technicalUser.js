@@ -1,57 +1,83 @@
 /*eslint-env node, es6 */
 "use strict";
 
-const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises");
+/**
+ * @fileOverview
+ * 
+ * Helper functions used to get/set technical user into technical user table
+ * A value for TECHNICAL_USER property will be set when a technical user is maintained into secure store:
+ *		- insert into secure store => key property from secure store will be set for TECHNICAL_USER property
+ *		- delete from secure store => null value will be set for TECHNICAL_USER property
+ * null value is the default value of TECHNICAL_USER property from technical user table
+ * null value is returned in case no technical user is maintained into secure store
+ * 
+ * @name technicalUser.js
+ */
 
-// Helper functions used to get/set technical user into default values table
-// A value for TECHNICAL_USER property will be set when a technical user is maintained into secure store:
-//		- insert into secure store => key property from secure store will be set for TECHNICAL_USER property
-//		- delete from secure store => null value will be set for TECHNICAL_USER property
-// null value is the default value of TECHNICAL_USER property from default value table
-// null value is returned in case no technical user is maintained into secure store
+const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 
-class TechnicalUser {
+/** @class
+ * @classdesc Technical user utility helpers
+ * @name TechnicalUserUtil 
+ */
+class TechnicalUserUtil {
 
 	constructor() {
 
 	}
 
-	async getTechnicalFromDefaultValuesTable() {
+	/** @function
+	 * Used to retrieve from t_technical_user the value of TECHNICAL_USER
+	 * 
+	 * @default sTechnicalUser = null
+	 * @return {boolean/null} sTechnicalUser - the technical user
+	 *  	If TECHNICAL_USER not found the default value is returned
+	 */
+	async getTechnicalUserFromTable() {
 
-		let hdbClient = await DatabaseClass.createConnection();
-		let connection = new DatabaseClass(hdbClient);
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
 
-		let statement = await connection.preparePromisified(
+		const statement = await connection.preparePromisified(
 			`
-				select * from "basis.t_default_values"
+				select * from "sap.plc.extensibility::template_application.t_technical_user"
 				where FIELD_NAME = 'TECHNICAL_USER';
-			`);
-		let aResults = await connection.statementExecPromisified(statement, []);
-		hdbClient.close();
+			`
+		);
+		const aResults = await connection.statementExecPromisified(statement, []);
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		let aTechnicalUser = aResults.slice();
+		const aTechnicalUser = aResults.slice();
 
-		let sTechnicalUser = null;
+		var sTechnicalUser = null;
 		if (aTechnicalUser.length === 1) {
 			sTechnicalUser = aTechnicalUser[0].FIELD_VALUE;
 		}
 		return sTechnicalUser;
 	}
 
-	async upsertTechnicalUserIntoDefaultValuesTable(sTechnicalUser) {
+	/** @function
+	 * Used to upsert into t_technical_user the value of TECHNICAL_USER
+	 * 
+	 * @param {string} sTechnicalUser - the technical user
+	 * @default sTechnicalUser = null
+	 */
+	async upsertTechnicalUserIntoTable(sTechnicalUser) {
 
 		sTechnicalUser = (sTechnicalUser === undefined) ? null : sTechnicalUser;
 
-		let hdbClient = await DatabaseClass.createConnection();
-		let connection = new DatabaseClass(hdbClient);
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
 
-		let statement = await connection.preparePromisified(
+		const statement = await connection.preparePromisified(
 			`
-				upsert "basis.t_default_values" values ( 'TECHNICAL_USER', ? )
+				upsert "sap.plc.extensibility::template_application.t_technical_user" values ( 'TECHNICAL_USER', ? )
 				where FIELD_NAME = 'TECHNICAL_USER';
-			`);
+			`
+		);
 		await connection.statementExecPromisified(statement, [sTechnicalUser]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	}
+
 }
-exports.TechnicalUser = module.exports.TechnicalUser = TechnicalUser;
+exports.TechnicalUserUtil = module.exports.TechnicalUserUtil = TechnicalUserUtil;

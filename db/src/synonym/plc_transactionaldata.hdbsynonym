@@ -6,6 +6,12 @@
 	"sap.plc.db::basis.t_item": {},
 	"sap.plc.db::basis.t_item_ext": {},
 	"sap.plc.db::basis.t_item_temporary": {},
+	"sap.plc.db::basis.t_variant": {},
+	"sap.plc.db::basis.t_variant_item": {},
+	"sap.plc.db::basis.t_tag": {},
+	"sap.plc.db::basis.t_entity_tags": {},
+	"sap.plc.db::basis.t_entity_relation": {},
+	"sap.plc.db::basis.t_folder": {},
 	"sap.plc.db::basis.t_session": {},
 	"sap.plc.db::auth.t_auth_project": {}
 }

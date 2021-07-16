@@ -1,6 +1,8 @@
 {
 	"sap.plc.db::basis.t_account": {},
 	"sap.plc.db::basis.t_account__text": {},
+	"sap.plc.db::basis.t_account_group": {},
+	"sap.plc.db::basis.t_account_group__text": {},
 	"sap.plc.db::basis.t_activity_price": {},
 	"sap.plc.db::basis.t_activity_price_ext": {},
 	"sap.plc.db::basis.t_activity_type": {},

@@ -3,39 +3,57 @@
 
 const async = require("async");
 
-const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises");
-const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
+/**
+ * @fileOverview
+ * 
+ * List of all service implementations of Extensibility PLC Routes
+ * 
+ * @name extensibilityService.js
+ */
 
+const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
+
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Message = MessageLibrary.Message;
+
+/** @class
+ * @classdesc Extensibility PLC services
+ * @name Service 
+ */
 class Service {
 
-	// constructor
+	/** @constructor
+	 * Is setting the JOB_ID in order to log the messages
+	 */
 	constructor(request) {
 
-		this.token = request.authInfo.getAppToken();
+		this.JOB_ID = request.JOB_ID;
 		this.hdbClient = request.db;
-		this.userId = request.user.id;
+		this.userId = request.user.id !== undefined ? request.user.id.toUpperCase() : global.TECHNICAL_USER;
+
 	}
 
-	async getAllProjects(request, response) {
-		var oServiceResponseBody = {}; // service response body
-		try {
-			// ------------------------- Start Business Logic ---------------------------
-			let connection = new DatabaseClass(request.db);
-			let statement = await connection.preparePromisified(`
-				SELECT * FROM "sap.plc.db::basis.t_project" ORDER BY PROJECT_NAME ASC;
-			`);
-			oServiceResponseBody = await connection.statementExecPromisified(statement, []);
-			// -------------------------- End Business Logic ----------------------------
-		} catch (err) {
-			let oPlcException = PlcException.createPlcException(err);
-			response.status(oPlcException.code.responseCode);
-			oServiceResponseBody = oPlcException;
-		} finally {
-			response.type("application/json");
-			response.send(JSON.stringify(oServiceResponseBody));
-		}
+	/** @function
+	 * Get all projects from t_project
+	 * 
+	 * @return {array} aResults - all projects
+	 */
+	async getAllProjects() {
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
+		const statement = await connection.preparePromisified(
+			`
+				select * from "sap.plc.db::basis.t_project";
+			`
+		);
+		const aResults = await connection.statementExecPromisified(statement, []);
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+		return aResults.slice();
 	}
 
+	/** @function
+	 * Used to maintain default values into t_default_values
+	 */
 	maintainDefaultValues(request) {
 
 		var that = this;
@@ -45,7 +63,7 @@ class Service {
 		return new Promise(function (resolve, reject) {
 
 			var tName = "#" + that.userId + "_t_default_values_temp_data";
-			var fnProc = 'CALL "p_maintain_t_default_values"(' + tName + ')';
+			var fnProc = `CALL "p_maintain_t_default_values"(${tName})`;
 
 			async.series([
 				function (callback) {
@@ -79,7 +97,7 @@ class Service {
 					// run CALL fnProc
 					that.hdbClient.exec(fnProc, function (err, resultTable) {
 						if (err) {
-							console.error("Exec error:", err);
+							Message.addLog(0, "Error exec " + fnProc, "error", err);
 							callback(err);
 							return;
 						}
@@ -97,10 +115,10 @@ class Service {
 				}
 			], function (err, results) {
 				if (err) {
-					console.log("Maintain Default Values Object series error : ", err);
+					Message.addLog(0, "Maintain Default Values Object series error", "error", err);
 					reject(err);
 				}
-				console.log("Maintain Default Values series results : ", results);
+				// Message.addLog(0, "Maintain Default Values series results", "message", results);
 				resolve(results);
 			});
 		});
@@ -108,10 +126,10 @@ class Service {
 
 	createTempDefaultValuesTable(client, tName, tType) {
 		return new Promise(function (resolve, reject) {
-			var sql = 'CREATE LOCAL TEMPORARY TABLE ' + tName + ' LIKE "' + tType + '"';
+			var sql = `CREATE LOCAL TEMPORARY TABLE ${tName} LIKE "${tType}"`;
 			client.exec(sql, function (err, res) {
 				if (err) {
-					console.log("Create temp table ERROR : " + JSON.stringify(err));
+					Message.addLog(0, "Create temp table ERROR", "error", err);
 					reject(err);
 				}
 				resolve(res);
@@ -121,11 +139,11 @@ class Service {
 
 	insertIntoTempDefaultValuesTable(client, tName, defaultItems) {
 		return new Promise(function (resolve, reject) {
-			client.prepare('INSERT INTO ' + tName + ' VALUES(?, ?)', function (err, statement) {
+			client.prepare(`INSERT INTO ${tName} VALUES(?, ?)`, function (err, statement) {
 				if (err) {
-					console.log("Prepare insert temp table ERROR : " + JSON.stringify(err));
+					Message.addLog(0, "Prepare insert temp table ERROR", "error", err);
 					if (!statement.exec) {
-						console.log("Statement is null!");
+						Message.addLog(0, "Statement is null!", "error");
 						reject(err);
 						return;
 					}
@@ -139,7 +157,7 @@ class Service {
 				}
 				var tasks = defaultItems.map(createTasks);
 
-				async.series(tasks, function (err, results) {
+				async.series(tasks, function (error, results) {
 					var ok = true;
 					var errIndexes = [];
 					for (var i = 0; i < results.length; i++) {
@@ -150,9 +168,9 @@ class Service {
 						}
 					}
 					if (ok) {
-						console.log("All rows inserted ok !");
+						// Message.addLog(0, "All rows inserted ok !", "message");
 					} else {
-						console.log("Rows indexes with errors :" + errIndexes.join(', '));
+						Message.addLog(0, "Rows indexes with errors", "error", errIndexes.join(", "));
 					}
 					resolve(ok);
 				});
@@ -162,9 +180,9 @@ class Service {
 
 	dropTempDefaultValuesTable(client, tName) {
 		return new Promise(function (resolve, reject) {
-			client.exec('DROP TABLE ' + tName, function (err, res) {
+			client.exec("DROP TABLE " + tName, function (err, res) {
 				if (err) {
-					console.log("Drop temp table ERROR : " + JSON.stringify(err));
+					Message.addLog(0, "Drop temp table ERROR", "error", err);
 					reject(err);
 				}
 				resolve(res);
@@ -174,13 +192,13 @@ class Service {
 
 	countTempDefaultValuesTable(client, tName) {
 		return new Promise(function (resolve, reject) {
-			client.exec('SELECT COUNT(*) AS "COUNT" FROM ' + tName, function (err, res) {
+			client.exec(`SELECT COUNT(*) AS "COUNT" FROM ${tName}`, function (err, res) {
 				if (err) {
-					console.log('SELECT COUNT from temp table ERROR : ' + JSON.stringify(err));
+					Message.addLog(0, "SELECT COUNT from temp table ERROR", "error", err);
 					reject(err);
 				}
 				var count = parseInt(res[0].COUNT);
-				console.log("COUNT for " + tName + " = " + count);
+				// Message.addLog(0, "COUNT for " + tName + " = " + count, "message");
 				resolve(count);
 			});
 		});

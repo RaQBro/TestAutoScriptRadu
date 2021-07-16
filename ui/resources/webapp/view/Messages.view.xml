@@ -1,0 +1,43 @@
+<mvc:View controllerName="webapp.ui.controller.Messages" xmlns="sap.m" xmlns:f="sap.f" xmlns:core="sap.ui.core"
+	xmlns:smartTable="sap.ui.comp.smarttable" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false" showFooter="false" showNavButton="false" floatingFooter="false" showSubHeader="false">
+		<content>
+			<VBox id="vboxMessages" fitContainer="true">
+				<smartFilterBar:SmartFilterBar id="sfbMessages" initialized="onSmartFilterBarInitialized" useToolbar="false"
+					considerSelectionVariants="false" visible="false">
+					<smartFilterBar:controlConfiguration >
+						<smartFilterBar:ControlConfiguration key="TIMESTAMP" visibleInAdvancedArea="true" conditionType="sap.ui.comp.config.condition.DateRangeType"
+							label="{i18n>jobMessagesTimestamp}"/>
+						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
+						<smartFilterBar:ControlConfiguration key="JOB_NAME" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobName}"/>
+						<smartFilterBar:ControlConfiguration key="USER_ID" visibleInAdvancedArea="true" label="USER"/>
+						<smartFilterBar:ControlConfiguration key="IS_ONLINE_MODE" visibleInAdvancedArea="true" label="ONLINE"/>
+					</smartFilterBar:controlConfiguration>
+					<smartFilterBar:layoutData>
+						<FlexItemData shrinkFactor="0"/>
+					</smartFilterBar:layoutData>
+				</smartFilterBar:SmartFilterBar>
+				<smartTable:SmartTable id="stMessages" smartFilterId="sfbMessages" tableType="ResponsiveTable" useTablePersonalisation="true"
+					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
+					initiallyVisibleFields="TIMESTAMP,JOB_ID,JOB_NAME,SEVERITY,TEXT,PLC_RESPONSE" beforeRebindTable="onBeforeRebindTable"
+					requestAtLeastFields="TIMESTAMP,JOB_ID,SEVERITY,TEXT">
+					<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+					</smartTable:layoutData>
+					<smartTable:customToolbar>
+						<OverflowToolbar design="Transparent">
+							<ToolbarSpacer/>
+							<Button id="btnSeeAllEntries" icon="sap-icon://reset" text="{i18n>btnSeeAllEntries}" visible="false" press="onSeeAllEntries"/>
+						</OverflowToolbar>
+					</smartTable:customToolbar>
+					<Table id="tMessages" growing="true">
+						<ColumnListItem highlight="{path:'SEVERITY',formatter:'.formatRowHighlight'}"/>
+					</Table>
+				</smartTable:SmartTable>
+			</VBox>
+		</content>
+		<footer>
+			<core:Fragment fragmentName="webapp.ui.view.fragment.MessagePopover" type="XML"/>
+		</footer>
+	</Page>
+</mvc:View>

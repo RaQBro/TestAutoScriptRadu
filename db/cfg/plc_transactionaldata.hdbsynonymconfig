@@ -35,9 +35,45 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_variant": {
+		"target": {
+			"object": "sap.plc.db::basis.t_variant",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_variant_item": {
+		"target": {
+			"object": "sap.plc.db::basis.t_variant_item",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_item_temporary": {
 		"target": {
 			"object": "sap.plc.db::basis.t_item_temporary",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_tag": {
+		"target": {
+			"object": "sap.plc.db::basis.t_tag",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_entity_tags": {
+		"target": {
+			"object": "sap.plc.db::basis.t_entity_tags",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_entity_relation": {
+		"target": {
+			"object": "sap.plc.db::basis.t_entity_relation",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_folder": {
+		"target": {
+			"object": "sap.plc.db::basis.t_folder",
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
@@ -47,7 +83,7 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
-    "sap.plc.db::auth.t_auth_project": {
+	"sap.plc.db::auth.t_auth_project": {
 		"target": {
 			"object": "sap.plc.db::auth.t_auth_project",
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
