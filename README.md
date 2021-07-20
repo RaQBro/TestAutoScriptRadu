@@ -35,12 +35,12 @@ Add Global Environment Variables (SPACE Specific) to store the plc endpoints (xs
 Documentation: 
 https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/6842b2e341b643d0bd912ab2df96165e.html
 
-Example from X99 - DEV space:
+Example from X99 - PROD space:
 
 1. logon
-xs login -a https://x99.mo.sap.corp:30030/ -u USER -p PASSWORD -s DEV --skip-ssl-validation
+xs login -a https://x99.plc.c.eu-de-2.cloud.sap:30030 -u USER -p PASSWORD -s PROD --skip-ssl-validation
 2. set variables
-xs set-running-environment-variable-group '{"SAP_PLC_XSJS":"https://x99.mo.sap.corp:51065", "SAP_PLC_PUBLIC_API":"https://x99.mo.sap.corp:51066", "SAP_PLC_WEB":"https://x99.mo.sap.corp:64400"}'
+xs set-running-environment-variable-group '{"SAP_PLC_XSJS":"https://x99.plc.c.eu-de-2.cloud.sap:51033", "SAP_PLC_PUBLIC_API":"https://x99.plc.c.eu-de-2.cloud.sap:51045", "SAP_PLC_WEB":"https://x99.plc.c.eu-de-2.cloud.sap:51054"}'
 
 Testing can be done via app ui_endpoint + /extensibility/plc/applicationRoutes
 Ideally, if the response is empty, an error has to be thrown and the app should not be initialized
