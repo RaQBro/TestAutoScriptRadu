@@ -1,5 +1,5 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
 
 	var Constants = {
 

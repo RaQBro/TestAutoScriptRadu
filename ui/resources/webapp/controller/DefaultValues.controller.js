@@ -1,8 +1,11 @@
 /* global _:true */
 sap.ui.define([
 	"./BaseController",
-	"webapp/ui/core/connector/BackendConnector"
-], function (BaseController, BackendConnector) {
+	"sap/ui/core/library",
+	"webapp/ui/core/connector/BackendConnector",
+	"webapp/ui/core/utils/MessageHelpers",
+	"webapp/ui/toolBarMessages/ToolBarMessages"
+], function (BaseController, library, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
 	return BaseController.extend("webapp.ui.controller.DefaultValues", {
@@ -13,6 +16,9 @@ sap.ui.define([
 		/** @function called when the controller is initialized
 		 * gets the i18n model, creates message popover, disabling save button from footer
 		 */
+		
+		ToolBarMessages: ToolBarMessages,
+		
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
@@ -24,7 +30,8 @@ sap.ui.define([
 		},
 
 		_setupView: function () {
-			this.createMessagePopover();
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+			
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
 
@@ -32,7 +39,6 @@ sap.ui.define([
 			this.setNoCalculations();
 			this.setNoVersions();
 
-			this.handleMessagePopover(this.aMessages);
 			this.closeBusyDialog();
 		},
 
@@ -57,8 +63,6 @@ sap.ui.define([
 				oNoProjectsControl.setValue(oDefaultNoProjects.FIELD_VALUE);
 			} else {
 
-				//oNoProjectsControl.setValue(1);
-
 				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
@@ -79,8 +83,6 @@ sap.ui.define([
 				oNoCalculationsControl.setValue(oDefaultNoCalculations.FIELD_VALUE);
 			} else {
 
-				//oNoCalculationsControl.setValue(1);
-
 				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
@@ -100,8 +102,6 @@ sap.ui.define([
 
 				oNoVersionsControl.setValue(oDefaultNoVersions.FIELD_VALUE);
 			} else {
-
-				//oNoVersionsControl.setValue(1);
 
 				this.handleControlEnabledState("saveBtn", true);
 			}
@@ -132,25 +132,16 @@ sap.ui.define([
 			var oController = this;
 
 			var onSuccess = function () {
-				var sMessage = {
-					type: "Success",
-					title: oController.getResourceBundleText("succesSaveDefaultValues"),
-					description: ""
-				};
-				oController.aMessages.unshift(sMessage);
-				oController.handleMessagePopover(oController.aMessages);
+				
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), "Success", oController.oButtonPopover);
+				
 				// get new default values
 				oController.getDefaultValues();
 				oController.handleControlEnabledState("saveBtn", false);
 			};
 			var onError = function () {
-				var sMessage = {
-					type: "Error",
-					title: oController.getResourceBundleText("errorSaveDefaultValues"),
-					description: ""
-				};
-				oController.aMessages.unshift(sMessage);
-				oController.handleMessagePopover(oController.aMessages);
+				
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), "Error", oController.oButtonPopover);
 			};
 			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);
 		},

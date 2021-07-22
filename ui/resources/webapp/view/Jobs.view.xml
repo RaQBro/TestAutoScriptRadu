@@ -1,6 +1,6 @@
 <mvc:View controllerName="webapp.ui.controller.Jobs" xmlns="sap.m" xmlns:f="sap.f" xmlns:core="sap.ui.core"
 	xmlns:smartTable="sap.ui.comp.smarttable" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:mvc="sap.ui.core.mvc">
-	<Page showHeader="false" showFooter="false" showNavButton="false" floatingFooter="false" showSubHeader="false">
+	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
 				<smartFilterBar:SmartFilterBar id="sfbJobs" initialized="onSmartFilterBarInitialized" useToolbar="false" considerSelectionVariants="false"
@@ -48,7 +48,7 @@
 			</VBox>
 		</content>
 		<footer>
-			<core:Fragment fragmentName="webapp.ui.view.fragment.MessagePopover" type="XML"/>
+			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
 		</footer>
 	</Page>
 </mvc:View>

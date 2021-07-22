@@ -6,9 +6,13 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/syncStyleClass",
-	"webapp/ui/core/connector/BackendConnector"
-
-], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, syncStyleClass, BackendConnector) {
+	"webapp/ui/core/connector/BackendConnector",
+	"webapp/ui/toolBarMessages/ToolBarMessages",
+	"webapp/ui/core/utils/MessageHelpers",
+	"sap/ui/Device",
+	"webapp/ui/core/utils/Constants"
+], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, syncStyleClass, BackendConnector, ToolBarMessages,
+	MessageHelpers, Device, Constants) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.BaseController", {
@@ -26,19 +30,19 @@ sap.ui.define([
 		 * used globally for show meesages of the application
 		 */
 		mViewsData: {},
-		aMessages: [],
+
+		onInit: function () {
+			ToolBarMessages.initialiseMessagePopover.call(this);
+		},
 
 		getResourceBundleText: function (text) {
 			if (this.bundle === undefined || this.bundle === null) {
 				this.bundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			}
+
 			return this.bundle.getText(text);
 		},
 
-		/** @function Used to get messages*/
-		getMessages: function () {
-			return this.aMessages;
-		},
 		/** @function Used to get Router*/
 		getRouter: function () {
 			return UIComponent.getRouterFor(this);
@@ -51,141 +55,23 @@ sap.ui.define([
 		 */
 		navTo: function (sTarget, oParams) {
 			this.getRouter().navTo(sTarget, oParams);
-			this.aMessages.splice(0, this.aMessages.length);
 		},
 
 		/** @function Used to get model*/
 		getModel: function (sName) {
 			return this.getView().getModel(sName);
 		},
+
 		/** @function Used to set model*/
 		setModel: function (oModel, sName) {
 			return this.getView().setModel(oModel, sName);
 		},
+
 		/** @function Used to get translation model*/
 		getResourceBundle: function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
-		/** @function Used to create the message popover control*/
-		createMessagePopover: function () {
-			var oMessagePopoverBtn = this.getView().byId("messagePopoverBtn");
 
-			var oMessageTemplate = new sap.m.MessageItem({
-				type: "{oMessageModel>type}",
-				title: "{oMessageModel>title}",
-				description: "{oMessageModel>description}",
-				subtitle: "{oMessageModel>subtitle}",
-				groupName: "{oMessageModel>groupName}"
-			});
-
-			this.oMessagePopover = new MessagePopover({
-				items: {
-					path: "oMessageModel>/",
-					template: oMessageTemplate
-				},
-				groupItems: true
-			});
-
-			oMessagePopoverBtn.setVisible(true);
-			oMessagePopoverBtn.addDependent(this.oMessagePopover);
-		},
-		/** @function Used to handle the message button press*/
-		handleMessagePopoverPress: function (oEvent) {
-			if (!this.oMessagePopover) {
-				this.createMessagePopover();
-			}
-			this.oMessagePopover.toggle(oEvent.getSource());
-		},
-		/** @function Used to show the message popover if there is an success or error message
-		 * @param {array} aMessages - used to store messages
-		 */
-		handleMessagePopover: function (aMessages) {
-			// if (aMessages.length === 0) {
-			// 	return;
-			// }
-			var oMessagePopoverBtn = this.getView().byId("messagePopoverBtn");
-			oMessagePopoverBtn.setVisible(true);
-
-			var oMessageModel = new JSONModel();
-			oMessageModel.setData(aMessages);
-
-			this.oMessagePopover.setModel(oMessageModel, "oMessageModel");
-			oMessagePopoverBtn.setType(this.buttonTypeFormatter());
-			oMessagePopoverBtn.setIcon(this.buttonIconFormatter());
-
-			var errorMessage = _.find(aMessages, function (message) {
-				return message.type === "Error";
-			});
-			var successMessage = _.find(aMessages, function (message) {
-				return message.type === "Success";
-			});
-
-			if ((errorMessage !== null && errorMessage !== undefined) || (successMessage !== null && successMessage !== undefined)) {
-				this.oMessagePopover.openBy(oMessagePopoverBtn);
-			}
-
-			var sShowAllMessagesInPopover = _.find(sap.ui.getCore().aConfiguration, (item) => {
-				return item.FIELD_NAME === "SHOW_ALL_MESSAGES_IN_POPOVER";
-			});
-			if (sShowAllMessagesInPopover) {
-				if (sShowAllMessagesInPopover.FIELD_VALUE !== "true") {
-					aMessages.length = 0;
-				}
-			}
-		},
-
-		/** @function Used to format the button type according to the message with the highest severity of the message popover
-		 * 	Display the button type according to the message with the highest severity
-		 *	The priority of the message types are as follows: Error > Warning > Success > Info
-		 */
-		buttonTypeFormatter: function () {
-			var sHighestSeverity,
-				aMessagesTemp = this.oMessagePopover.getModel("oMessageModel").oData;
-
-			aMessagesTemp.forEach(function (sMessageTemp) {
-				switch (sMessageTemp.type) {
-				case "Error":
-					sHighestSeverity = "Negative";
-					break;
-				case "Warning":
-					sHighestSeverity = sHighestSeverity !== "Negative" ? "Critical" : sHighestSeverity;
-					break;
-				case "Success":
-					sHighestSeverity = sHighestSeverity !== "Negative" && sHighestSeverity !== "Critical" ? "Success" : sHighestSeverity;
-					break;
-				default:
-					sHighestSeverity = !sHighestSeverity ? "Neutral" : sHighestSeverity;
-					break;
-				}
-			});
-
-			return sHighestSeverity;
-		},
-
-		/** @function Used to Set the button icon according to the message with the highest severity
-		 */
-		buttonIconFormatter: function () {
-			var sIcon,
-				aMessagesTemp = this.oMessagePopover.getModel("oMessageModel").oData;
-
-			aMessagesTemp.forEach(function (sMessageTemp) {
-				switch (sMessageTemp.type) {
-				case "Error":
-					sIcon = "sap-icon://message-error";
-					break;
-				case "Warning":
-					sIcon = sIcon !== "sap-icon://message-error" ? "sap-icon://message-warning" : sIcon;
-					break;
-				case "Success":
-					sIcon = "sap-icon://message-error" && sIcon !== "sap-icon://message-warning" ? "sap-icon://message-success" : sIcon;
-					break;
-				default:
-					sIcon = !sIcon ? "sap-icon://message-information" : sIcon;
-					break;
-				}
-			});
-			return sIcon;
-		},
 		/** @function used to open BusyDialog
 		 */
 		openBusyDialog: function () {
@@ -197,7 +83,6 @@ sap.ui.define([
 					controller: this
 				}).then(function (oBusyDialog) {
 					oView.addDependent(oBusyDialog);
-					syncStyleClass("sapUiSizeCompact", oView, oBusyDialog);
 					return oBusyDialog;
 				}.bind());
 			}
@@ -206,6 +91,7 @@ sap.ui.define([
 				oBusyDialog.open();
 			}.bind());
 		},
+
 		closeBusyDialog: function () {
 			setTimeout(function () {
 				this._busyDialog.then((oBusyDialog) => {
@@ -213,6 +99,7 @@ sap.ui.define([
 				});
 			}.bind(this), 1000);
 		},
+
 		/** @function used to handle the state of a control
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
@@ -220,36 +107,13 @@ sap.ui.define([
 		handleControlEnabledState: function (controlId, state) {
 			this.byId(controlId).setEnabled(state);
 		},
+
 		/** @function used to handle the visibility of a control
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
 		handleControlVisibleState: function (controlId, state) {
 			this.byId(controlId).setVisible(state);
-		},
-		/** @function used to get the XCSRF token from PLC , returns the token in a global variable
-		 */
-		getXCSRFToken: function () {
-
-			BackendConnector.doGet({
-					constant: "AUTH_URL"
-				},
-				function (res, status, xhr) {
-					var sHeaderCsrfToken = "X-Csrf-Token";
-					var sCsrfToken = xhr.getResponseHeader(sHeaderCsrfToken);
-					// for POST, PUT, and DELETE requests, add the CSRF token to the header
-					$(document).ajaxSend(function (event, jqxhr, settings) {
-						if (settings.type === "POST" || settings.type === "PUT" || settings.type === "DELETE" || settings.type === "PATCH") {
-							jqxhr.setRequestHeader(sHeaderCsrfToken, sCsrfToken);
-						}
-					});
-				},
-				null,
-				null,
-				null, {
-					"X-Csrf-Token": "fetch"
-				}
-			);
 		},
 
 		/** @function used to get the user details to show them on the ui
@@ -272,6 +136,7 @@ sap.ui.define([
 
 			return oUserDetails;
 		},
+
 		/** @function used to initialize the PLC session
 		 */
 		plcInitSession: function () {
@@ -286,14 +151,10 @@ sap.ui.define([
 
 					var onSuccess = function () {};
 					var onError = function () {
-						var sMessage = {
-							type: "Error",
-							title: oController.getResourceBundleText("errorInitPLCSession"),
-							description: "",
-							groupName: ""
-						};
-						oController.aMessages.unshift(sMessage);
+						var oButtonPopover = this.byId("buttonMessagePopover");
+						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), "Error", oButtonPopover);
 					};
+
 					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
 				}
 			}
@@ -303,19 +164,14 @@ sap.ui.define([
 		 */
 		getConfiguration: function () {
 			var oController = this;
-
 			var onSuccess = function (oData) {
 				sap.ui.getCore().aConfiguration = oData.d.results;
 			};
 			var onError = function () {
-				var sMessage = {
-					type: "Error",
-					title: oController.getResourceBundleText("errorGetConfiguration"),
-					description: "",
-					groupName: ""
-				};
-				oController.aMessages.unshift(sMessage);
+				var oButtonPopover = this.byId("buttonMessagePopover");
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), "Error", oButtonPopover);
 			};
+
 			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError, true);
 		},
 
@@ -327,14 +183,10 @@ sap.ui.define([
 				sap.ui.getCore().aDefaultValues = oData.d.results;
 			};
 			var onError = function () {
-				var sMessage = {
-					type: "Error",
-					title: oController.getResourceBundleText("errorGetDefaultValues"),
-					description: "",
-					groupName: ""
-				};
-				oController.aMessages.unshift(sMessage);
+				var oButtonPopover = this.byId("buttonMessagePopover");
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), "Error", oButtonPopover);
 			};
+
 			BackendConnector.doGet("GET_DEFAULT_VALUES", onSuccess, onError, true);
 		},
 
@@ -346,13 +198,8 @@ sap.ui.define([
 				sap.ui.getCore().aTechnicalUser = oData.d.results;
 			};
 			var onError = function () {
-				var sMessage = {
-					type: "Error",
-					title: oController.getResourceBundleText("errorGetTechnicalUser"),
-					description: "",
-					groupName: ""
-				};
-				oController.aMessages.unshift(sMessage);
+				var oButtonPopover = this.byId("buttonMessagePopover");
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), "Error", oButtonPopover);
 			};
 			BackendConnector.doGet("GET_TECHNICAL_USER", onSuccess, onError, true);
 		},
@@ -365,14 +212,10 @@ sap.ui.define([
 				sap.ui.getCore().aAllJobs = oData.details.results;
 			};
 			var onError = function () {
-				var sMessage = {
-					type: "Error",
-					title: oController.getResourceBundleText("errorGetAllJobs"),
-					description: "",
-					groupName: ""
-				};
-				oController.aMessages.unshift(sMessage);
+				var oButtonPopover = this.byId("buttonMessagePopover");
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), "Error", oButtonPopover);
 			};
+
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
 		},
 
@@ -381,6 +224,7 @@ sap.ui.define([
 		plcLogout: function () {
 			BackendConnector.doGet("LOGOUT_PLC", null, null, true);
 		},
+
 		/** @function used to add an eventlistener so when the window is closed, it triggers logout from PLC
 		 */
 		handleWindowClose: function () {
@@ -390,11 +234,22 @@ sap.ui.define([
 			});
 			if (sLogoutAtCloseApp) {
 				if (sLogoutAtCloseApp.FIELD_VALUE === "true") {
-					window.addEventListener("beforeunload", function (e) {
+					window.addEventListener("beforeunload", function () {
 						that.plcLogout();
 					});
 				}
 			}
+		},
+
+		getContentDensityClass: function () {
+			if (!this._sContentDensityClass) {
+				//if (!Device.support.touch) {
+				    //this._sContentDensityClass = Constants.CONTENT_DENSITY.COZY;
+				//} else {
+				this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
+				//}
+			}
+			return this._sContentDensityClass;
 		}
 	});
 });

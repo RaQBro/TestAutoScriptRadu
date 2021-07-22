@@ -1,28 +1,38 @@
 sap.ui.define([
-	"./BaseController"
-], function (Controller) {
+	"./BaseController",
+	"webapp/ui/toolBarMessages/ToolBarMessages"
+], function (Controller, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.View", {
-		/**
-		 * @file ViewController - ce sa si faca
-		 */
-
-		/** @function called when controller is initialized	*/
+		
+		ToolBarMessages: ToolBarMessages,
+		
 		onInit: function () {
-			//Open loading dialog
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.getRoute("view").attachPatternMatched(this._onObjectMatched, this);
+		},
+		
+		onAfterRendering: function () {
+		},
+		
+		_onObjectMatched: function () {
 			this.openBusyDialog();
+			this._setupView();
+		},
+		
+		_setupView: function () {
+			
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this._mViewSettingsDialogs = {};
-			this.createMessagePopover();
-			this.byId("saveBtn").setEnabled(false);
+			
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+			
+			this.handleControlEnabledState("saveBtn", false);
+			this.handleControlVisibleState("saveBtn", false);
 
 			this.closeBusyDialog();
 		},
-		/** @function called after onInit*/
-		onAfterRendering: function () {
-			this.handleMessagePopover(this.getMessages());
-		},
-		// unde folosim oare?
+		
 		onExit: function () {
 			var oDialogKey,
 				oDialogValue;

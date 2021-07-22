@@ -19,7 +19,7 @@
 		"technology": "UI5",
 		"icons": {
 			"icon": "",
-			"favIcon": "img/favicon.ico",
+			"favIcon": "",
 			"phone": "",
 			"phone@2": "",
 			"tablet": "",
@@ -43,7 +43,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.89.0",
+			"minUI5Version": "1.92.2",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},

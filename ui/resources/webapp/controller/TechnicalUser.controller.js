@@ -1,17 +1,15 @@
 /* global _:true */
 sap.ui.define([
 	"./BaseController",
-	"webapp/ui/core/connector/BackendConnector"
-], function (Controller, BackendConnector) {
+	"webapp/ui/core/connector/BackendConnector",
+	"webapp/ui/core/utils/MessageHelpers",
+	"webapp/ui/toolBarMessages/ToolBarMessages"
+], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.TechnicalUser", {
-		/**
-		 * @file TechnicalUser - ce sa si faca
-		 */
-
-		/** @function called when the controller is initialized
-		 * gets the i18n model, creates message popover, disabling save button from footer
-		 */
+		
+		ToolBarMessages: ToolBarMessages,
+		
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("technicalUser").attachPatternMatched(this._onObjectMatched, this);
@@ -23,9 +21,8 @@ sap.ui.define([
 		},
 
 		_setupView: function () {
-			this.createMessagePopover();
-			this.handleMessagePopover(this.aMessages);
-
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+			
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
 
@@ -33,7 +30,6 @@ sap.ui.define([
 			this.closeBusyDialog();
 		},
 
-		/** @function called after onInit*/
 		onAfterRendering: function () {
 
 		},
@@ -57,19 +53,13 @@ sap.ui.define([
 		maintainTechnicalUser: function () {
 			var sTechnicalUsername = this.getView().byId("technicalUsername").getValue();
 			var sTechnicalPassword = this.getView().byId("technicalPassword").getValue();
+
 			if (sTechnicalUsername && sTechnicalPassword) {
 				this.deleteFromSecureStore(sTechnicalUsername);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword);
 				sap.ui.getCore().aTechnicalUser[0].FIELD_VALUE = sTechnicalUsername;
 			} else {
-				var sMessage = {
-					type: "Error",
-					title: "Please fill both username and password",
-					description: "",
-					groupName: this.getResourceBundleText("TechnicalUser")
-				};
-				this.aMessages.unshift(sMessage);
-				this.handleMessagePopover(this.aMessages);
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), "Error", this.oButtonPopover);
 			}
 		},
 
@@ -90,32 +80,22 @@ sap.ui.define([
 				data = {
 					"VALUE": sValue
 				};
-			var onSuccess = function (oData) {
-				var sMessage = {
-					type: "Success",
-					title: oData.message,
-					description: "",
-					groupName: oController.getResourceBundleText("TechnicalUser")
-				};
-				oController.aMessages.unshift(sMessage);
-				oController.handleMessagePopover(oController.aMessages);
+				
+			var onSuccess = function () {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("succesMaintainTechnicalUser"), "Success", oController.oButtonPopover);
 			};
-			var onError = function (oXHR, sTextStatus) {
-				var sMessage = {
-					type: "Error",
-					title: sTextStatus,
-					description: "",
-					groupName: oController.getResourceBundleText("TechnicalUser")
-				};
-				oController.aMessages.unshift(sMessage);
-				oController.handleMessagePopover(oController.aMessages);
+
+			var onError = function () {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMaintainTechnicalUser"), "Error", oController.oButtonPopover);
 			};
+			
 			var url = {
 				constant: "SET_SEC_STORE",
 				parameters: {
 					KEY: sKey
 				}
 			};
+			
 			BackendConnector.doPost(url, data, onSuccess, onError, false);
 		},
 
