@@ -36,6 +36,9 @@ global.plcWebUrl = process.env.SAP_PLC_WEB;
 global.plcXsjsUrl = process.env.SAP_PLC_XSJS;
 global.plcPublicApiUrl = process.env.SAP_PLC_PUBLIC_API;
 
+//For local development and usage only !!!
+//xsenv.loadEnv();
+
 // extensibility plc router
 const ExtensibilityPlc = require(global.appRoot + "/lib/customRouter/extensibilityRouter.js");
 var ExtensibilityPlcRouter = new ExtensibilityPlc.ExtensibilityRouter();
