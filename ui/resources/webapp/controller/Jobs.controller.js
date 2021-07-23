@@ -11,6 +11,8 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
+			this.redirectToLaunchpadOnRefresh();
+			
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("jobs").attachPatternMatched(this._onObjectMatched, this);
 		},

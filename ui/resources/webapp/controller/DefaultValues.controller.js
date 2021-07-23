@@ -20,6 +20,8 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
+			this.redirectToLaunchpadOnRefresh();
+			
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
 		},

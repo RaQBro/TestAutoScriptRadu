@@ -25,24 +25,12 @@ sap.ui.define([
 				this.navTo("view");
 				var avatarBtn = this.getView().byId("avatarBtn");
 				avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
-
-				// Get configuration
-				this.getConfiguration();
-				// Get default values
-				this.getDefaultValues();
-				// Get technical user
-				this.getTechnicalUser();
-				// Get all jobs
-				this.getAllJobs();
-				// Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true
-				this.plcInitSession();
-				// Triggered to activate the event listener for logging out of PLC when LOGOUT_AT_CLOSE_APP is true. The logout will happen on window/browser close.
-				this.handleWindowClose();
 			}
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {},
+		onAfterRendering: function () {
+		},
 
 		/** @function used when the user details avatar is pressed*/
 		onIndividualPress: function () {

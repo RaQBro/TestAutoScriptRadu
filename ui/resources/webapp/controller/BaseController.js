@@ -5,12 +5,12 @@ sap.ui.define([
 	"sap/m/MessagePopover",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/syncStyleClass",
+	"sap/ui/core/routing/History",
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/core/utils/Constants"
-], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, syncStyleClass, BackendConnector, ToolBarMessages,
+], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, History, BackendConnector, ToolBarMessages,
 	MessageHelpers, Constants) {
 	"use strict";
 
@@ -217,6 +217,15 @@ sap.ui.define([
 
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
 		},
+		
+		redirectToLaunchpadOnRefresh: function(){
+            var oHistory = History.getInstance();
+			var sPreviousHash = oHistory.getPreviousHash();
+
+			if (sPreviousHash === undefined) {
+				this.getRouter().navTo("view", {}, true /*no history*/);
+			}
+        },
 
 		/** @function used to logout from PLC
 		 */

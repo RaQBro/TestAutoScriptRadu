@@ -12,6 +12,8 @@ sap.ui.define([
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {
+			this.redirectToLaunchpadOnRefresh();
+			
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("error").attachMatched(this._popUpMessage, this);
 		},

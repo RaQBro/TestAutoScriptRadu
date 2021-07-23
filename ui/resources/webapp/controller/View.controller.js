@@ -12,7 +12,21 @@ sap.ui.define([
 			oRouter.getRoute("view").attachPatternMatched(this._onObjectMatched, this);
 		},
 
-		onAfterRendering: function () {},
+		onAfterRendering: function () {
+
+			// Get configuration
+			this.getConfiguration();
+			// Get default values
+			this.getDefaultValues();
+			// Get technical user
+			this.getTechnicalUser();
+			// Get all jobs
+			this.getAllJobs();
+			// Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true
+			this.plcInitSession();
+			// Triggered to activate the event listener for logging out of PLC when LOGOUT_AT_CLOSE_APP is true. The logout will happen on window/browser close.
+			this.handleWindowClose();
+		},
 
 		_onObjectMatched: function () {
 			this.openBusyDialog();
