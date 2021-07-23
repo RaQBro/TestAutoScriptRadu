@@ -9,7 +9,7 @@ sap.ui.define([
 	return Controller.extend("webapp.ui.controller.Jobs", {
 
 		ToolBarMessages: ToolBarMessages,
-		
+
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("jobs").attachPatternMatched(this._onObjectMatched, this);
@@ -17,16 +17,15 @@ sap.ui.define([
 
 		_onObjectMatched: function () {
 			this.openBusyDialog();
-			
-			
+
 			this._setupView();
 		},
 
 		_setupView: function () {
-			
+
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.handleControlVisibleState("saveBtn", false);
-			
+
 			var oView = this.getView();
 			var oModel = new ODataModel("/service/odataService.xsodata/", {
 				json: true,
@@ -62,15 +61,15 @@ sap.ui.define([
 					header.setText(this.getResourceBundleText("colUser"));
 				} else if (header.getText() === "IS_ONLINE_MODE") {
 					header.setText(this.getResourceBundleText("colIsOnline"));
-				}else if (header.getText() === "REQUEST_BODY") {
+				} else if (header.getText() === "REQUEST_BODY") {
 					header.setText(this.getResourceBundleText("colRequestBody"));
-				}else if (header.getText() === "RESPONSE_BODY") {
+				} else if (header.getText() === "RESPONSE_BODY") {
 					header.setText(this.getResourceBundleText("colResponseBody"));
-				}else if (header.getText() === "SAP_JOB_ID") {
+				} else if (header.getText() === "SAP_JOB_ID") {
 					header.setText(this.getResourceBundleText("colSapJobId"));
-				}else if (header.getText() === "SAP_JOB_RUN_ID") {
+				} else if (header.getText() === "SAP_JOB_RUN_ID") {
 					header.setText(this.getResourceBundleText("colSapJobRunId"));
-				}else if (header.getText() === "SAP_JOB_SCHEDULE_ID") {
+				} else if (header.getText() === "SAP_JOB_SCHEDULE_ID") {
 					header.setText(this.getResourceBundleText("colSapJobScheduleId"));
 				}
 			}.bind(this));

@@ -7,31 +7,30 @@ sap.ui.define([
 ], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.Messages", {
-		
+
 		ToolBarMessages: ToolBarMessages,
-		
+
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("messages").attachPatternMatched(this._onObjectMatched, this);
 		},
 
 		_onObjectMatched: function (oEvent) {
-			
+
 			this.openBusyDialog();
-			
 
 			var jobID = oEvent.getParameter("arguments").jobID;
 
-			this._setupView(jobID)
+			this._setupView()
 				.then(this.applyFiltersFromParameters(jobID))
 				.then(this.closeBusyDialog());
 		},
 
 		_setupView: function () {
-			
+
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.handleControlVisibleState("saveBtn", false);
-			
+
 			return new Promise(function (resolve) {
 				var oView = this.getView();
 				var oModel = new ODataModel("/service/odataService.xsodata/", {
@@ -78,7 +77,7 @@ sap.ui.define([
 					header.setText(this.getResourceBundleText("colSeverity"));
 				} else if (header.getText() === "TEXT") {
 					header.setText(this.getResourceBundleText("colText"));
-				}else if (header.getText() === "DETAILS") {
+				} else if (header.getText() === "DETAILS") {
 					header.setText(this.getResourceBundleText("colDetails"));
 				}
 			}.bind(this));
@@ -95,12 +94,10 @@ sap.ui.define([
 			var sJobName = jobID || null;
 
 			if (sJobName !== null) {
-
 				this.oTableSearchState = [];
-				if (sJobName !== null) {
-					this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
-				}
+				this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
 				oView.byId("btnSeeAllEntries").setVisible(true);
+				oSmartTable.rebindTable();
 			} else {
 				this.oTableSearchState = [];
 				this.getView().byId("btnSeeAllEntries").setVisible(false);
@@ -113,7 +110,6 @@ sap.ui.define([
 					}
 				});
 			}
-			oSmartTable.rebindTable();
 		},
 
 		onSmartFilterBarInitialized: function () {

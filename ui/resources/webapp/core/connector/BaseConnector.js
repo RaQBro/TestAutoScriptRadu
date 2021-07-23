@@ -5,62 +5,62 @@ sap.ui.define([
 
 	var BaseConnector = {
 
-        _sDefaultContentType: "application/json",
-        _sDefaultDataType: "json",
+		_sDefaultContentType: "application/json",
+		_sDefaultDataType: "json",
 
-        doAjaxCall: function (sHttpMethod, vURL, oData, fnSuccess, fnError, oHeaders, bExpectsResponse, bSync, dataType, contentType) {
-            var mConfiguration = {};
+		doAjaxCall: function (sHttpMethod, vURL, oData, fnSuccess, fnError, oHeaders, bExpectsResponse, bSync, dataType, contentType) {
+			var mConfiguration = {};
 
-            mConfiguration.type = sHttpMethod;
+			mConfiguration.type = sHttpMethod;
 
-            if (contentType === undefined) {
-                contentType = this._sDefaultContentType;
-            }
+			if (contentType === undefined) {
+				contentType = this._sDefaultContentType;
+			}
 
-            if (dataType === undefined) {
-                dataType = this._sDefaultDataType;
-            }
+			if (dataType === undefined) {
+				dataType = this._sDefaultDataType;
+			}
 
-            if (bExpectsResponse) {
-                mConfiguration.contentType = contentType;
-                mConfiguration.dataType = dataType;
-            }
+			if (bExpectsResponse) {
+				mConfiguration.contentType = contentType;
+				mConfiguration.dataType = dataType;
+			}
 
-            mConfiguration.success = fnSuccess;
-            mConfiguration.error = fnError;
+			mConfiguration.success = fnSuccess;
+			mConfiguration.error = fnError;
 
-            if (bSync) {
-                mConfiguration.async = false;
-            }
+			if (bSync) {
+				mConfiguration.async = false;
+			}
 
-            if (oHeaders) {
-                mConfiguration.headers = oHeaders;
-            }
+			if (oHeaders) {
+				mConfiguration.headers = oHeaders;
+			}
 
-            if (sHttpMethod !== "GET") {
-                mConfiguration.data = JSON.stringify(oData);
-            }
+			if (sHttpMethod !== "GET") {
+				mConfiguration.data = JSON.stringify(oData);
+			}
 
-            if (typeof vURL === "object") {
-                var mURLConfiguration = vURL,
-                    sQuery = mURLConfiguration.query ? mURLConfiguration.query : "";
+			if (typeof vURL === "object") {
+				var mURLConfiguration = vURL,
+					sQuery = mURLConfiguration.query ? mURLConfiguration.query : "";
 
-                mConfiguration.url = UrlProvider.getUrl(mURLConfiguration.constant, mURLConfiguration.parameters) + sQuery;
-            } else {
-                mConfiguration.url = UrlProvider.getUrl(vURL);
-            }
+				mConfiguration.url = UrlProvider.getUrl(mURLConfiguration.constant, mURLConfiguration.parameters) + sQuery;
+			} else {
+				mConfiguration.url = UrlProvider.getUrl(vURL);
+			}
 
-            return jQuery.ajax(mConfiguration)
-                .success(function (oResponse) {
-                    //TODO
-                    
-                })
-                .fail(function (oResponse) {
-                    //TODO
-                   
-                }.bind(this));
-        }
+			return jQuery.ajax(mConfiguration)
+				.success(function (oResponse) {
+					//TODO
 
-    };
-    return BaseConnector;
+				})
+				.fail(function (oResponse) {
+					//TODO
+
+				}.bind(this));
+		}
+
+	};
+	return BaseConnector;
 });

@@ -7,9 +7,9 @@ sap.ui.define([
 ], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.TechnicalUser", {
-		
+
 		ToolBarMessages: ToolBarMessages,
-		
+
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("technicalUser").attachPatternMatched(this._onObjectMatched, this);
@@ -22,7 +22,7 @@ sap.ui.define([
 
 		_setupView: function () {
 			this.oButtonPopover = this.byId("buttonMessagePopover");
-			
+
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
 
@@ -80,7 +80,7 @@ sap.ui.define([
 				data = {
 					"VALUE": sValue
 				};
-				
+
 			var onSuccess = function () {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("succesMaintainTechnicalUser"), "Success", oController.oButtonPopover);
 			};
@@ -88,14 +88,14 @@ sap.ui.define([
 			var onError = function () {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMaintainTechnicalUser"), "Error", oController.oButtonPopover);
 			};
-			
+
 			var url = {
 				constant: "SET_SEC_STORE",
 				parameters: {
 					KEY: sKey
 				}
 			};
-			
+
 			BackendConnector.doPost(url, data, onSuccess, onError, false);
 		},
 

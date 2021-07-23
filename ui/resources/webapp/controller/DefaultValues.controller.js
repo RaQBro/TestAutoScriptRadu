@@ -16,9 +16,9 @@ sap.ui.define([
 		/** @function called when the controller is initialized
 		 * gets the i18n model, creates message popover, disabling save button from footer
 		 */
-		
+
 		ToolBarMessages: ToolBarMessages,
-		
+
 		onInit: function () {
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
@@ -31,7 +31,7 @@ sap.ui.define([
 
 		_setupView: function () {
 			this.oButtonPopover = this.byId("buttonMessagePopover");
-			
+
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
 
@@ -132,15 +132,16 @@ sap.ui.define([
 			var oController = this;
 
 			var onSuccess = function () {
-				
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), "Success", oController.oButtonPopover);
-				
+
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), "Success",
+					oController.oButtonPopover);
+
 				// get new default values
 				oController.getDefaultValues();
 				oController.handleControlEnabledState("saveBtn", false);
 			};
 			var onError = function () {
-				
+
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), "Error", oController.oButtonPopover);
 			};
 			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);

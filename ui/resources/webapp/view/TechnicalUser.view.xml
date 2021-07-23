@@ -1,5 +1,5 @@
 <mvc:View id="technicalUserView" controllerName="webapp.ui.controller.TechnicalUser" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	xmlns:form="sap.ui.layout.form" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:tnt="sap.tnt" xmlns:l="sap.ui.layout" displayBlock="true">
+	xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" displayBlock="true">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<l:VerticalLayout class="sapUiContentPadding" width="50%">

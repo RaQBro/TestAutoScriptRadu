@@ -3,24 +3,24 @@ sap.ui.define([
 ], function (mConstants) {
 	"use strict";
 
-    function UrlProvider(_mConstants) {
-        this._mConstants = _mConstants;
-    }
+	function UrlProvider(_mConstants) {
+		this._mConstants = _mConstants;
+	}
 
-    UrlProvider.prototype.getUrl = function (sConstant, mParameters) {
-        var sURL = this._mConstants[sConstant];
+	UrlProvider.prototype.getUrl = function (sConstant, mParameters) {
+		var sURL = this._mConstants[sConstant];
 
-        if (!sURL) {
-            throw new Error("URL defined by constant '" + sConstant + "' not found in UrlProvider.js");
-        }
+		if (!sURL) {
+			throw new Error("URL defined by constant '" + sConstant + "' not found in UrlProvider.js");
+		}
 
-        if (mParameters) {
-            Object.keys(mParameters).forEach(function (sKey) {
-                sURL = sURL.replace("{" + sKey + "}", encodeURIComponent(mParameters[sKey]));
-            });
-        }
-        return sURL;
-    };
-    
-    return new UrlProvider(mConstants);
+		if (mParameters) {
+			Object.keys(mParameters).forEach(function (sKey) {
+				sURL = sURL.replace("{" + sKey + "}", encodeURIComponent(mParameters[sKey]));
+			});
+		}
+		return sURL;
+	};
+
+	return new UrlProvider(mConstants);
 });

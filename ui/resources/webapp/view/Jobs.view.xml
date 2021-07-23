@@ -1,5 +1,5 @@
-<mvc:View controllerName="webapp.ui.controller.Jobs" xmlns="sap.m" xmlns:f="sap.f" xmlns:core="sap.ui.core"
-	xmlns:smartTable="sap.ui.comp.smarttable" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:mvc="sap.ui.core.mvc">
+<mvc:View controllerName="webapp.ui.controller.Jobs" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:smartTable="sap.ui.comp.smarttable" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
