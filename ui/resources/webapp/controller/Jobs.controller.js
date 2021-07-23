@@ -11,13 +11,15 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
+
 			this.redirectToLaunchpadOnRefresh();
-			
+
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("jobs").attachPatternMatched(this._onObjectMatched, this);
 		},
 
 		_onObjectMatched: function () {
+
 			this.openBusyDialog();
 
 			this._setupView();
@@ -26,6 +28,7 @@ sap.ui.define([
 		_setupView: function () {
 
 			this.oButtonPopover = this.byId("buttonMessagePopover");
+
 			this.handleControlVisibleState("saveBtn", false);
 
 			var oView = this.getView();
@@ -50,6 +53,7 @@ sap.ui.define([
 		},
 
 		_renameColumns: function (oEvent) {
+
 			const columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
 			columnNames.forEach(function (column) {
 				var header = column.getHeader();
@@ -78,7 +82,11 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {},
+		onAfterRendering: function () {
+
+			this.sViewName = this.getView().getParent().getParent().getSideContent().getAggregation("fixedItem").getSelectedItem().getProperty(
+				"text");
+		},
 
 		applyFiltersFromParameters: function () {
 

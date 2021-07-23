@@ -20,18 +20,21 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
+
 			this.redirectToLaunchpadOnRefresh();
-			
+
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
 		},
 
 		_onObjectMatched: function () {
+
 			this.openBusyDialog();
 			this._setupView();
 		},
 
 		_setupView: function () {
+
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 
 			this.handleControlEnabledState("saveBtn", false);
@@ -47,6 +50,8 @@ sap.ui.define([
 		/** @function called after onInit*/
 		onAfterRendering: function () {
 
+			this.sViewName = this.getView().getParent().getParent().getSideContent().getAggregation("fixedItem").getSelectedItem().getProperty(
+				"text");
 		},
 
 		setNoProjects: function () {
@@ -135,8 +140,7 @@ sap.ui.define([
 
 			var onSuccess = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), "Success",
-					oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, "Success", this.sViewName, oController.oButtonPopover);
 
 				// get new default values
 				oController.getDefaultValues();
@@ -144,7 +148,7 @@ sap.ui.define([
 			};
 			var onError = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), "Error", oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, "Error", oController.sViewName, oController.oButtonPopover);
 			};
 			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);
 		},

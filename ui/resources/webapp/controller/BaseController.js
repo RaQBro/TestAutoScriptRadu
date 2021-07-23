@@ -138,7 +138,7 @@ sap.ui.define([
 
 		/** @function used to initialize the PLC session
 		 */
-		plcInitSession: function () {
+		plcInitSession: function (sViewName) {
 			var oController = this;
 
 			var sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
@@ -151,7 +151,7 @@ sap.ui.define([
 					var onSuccess = function () {};
 					var onError = function () {
 						var oButtonPopover = oController.byId("buttonMessagePopover");
-						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), "Error", oButtonPopover);
+						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), null, "Error", sViewName, oButtonPopover);
 					};
 
 					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
@@ -161,29 +161,32 @@ sap.ui.define([
 
 		/** @function used to get configuration which are used in the configuration logic
 		 */
-		getConfiguration: function () {
+		getConfiguration: function (sViewName) {
 			var oController = this;
 			var onSuccess = function (oData) {
 				sap.ui.getCore().aConfiguration = oData.d.results;
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), "Error", oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Error", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Success", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Information", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Warning", sViewName, oButtonPopover);
 			};
 
-			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError, true);
+			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError.bind(this), true);
 		},
 
 		/** @function used to get default values which are used in the configuration logic
 		 */
-		getDefaultValues: function () {
+		getDefaultValues: function (sViewName) {
 			var oController = this;
 			var onSuccess = function (oData) {
 				sap.ui.getCore().aDefaultValues = oData.d.results;
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), "Error", oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), null, "Error", sViewName, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_DEFAULT_VALUES", onSuccess, onError, true);
@@ -191,28 +194,28 @@ sap.ui.define([
 
 		/** @function used to get the technical user
 		 */
-		getTechnicalUser: function () {
+		getTechnicalUser: function (sViewName) {
 			var oController = this;
 			var onSuccess = function (oData) {
 				sap.ui.getCore().aTechnicalUser = oData.d.results;
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), "Error", oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), null, "Error", sViewName, oButtonPopover);
 			};
 			BackendConnector.doGet("GET_TECHNICAL_USER", onSuccess, onError, true);
 		},
 
 		/** @function used to get details of all existing jobs
 		 */
-		getAllJobs: function () {
+		getAllJobs: function (sViewName) {
 			var oController = this;
 			var onSuccess = function (oData) {
 				sap.ui.getCore().aAllJobs = oData.details.results;
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), "Error", oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, "Error", sViewName, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
