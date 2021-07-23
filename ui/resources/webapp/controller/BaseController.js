@@ -9,10 +9,9 @@ sap.ui.define([
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers",
-	"sap/ui/Device",
 	"webapp/ui/core/utils/Constants"
 ], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, syncStyleClass, BackendConnector, ToolBarMessages,
-	MessageHelpers, Device, Constants) {
+	MessageHelpers, Constants) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.BaseController", {
@@ -151,7 +150,7 @@ sap.ui.define([
 
 					var onSuccess = function () {};
 					var onError = function () {
-						var oButtonPopover = this.byId("buttonMessagePopover");
+						var oButtonPopover = oController.byId("buttonMessagePopover");
 						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), "Error", oButtonPopover);
 					};
 
@@ -168,7 +167,7 @@ sap.ui.define([
 				sap.ui.getCore().aConfiguration = oData.d.results;
 			};
 			var onError = function () {
-				var oButtonPopover = this.byId("buttonMessagePopover");
+				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), "Error", oButtonPopover);
 			};
 
@@ -183,7 +182,7 @@ sap.ui.define([
 				sap.ui.getCore().aDefaultValues = oData.d.results;
 			};
 			var onError = function () {
-				var oButtonPopover = this.byId("buttonMessagePopover");
+				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), "Error", oButtonPopover);
 			};
 
@@ -198,7 +197,7 @@ sap.ui.define([
 				sap.ui.getCore().aTechnicalUser = oData.d.results;
 			};
 			var onError = function () {
-				var oButtonPopover = this.byId("buttonMessagePopover");
+				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), "Error", oButtonPopover);
 			};
 			BackendConnector.doGet("GET_TECHNICAL_USER", onSuccess, onError, true);
@@ -212,7 +211,7 @@ sap.ui.define([
 				sap.ui.getCore().aAllJobs = oData.details.results;
 			};
 			var onError = function () {
-				var oButtonPopover = this.byId("buttonMessagePopover");
+				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), "Error", oButtonPopover);
 			};
 
@@ -243,11 +242,7 @@ sap.ui.define([
 
 		getContentDensityClass: function () {
 			if (!this._sContentDensityClass) {
-				//if (!Device.support.touch) {
-				    //this._sContentDensityClass = Constants.CONTENT_DENSITY.COZY;
-				//} else {
 				this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
-				//}
 			}
 			return this._sContentDensityClass;
 		}
