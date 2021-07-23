@@ -169,9 +169,6 @@ sap.ui.define([
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Error", sViewName, oButtonPopover);
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Success", sViewName, oButtonPopover);
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Information", sViewName, oButtonPopover);
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Warning", sViewName, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError.bind(this), true);
