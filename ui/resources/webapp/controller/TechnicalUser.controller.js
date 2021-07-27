@@ -42,6 +42,7 @@ sap.ui.define([
 		},
 
 		handleMaintainTechnicalUser: function () {
+			
 			var aTechnicalUser = sap.ui.getCore().aTechnicalUser;
 			var sTechnicalUser = _.find(aTechnicalUser, (item) => {
 				return item.FIELD_NAME === "TECHNICAL_USER";
@@ -54,23 +55,26 @@ sap.ui.define([
 		},
 
 		onSavePress: function () {
+			
 			this.maintainTechnicalUser();
+			this.getTechincalUser();
 		},
 
 		maintainTechnicalUser: function () {
+			
 			var sTechnicalUsername = this.getView().byId("technicalUsername").getValue();
 			var sTechnicalPassword = this.getView().byId("technicalPassword").getValue();
 
 			if (sTechnicalUsername && sTechnicalPassword) {
 				this.deleteFromSecureStore(sTechnicalUsername);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword);
-				sap.ui.getCore().aTechnicalUser[0].FIELD_VALUE = sTechnicalUsername;
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this.sViewName, this.oButtonPopover);
 			}
 		},
 
 		deleteFromSecureStore: function (sKey) {
+			
 			var onSuccess = function () {};
 			var onError = function () {};
 
@@ -83,17 +87,18 @@ sap.ui.define([
 		},
 
 		insertIntoSecureStore: function (sKey, sValue) {
+			
 			var oController = this,
 				data = {
 					"VALUE": sValue
 				};
 
 			var onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success", this.sViewName, oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success", oController.sViewName, oController.oButtonPopover);
 			};
 
 			var onError = function () {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error", this.sViewName, oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error", oController.sViewName, oController.oButtonPopover);
 			};
 
 			var url = {
