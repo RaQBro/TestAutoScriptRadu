@@ -57,7 +57,7 @@ sap.ui.define([
 		onSavePress: function () {
 			
 			this.maintainTechnicalUser();
-			this.getTechincalUser();
+			this.getTechnicalUser();
 		},
 
 		maintainTechnicalUser: function () {
