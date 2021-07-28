@@ -248,6 +248,11 @@ sap.ui.define([
 				}
 			}
 		},
+		
+		getViewName(sAggregationName){
+			
+			return this.getView().getParent().getParent().getSideContent().getAggregation(sAggregationName).getSelectedItem().getProperty("text");			
+		},
 
 		getContentDensityClass: function () {
 			if (!this._sContentDensityClass) {

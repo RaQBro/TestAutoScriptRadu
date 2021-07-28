@@ -12,8 +12,6 @@ sap.ui.define([
 
 		onInit: function () {
 
-			this.redirectToLaunchpadOnRefresh();
-
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("jobs").attachPatternMatched(this._onObjectMatched, this);
 		},
@@ -49,6 +47,7 @@ sap.ui.define([
 			oTable.setEnableBusyIndicator(true);
 			oTable.setAlternateRowColors(true);
 			oTable.setGrowing(true);
+			
 			this.closeBusyDialog();
 		},
 
@@ -83,9 +82,6 @@ sap.ui.define([
 
 		/** @function called after onInit*/
 		onAfterRendering: function () {
-
-			this.sViewName = this.getView().getParent().getParent().getSideContent().getAggregation("fixedItem").getSelectedItem().getProperty(
-				"text");
 		},
 
 		applyFiltersFromParameters: function () {

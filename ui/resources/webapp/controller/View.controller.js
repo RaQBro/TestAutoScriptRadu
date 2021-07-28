@@ -15,19 +15,16 @@ sap.ui.define([
 
 		onAfterRendering: function () {
 
-			this.sViewName = this.getView().getParent().getParent().getSideContent().getAggregation("item").getSelectedItem().getProperty(
-				"text");
-
 			// Get configuration
-			this.getConfiguration(this.sViewName);
+			this.getConfiguration(this.getViewName("item"));
 			// Get default values
-			this.getDefaultValues(this.sViewName);
+			this.getDefaultValues(this.getViewName("item"));
 			// Get technical user
-			this.getTechnicalUser(this.sViewName);
+			this.getTechnicalUser(this.getViewName("item"));
 			// Get all jobs
-			this.getAllJobs(this.sViewName);
+			this.getAllJobs(this.getViewName("item"));
 			// Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true
-			this.plcInitSession(this.sViewName);
+			this.plcInitSession(this.getViewName("item"));
 			// Triggered to activate the event listener for logging out of PLC when LOGOUT_AT_CLOSE_APP is true. The logout will happen on window/browser close.
 			this.handleWindowClose();
 		},

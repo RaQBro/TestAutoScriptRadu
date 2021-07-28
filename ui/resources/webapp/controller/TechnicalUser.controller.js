@@ -12,8 +12,6 @@ sap.ui.define([
 
 		onInit: function () {
 
-			this.redirectToLaunchpadOnRefresh();
-
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("technicalUser").attachPatternMatched(this._onObjectMatched, this);
 		},
@@ -32,13 +30,11 @@ sap.ui.define([
 			this.handleControlVisibleState("saveBtn", true);
 
 			this.handleMaintainTechnicalUser();
+			
 			this.closeBusyDialog();
 		},
 
 		onAfterRendering: function () {
-
-			this.sViewName = this.getView().getParent().getParent().getSideContent().getAggregation("fixedItem").getSelectedItem().getProperty(
-				"text");
 		},
 
 		handleMaintainTechnicalUser: function () {
@@ -69,7 +65,7 @@ sap.ui.define([
 				this.deleteFromSecureStore(sTechnicalUsername);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword);
 			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this.sViewName, this.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this.getViewName("fixedItem"), this.oButtonPopover);
 			}
 		},
 
@@ -94,11 +90,11 @@ sap.ui.define([
 				};
 
 			var onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success", oController.sViewName, oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success", oController.getViewName("fixedItem"), oController.oButtonPopover);
 			};
 
 			var onError = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error", oController.sViewName, oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error", oController.getViewName("fixedItem"), oController.oButtonPopover);
 			};
 
 			var url = {

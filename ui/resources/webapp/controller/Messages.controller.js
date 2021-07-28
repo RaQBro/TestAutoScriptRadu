@@ -11,7 +11,6 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
-			this.redirectToLaunchpadOnRefresh();
 
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("messages").attachPatternMatched(this._onObjectMatched, this);
@@ -33,7 +32,7 @@ sap.ui.define([
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 
 			this.handleControlVisibleState("saveBtn", false);
-
+			
 			return new Promise(function (resolve) {
 				var oView = this.getView();
 				var oModel = new ODataModel("/service/odataService.xsodata/", {
@@ -88,9 +87,6 @@ sap.ui.define([
 
 		/** @function called after onInit*/
 		onAfterRendering: function () {
-
-			this.sViewName = this.getView().getParent().getParent().getSideContent().getAggregation("fixedItem").getSelectedItem().getProperty(
-				"text");
 		},
 
 		applyFiltersFromParameters: function (jobID) {
