@@ -504,7 +504,7 @@ Message.prototype.constructor = Message;
  */
 Message.addLog = async function (iJobId, sMessage, sType, oDetails) {
 
-	if (iJobId === undefined) {
+	if (iJobId === undefined || typeof iJobId !== "number") {
 		return;
 	}
 
@@ -574,7 +574,7 @@ PlcException.prototype.constructor = PlcException;
  * @param {integer} iJobId - the job id needed to save the message
  * @return {PlcException} oPlcException - the new PlcException error object 
  */
-PlcException.createPlcException = function (oException, iJobId) {
+PlcException.createPlcException = async function (oException, iJobId) {
 
 	var oPlcException, sLogMessage;
 
@@ -588,7 +588,7 @@ PlcException.createPlcException = function (oException, iJobId) {
 	}
 
 	// save message log
-	Message.addLog(iJobId, sLogMessage, "error", oPlcException);
+	await Message.addLog(iJobId, sLogMessage, "error", oPlcException);
 
 	// return exception
 	return oPlcException;

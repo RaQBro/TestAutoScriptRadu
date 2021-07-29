@@ -14,15 +14,21 @@ const express = require("express");
  *		- GET /extensibility/plc/applicationRoutes
  *		- POST /extensibility/plc/maintainDefaultValues
  *		- GET /extensibility/plc/getAllProjects
- *		- GET /extensibility/plc/exampleService
+ *		- GET /extensibility/plc/exampleService?IS_ONLINE_MODE=true/false
+ *							- undefined or true if onlime mode (web request) - no entries in logs/messages if undefined for web request
+ *							- false if fake background job (web request)
+ *							- must be undefined in case of background job (job request) - with entries in logs/messages for job request
  * 
  * @name extensibilityRouter.js
  */
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
-const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
+
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Message = MessageLibrary.Message;
+const PlcException = MessageLibrary.PlcException;
 
 /** @class
  * @classdesc Extensibility PLC router
@@ -40,11 +46,11 @@ class ExtensibilityRouter {
 
 		/**
 		 * Common function before all routes are processed:
-		 *		- generate a an autoincrement JOB_ID based on the existing ids
+		 *		- generate an autoincrement JOB_ID based on the existing ids
 		 */
 		router.use(async function (request, response, next) {
 
-			await JobSchedulerUtil.generateJobIdAndJobTimestamp(request);
+			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobType(request);
 			ExtensibilityPlcService = new ExtensibilityService(request);
 			next();
 
@@ -104,14 +110,28 @@ class ExtensibilityRouter {
 
 		router.get("/exampleService", function (request, response) {
 
+			// create job log entry
+			JobSchedulerUtil.insertJobLogEntryIntoTable(request);
+
+			// write entry into t_messages only for jobs (fake or real)
+			const sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+			Message.addLog(request.JOB_ID, sMessageInfo, "message");
+
 			// check if web or job request
 			if (helpers.isRequestFromJob(request)) {
 				// return special header to jobscheduler to know that it's async job run
 				response.status(202).send("ACCEPTED");
+			} else {
+				// check if should wait for service response or return a JOB_ID
+				if (request.IS_ONLINE_MODE === false) {
+					// fake/simulate background job
+					const oMessage = new Message(sMessageInfo, {
+						"JOB_ID": request.JOB_ID
+					});
+					// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
+					response.status(200).send(oMessage);
+				}
 			}
-
-			// create job log entry
-			JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
 			// import service
 			require(global.appRoot + "/lib/service/exampleService.js")
@@ -128,7 +148,10 @@ class ExtensibilityRouter {
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
 
-					// update run log of schedule and add service response body to job log entry
+					// add service response body to job log entry
+					JobSchedulerUtil.updateJobLogEntryFromTable(request, oServiceResponseBody);
+
+					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
 
 				} else {
@@ -137,9 +160,12 @@ class ExtensibilityRouter {
 					JobSchedulerUtil.updateJobLogEntryFromTable(request, oServiceResponseBody);
 
 					// return service response body for web request
-					response.type(sContentType).status(iStatusCode).send(oServiceResponseBody);
+					if (request.IS_ONLINE_MODE === true) {
+						response.type(sContentType).status(iStatusCode).send(oServiceResponseBody);
+					}
 
 				}
+				Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message");
 			})
 
 			// handle errors from then function
@@ -148,7 +174,10 @@ class ExtensibilityRouter {
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
 
-					// update run log of schedule and add service response body to job log entry
+					// add service response body to job log entry
+					JobSchedulerUtil.updateJobLogEntryFromTable(request, err);
+
+					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, 500, err);
 
 				} else {
@@ -160,9 +189,12 @@ class ExtensibilityRouter {
 					JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException);
 
 					// return service response body for web request
-					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
+					if (request.IS_ONLINE_MODE === true) {
+						response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
+					}
 
 				}
+				Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message");
 			});
 		});
 

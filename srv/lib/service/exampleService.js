@@ -20,7 +20,6 @@ const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
-const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js").PlcDispatcher;
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
 
@@ -39,28 +38,12 @@ async function doService(request) {
 	var iStatusCode = 200; // service response code
 	var oServiceResponseBody = {}; // service response body
 
-	const PlcDispatcher = new DispatcherPlc(request);
 	const StandardPlcService = new StandardPlcDispatcher(request);
 	const ExtensibilityPlcService = new ExtensibilityService(request);
 
 	const sLanguage = "EN";
 
 	// ------------------------- Start Functions List ---------------------------
-	async function testGetCalculationVersion(iVersionId) {
-
-		var aParams = [{
-			"name": "id",
-			"value": iVersionId
-		}];
-
-		var oResponse = await PlcDispatcher.dispatchPrivateApi("calculation-versions", "GET", aParams);
-
-		if (oResponse.statusCode !== 200) {
-			return JSON.parse(oResponse.body);
-		}
-
-		return new Message("Get calculation version request executed with success!");
-	}
 
 	this.getFirstProject = async function () {
 		const hdbClient = await DatabaseClass.createConnection();
@@ -161,11 +144,11 @@ async function doService(request) {
 		var sProjectId = await this.getFirstProject();
 		oServiceResponseBody.PROJECT_ID = sProjectId;
 
-		var sGetVersionMsg = await testGetCalculationVersion(1000);
-		oServiceResponseBody.VERSION_MSG = sGetVersionMsg;
-
 		var aAllProject = await ExtensibilityPlcService.getAllProjects();
 		oServiceResponseBody.PROJECT = aAllProject[0];
+
+		await StandardPlcService.openCalculationVersion(1);
+		await StandardPlcService.closeCalculationVersion(1);
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {

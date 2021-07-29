@@ -152,10 +152,6 @@ class JobSchedulerUtil {
 	 */
 	updateRunLogOfSchedule(request, iResponseStatusCode, oServiceResponseBody) {
 
-		Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message");
-
-		this.updateJobLogEntryFromTable(request, oServiceResponseBody);
-
 		var iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
 		var iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
 		var iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
@@ -163,8 +159,8 @@ class JobSchedulerUtil {
 		var bWithSuccess = true;
 		var sMessageInfo = `Job with ID '${request.JOB_ID}' completed with success!`;
 
-		if (iSapJobId === null || iSapScheduleId === null || iSapRunId === null || iResponseStatusCode === undefined || oServiceResponseBody ===
-			undefined) {
+		if (request.IS_ONLINE_MODE && (!helpers.isRequestFromJob(request) || iResponseStatusCode === undefined || oServiceResponseBody ===
+				undefined)) {
 			sMessageInfo = "Error update run log: Please provide request, response status code and response body as parameters!";
 			bWithSuccess = false;
 		}
@@ -213,9 +209,6 @@ class JobSchedulerUtil {
 			return;
 		}
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-
 		const iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
 		const iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
 		const iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
@@ -226,7 +219,7 @@ class JobSchedulerUtil {
 		var sUserId = null;
 		var iWebRequest = null;
 
-		if (iSapJobId === null || iSapScheduleId === null || iSapRunId === null) {
+		if (request.IS_ONLINE_MODE === true && !helpers.isRequestFromJob(request)) {
 			sUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
 		} else {
@@ -235,6 +228,8 @@ class JobSchedulerUtil {
 			iWebRequest = 0;
 		}
 
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
 		const statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
@@ -257,6 +252,10 @@ class JobSchedulerUtil {
 	 */
 	async updateJobLogEntryFromTable(request, oServiceResponseBody) {
 
+		if (request.JOB_TIMESTAMP === undefined || oServiceResponseBody === undefined) {
+			return;
+		}
+
 		const hdbClient = await DatabaseClass.createConnection();
 		const connection = new DatabaseClass(hdbClient);
 
@@ -273,76 +272,92 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
-	 * Used to generate JOB_ID and JOB_TIMESTAMP and set as properties in request object
+	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE and set as properties in request object
 	 * JOB_TIMESTAMP used to update the log entry with service response body
 	 * JOB_ID is used in t_messages and t_job_log tables
-	 * JOB_ID value: Negative if online mode / Positive if job
+	 * JOB_ID value: Negative if online mode / Positive if job (real or fake)
+	 * IS_ONLINE_MODE value: undefined or true if web request / false if job (real or fake)
+	 * A fake job is actually a web request that is returning the JOB_ID on the response (in order to avoid session timeout)
+	 * and continue execution of the service afterwards
 	 * 
 	 * @param {object} request - web request / job request
-	 * @return {integer} iJobId - the generated job id
+	 * @return {integer} iJobId - the generated job id / undefined if IS_ONLINE_MODE undefined
 	 */
-	async generateJobIdAndJobTimestamp(request) {
+	async generateJobIdAndJobTimestampAndJobType(request) {
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-
-		var iJobId = 0;
+		var iJobId;
 		var iWebRequest;
 
-		const iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
-		const iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
-		const iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
-
-		if (iSapJobId === null || iSapScheduleId === null || iSapRunId === null) {
-			const statement = await connection.preparePromisified(
-				`
-					select MIN("JOB_ID") as LAST_NEGATIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
-				`
-			);
-			const aResults = await connection.statementExecPromisified(statement, []);
-			const aJobIds = aResults.slice();
-			if (aJobIds[0].LAST_NEGATIVE_JOB_ID === null || aJobIds[0].LAST_NEGATIVE_JOB_ID > 0) {
-				iJobId = -1;
-			} else {
-				iJobId = parseInt(aJobIds[0].LAST_NEGATIVE_JOB_ID) - 1;
-			}
-			iWebRequest = 1;
-		} else {
-			const statement = await connection.preparePromisified(
-				`
-					select MAX("JOB_ID") as LAST_POSITIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
-				`
-			);
-			const aResults = await connection.statementExecPromisified(statement, []);
-			const aJobIds = aResults.slice();
-			if (aJobIds[0].LAST_POSITIVE_JOB_ID === null || aJobIds[0].LAST_POSITIVE_JOB_ID < 0) {
-				iJobId = 1;
-			} else {
-				iJobId = parseInt(aJobIds[0].LAST_POSITIVE_JOB_ID) + 1;
-			}
+		if (helpers.isRequestFromJob(request)) {
+			// background job
 			iWebRequest = 0;
+		} else {
+			// online mode
+			if (request.query.IS_ONLINE_MODE === undefined || request.query.IS_ONLINE_MODE === "") {
+				iWebRequest = 1;
+			} else {
+				if (request.query.IS_ONLINE_MODE === false || request.query.IS_ONLINE_MODE === "false") {
+					// fake background job
+					iWebRequest = 0;
+				} else {
+					// online mode
+					iWebRequest = 1;
+				}
+			}
 		}
 
-		// get current timestamp
-		const statement = await connection.preparePromisified(
-			`
+		// set IS_ONLINE_MODE to request
+		request.IS_ONLINE_MODE = iWebRequest === 1 ? true : false;
+
+		// do not generate a JOB_ID if parameter IS_ONLINE_MODE is not defined
+		if (iWebRequest === 0 || request.query.IS_ONLINE_MODE !== undefined && request.query.IS_ONLINE_MODE !== "") {
+			const hdbClient = await DatabaseClass.createConnection();
+			const connection = new DatabaseClass(hdbClient);
+
+			if (iWebRequest === 1) {
+				const statement = await connection.preparePromisified(
+					`
+					select MIN("JOB_ID") as LAST_NEGATIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
+				`
+				);
+				const aResults = await connection.statementExecPromisified(statement, []);
+				const aJobIds = aResults.slice();
+				if (aJobIds[0].LAST_NEGATIVE_JOB_ID === null || aJobIds[0].LAST_NEGATIVE_JOB_ID > 0) {
+					iJobId = -1;
+				} else {
+					iJobId = parseInt(aJobIds[0].LAST_NEGATIVE_JOB_ID) - 1;
+				}
+			} else {
+				const statement = await connection.preparePromisified(
+					`
+					select MAX("JOB_ID") as LAST_POSITIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
+				`
+				);
+				const aResults = await connection.statementExecPromisified(statement, []);
+				const aJobIds = aResults.slice();
+				if (aJobIds[0].LAST_POSITIVE_JOB_ID === null || aJobIds[0].LAST_POSITIVE_JOB_ID < 0) {
+					iJobId = 1;
+				} else {
+					iJobId = parseInt(aJobIds[0].LAST_POSITIVE_JOB_ID) + 1;
+				}
+			}
+
+			// get current timestamp
+			const statement = await connection.preparePromisified(
+				`
 				select CURRENT_UTCTIMESTAMP from dummy;
 			`
-		);
-		const aResults = await connection.statementExecPromisified(statement, []);
-		const aCurrentTimestamp = aResults.slice();
+			);
+			const aResults = await connection.statementExecPromisified(statement, []);
+			const aCurrentTimestamp = aResults.slice();
 
-		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		// set JOB_TIMESTAMP to request
-		request.JOB_TIMESTAMP = aCurrentTimestamp[0].CURRENT_UTCTIMESTAMP;
+			// set JOB_TIMESTAMP to request
+			request.JOB_TIMESTAMP = aCurrentTimestamp[0].CURRENT_UTCTIMESTAMP;
 
-		// set JOB_ID to request
-		request.JOB_ID = iJobId;
-
-		// write entry into t_messages only for jobs
-		if (iWebRequest === 0) {
-			Message.addLog(iJobId, `Job with ID '${iJobId}' started!`, "message");
+			// set JOB_ID to request
+			request.JOB_ID = iJobId;
 		}
 
 		return iJobId;

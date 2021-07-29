@@ -23,16 +23,19 @@ class PlcDispatcher {
 
 	/** @constructor
 	 * Check if is a web request or request from a job and is getting the token:
-	 *		- for job request from the global variable that contains the bearer token generated from technical user
+	 *		- for job request (real or fake) from the global variable that contains the bearer token generated from technical user
 	 *		- for web request from the authentication information of request
+	 * 
+	 * request.IS_ONLINE_MODE if true online mode otherwise could be background job or fake backgound job (in this case we will use technical user)
+	 * 
 	 * @param {object} request - web request / job request
 	 */
 	constructor(request) {
 
-		if (request.user.id === undefined) { // undefined in job context
-			this.token = global.TECHNICAL_BEARER_TOKEN; // bearer token generated from technical user
-		} else {
+		if ((request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true) || request.user.id !== undefined) {
 			this.token = request.authInfo.getAppToken();
+		} else {
+			this.token = global.TECHNICAL_BEARER_TOKEN; // bearer token generated from technical user
 		}
 
 	}
