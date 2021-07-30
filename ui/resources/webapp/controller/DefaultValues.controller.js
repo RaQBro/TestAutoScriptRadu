@@ -41,13 +41,12 @@ sap.ui.define([
 			this.setNoProjects();
 			this.setNoCalculations();
 			this.setNoVersions();
-			
+
 			this.closeBusyDialog();
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {
-		},
+		onAfterRendering: function () {},
 
 		setNoProjects: function () {
 
@@ -130,12 +129,13 @@ sap.ui.define([
 					oDefaultValues.push(kvPair);
 				}
 			});
-			
+
 			var oController = this;
 
 			var onSuccess = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, "Success", oController.getViewName("fixedItem"), oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, "Success",
+					oController.getViewName("fixedItem"), oController.oButtonPopover);
 
 				// get new default values
 				oController.getDefaultValues();
@@ -143,7 +143,8 @@ sap.ui.define([
 			};
 			var onError = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, "Error", oController.getViewName("fixedItem"), oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, "Error",
+					oController.getViewName("fixedItem"), oController.oButtonPopover);
 			};
 			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);
 		},

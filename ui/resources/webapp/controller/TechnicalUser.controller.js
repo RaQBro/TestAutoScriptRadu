@@ -30,15 +30,14 @@ sap.ui.define([
 			this.handleControlVisibleState("saveBtn", true);
 
 			this.handleMaintainTechnicalUser();
-			
+
 			this.closeBusyDialog();
 		},
 
-		onAfterRendering: function () {
-		},
+		onAfterRendering: function () {},
 
 		handleMaintainTechnicalUser: function () {
-			
+
 			var aTechnicalUser = sap.ui.getCore().aTechnicalUser;
 			var sTechnicalUser = _.find(aTechnicalUser, (item) => {
 				return item.FIELD_NAME === "TECHNICAL_USER";
@@ -51,13 +50,13 @@ sap.ui.define([
 		},
 
 		onSavePress: function () {
-			
+
 			this.maintainTechnicalUser();
 			this.getTechnicalUser();
 		},
 
 		maintainTechnicalUser: function () {
-			
+
 			var sTechnicalUsername = this.getView().byId("technicalUsername").getValue();
 			var sTechnicalPassword = this.getView().byId("technicalPassword").getValue();
 
@@ -65,12 +64,13 @@ sap.ui.define([
 				this.deleteFromSecureStore(sTechnicalUsername);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword);
 			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this.getViewName("fixedItem"), this.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this
+					.getViewName("fixedItem"), this.oButtonPopover);
 			}
 		},
 
 		deleteFromSecureStore: function (sKey) {
-			
+
 			var onSuccess = function () {};
 			var onError = function () {};
 
@@ -83,18 +83,20 @@ sap.ui.define([
 		},
 
 		insertIntoSecureStore: function (sKey, sValue) {
-			
+
 			var oController = this,
 				data = {
 					"VALUE": sValue
 				};
 
 			var onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success", oController.getViewName("fixedItem"), oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success",
+					oController.getViewName("fixedItem"), oController.oButtonPopover);
 			};
 
 			var onError = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error", oController.getViewName("fixedItem"), oController.oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error",
+					oController.getViewName("fixedItem"), oController.oButtonPopover);
 			};
 
 			var url = {

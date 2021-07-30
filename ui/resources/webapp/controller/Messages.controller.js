@@ -32,7 +32,7 @@ sap.ui.define([
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 
 			this.handleControlVisibleState("saveBtn", false);
-			
+
 			return new Promise(function (resolve) {
 				var oView = this.getView();
 				var oModel = new ODataModel("/service/odataService.xsodata/", {
@@ -86,8 +86,7 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {
-		},
+		onAfterRendering: function () {},
 
 		applyFiltersFromParameters: function (jobID) {
 

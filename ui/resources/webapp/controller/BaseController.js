@@ -151,7 +151,8 @@ sap.ui.define([
 					var onSuccess = function () {};
 					var onError = function () {
 						var oButtonPopover = oController.byId("buttonMessagePopover");
-						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), null, "Error", sViewName, oButtonPopover);
+						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), null, "Error",
+							sViewName, oButtonPopover);
 					};
 
 					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
@@ -168,7 +169,8 @@ sap.ui.define([
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Error", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Error",
+					sViewName, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError.bind(this), true);
@@ -183,7 +185,8 @@ sap.ui.define([
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), null, "Error", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), null, "Error",
+					sViewName, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_DEFAULT_VALUES", onSuccess, onError, true);
@@ -198,7 +201,8 @@ sap.ui.define([
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), null, "Error", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), null, "Error",
+					sViewName, oButtonPopover);
 			};
 			BackendConnector.doGet("GET_TECHNICAL_USER", onSuccess, onError, true);
 		},
@@ -212,20 +216,21 @@ sap.ui.define([
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, "Error", sViewName, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, "Error", sViewName,
+					oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
 		},
-		
-		redirectToLaunchpadOnRefresh: function(){
-            var oHistory = History.getInstance();
+
+		redirectToLaunchpadOnRefresh: function () {
+			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
 
 			if (sPreviousHash === undefined) {
-				this.getRouter().navTo("view", {}, true /*no history*/);
+				this.getRouter().navTo("view", {}, true /*no history*/ );
 			}
-        },
+		},
 
 		/** @function used to logout from PLC
 		 */
@@ -248,10 +253,10 @@ sap.ui.define([
 				}
 			}
 		},
-		
-		getViewName(sAggregationName){
-			
-			return this.getView().getParent().getParent().getSideContent().getAggregation(sAggregationName).getSelectedItem().getProperty("text");			
+
+		getViewName(sAggregationName) {
+
+			return this.getView().getParent().getParent().getSideContent().getAggregation(sAggregationName).getSelectedItem().getProperty("text");
 		},
 
 		getContentDensityClass: function () {

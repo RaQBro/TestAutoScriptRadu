@@ -47,7 +47,7 @@ sap.ui.define([
 			oTable.setEnableBusyIndicator(true);
 			oTable.setAlternateRowColors(true);
 			oTable.setGrowing(true);
-			
+
 			this.closeBusyDialog();
 		},
 
@@ -81,8 +81,7 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {
-		},
+		onAfterRendering: function () {},
 
 		applyFiltersFromParameters: function () {
 

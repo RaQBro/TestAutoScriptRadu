@@ -29,8 +29,7 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {
-		},
+		onAfterRendering: function () {},
 
 		/** @function used when the user details avatar is pressed*/
 		onIndividualPress: function () {
