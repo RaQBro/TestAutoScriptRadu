@@ -30,7 +30,7 @@
 							<Button id="btnSeeAllEntries" icon="sap-icon://reset" text="{i18n>btnSeeAllEntries}" visible="false" press="onSeeAllEntries"/>
 						</OverflowToolbar>
 					</smartTable:customToolbar>
-					<Table id="tMessages" growing="true">
+					<Table id="tMessages" growing="true" growingThreshold="1000">
 						<ColumnListItem highlight="{path:'SEVERITY',formatter:'.formatRowHighlight'}"/>
 					</Table>
 				</smartTable:SmartTable>
