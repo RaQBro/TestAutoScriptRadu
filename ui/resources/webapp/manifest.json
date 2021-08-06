@@ -82,7 +82,7 @@
 			},
 			"routes": [{
 				"name": "view",
-				"pattern": "view",
+				"pattern": "",
 				"target": ["view"]
 			}, {
 				"name": "defaultValues",

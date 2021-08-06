@@ -5,7 +5,7 @@
 			<core:Fragment fragmentName="webapp.ui.view.fragment.Shellbar" type="XML"/>
 		</tnt:header>
 		<tnt:sideContent>
-			<tnt:SideNavigation id="sideNavigation" itemSelect="onViewChange" selectedKey="view">
+			<tnt:SideNavigation id="sideNavigation" itemSelect="onViewChange">
 				<tnt:NavigationList >
 					<tnt:NavigationListItem text="{i18n>MainPage}" icon="sap-icon://provision" key="view"></tnt:NavigationListItem>
 				</tnt:NavigationList>

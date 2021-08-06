@@ -53,11 +53,7 @@ sap.ui.define([
 				oTable.setAlternateRowColors(true);
 				oTable.setGrowing(true);
 
-				var sideContent = oView.getParent().getParent().getSideContent();
-				var selectedKey = sideContent.getSelectedKey();
-				if (selectedKey !== "messages") {
-					sideContent.setSelectedKey("messages");
-				}
+				this.setSideContentSelectedKey("messages");
 
 				resolve();
 			}.bind(this));

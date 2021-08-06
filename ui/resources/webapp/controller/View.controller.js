@@ -44,6 +44,8 @@ sap.ui.define([
 
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", false);
+			
+			this.setSideContentSelectedKey("view");
 
 			this.closeBusyDialog();
 		},

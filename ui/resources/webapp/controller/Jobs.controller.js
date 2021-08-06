@@ -47,6 +47,8 @@ sap.ui.define([
 			oTable.setEnableBusyIndicator(true);
 			oTable.setAlternateRowColors(true);
 			oTable.setGrowing(true);
+			
+			this.setSideContentSelectedKey("jobs");
 
 			this.closeBusyDialog();
 		},

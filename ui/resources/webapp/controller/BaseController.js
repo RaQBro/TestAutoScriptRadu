@@ -223,15 +223,6 @@ sap.ui.define([
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
 		},
 
-		redirectToLaunchpadOnRefresh: function () {
-			var oHistory = History.getInstance();
-			var sPreviousHash = oHistory.getPreviousHash();
-
-			if (sPreviousHash === undefined) {
-				this.getRouter().navTo("view", {}, true /*no history*/ );
-			}
-		},
-
 		/** @function used to logout from PLC
 		 */
 		plcLogout: function () {
@@ -254,9 +245,18 @@ sap.ui.define([
 			}
 		},
 
-		getViewName(sAggregationName) {
+		setSideContentSelectedKey: function (sViewId) {
+			var sideContent = this.getView().getParent().getParent().getSideContent();
+			var selectedKey = sideContent.getSelectedKey();
+			if (selectedKey !== sViewId) {
+				sideContent.setSelectedKey(sViewId);
+			}
+		},
 
-			return this.getView().getParent().getParent().getSideContent().getAggregation(sAggregationName).getSelectedItem().getProperty("text");
+		getViewName: function (sAggregationName) {
+
+			return this.getView().getParent().getParent().getSideContent().getAggregation(sAggregationName).getSelectedItem().getProperty(
+				"text");
 		},
 
 		getContentDensityClass: function () {
