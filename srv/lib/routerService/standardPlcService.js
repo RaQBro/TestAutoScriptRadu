@@ -551,6 +551,9 @@ class Dispatcher {
 			"name": "id",
 			"value": parseInt(iVersionId)
 		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}, {
 			"name": "loadMasterdata",
 			"value": "false"
 		}, {
@@ -993,6 +996,118 @@ class Dispatcher {
 			return oResponseBody;
 		}
 	}
+	
+		/** @function
+	 * Update master data for calculation version
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async updateMasterData(oCalculatonVersion) {
+
+		const sQueryPath = "calculation-versions";
+		const aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "updateMasterdataTimestamp",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}, {
+			"name": "loadMasterdata",
+			"value": "true"
+		}];
+
+		var aBodyData = [{
+			"CALCULATION_ID": oCalculatonVersion.CALCULATION_ID,
+			"CALCULATION_VERSION_ID": oCalculatonVersion.CALCULATION_VERSION_ID,
+			"CALCULATION_VERSION_NAME": oCalculatonVersion.CALCULATION_VERSION_NAME,
+			"CUSTOMER_ID": oCalculatonVersion.CUSTOMER_ID,
+			"REPORT_CURRENCY_ID": oCalculatonVersion.REPORT_CURRENCY_ID,
+			"EXCHANGE_RATE_TYPE_ID": oCalculatonVersion.EXCHANGE_RATE_TYPE_ID,
+			"ROOT_ITEM_ID": oCalculatonVersion.ROOT_ITEM_ID,
+			"SALES_PRICE_CURRENCY_ID": oCalculatonVersion.SALES_PRICE_CURRENCY_ID,
+			"SALES_DOCUMENT": oCalculatonVersion.SALES_DOCUMENT,
+			"VALUATION_DATE": oCalculatonVersion.VALUATION_DATE,
+			"MATERIAL_PRICE_STRATEGY_ID": oCalculatonVersion.MATERIAL_PRICE_STRATEGY_ID,
+			"ACTIVITY_PRICE_STRATEGY_ID": oCalculatonVersion.ACTIVITY_PRICE_STRATEGY_ID,
+			"STATUS_ID": oCalculatonVersion.STATUS_ID,
+			"SELECTED_TOTAL_COSTING_SHEET": oCalculatonVersion.SELECTED_TOTAL_COSTING_SHEET,
+			"SELECTED_TOTAL_COMPONENT_SPLIT": oCalculatonVersion.SELECTED_TOTAL_COMPONENT_SPLIT
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
+			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+		} else {
+			const sMessageInfo =
+				`Update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody.body.transactionaldata[0];
+		}
+	}
+
+	async upsertMaterial(aMaterials) {
+
+		let sQueryPath = "administration",
+			aParameters = [];
+
+		aParameters.push({
+			name: "ignoreBadData",
+			value: "true"
+		});
+		aParameters.push({
+			name: "business_object",
+			value: "Material"
+		});
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParameters, aMaterials);
+		let oResponseBody = oResponse.body;
+
+		return oResponseBody;
+	}
+
+	async upsertMaterialPlant(aMaterialPlants) {
+
+		let sQueryPath = "administration",
+			aParameters = [];
+
+		aParameters.push({
+			name: "ignoreBadData",
+			value: "true"
+		});
+		aParameters.push({
+			name: "business_object",
+			value: "Material_Plant"
+		});
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParameters, aMaterialPlants);
+		let oResponseBody = oResponse.body;
+
+		return oResponseBody;
+	}
+
+	async upsertMaterialPrices(aMaterialPrices) {
+
+		let sQueryPath = "materialPrices/upsert",
+			aParameters = [];
+
+		aParameters.push({
+			name: "returnType",
+			value: "full"
+		});
+
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParameters, aMaterialPrices);
+		let oResponseBody = oResponse.body;
+
+		return oResponseBody;
+	}
+
 
 }
 exports.Dispatcher = module.exports.Dispatcher = Dispatcher;
