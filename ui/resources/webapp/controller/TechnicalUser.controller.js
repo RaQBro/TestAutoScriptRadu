@@ -63,6 +63,8 @@ sap.ui.define([
 			if (sTechnicalUsername && sTechnicalPassword) {
 				this.deleteFromSecureStore(sTechnicalUsername);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword);
+				
+				this.handleControlEnabledState("saveBtn", false);
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this
 					.getViewName("fixedItem"), this.oButtonPopover);
