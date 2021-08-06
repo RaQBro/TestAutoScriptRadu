@@ -152,7 +152,7 @@ sap.ui.define([
 					var onError = function () {
 						var oButtonPopover = oController.byId("buttonMessagePopover");
 						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), null, "Error",
-							sViewName, oButtonPopover);
+							sViewName, false, null, oButtonPopover);
 					};
 
 					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
@@ -170,7 +170,7 @@ sap.ui.define([
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, "Error",
-					sViewName, oButtonPopover);
+					sViewName, false, null, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_CONFIGURATION", onSuccess, onError.bind(this), true);
@@ -186,7 +186,7 @@ sap.ui.define([
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), null, "Error",
-					sViewName, oButtonPopover);
+					sViewName, false, null, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_DEFAULT_VALUES", onSuccess, onError, true);
@@ -202,7 +202,7 @@ sap.ui.define([
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetTechnicalUser"), null, "Error",
-					sViewName, oButtonPopover);
+					sViewName, false, null, oButtonPopover);
 			};
 			BackendConnector.doGet("GET_TECHNICAL_USER", onSuccess, onError, true);
 		},
@@ -217,7 +217,7 @@ sap.ui.define([
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, "Error", sViewName,
-					oButtonPopover);
+					false, null, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
@@ -264,6 +264,12 @@ sap.ui.define([
 				this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
 			}
 			return this._sContentDensityClass;
+		},
+		
+		onMessageTitlePress: function (oEvent) {
+			this.navTo("messages", {
+				jobID: oEvent.getParameters().item.getType()
+			});
 		}
 	});
 });
