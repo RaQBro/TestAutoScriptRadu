@@ -136,7 +136,7 @@ sap.ui.define([
 
 			var onSuccess = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, "Success",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, null, "Success",
 					oController.getViewName("fixedItem"), true, null, oController.oButtonPopover);
 
 				// get new default values
@@ -145,7 +145,7 @@ sap.ui.define([
 			};
 			var onError = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, "Error",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, null, "Error",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);

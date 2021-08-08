@@ -66,7 +66,7 @@ sap.ui.define([
 				
 				this.handleControlEnabledState("saveBtn", false);
 			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, "Error", this
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsTechnicalUser"), null, null, "Error", this
 					.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
 		},
@@ -92,12 +92,12 @@ sap.ui.define([
 				};
 
 			var onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, "Success",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainTechnicalUser"), null, null, "Success",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
 			var onError = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, "Error",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainTechnicalUser"), null, null, "Error",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 

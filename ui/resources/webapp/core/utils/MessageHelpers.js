@@ -36,14 +36,17 @@ sap.ui.define([
 			oButton.setType(MessageHelpers.buttonTypeFormatter.call(this, sType));
 		},
 
-		addMessageToPopover: function (sMessage, sDescription, sType, sViewName, bActiveTitle, sJobId, oButton) {
+		addMessageToPopover: function (sMessage, sDescription, sAdditionalText, sType, sViewName, bActiveTitle, sJobId, oButton) {
 			let oMessage = new Message({
 				message: sMessage,
 				description: sDescription,
 				type: sType,
+				additionalText: sAdditionalText,
 				code: sViewName,
 				technical: bActiveTitle,
-				additionalText: sJobId
+				technicalDetails: {
+					"JOB_ID": sJobId
+				}
 			});
 			sap.ui.getCore().getMessageManager().addMessages(oMessage);
 			if (oButton) {
