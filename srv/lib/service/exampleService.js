@@ -152,7 +152,7 @@ async function doService(request) {
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {
-		const oPlcException = PlcException.createPlcException(err, request.JOB_ID);
+		const oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
 		iStatusCode = oPlcException.code.responseCode;
 		oServiceResponseBody = oPlcException;
 	}
