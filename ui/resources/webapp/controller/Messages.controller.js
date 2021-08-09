@@ -77,6 +77,8 @@ sap.ui.define([
 					header.setText(this.getResourceBundleText("colText"));
 				} else if (header.getText() === "DETAILS") {
 					header.setText(this.getResourceBundleText("colDetails"));
+				} else if (header.getText() === "OPERATION") {
+					header.setText(this.getResourceBundleText("colOperation"));
 				}
 			}.bind(this));
 		},

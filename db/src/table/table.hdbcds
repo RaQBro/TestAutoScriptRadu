@@ -36,5 +36,6 @@ context template_application {
             SEVERITY  : String(50);
             TEXT      : String(5000);
             DETAILS   : String(5000);
+            OPERATION : String(500);
     };
 };
