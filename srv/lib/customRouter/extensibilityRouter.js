@@ -145,19 +145,16 @@ class ExtensibilityRouter {
 				const iStatusCode = oServiceResponse.STATUS_CODE;
 				const oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
+				// add service response body to job log entry
+				JobSchedulerUtil.updateJobLogEntryFromTable(request, oServiceResponseBody);
+
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
-
-					// add service response body to job log entry
-					JobSchedulerUtil.updateJobLogEntryFromTable(request, oServiceResponseBody);
 
 					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
 
 				} else {
-
-					// add service response body to job log entry
-					JobSchedulerUtil.updateJobLogEntryFromTable(request, oServiceResponseBody);
 
 					// return service response body for web request
 					if (request.IS_ONLINE_MODE === true) {

@@ -149,7 +149,7 @@ async function doService(request) {
 
 		await StandardPlcService.openCalculationVersion(1);
 		await StandardPlcService.closeCalculationVersion(1);
-		
+
 		await Message.addLog(request.JOB_ID, "Example how to add operation at the messages.", "message", undefined, "TEST_OPERATION");
 
 		// -------------------------- End Business Logic ----------------------------

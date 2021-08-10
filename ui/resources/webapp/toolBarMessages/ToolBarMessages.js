@@ -28,7 +28,7 @@ sap.ui.define([
 		onMessagePopoverPress: function (oEvent) {
 			oMessagePopover.openBy(oEvent.getSource());
 		},
-		
+
 		onMessageTitlePress: function (oEvent) {
 			console.log("test");
 		}

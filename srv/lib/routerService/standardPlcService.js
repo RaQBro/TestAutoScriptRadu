@@ -996,8 +996,8 @@ class Dispatcher {
 			return oResponseBody;
 		}
 	}
-	
-		/** @function
+
+	/** @function
 	 * Update master data for calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
@@ -1107,7 +1107,6 @@ class Dispatcher {
 
 		return oResponseBody;
 	}
-
 
 }
 exports.Dispatcher = module.exports.Dispatcher = Dispatcher;

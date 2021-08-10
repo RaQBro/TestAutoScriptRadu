@@ -216,8 +216,8 @@ sap.ui.define([
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, null, "Error", sViewName,
-					false, null, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, null, "Error",
+					sViewName, false, null, oButtonPopover);
 			};
 
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
@@ -265,7 +265,7 @@ sap.ui.define([
 			}
 			return this._sContentDensityClass;
 		},
-		
+
 		onMessageTitlePress: function (oEvent) {
 			this.navTo("messages", {
 				jobID: oEvent.getParameters().item.getBindingContext("message").getObject().technicalDetails.JOB_ID

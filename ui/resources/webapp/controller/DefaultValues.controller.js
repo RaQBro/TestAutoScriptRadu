@@ -20,7 +20,7 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
-			
+
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
 		},
@@ -41,7 +41,7 @@ sap.ui.define([
 			this.setNoProjects();
 			this.setNoCalculations();
 			this.setNoVersions();
-			
+
 			this.setSideContentSelectedKey("defaultValues");
 
 			this.closeBusyDialog();

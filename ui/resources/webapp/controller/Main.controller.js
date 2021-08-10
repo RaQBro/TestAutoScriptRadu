@@ -18,12 +18,12 @@ sap.ui.define([
 			var oUserDetails = this.getUserDetails();
 
 			if (oUserDetails.Error === true) {
-				
+
 				this.navTo("error", {
 					item: JSON.stringify(oUserDetails)
 				});
 			} else {
-				
+
 				var avatarBtn = this.getView().byId("avatarBtn");
 				avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
 			}
