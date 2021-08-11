@@ -28,7 +28,9 @@ sap.ui.define([
 
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
-
+			
+			this.setSideContentSelectedKey("technicalUser");
+			
 			this.handleMaintainTechnicalUser();
 
 			this.closeBusyDialog();
