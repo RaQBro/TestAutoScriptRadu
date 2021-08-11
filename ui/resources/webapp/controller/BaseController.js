@@ -114,13 +114,13 @@ sap.ui.define([
 		/** @function used to get the user details to show them on the ui
 		 */
 		getUserDetails: function () {
-			var that = this,
+			var oController = this,
 				oUserDetails = {};
 
 			var onSuccess = function (response) {
 				oUserDetails.Error = false;
 				oUserDetails.BODY = response;
-				that.aUserDetails = response;
+				oController.aUserDetails = response;
 			};
 			var onError = function (error) {
 				oUserDetails.Error = true;
@@ -228,14 +228,14 @@ sap.ui.define([
 		/** @function used to add an eventlistener so when the window is closed, it triggers logout from PLC
 		 */
 		handleWindowClose: function () {
-			var that = this;
+			var oController = this;
 			var sLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "LOGOUT_AT_CLOSE_APP";
 			});
 			if (sLogoutAtCloseApp) {
 				if (sLogoutAtCloseApp.FIELD_VALUE === "true") {
 					window.addEventListener("beforeunload", function () {
-						that.plcLogout();
+						oController.plcLogout();
 					});
 				}
 			}

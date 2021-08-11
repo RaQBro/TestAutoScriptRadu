@@ -1,4 +1,4 @@
-/*eslint no-console: 0, no-unused-vars: 0*/
+/*eslint no-console: 0*/
 "use strict";
 
 const xsjs = require("@sap/xsjs");
@@ -11,7 +11,6 @@ const xsHDBConn = require("@sap/hdbext");
 const xssec = require("@sap/xssec");
 const passport = require("passport");
 const bodyParser = require("body-parser");
-const listEndpoints = require("express-list-endpoints");
 
 /**
  * @fileOverview

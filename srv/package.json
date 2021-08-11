@@ -8,7 +8,6 @@
 		"@sap/jobs-client": "latest",
 		"express": "latest",
 		"body-parser": "latest",
-		"express-list-endpoints": "latest",
 		"underscore": "latest",
 		"async": "latest",
 		"passport": "latest"
