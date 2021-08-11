@@ -2,16 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
-	"sap/m/MessagePopover",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/routing/History",
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/core/utils/Constants"
-], function (Controller, UIComponent, MessagePopover, JSONModel, Fragment, History, BackendConnector, ToolBarMessages,
-	MessageHelpers, Constants) {
+], function (Controller, UIComponent, Fragment, BackendConnector, ToolBarMessages, MessageHelpers, Constants) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.BaseController", {
