@@ -51,7 +51,6 @@ The default configuration values are stored into t_default_values table and coul
 Description of default values:
 INIT_SESSION_AT_OPEN_APP - Set to true if init session with PLC is required at open application
 LOGOUT_AT_CLOSE_APP - Set to true if logout from PLC is required at close application
-SHOW_ALL_MESSAGES_IN_POPOVER - Set to true if all messages should be visible in MessagePopover
 CREATE_JOBS_AUTOMATICALLY - Set to true if job(s) are required to be created when server.js is executed for the first time
 
 A technical user is required to execute jobs and it is stored into t_technical_user table. The FIELD_NAME is TECHNICAL_USER and the initial value is null.
