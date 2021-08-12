@@ -153,7 +153,6 @@ expressApp.use(xsjsApp);
 // start app listen
 expressApp.listen(port, function () {
 	console.log("Server listening on port %d", port);
-	// console.log(listEndpoints(expressApp));
 });
 
 // token lifecycle at 1 minute (get & refresh)
