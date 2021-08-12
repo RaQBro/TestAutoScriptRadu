@@ -28,7 +28,6 @@ class Service {
 	constructor(request) {
 
 		this.JOB_ID = request.JOB_ID;
-		this.hdbClient = request.db;
 		this.userId = request.user.id !== undefined ? request.user.id.toUpperCase() : global.TECHNICAL_USER;
 
 	}
@@ -41,12 +40,12 @@ class Service {
 	async getAllProjects() {
 		const hdbClient = await DatabaseClass.createConnection();
 		const connection = new DatabaseClass(hdbClient);
-		const statement = await connection.preparePromisified(
+		let statement = await connection.preparePromisified(
 			`
 				select * from "sap.plc.db::basis.t_project";
 			`
 		);
-		const aResults = await connection.statementExecPromisified(statement, []);
+		let aResults = await connection.statementExecPromisified(statement, []);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 		return aResults.slice();
 	}
@@ -58,6 +57,8 @@ class Service {
 
 		var that = this;
 		var tType = "gtt_default_values";
+
+		const hdbClient = request.db;
 		var aDefaultItems = request.body;
 
 		return new Promise(function (resolve, reject) {
@@ -67,7 +68,7 @@ class Service {
 
 			async.series([
 				function (callback) {
-					that.createTempDefaultValuesTable(that.hdbClient, tName, tType)
+					that.createTempDefaultValuesTable(hdbClient, tName, tType)
 						.then(function (res) {
 							callback(null, res);
 						})
@@ -76,7 +77,7 @@ class Service {
 						});
 				},
 				function (callback) {
-					that.insertIntoTempDefaultValuesTable(that.hdbClient, tName, aDefaultItems)
+					that.insertIntoTempDefaultValuesTable(hdbClient, tName, aDefaultItems)
 						.then(function (res) {
 							callback(null, res);
 						})
@@ -85,7 +86,7 @@ class Service {
 						});
 				},
 				function (callback) {
-					that.countTempDefaultValuesTable(that.hdbClient, tName)
+					that.countTempDefaultValuesTable(hdbClient, tName)
 						.then(function (res) {
 							callback(null, res);
 						})
@@ -95,7 +96,7 @@ class Service {
 				},
 				function (callback) {
 					// run CALL fnProc
-					that.hdbClient.exec(fnProc, function (err, resultTable) {
+					hdbClient.exec(fnProc, function (err, resultTable) {
 						if (err) {
 							Message.addLog(0, "Error exec " + fnProc, "error", err);
 							callback(err);
@@ -105,7 +106,7 @@ class Service {
 					});
 				},
 				function (callback) {
-					that.dropTempDefaultValuesTable(that.hdbClient, tName)
+					that.dropTempDefaultValuesTable(hdbClient, tName)
 						.then(function (res) {
 							callback(null, res);
 						})
