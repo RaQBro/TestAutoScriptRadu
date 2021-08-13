@@ -147,11 +147,15 @@ sap.ui.define([
 
 		formatRowHighlight: function (oValue) {
 			var value = "None";
+
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";
 			} else if (oValue && oValue.toUpperCase() === "INFO") {
 				value = "Success";
+			} else if (oValue && oValue.toUpperCase() === "WARNING") {
+				value = "Warning";
 			}
+
 			return value;
 		}
 	});
