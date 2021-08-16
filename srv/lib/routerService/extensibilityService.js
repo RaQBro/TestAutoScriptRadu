@@ -28,7 +28,12 @@ class Service {
 	constructor(request) {
 
 		this.JOB_ID = request.JOB_ID;
-		this.userId = request.user.id !== undefined ? request.user.id.toUpperCase() : global.TECHNICAL_USER;
+
+		if ((request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true) || request.user.id !== undefined) {
+			this.userId = request.user.id.toUpperCase();
+		} else {
+			this.userId = global.TECHNICAL_USER; // technical user
+		}
 
 	}
 

@@ -108,14 +108,18 @@ class ExtensibilityRouter {
 			});
 		});
 
-		router.get("/exampleService", function (request, response) {
+		router.get("/exampleService", async function (request, response) {
 
 			// create job log entry
-			JobSchedulerUtil.insertJobLogEntryIntoTable(request);
+			let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
+			if (oException !== undefined) {
+				response.status(oException.code.responseCode).send(oException);
+				return;
+			}
 
 			// write entry into t_messages only for jobs (fake or real)
 			const sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-			Message.addLog(request.JOB_ID, sMessageInfo, "message");
+			await Message.addLog(request.JOB_ID, sMessageInfo, "message");
 
 			// check if web or job request
 			if (helpers.isRequestFromJob(request)) {

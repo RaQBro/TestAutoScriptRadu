@@ -26,7 +26,9 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const PlcException = MessageLibrary.PlcException;
 const Message = MessageLibrary.Message;
+const Code = MessageLibrary.Code;
 
 /** @class
  * @classdesc Job scheduler utility helpers
@@ -225,6 +227,11 @@ class JobSchedulerUtil {
 		} else {
 			const TechnicalUserUtil = new TechnicalUser();
 			sUserId = await TechnicalUserUtil.getTechnicalUserFromTable();
+			if (helpers.isUndefinedOrNull(sUserId)) {
+				const sDeveloperInfo = "Please provide a technical user into administration section of application!";
+				const oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
+				return oPlcException;
+			}
 			iWebRequest = 0;
 		}
 
