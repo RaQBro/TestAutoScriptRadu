@@ -1,6 +1,8 @@
 /*eslint-env node, es6 */
 "use strict";
 
+const _ = require("underscore");
+
 /**
  * @fileOverview
  * 
@@ -54,6 +56,33 @@ class Dispatcher {
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
+			let sMessageInfo;
+			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
+				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
+					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
+				});
+				if (oMessage !== undefined) {
+					if (oMessage.details !== undefined && oMessage.details.userObjs !== undefined && oMessage.details.userObjs.length > 0) {
+						var aUsers = _.pluck(oMessage.details.userObjs, "id");
+					}
+					if (aUsers !== undefined && aUsers.length > 0) {
+						sMessageInfo = "Variant Matrix of calculation version with ID '" + iVersionId +
+							"' was opened in read-only mode! Locked by User(s): " + aUsers.join(", ");
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						sMessageInfo =
+							`Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable. Locked by User(s): ${aUsers}`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+					} else {
+						sMessageInfo = "Variant Matrix of calculation version with ID '" + iVersionId + "' is locked and was opened in read-only mode!";
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+					}
+					// close variant matrix
+					this.closeVariantMatrix(iVersionId);
+					return;
+				}
+			}
 			const sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
 			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
 		} else {
