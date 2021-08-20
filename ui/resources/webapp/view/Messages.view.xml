@@ -28,6 +28,7 @@
 						<OverflowToolbar design="Transparent">
 							<ToolbarSpacer/>
 							<Button id="btnSeeAllEntries" icon="sap-icon://reset" text="{i18n>btnSeeAllEntries}" visible="false" press="onSeeAllEntries"/>
+							<Button id="btnRefresh" icon="sap-icon://refresh" text="{i18n>btnRefresh}" visible="true" press="onRefreshEntries"/>
 						</OverflowToolbar>
 					</smartTable:customToolbar>
 					<Table id="tMessages" growing="true" growingThreshold="1000">

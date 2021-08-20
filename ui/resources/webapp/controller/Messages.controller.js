@@ -137,6 +137,11 @@ sap.ui.define([
 			this.getView().byId("btnSeeAllEntries").setVisible(false);
 		},
 
+		onRefreshEntries: function () {
+
+			this.oView.byId("stMessages").getTable().getBinding("items").refresh();
+		},
+
 		onBeforeRebindTable: function (oEvent) {
 			var bindingParams = oEvent.getParameter("bindingParams");
 			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {

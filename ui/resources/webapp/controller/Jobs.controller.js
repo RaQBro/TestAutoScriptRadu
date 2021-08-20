@@ -149,14 +149,16 @@ sap.ui.define([
 			return value;
 		},
 
+		onRefreshEntries: function () {
+
+			this.oView.byId("stJobs").getTable().getBinding("items").refresh();
+		},
+
 		onViewJobLogs: function (oEvent) {
 			var jID = oEvent.getSource().getBindingContext().getObject().JOB_ID;
 			this.navTo("messages", {
 				jobID: jID
 			});
-			// var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			// oRouter.navTo("messages", { jobID: oEvent.getSource().getBindingContext().getObject()["JOB_ID"] });
 		}
-
 	});
 }, /* bExport= */ true);
