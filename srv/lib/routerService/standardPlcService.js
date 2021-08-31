@@ -56,7 +56,7 @@ class Dispatcher {
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			let sMessageInfo;
+			var sMessageInfo;
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
@@ -565,6 +565,30 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * Get Calculation Version from PLC
+	 * 
+	 * @param {string} iVersionId - CALCULATION_VERSION_ID
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getCalculationVersion(iVersionId) {
+
+		const sQueryPath = "calculation-versions?id=" + iVersionId;
+		const aParams = [];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get calculation version with ID '${iVersionId}'.`;
+			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+		} else {
+			const sMessageInfo = `Calculation version with ID '${iVersionId}' was retrieved with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody;
+		}
+	}
+
+	/** @function
 	 * Open calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
@@ -1021,6 +1045,81 @@ class Dispatcher {
 			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
 		} else {
 			const sMessageInfo = "Logout from PLC with success!";
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody;
+		}
+	}
+
+	/** @function
+	 * Get Addin Configuration from PLC
+	 * 
+	 * @param {string} addinGuid - addin unique guid
+	 * @param {string} addinVersion - addin version
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getAddinConfiguration(addinGuid, addinVersion) {
+
+		const sQueryPath = "addin-configurations?guid=" + addinGuid + "&version=" + addinVersion + "&use_previous_version=false";
+		const aParams = [];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get addin configuration with ID '${addinGuid}' and version '${addinVersion}'.`;
+			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+		} else {
+			const sMessageInfo = `Addin configuration with ID '${addinGuid}' and version '${addinVersion}' was retrieved with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody;
+		}
+	}
+
+	/** @function
+	 * POST Version Items to PLC
+	 * 
+	 * @param {array} Items Array
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async copyItems(aItems) {
+
+		const sQueryPath = "items?calculate=false&mode=replace&compressedResult=true";
+		const aParams = [];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 201) {
+			const sDeveloperInfo = "Failed to copy version items to PLC.";
+			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+		} else {
+			const sMessageInfo = "Copy version items to PLC with success!";
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody;
+		}
+	}
+
+	/** @function
+	 * GET trasportation (t_metadata info) from PLC
+	 * 
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getMetadata() {
+
+		const sQueryPath = "transportation";
+		const aParams = [{
+			"name": "businessObjects",
+			"value": "customizing"
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = "Failed to get metadata from PLC.";
+			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+		} else {
+			const sMessageInfo = "Metadata from PLC was retrieved with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
