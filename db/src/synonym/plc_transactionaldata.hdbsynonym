@@ -13,5 +13,9 @@
 	"sap.plc.db::basis.t_entity_relation": {},
 	"sap.plc.db::basis.t_folder": {},
 	"sap.plc.db::basis.t_session": {},
+	"sap.plc.db::basis.t_metadata": {},
+	"sap.plc.db::basis.t_metadata__text": {},
+	"sap.plc.db::basis.t_regex": {},
+	"sap.plc.db::basis.t_dummy": {},
 	"sap.plc.db::auth.t_auth_project": {}
 }
