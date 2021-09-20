@@ -521,12 +521,12 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 	}
 	// details
 	var sTrimmedDetails = null;
-	const sDetails = oDetails !== undefined ? JSON.stringify(oDetails) : null;
+	const sDetails = oDetails !== undefined && oDetails !== null ? JSON.stringify(oDetails) : null;
 	if (sDetails !== null) {
 		sTrimmedDetails = sDetails.length > 5000 ? sDetails.substring(0, 5000 - 3) + "..." : sDetails;
 	}
 	// operation
-	const sOperationToSave = sOperation !== undefined ? sOperation : null;
+	const sOperationToSave = sOperation !== undefined && sOperation !== null ? sOperation : null;
 	// message
 	const sTrimmedMessage = sMessage.length > 5000 ? sMessage.substring(0, 5000 - 3) + "..." : sMessage;
 	// job id
