@@ -81,7 +81,7 @@ class ExtensibilityRouter {
 			response.type(sContentType).status(200).send({
 				"web": global.plcWebUrl,
 				"xsjs": global.plcXsjsUrl,
-				"publicApi": global.plcXsjsUrl
+				"publicApi": global.plcPublicApiUrl
 			});
 		});
 
