@@ -61,10 +61,13 @@ sap.ui.define([
 		},
 
 		_renameColumns: function (oEvent) {
+			
 			if (!oEvent.getSource().getAggregation("items")[1]) { //columns not initialized yet
 				return;
 			}
+			
 			const columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
+			
 			columnNames.forEach(function (column) {
 				var header = column.getHeader();
 				if (header.getText() === "TIMESTAMP") {
@@ -94,11 +97,13 @@ sap.ui.define([
 			var sJobName = jobID || null;
 
 			if (sJobName !== null) {
+				
 				this.oTableSearchState = [];
 				this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
 				oView.byId("btnSeeAllEntries").setVisible(true);
 				oSmartTable.rebindTable();
 			} else {
+				
 				this.oTableSearchState = [];
 				this.getView().byId("btnSeeAllEntries").setVisible(false);
 				oSmartTable.applyVariant({
@@ -113,6 +118,7 @@ sap.ui.define([
 		},
 
 		onSmartFilterBarInitialized: function () {
+			
 			// this smart filter bar is used only to be able to apply parameters - smart filter bar is not visible
 			// this.applyFiltersFromParameters();
 
@@ -122,6 +128,7 @@ sap.ui.define([
 		},
 
 		onSeeAllEntries: function () {
+			
 			this.oTableSearchState = [];
 			this.getView().byId("sfbMessages").clear();
 			this.getView().byId("stMessages").applyVariant({
@@ -132,8 +139,8 @@ sap.ui.define([
 					}]
 				}
 			});
+			
 			this.getView().byId("stMessages").rebindTable();
-
 			this.getView().byId("btnSeeAllEntries").setVisible(false);
 		},
 
@@ -143,19 +150,22 @@ sap.ui.define([
 		},
 
 		onBeforeRebindTable: function (oEvent) {
+			
 			var bindingParams = oEvent.getParameter("bindingParams");
 			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
+				
 				bindingParams.filters = this.oTableSearchState;
 			}
 			this._renameColumns(oEvent);
 		},
 
 		formatRowHighlight: function (oValue) {
+			
 			var value = "None";
-
+			
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";
-			} else if (oValue && oValue.toUpperCase() === "INFO") {
+			} else if (oValue && oValue.toUpperCase() === "INFO" || oValue && oValue.toUpperCase() === "SUCCESS") {
 				value = "Success";
 			} else if (oValue && oValue.toUpperCase() === "WARNING") {
 				value = "Warning";
@@ -164,5 +174,4 @@ sap.ui.define([
 			return value;
 		}
 	});
-
 }, /* bExport= */ true);

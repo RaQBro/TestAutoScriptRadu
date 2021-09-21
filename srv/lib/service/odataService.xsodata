@@ -27,7 +27,7 @@ service{
 		delete forbidden;
 		
 		// ------------------------------------ Get Job Logs Data ------------------------------------
-		"sap.plc.extensibility::template_application.t_job_log" as "GetJobLogs" keys ("TIMESTAMP")
+		"sap.plc.extensibility::template_application.t_job_log" as "GetJobLogs" keys ("START_TIMESTAMP")
 		create forbidden
 		update forbidden
 		delete forbidden;

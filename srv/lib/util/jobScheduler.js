@@ -230,6 +230,7 @@ class JobSchedulerUtil {
 			if (helpers.isUndefinedOrNull(sUserId)) {
 				const sDeveloperInfo = "Please provide a technical user into administration section of application!";
 				const oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
+				
 				return oPlcException;
 			}
 			iWebRequest = 0;
@@ -240,12 +241,12 @@ class JobSchedulerUtil {
 		const statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
-				( TIMESTAMP, JOB_ID, JOB_NAME, USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
+				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
-			request.JOB_TIMESTAMP, request.JOB_ID, sJobName, sUserId, iWebRequest,
+			request.JOB_TIMESTAMP, null, request.JOB_ID, sJobName, "Running", sUserId, iWebRequest,
 			sRequestBody, null, iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
@@ -257,24 +258,26 @@ class JobSchedulerUtil {
 	 * @param {object} request - web request / job request
 	 * @param {object} oServiceResponseBody - service response body
 	 */
-	async updateJobLogEntryFromTable(request, oServiceResponseBody) {
-
+	async updateJobLogEntryFromTable(request, iResponseStatusCode, oServiceResponseBody) {
+		
 		if (request.JOB_TIMESTAMP === undefined || oServiceResponseBody === undefined) {
 			return;
 		}
 
 		const hdbClient = await DatabaseClass.createConnection();
 		const connection = new DatabaseClass(hdbClient);
-
+		
+		const sJobStatus = iResponseStatusCode === 200 ? "Done" : "Error";
 		const sResponseBody = oServiceResponseBody === undefined ? null : JSON.stringify(oServiceResponseBody);
 
 		const statement = await connection.preparePromisified(
 			`
 				update "sap.plc.extensibility::template_application.t_job_log"
-				set RESPONSE_BODY = ? where TIMESTAMP = ?;
+				set RESPONSE_BODY = ?, JOB_STATUS = ?, END_TIMESTAMP = CURRENT_UTCTIMESTAMP where START_TIMESTAMP = ?;
 			`
 		);
-		await connection.statementExecPromisified(statement, [sResponseBody, request.JOB_TIMESTAMP]);
+		
+		await connection.statementExecPromisified(statement, [sResponseBody, sJobStatus, request.JOB_TIMESTAMP]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	}
 

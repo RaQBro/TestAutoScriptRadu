@@ -6,12 +6,11 @@
 				<smartFilterBar:SmartFilterBar id="sfbMessages" initialized="onSmartFilterBarInitialized" useToolbar="false"
 					considerSelectionVariants="false" visible="false">
 					<smartFilterBar:controlConfiguration >
+						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
 						<smartFilterBar:ControlConfiguration key="TIMESTAMP" visibleInAdvancedArea="true" conditionType="sap.ui.comp.config.condition.DateRangeType"
 							label="{i18n>jobMessagesTimestamp}"/>
-						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
-						<smartFilterBar:ControlConfiguration key="JOB_NAME" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobName}"/>
-						<smartFilterBar:ControlConfiguration key="USER_ID" visibleInAdvancedArea="true" label="USER"/>
-						<smartFilterBar:ControlConfiguration key="IS_ONLINE_MODE" visibleInAdvancedArea="true" label="ONLINE"/>
+						<smartFilterBar:ControlConfiguration key="SEVERITY" visibleInAdvancedArea="true" label="{i18n>colSeverity}"/>
+						<smartFilterBar:ControlConfiguration key="OPERATION" visibleInAdvancedArea="true" label="{i18n>colOperation}"/>
 					</smartFilterBar:controlConfiguration>
 					<smartFilterBar:layoutData>
 						<FlexItemData shrinkFactor="0"/>
@@ -19,8 +18,7 @@
 				</smartFilterBar:SmartFilterBar>
 				<smartTable:SmartTable id="stMessages" smartFilterId="sfbMessages" tableType="ResponsiveTable" useTablePersonalisation="true"
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
-					initiallyVisibleFields="TIMESTAMP,JOB_ID,JOB_NAME,SEVERITY,TEXT,PLC_RESPONSE" beforeRebindTable="onBeforeRebindTable"
-					requestAtLeastFields="TIMESTAMP,JOB_ID,SEVERITY,TEXT">
+					initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>

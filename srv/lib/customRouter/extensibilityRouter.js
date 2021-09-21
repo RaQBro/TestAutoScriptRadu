@@ -150,7 +150,7 @@ class ExtensibilityRouter {
 				const oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
 				// add service response body to job log entry
-				JobSchedulerUtil.updateJobLogEntryFromTable(request, oServiceResponseBody);
+				JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -176,7 +176,7 @@ class ExtensibilityRouter {
 				if (helpers.isRequestFromJob(request)) {
 
 					// add service response body to job log entry
-					JobSchedulerUtil.updateJobLogEntryFromTable(request, err);
+					JobSchedulerUtil.updateJobLogEntryFromTable(request, 500, err);
 
 					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, 500, err);
@@ -187,7 +187,7 @@ class ExtensibilityRouter {
 					const oPlcException = PlcException.createPlcException(err, request.JOB_ID);
 
 					// add service response body to job log entry
-					JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException);
+					JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);
 
 					// return service response body for web request
 					if (request.IS_ONLINE_MODE === true) {

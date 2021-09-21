@@ -58,12 +58,16 @@ sap.ui.define([
 			const columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
 			columnNames.forEach(function (column) {
 				var header = column.getHeader();
-				if (header.getText() === "TIMESTAMP") {
-					header.setText(this.getResourceBundleText("colTimestamp"));
+				if (header.getText() === "START_TIMESTAMP") {
+					header.setText(this.getResourceBundleText("jobStartTimestamp"));
+				} else if (header.getText() === "END_TIMESTAMP") {
+					header.setText(this.getResourceBundleText("jobEndTimestamp"));
 				} else if (header.getText() === "JOB_ID") {
 					header.setText(this.getResourceBundleText("colJobID"));
 				} else if (header.getText() === "JOB_NAME") {
 					header.setText(this.getResourceBundleText("colJobName"));
+				} else if (header.getText() === "JOB_STATUS") {
+					header.setText(this.getResourceBundleText("jobStatus"));
 				} else if (header.getText() === "USER_ID") {
 					header.setText(this.getResourceBundleText("colUser"));
 				} else if (header.getText() === "IS_ONLINE_MODE") {
@@ -84,35 +88,27 @@ sap.ui.define([
 
 		/** @function called after onInit*/
 		onAfterRendering: function () {},
-
+		
 		applyFiltersFromParameters: function () {
 
 			var oView = this.getView();
 			var oSmartTable = oView.byId("stJobs");
 
 			var sJobName = jQuery.sap.getUriParameters().get("JOB_ID");
-			var sSeverity = jQuery.sap.getUriParameters().get("SEVERITY");
 
-			if (sJobName !== null || sSeverity !== null) {
+			if (sJobName !== null) {
 
 				this.oTableSearchState = [];
 				if (sJobName !== null) {
 					this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
 				}
-				if (sSeverity !== null) {
-					this.oTableSearchState.push(new Filter("SEVERITY", FilterOperator.Contains, sSeverity));
-				}
-				// reset filters if exists
-				//				oView.byId("sfbMessages").clear();
-				//				oView.byId("stMessages").applyVariant({});
-				// set reset buton visible
 				oView.byId("btnSeeAllEntries").setVisible(true);
 
 			} else {
 				oView.byId("stJobs").applyVariant({
 					sort: {
 						sortItems: [{
-							columnKey: "TIMESTAMP",
+							columnKey: "START_TIMESTAMP",
 							operation: "Descending"
 						}]
 					}
@@ -120,18 +116,21 @@ sap.ui.define([
 			}
 			oSmartTable.rebindTable();
 		},
-
+		
 		onSmartFilterBarInitialized: function () {
+			
 			// this smart filter bar is used only to be able to apply parameters - smart filter bar is not visible
 			this.applyFiltersFromParameters();
-
+			
 			// rebind table with filters
 			var oSmartTable = this.getView().byId("stJobs");
 			oSmartTable.rebindTable();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
+			
 			var bindingParams = oEvent.getParameter("bindingParams");
+			
 			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
 				bindingParams.filters = this.oTableSearchState;
 			}
@@ -140,12 +139,17 @@ sap.ui.define([
 		},
 
 		formatRowHighlight: function (oValue) {
+			
 			var value = "None";
-			if (oValue.toUpperCase() === "ERROR") {
+			
+			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";
-			} else if (oValue.toUpperCase() === "INFO") {
+			} if(oValue && oValue.toUpperCase() === "DONE") {
 				value = "Success";
+			} else if (oValue && oValue.toUpperCase() === "RUNNING") {
+				value = "Warning";
 			}
+
 			return value;
 		},
 
