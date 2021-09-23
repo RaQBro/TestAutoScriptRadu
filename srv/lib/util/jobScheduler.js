@@ -230,7 +230,7 @@ class JobSchedulerUtil {
 			if (helpers.isUndefinedOrNull(sUserId)) {
 				const sDeveloperInfo = "Please provide a technical user into administration section of application!";
 				const oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
-				
+
 				return oPlcException;
 			}
 			iWebRequest = 0;
@@ -259,14 +259,14 @@ class JobSchedulerUtil {
 	 * @param {object} oServiceResponseBody - service response body
 	 */
 	async updateJobLogEntryFromTable(request, iResponseStatusCode, oServiceResponseBody) {
-		
+
 		if (request.JOB_TIMESTAMP === undefined || oServiceResponseBody === undefined) {
 			return;
 		}
 
 		const hdbClient = await DatabaseClass.createConnection();
 		const connection = new DatabaseClass(hdbClient);
-		
+
 		const sJobStatus = iResponseStatusCode === 200 ? "Done" : "Error";
 		const sResponseBody = oServiceResponseBody === undefined ? null : JSON.stringify(oServiceResponseBody);
 
@@ -276,7 +276,7 @@ class JobSchedulerUtil {
 				set RESPONSE_BODY = ?, JOB_STATUS = ?, END_TIMESTAMP = CURRENT_UTCTIMESTAMP where START_TIMESTAMP = ?;
 			`
 		);
-		
+
 		await connection.statementExecPromisified(statement, [sResponseBody, sJobStatus, request.JOB_TIMESTAMP]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	}

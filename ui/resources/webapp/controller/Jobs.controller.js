@@ -88,7 +88,7 @@ sap.ui.define([
 
 		/** @function called after onInit*/
 		onAfterRendering: function () {},
-		
+
 		applyFiltersFromParameters: function () {
 
 			var oView = this.getView();
@@ -116,21 +116,21 @@ sap.ui.define([
 			}
 			oSmartTable.rebindTable();
 		},
-		
+
 		onSmartFilterBarInitialized: function () {
-			
+
 			// this smart filter bar is used only to be able to apply parameters - smart filter bar is not visible
 			this.applyFiltersFromParameters();
-			
+
 			// rebind table with filters
 			var oSmartTable = this.getView().byId("stJobs");
 			oSmartTable.rebindTable();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
-			
+
 			var bindingParams = oEvent.getParameter("bindingParams");
-			
+
 			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
 				bindingParams.filters = this.oTableSearchState;
 			}
@@ -139,12 +139,12 @@ sap.ui.define([
 		},
 
 		formatRowHighlight: function (oValue) {
-			
+
 			var value = "None";
-			
+
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";
-			} if(oValue && oValue.toUpperCase() === "DONE") {
+			} else if (oValue && oValue.toUpperCase() === "DONE") {
 				value = "Success";
 			} else if (oValue && oValue.toUpperCase() === "RUNNING") {
 				value = "Warning";
