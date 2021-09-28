@@ -90,6 +90,60 @@ function chunkIntoSmallArrays(a, n) {
 	return [...Array(Math.ceil(a.length / n))].map((x, i) => a.slice(n * i, n + n * i));
 }
 
+function getDateByPattern(sPattern) {
+
+	function addZero(i) {
+		if (i < 10) {
+			i = "0" + i;
+		}
+		return i;
+	}
+
+	var dDate = new Date();
+	var iYear = dDate.getFullYear();
+	var sMonth = addZero(dDate.getMonth() + 1);
+	var sDate = addZero(dDate.getDate());
+	var sHours = addZero(dDate.getHours());
+	var sMinutes = addZero(dDate.getMinutes());
+	var sSeconds = addZero(dDate.getSeconds());
+
+	var sCurrentDate = "";
+	switch (sPattern) {
+	case "YYYYMMDD hh:mm:ss":
+		sCurrentDate = iYear + "" + sMonth + "" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
+		break;
+	case "YYYYMMDD":
+		sCurrentDate = iYear + "" + sMonth + "" + sDate;
+		break;
+	case "DD.MM.YYYY hh:mm:ss":
+		sCurrentDate = sDate + "." + sMonth + "." + iYear + " " + sHours + ":" + sMinutes + ":" + sSeconds;
+		break;
+	case "DD.MM.YYYY":
+		sCurrentDate = sDate + "." + sMonth + "." + iYear;
+		break;
+	case "YYYY/MM/DD hh:mm:ss":
+		sCurrentDate = iYear + "/" + sMonth + "/" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
+		break;
+	case "YYYY/MM/DD":
+		sCurrentDate = iYear + "/" + sMonth + "/" + sDate;
+		break;
+	case "YYYY-MM-DD hh:mm:ss":
+		sCurrentDate = iYear + "-" + sMonth + "-" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
+		break;
+	case "YYYY-MM-DD":
+		sCurrentDate = iYear + "-" + sMonth + "-" + sDate;
+		break;
+	case "YYYY-MM[-1]":
+		sCurrentDate = iYear + "-" + addZero(dDate.getMonth());
+		break;
+	default:
+		sCurrentDate = iYear + "" + sMonth + "" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
+		break;
+	}
+
+	return sCurrentDate;
+}
+
 module.exports = {
 	nowPlusSecondstoISOString,
 	isUndefinedOrNull,
@@ -98,5 +152,6 @@ module.exports = {
 	isRequestFromJob,
 	getAllConfigurations,
 	getAllDefaultValues,
-	chunkIntoSmallArrays
+	chunkIntoSmallArrays,
+	getDateByPattern
 };
