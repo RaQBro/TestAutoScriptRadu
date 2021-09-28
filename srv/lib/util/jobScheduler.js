@@ -267,7 +267,7 @@ class JobSchedulerUtil {
 		const hdbClient = await DatabaseClass.createConnection();
 		const connection = new DatabaseClass(hdbClient);
 
-		const sJobStatus = iResponseStatusCode === 200 ? "Done" : "Error";
+		const sJobStatus = iResponseStatusCode === 200 ? "Success" : "Error";
 		const sResponseBody = oServiceResponseBody === undefined ? null : JSON.stringify(oServiceResponseBody);
 
 		const statement = await connection.preparePromisified(
