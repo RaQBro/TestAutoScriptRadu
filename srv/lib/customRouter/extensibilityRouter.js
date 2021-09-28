@@ -102,8 +102,8 @@ class ExtensibilityRouter {
 
 			ExtensibilityPlcService.getAllProjects().then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -170,7 +170,7 @@ class ExtensibilityRouter {
 			})
 
 			// handle errors from then function
-			.catch(function (err) {
+			.catch(async function (err) {
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -184,7 +184,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// create error as service response body
-					const oPlcException = PlcException.createPlcException(err, request.JOB_ID);
+					const oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
 
 					// add service response body to job log entry
 					JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);

@@ -47,8 +47,8 @@ class JobSchedulerRouter {
 
 			JobSchedulerService.getAllJobs().then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -59,8 +59,8 @@ class JobSchedulerRouter {
 
 			JobSchedulerService.getJobByName(sJobName).then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -72,8 +72,8 @@ class JobSchedulerRouter {
 
 			JobSchedulerService.addNewSchedule(iJobId, oNewSchedule).then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -85,8 +85,8 @@ class JobSchedulerRouter {
 
 			JobSchedulerService.addSchedules(iJobId, oRequestBody).then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});

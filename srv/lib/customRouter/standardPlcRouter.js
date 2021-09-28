@@ -48,8 +48,8 @@ class StandardPlcRouter {
 
 			StandardPlcService.initPlcSession(sLanguage).then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -58,8 +58,8 @@ class StandardPlcRouter {
 
 			StandardPlcService.logoutPlcSession().then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -70,8 +70,8 @@ class StandardPlcRouter {
 
 			StandardPlcService.openCalculationVersion(iVersionId).then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});

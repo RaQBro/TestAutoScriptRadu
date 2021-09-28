@@ -47,8 +47,8 @@ class SecureStoreRouter {
 
 			SecureStoreService.retrieveKey(sKey).then(function (result) {
 				response.type(sContentType).status(200).send(result);
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -62,12 +62,12 @@ class SecureStoreRouter {
 
 				TechnicalUserUtil.upsertTechnicalUserIntoTable(sKey).then(function () {
 					response.type(sContentType).status(200).send(result);
-				}).catch(function (err) {
-					const oPlcException = PlcException.createPlcException(err);
+				}).catch(async function (err) {
+					const oPlcException = await PlcException.createPlcException(err);
 					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -81,12 +81,12 @@ class SecureStoreRouter {
 
 				TechnicalUserUtil.upsertTechnicalUserIntoTable(sValue).then(function () {
 					response.type(sContentType).status(200).send(result);
-				}).catch(function (err) {
-					const oPlcException = PlcException.createPlcException(err);
+				}).catch(async function (err) {
+					const oPlcException = await PlcException.createPlcException(err);
 					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
-			}).catch(function (err) {
-				const oPlcException = PlcException.createPlcException(err);
+			}).catch(async function (err) {
+				const oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
