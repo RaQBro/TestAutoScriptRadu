@@ -282,8 +282,9 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
-	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE and set as properties in request object
+	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, USER_ID and set as properties in request object
 	 * JOB_TIMESTAMP used to update the log entry with service response body
+	 * USER_ID contains the request user id or the technical user
 	 * JOB_ID is used in t_messages and t_job_log tables
 	 * JOB_ID value: Negative if online mode / Positive if job (real or fake)
 	 * IS_ONLINE_MODE value: undefined or true if web request / false if job (real or fake)
@@ -362,6 +363,13 @@ class JobSchedulerUtil {
 			const aCurrentTimestamp = aResults.slice();
 
 			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+
+			// set USER_ID to request
+			if ((request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true) || request.user.id !== undefined) {
+				request.USER_ID = request.user.id.toUpperCase();
+			} else {
+				request.USER_ID = global.TECHNICAL_USER; // technical user
+			}
 
 			// set JOB_TIMESTAMP to request
 			request.JOB_TIMESTAMP = aCurrentTimestamp[0].CURRENT_UTCTIMESTAMP;
