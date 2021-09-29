@@ -260,14 +260,19 @@ class JobSchedulerUtil {
 	 */
 	async updateJobLogEntryFromTable(request, iResponseStatusCode, oServiceResponseBody) {
 
-		if (request.JOB_TIMESTAMP === undefined || oServiceResponseBody === undefined) {
+		if (request.JOB_ID === undefined || request.JOB_TIMESTAMP === undefined || oServiceResponseBody === undefined) {
 			return;
 		}
 
 		const hdbClient = await DatabaseClass.createConnection();
 		const connection = new DatabaseClass(hdbClient);
 
-		const sJobStatus = iResponseStatusCode === 200 ? "Success" : "Error";
+		var sJobStatus = null;
+		if (iResponseStatusCode === 200) {
+			sJobStatus = await this.generateJobStatus(request.JOB_ID);
+		} else {
+			sJobStatus = "Error";
+		}
 		const sResponseBody = oServiceResponseBody === undefined ? null : JSON.stringify(oServiceResponseBody);
 
 		const statement = await connection.preparePromisified(
@@ -279,6 +284,27 @@ class JobSchedulerUtil {
 
 		await connection.statementExecPromisified(statement, [sResponseBody, sJobStatus, request.JOB_TIMESTAMP]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+	}
+
+	/** @function
+	 * Used to generate the job status. Success if no errors / Done if completed with errors
+	 * 
+	 * @param {integer} iJobId - the job id
+	 * @return {string} sJobStatus - Success / Done
+	 */
+	async generateJobStatus(iJobId) {
+
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
+		const statement = await connection.preparePromisified(
+			`
+				select count(*) as COUNT from "sap.plc.extensibility::template_application.t_messages"
+				where SEVERITY = 'Error' and JOB_ID = ?;
+			`
+		);
+		const aResultCount = await connection.statementExecPromisified(statement, [iJobId]);
+
+		return parseInt(aResultCount[0].COUNT, 10) > 0 ? "Done" : "Success";
 	}
 
 	/** @function
