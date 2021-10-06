@@ -30,23 +30,25 @@ sap.ui.define([
 			this.handleControlVisibleState("saveBtn", false);
 
 			var oView = this.getView();
-			var oModel = new ODataModel("/service/odataService.xsodata/", {
-				json: true,
-				useBatch: false
-			});
+			// var oModel = new ODataModel("/service/odataService.xsodata/", {
+			// 	json: true,
+			// 	useBatch: false
+			// });
+			
+			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
 
-			var oSmartFilterBar = oView.byId("sfbJobs");
-			oSmartFilterBar.setModel(oModel);
-			oSmartFilterBar.setEntitySet("GetJobLogs");
+			// var oSmartFilterBar = oView.byId("sfbJobs");
+			// oSmartFilterBar.setModel(oModel);
+			// oSmartFilterBar.setEntitySet("GetJobLogs");
 
-			var oSmartTable = oView.byId("stJobs");
-			oSmartTable.setModel(oModel);
-			oSmartTable.setEntitySet("GetJobLogs");
+			// var oSmartTable = oView.byId("stJobs");
+			// oSmartTable.setModel(oModel);
+			// oSmartTable.setEntitySet("GetJobLogs");
 
-			var oTable = oSmartTable.getTable();
-			oTable.setEnableBusyIndicator(true);
-			oTable.setAlternateRowColors(true);
-			oTable.setGrowing(true);
+			// var oTable = oSmartTable.getTable();
+			// oTable.setEnableBusyIndicator(true);
+			// oTable.setAlternateRowColors(true);
+			// oTable.setGrowing(true);
 
 			this.setSideContentSelectedKey("jobs");
 

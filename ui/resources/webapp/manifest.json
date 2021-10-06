@@ -12,6 +12,15 @@
 		"sourceTemplate": {
 			"id": "hanatemplates.basicSAPUI5ApplicationProject",
 			"version": "0.0.0"
+		},
+		"dataSources": {
+			"serviceDS": {
+				"uri": "/service/odataService.xsodata",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
 		}
 	},
 
@@ -64,6 +73,18 @@
 				"settings": {
 					"bundleName": "webapp.ui.i18n.i18n"
 				}
+			},
+			"serviceModel": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "TwoWay",
+					"defaultCountMode": "Inline",
+					"useBatch": false,
+					"defaultUpdateMethod": "PUT"
+				},
+				"dataSource": "serviceDS",
+				"preload": false
 			}
 		},
 		"resources": {
