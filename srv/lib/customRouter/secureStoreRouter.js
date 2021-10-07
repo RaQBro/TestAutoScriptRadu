@@ -20,6 +20,8 @@ const PlcException = require(global.appRoot + "/lib/util/message.js").PlcExcepti
 const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
 
+const sContentType = "application/json";
+
 /** @class
  * @classdesc Secure store router
  * @name SecureStoreRouter 
@@ -32,7 +34,6 @@ class SecureStoreRouter {
 
 		var SecureStoreService = new SecureStore();
 		var TechnicalUserUtil = new TechnicalUser();
-		const sContentType = "application/json";
 
 		/**
 		 * Common function before all routes are processed

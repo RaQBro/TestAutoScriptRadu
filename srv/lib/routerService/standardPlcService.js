@@ -12,11 +12,9 @@ const _ = require("underscore");
  */
 
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js").PlcDispatcher;
-
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
-const Code = MessageLibrary.Code;
+
 const Message = MessageLibrary.Message;
-const PlcException = MessageLibrary.PlcException;
 
 /** @class
  * @classdesc Standard PLC services
@@ -27,11 +25,11 @@ class Dispatcher {
 	/** @constructor
 	 * Is setting the JOB_ID in order to log the messages
 	 */
-	constructor(request) {
+	constructor(request, sOperation) {
 
 		this.JOB_ID = request.JOB_ID;
 		this.PlcDispatcher = new DispatcherPlc(request);
-
+		this.Operation = sOperation;
 	}
 
 	/** @function
@@ -55,8 +53,8 @@ class Dispatcher {
 		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
 		const oResponseBody = JSON.parse(oResponse.body);
 
+		var sMessageInfo;
 		if (oResponse.statusCode !== 200) {
-			var sMessageInfo;
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
@@ -68,26 +66,37 @@ class Dispatcher {
 					if (aUsers !== undefined && aUsers.length > 0) {
 						sMessageInfo = "Variant Matrix of calculation version with ID '" + iVersionId +
 							"' was opened in read-only mode! Locked by User(s): " + aUsers.join(", ");
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 						sMessageInfo =
 							`Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable. Locked by User(s): ${aUsers}`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 					} else {
 						sMessageInfo = "Variant Matrix of calculation version with ID '" + iVersionId + "' is locked and was opened in read-only mode!";
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 					}
 					// close variant matrix
 					this.closeVariantMatrix(iVersionId);
-					return;
+
+					return null;
+				} else {
+					const sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+
+					return undefined;
 				}
+			} else {
+
+				const sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+
+				return undefined;
 			}
-			const sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
 		} else {
-			const sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was opened with success!`;
+			sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was opened with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+
 			return oResponseBody;
 		}
 	}
@@ -131,7 +140,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo = `Failed to create variant for calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variant with name '${oVariant.VARIANT_NAME}' for version with ID '${iVersionId}' was created with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -156,7 +166,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to save all variants of calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variants of calculation version with ID '${iVersionId}' were saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -181,11 +192,13 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to delete variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was deleted with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
-			return oResponseBody;
+
+			return true;
 		}
 	}
 
@@ -238,7 +251,8 @@ class Dispatcher {
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo =
 				`Failed to calculate the variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}' was calculated with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -264,7 +278,8 @@ class Dispatcher {
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo =
 				`Failed to save the variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -297,7 +312,8 @@ class Dispatcher {
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo =
 				`Failed to generate a version in calculation with ID '${iTargetCalculationId}' from variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const oResult = oResponseBody.body.transactionaldata[0];
 			const iNewVersionId = oResult.LAST_GENERATED_VERSION_ID;
@@ -331,7 +347,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to close variant matrix of calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was closed with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -365,7 +382,8 @@ class Dispatcher {
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo =
 				`Failed to set version with ID '${iVersionId}' as current in calculation with ID '${oCalculationDetails.CALCULATION_ID}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo =
 				`Version with ID '${iVersionId}' from calculation with ID '${oCalculationDetails.CALCULATION_ID}' was set as current with success!`;
@@ -393,7 +411,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to get calculation with ID '${iCalculationId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Calculation with ID '${iCalculationId}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -471,7 +490,8 @@ class Dispatcher {
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo =
 				`Failed to create a new calculation with name '${sCalculationName}' in project with ID '${oDetails.PROJECT_ID}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sProjectId = oDetails.PROJECT_ID;
 			const oNewCalculation = oResponseBody.body.transactionaldata[0];
@@ -518,11 +538,12 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to save calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' was saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
-			return oResponseBody.body.transactionaldata[0];
+			return true;
 		}
 	}
 
@@ -554,7 +575,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo = `Failed to create new version as copy of calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const oNewCopyVersion = oResponseBody.body.transactionaldata[0];
 			const sMessageInfo =
@@ -567,20 +589,24 @@ class Dispatcher {
 	/** @function
 	 * Get Calculation Version from PLC
 	 * 
-	 * @param {string} iVersionId - CALCULATION_VERSION_ID
+	 * @param {string} iVersionId - the calculation version id
 	 * @return {object} result / error - PLC response / the error
 	 */
 	async getCalculationVersion(iVersionId) {
 
-		const sQueryPath = "calculation-versions?id=" + iVersionId;
-		const aParams = [];
+		const sQueryPath = "calculation-versions";
+		const aParams = [{
+			"name": "id",
+			"value": iVersionId
+		}];
 
 		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to get calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Calculation version with ID '${iVersionId}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -592,20 +618,18 @@ class Dispatcher {
 	 * Open calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
-	 * @return {object} result / error - PLC response / PLC error
+	 * @param {boolean} bCompressedResult - flag if the response should be compressed
+	 * @return {object} result / error - the opened calculation version or throw error
 	 */
-	async openCalculationVersion(iVersionId) {
+	async openCalculationVersion(iVersionId, bCompressedResult) {
 
 		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		var aParams = [{
 			"name": "calculate",
 			"value": "false"
 		}, {
 			"name": "id",
 			"value": parseInt(iVersionId)
-		}, {
-			"name": "compressedResult",
-			"value": "true"
 		}, {
 			"name": "loadMasterdata",
 			"value": "false"
@@ -614,12 +638,20 @@ class Dispatcher {
 			"value": "open"
 		}];
 
+		if (bCompressedResult !== undefined && bCompressedResult === true) {
+			aParams.push({
+				"name": "compressedResult",
+				"value": "true"
+			});
+		}
+
 		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Calculation version with ID '${iVersionId}' was opened with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -659,7 +691,8 @@ class Dispatcher {
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo =
 				`Failed to reference version with ID '${iReferenceVersionId}' into calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Calculation version with ID '${iVersionId}' was referenced with success into version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -718,7 +751,8 @@ class Dispatcher {
 
 		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
 			const sDeveloperInfo = `Failed to add material item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Material item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -775,7 +809,8 @@ class Dispatcher {
 		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
 			const sDeveloperInfo =
 				`Failed to add variable item with description '${sDescription}'  in calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Variable item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -814,11 +849,44 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to update referenced items of calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Update referenced items of version with ID '${iVersionId}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
+		}
+	}
+
+	/** @function
+	 * Close calculation version
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async freezeCalculationVersion(iVersionId) {
+
+		const sQueryPath = "calculation-versions";
+		const aParams = [{
+			"name": "action",
+			"value": "freeze"
+		}];
+
+		const aBodyData = [{
+			"CALCULATION_VERSION_ID": iVersionId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to freeze calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `Calculation version with ID '${iVersionId}' was frozen with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
 		}
 	}
 
@@ -848,11 +916,12 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to close calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Calculation version with ID '${iVersionId}' was closed with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
-			return oResponseBody;
+			return true;
 		}
 	}
 
@@ -860,9 +929,10 @@ class Dispatcher {
 	 * Delete calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {integer} iCalculationId - the calculation ID
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async deleteCalculationVersion(iVersionId) {
+	async deleteCalculationVersion(iVersionId, iCalculationId) {
 
 		const sQueryPath = "calculation-versions";
 		const aParams = [];
@@ -874,11 +944,159 @@ class Dispatcher {
 		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
 		const oResponseBody = JSON.parse(oResponse.body);
 
+		var sMessageInfo;
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			if (oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
+				var aErrorMessages = _.filter(oResponseBody.head.messages, function (oMessage) {
+					return oMessage.code === "CALCULATIONVERSION_IS_SINGLE_ERROR" || oMessage.code === "DELETE_CURRENT_VERSION_ERROR";
+				});
+				if (aErrorMessages.length > 0 && iCalculationId !== undefined) {
+					sMessageInfo =
+						`The calculation version with ID '${iVersionId}' is the single version of the calculation with ID '${iCalculationId}'!`;
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+					// delete calculation
+					await this.deleteCalculation(iCalculationId);
+					return true;
+				} else {
+					const sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+					return undefined;
+				}
+			} else {
+				const sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				return undefined;
+			}
 		} else {
-			const sMessageInfo = `Calculation version with ID '${iVersionId}' was deleted with success!`;
+			sMessageInfo = `Calculation version with ID '${iVersionId}' was deleted with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+
+			return true;
+		}
+	}
+
+	/** @function
+	 * Delete calculation
+	 * 
+	 * @param {integer} iCalculationId - the calculation ID
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async deleteCalculation(iCalculationId) {
+
+		const sQueryPath = "calculations";
+		const aParams = [];
+
+		const aBodyData = [{
+			"CALCULATION_ID": iCalculationId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		var sMessageInfo;
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to delete calculation with ID '${iCalculationId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			sMessageInfo = `Calculation with ID '${iCalculationId}' was deleted with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+
+			return null;
+		}
+	}
+
+	/** @function
+	 * Get statuses
+	 * 
+	 * @returns {array} - the statuses or throw error
+	 */
+	async getStatuses() {
+
+		const sQueryPath = "statuses";
+		const aParams = [{
+			"name": "skip",
+			"value": 0
+		}, {
+			"name": "expand",
+			"value": "texts"
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = "Failed to get calculation version statuses from the system.";
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.entities !== undefined) {
+				const sMessageInfo = "The statuses of calculation version were retrieved with success!";
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.entities;
+			} else {
+				const sDeveloperInfo = "Failed to get calculation version statuses from the system.";
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Update the calculation version status
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {string} sStatusId - the status id
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async updateStatusOfCalculationVersion(iVersionId, sStatusId) {
+
+		const sQueryPath = "calculationVersions";
+		const aParams = [];
+
+		const aBodyData = [{
+			"calculationVersionId": iVersionId,
+			"statusId": sStatusId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to add status witn ID '${sStatusId}' at the calculation with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `The status with ID '${sStatusId}' was added with success at calculation with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody;
+		}
+	}
+
+	/** @function
+	 * Delete the calculation version status
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async deleteStatusOfCalculationVersion(iVersionId) {
+
+		const sQueryPath = "calculationVersions";
+		const aParams = [];
+
+		const aBodyData = [{
+			"calculationVersionId": iVersionId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to delete the status of calculation with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `The status of calculation version ID '${iVersionId}' was deleted with success.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -906,7 +1124,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation with ID '${iEntityId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `The tag with name '${sTagName}' was added with success at calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -935,10 +1154,12 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 204) {
 			const sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from calculation with ID '${iEntityId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponse.body);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.body, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `The tag with name '${sTagName}' was deleted with success from calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
 		}
 	}
 
@@ -964,7 +1185,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation version with ID '${iEntityId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `The tag with name '${sTagName}' was added with success at version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -993,10 +1215,393 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 204) {
 			const sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from version with ID '${iEntityId}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponse.body);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.body, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `The tag with name '${sTagName}' was deleted with success from version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
+		}
+	}
+
+	/** @function
+	 * Open project
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @return {object} result / error - opened project or undefined in case of error
+	 */
+	async openProject(sProjectId) {
+
+		const sQueryPath = "projects";
+		const aParams = [{
+			"name": "action",
+			"value": "open"
+		}];
+
+		const oBodyData = {
+			"PROJECT_ID": sProjectId
+		};
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			var sMessageInfo;
+			if (oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
+				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
+					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
+				});
+				if (oMessage !== undefined) {
+					if (oMessage.details !== undefined && oMessage.details.projectObjs !== undefined && oMessage.details.projectObjs.length > 0) {
+						var oPrjDetails = _.find(oMessage.details.projectObjs, function (oDetailsPrj) {
+							return oDetailsPrj.id === sProjectId;
+						});
+						if (oPrjDetails !== undefined && oPrjDetails.openingUsers !== undefined && oPrjDetails.openingUsers.length > 0) {
+							var aUsers = _.pluck(oPrjDetails.openingUsers, "id");
+						}
+					}
+					if (aUsers !== undefined) {
+						sMessageInfo = `Project with ID '${sProjectId}' was opened in read-only mode! Locked by User(s): ${aUsers}`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						sMessageInfo = `Project with ID '${sProjectId}' will be ignored since is not editable! Locked by User(s): ${aUsers}`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+					} else {
+						sMessageInfo = `Project with ID '${sProjectId}' is locked and was opened in read-only mode!`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						sMessageInfo = `Project with ID '${sProjectId}' will be ignored since is not editable!`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+					}
+					// close project
+					this.closeProject(sProjectId);
+					return true;
+				} else {
+					const sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+					return undefined;
+				}
+			}
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !==
+				undefined) {
+				sMessageInfo = `Project with ID '${sProjectId}' was opened with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.body.transactionaldata[0];
+			} else {
+				const sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Get Lifecycle configurations
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {array} - Lifecycle configurations or throw error
+	 */
+	async getLifecycleConfigurations(sProjectId) {
+
+		const sQueryPath = `lifecycleConfigurations/${sProjectId}`;
+		const aParams = [{
+			"name": "skip",
+			"value": 0
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.entities !== undefined) {
+				const sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were retrieved with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.entities;
+			} else {
+				const sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Save lLifecycle configurations
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {array} - Lifecycle configurations or throw error
+	 */
+	async saveLifecycleConfigurations(sProjectId, aLifecycleConfigurations) {
+
+		const sQueryPath = "lifecycleConfigurations";
+		const aParams = [];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleConfigurations);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
+				const sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were saved with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.entities;
+			} else {
+				const sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Get lifecycle quantities
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {array} - lifecycle quantities or throw error
+	 */
+	async getLifecycleQuantities(sProjectId) {
+
+		const sQueryPath = `lifecycleQuantities/${sProjectId}`;
+		const aParams = [{
+			"name": "skip",
+			"value": 0
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+
+			if (oResponseBody.entities !== undefined) {
+				const sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were retrieved with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.entities;
+			} else {
+				const sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Save lifecycle quantities
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @param {object} aQuantities - total quantities period values
+	 * @returns {boolean} - true if success or throw error
+	 */
+	async saveLifecycleQuantities(sProjectId, aLifecycleQuantities) {
+
+		const sQueryPath = "lifecycleQuantities";
+		const aParams = [];
+
+		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+
+			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
+				const sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were saved with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.entities;
+			} else {
+				const sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+
+		}
+	}
+
+	/** @function
+	 * Get project lifecycle surcharges
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @param {string} sSurcharge - material or activity
+	 * @returns {array} - project lifecycle surcharges (material or activity) or throw error
+	 */
+	async getProjectLifecycleSurcharges(sProjectId, sSurcharge) {
+
+		const sQueryPath = `projects/${sSurcharge}-price-surcharges`;
+		const aParams = [{
+			"name": "id",
+			"value": sProjectId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get project ${sSurcharge} price surcharges of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
+				const sMessageInfo = `The project ${sSurcharge} price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.body.transactionaldata;
+			} else {
+				const sDeveloperInfo = `Failed to get project ${sSurcharge} price surcharges of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Save project material or activity lifecycle surcharges
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @param {string} sSurcharge - material or activity
+	 * @param {object} aQuantities - total quantities period values
+	 * @returns {boolean} - true if success or throw error
+	 */
+	async saveProjectSurcharges(sProjectId, sSurcharge, aQuantities) {
+
+		const sQueryPath = `projects/${sSurcharge}-price-surcharges`;
+		const aParams = [{
+			"name": "id",
+			"value": sProjectId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aQuantities);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to save project ${sSurcharge} price surcharges of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `The ${sSurcharge} price surcharges for project with ID '${sProjectId}' were saved with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
+		}
+	}
+
+	/** @function
+	 * Calculate project lifecycle costs - will generate the lifecycle versions
+	 * 
+	 * @param {string} sProjectId - project id
+	 */
+	async calculateProjectLifecycleCosts(sProjectId) {
+
+		const sQueryPath = "projects";
+		const aParams = [{
+			"name": "id",
+			"value": sProjectId
+		}, {
+			"name": "action",
+			"value": "calculate_lifecycle_versions"
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to calculate project lifecycle costs of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+
+			// for each entry, check the task status until is completed, we can't close the project until then
+			// const Persistency = $.import("sap.plc.xs.db", "persistency").Persistency;
+			// const TaskService = $.import("sap.plc.xs.service", "taskService").TaskService;
+			// const oConnectionFactory = $.import("sap.plc.xs.db.connection", "connection");
+			// const LifecycleCalculator = $.import("sap.plc.xs.followUp", "lifecycleCalculator").LifecycleVersionCalculator;
+			// var PlcSchemas = $.import("sap.plc.xs.util", "constants").PlcSchemas;
+			// var oPersistency = new Persistency(oConnectionFactory.getConnection(), PlcSchemas.Plc, "SAP_PLC_REPL");
+			// var oTaskService = new TaskService(oPersistency);
+
+			// var iTaskId = oResponseBody.body.transactionaldata[0].TASK_ID;
+			// new LifecycleCalculator(iTaskId, oPersistency, oConnectionFactory, oTaskService).calculate();
+
+			// _.each(oResponseBody.body.transactionaldata, function (oData) {
+			// 	var status = checkTaskStatus(oData.TASK_ID);
+			// 	while (status !== 'COMPLETED') {
+			// 		status = checkTaskStatus(oData.TASK_ID);
+			// 	}
+			// });
+
+			const sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
+		}
+	}
+
+	/** @function
+	 * Check task status
+	 * 
+	 * @param {string} sTaskId - task id
+	 * @returns {string} - task status or throw error
+	 */
+	async checkTaskStatus(sTaskId) {
+
+		const sQueryPath = "tasks";
+		const aParams = [{
+			"name": "id",
+			"value": sTaskId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get the status of task with ID '${sTaskId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		}
+
+		return oResponseBody.body.transactionaldata[0].STATUS;
+	}
+
+	/** @function
+	 * Close project
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {boolean} - true if closed with success or throw error
+	 */
+	async closeProject(sProjectId) {
+
+		const sQueryPath = "projects";
+		const aParams = [{
+			"name": "action",
+			"value": "close"
+		}];
+
+		const oBodyData = {
+			"PROJECT_ID": sProjectId
+		};
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to close project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+
+			const sMessageInfo = `Project with ID '${sProjectId}' was closed with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
 		}
 	}
 
@@ -1019,7 +1624,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = "Init PLC session with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -1042,7 +1648,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = "Failed to logout from PLC. If this error persists, please contact your system administrator!";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = "Logout from PLC with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -1067,7 +1674,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to get addin configuration with ID '${addinGuid}' and version '${addinVersion}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = `Addin configuration with ID '${addinGuid}' and version '${addinVersion}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -1091,11 +1699,44 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 201) {
 			const sDeveloperInfo = "Failed to copy version items to PLC.";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = "Copy version items to PLC with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
+		}
+	}
+
+	/** @function
+	 * Update Version Items to PLC
+	 * 
+	 * @param {array} Items Array
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async updateItems(iVersionId, aBodyData) {
+
+		const sQueryPath = "items";
+		const aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo =
+				`'${aBodyData.length}' item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
 		}
 	}
 
@@ -1117,7 +1758,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = "Failed to get metadata from PLC.";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo = "Metadata from PLC was retrieved with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
@@ -1128,7 +1770,7 @@ class Dispatcher {
 	/** @function
 	 * Update master data for calculation version
 	 * 
-	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {object} oCalculatonVersion - the calculation version
 	 * @return {object} result / error - PLC response / PLC error
 	 */
 	async updateMasterData(oCalculatonVersion) {
@@ -1171,7 +1813,8 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 200) {
 			const sDeveloperInfo = `Failed to update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oResponseBody.head.messages);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
 		} else {
 			const sMessageInfo =
 				`Update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;

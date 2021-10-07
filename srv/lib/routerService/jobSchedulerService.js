@@ -12,11 +12,11 @@ const jobsc = require("@sap/jobs-client");
  * @name jobSchedulerService.js
  */
 
-const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
 const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
-
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+
 const Code = MessageLibrary.Code;
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;

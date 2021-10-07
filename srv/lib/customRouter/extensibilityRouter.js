@@ -22,13 +22,16 @@ const express = require("express");
  * @name extensibilityRouter.js
  */
 
-const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
-
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
+
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
+
+const sContentType = "application/json";
+const sOperation = "Dummy Operation"; // operation of the service/job
 
 /** @class
  * @classdesc Extensibility PLC router
@@ -39,10 +42,8 @@ class ExtensibilityRouter {
 	constructor() {
 
 		var router = express.Router();
-
 		var ExtensibilityPlcService;
 		var JobSchedulerUtil = new JobScheduler();
-		const sContentType = "application/json";
 
 		/**
 		 * Common function before all routes are processed:
@@ -51,7 +52,7 @@ class ExtensibilityRouter {
 		router.use(async function (request, response, next) {
 
 			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobType(request);
-			ExtensibilityPlcService = new ExtensibilityService(request);
+			ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 			next();
 
 		});

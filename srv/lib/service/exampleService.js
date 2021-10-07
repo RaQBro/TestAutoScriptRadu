@@ -23,6 +23,8 @@ const PlcException = MessageLibrary.PlcException;
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
 
+const sOperation = "Dummy Operation"; // operation of the service/job
+
 /** @function
  * Used to execute the custom business logic
  * In case of thrown error / unexpected error the corresponding status code is added to response
@@ -34,12 +36,11 @@ const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/stand
 async function doService(request) {
 
 	// --------------------- Global Constants and Variables ---------------------
-
 	var iStatusCode = 200; // service response code
 	var oServiceResponseBody = {}; // service response body
 
-	const StandardPlcService = new StandardPlcDispatcher(request);
-	const ExtensibilityPlcService = new ExtensibilityService(request);
+	const StandardPlcService = new StandardPlcDispatcher(request, sOperation);
+	const ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
 	const sLanguage = "EN";
 
@@ -147,8 +148,11 @@ async function doService(request) {
 		var aAllProject = await ExtensibilityPlcService.getAllProjects();
 		oServiceResponseBody.PROJECT = aAllProject[0];
 
-		await StandardPlcService.openCalculationVersion(1);
-		await StandardPlcService.closeCalculationVersion(1);
+		let oVersion = await StandardPlcService.openCalculationVersion(1);
+
+		if (oVersion !== undefined) {
+			await StandardPlcService.closeCalculationVersion(1);
+		}
 
 		await Message.addLog(request.JOB_ID, "Example how to add operation at the messages.", "message", undefined, "TEST_OPERATION");
 

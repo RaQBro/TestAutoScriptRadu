@@ -19,6 +19,9 @@ const express = require("express");
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
 
+const sContentType = "application/json";
+const sOperation = "Dummy Operation"; // operation of the service/job
+
 /** @class
  * @classdesc Standard PLC router
  * @name StandardPlcRouter 
@@ -28,16 +31,14 @@ class StandardPlcRouter {
 	constructor() {
 
 		var router = express.Router();
-
 		var StandardPlcService;
-		const sContentType = "application/json";
 
 		/**
 		 * Common function before all routes are processed
 		 */
 		router.use(async function (request, response, next) {
 
-			StandardPlcService = new StandardPlcDispatcher(request);
+			StandardPlcService = new StandardPlcDispatcher(request, sOperation);
 			next();
 
 		});

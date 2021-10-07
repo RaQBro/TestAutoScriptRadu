@@ -12,12 +12,12 @@ const async = require("async");
  */
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+
 const Message = MessageLibrary.Message;
 
 /** @class
- * @classdesc Extensibility PLC services
+ * @class desc Extensibility PLC services
  * @name Service 
  */
 class Service {
@@ -25,16 +25,16 @@ class Service {
 	/** @constructor
 	 * Is setting the JOB_ID in order to log the messages
 	 */
-	constructor(request) {
+	constructor(request, sOperation) {
 
 		this.JOB_ID = request.JOB_ID;
+		this.Operation = sOperation;
 
 		if ((request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true) || request.user.id !== undefined) {
 			this.userId = request.user.id.toUpperCase();
 		} else {
 			this.userId = global.TECHNICAL_USER; // technical user
 		}
-
 	}
 
 	/** @function
@@ -53,6 +53,67 @@ class Service {
 		let aResults = await connection.statementExecPromisified(statement, []);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 		return aResults.slice();
+	}
+
+	/**
+	 * Check if calculation version is editable
+	 * @param {integer} iVersionId - the calculation version id
+	 */
+	async checkIfVersionIsTouchable(iVersionId) {
+
+		var bIsTouchable = false;
+
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
+		const statement = await connection.preparePromisified(
+			`
+			select
+				CALCULATION_VERSION_ID,
+				IS_WRITEABLE,
+				VERSION_ID,
+				IS_FROZEN
+			from (
+				select
+					openCalcVersion.CALCULATION_VERSION_ID,
+					openCalcVersion.IS_WRITEABLE,
+					item.VERSION_ID,
+					calcVersion.IS_FROZEN
+				from "sap.plc.db::basis.t_calculation_version" calcVersion
+					inner join "sap.plc.db::basis.t_open_calculation_versions" openCalcVersion
+						on openCalcVersion.CALCULATION_VERSION_ID = calcVersion.CALCULATION_VERSION_ID
+							and SESSION_ID = '${this.userId}'
+					left outer join (select distinct(item.referenced_calculation_version_id) as VERSION_ID
+						from "sap.plc.db::basis.t_item" item
+							where item.item_category_id = 10
+								group by item.referenced_calculation_version_id) item
+						on item.VERSION_ID = calcVersion.CALCULATION_VERSION_ID
+			) where CALCULATION_VERSION_ID = ${iVersionId};
+			`
+		);
+
+		let aResultIsTouchableVersions = await connection.statementExecPromisified(statement, []);
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+
+		var aIsTouchableVersions = aResultIsTouchableVersions.slice();
+		if (aIsTouchableVersions[0] !== undefined) {
+			var oTouchableVersion = aIsTouchableVersions[0];
+			if (
+				(oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1") &&
+				(oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
+					oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined) &&
+				(oTouchableVersion.VERSION_ID === "null" || oTouchableVersion.VERSION_ID === null || oTouchableVersion.VERSION_ID === undefined)
+			) {
+				bIsTouchable = true;
+			}
+			var bIsWritable = oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1" ? true : false;
+			var bIsFrozen = oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
+				oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined ? false : true;
+			await Message.addLog(this.JOB_ID,
+				"Calculation Version with ID '" + iVersionId + "': Is Touchable = " + bIsTouchable +
+				". Is Writable = " + bIsWritable + ". Is Frozen = " + bIsFrozen + ".", "message", this.sOperation);
+		}
+
+		return bIsTouchable;
 	}
 
 	/** @function

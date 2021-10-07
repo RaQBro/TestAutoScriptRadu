@@ -23,6 +23,8 @@ const express = require("express");
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 const JobScheduler = require(global.appRoot + "/lib/routerService/jobSchedulerService.js").JobSchedulerService;
 
+const sContentType = "application/json";
+
 /** @class
  * @classdesc Job scheduler router
  * @name JobSchedulerRouter 
@@ -34,7 +36,6 @@ class JobSchedulerRouter {
 		var router = express.Router();
 
 		var JobSchedulerService = new JobScheduler();
-		const sContentType = "application/json";
 
 		/**
 		 * Common function before all routes are processed
