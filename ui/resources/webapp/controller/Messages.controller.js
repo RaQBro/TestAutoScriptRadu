@@ -22,47 +22,25 @@ sap.ui.define([
 
 			var jobID = oEvent.getParameter("arguments").jobID;
 
-			this._setupView()
-				.then(this.applyFiltersFromParameters(jobID))
-				.then(this.closeBusyDialog());
+			this._setupView(jobID);
 		},
 
-		_setupView: function () {
-
+		_setupView: function (jobID) {
+			
+			var oView = this.getView();
+			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
+			
 			this.oButtonPopover = this.byId("buttonMessagePopover");
-
 			this.handleControlVisibleState("saveBtn", false);
+			this.applyFiltersFromParameters(jobID);
+			this.setSideContentSelectedKey("messages");
 
-			return new Promise(function (resolve) {
-				var oView = this.getView();
-				var oModel = new ODataModel("/service/odataService.xsodata/", {
-					json: true,
-					useBatch: false
-				});
-
-				var oSmartFilterBar = oView.byId("sfbMessages");
-				oSmartFilterBar.setModel(oModel);
-				oSmartFilterBar.setEntitySet("GetMessages");
-
-				var oSmartTable = oView.byId("stMessages");
-				oSmartTable.setModel(oModel);
-				oSmartTable.setEntitySet("GetMessages");
-
-				var oTable = oSmartTable.getTable();
-				oTable.setEnableBusyIndicator(true);
-				oTable.setAlternateRowColors(true);
-				oTable.setGrowing(true);
-
-				this.setSideContentSelectedKey("messages");
-
-				resolve();
-			}.bind(this));
-
+			this.closeBusyDialog();
 		},
 
 		_renameColumns: function (oEvent) {
 
-			if (!oEvent.getSource().getAggregation("items")[1]) { //columns not initialized yet
+			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
 			}
 
@@ -115,16 +93,6 @@ sap.ui.define([
 					}
 				});
 			}
-		},
-
-		onSmartFilterBarInitialized: function () {
-
-			// this smart filter bar is used only to be able to apply parameters - smart filter bar is not visible
-			// this.applyFiltersFromParameters();
-
-			// rebind table with filters
-			var oSmartTable = this.getView().byId("stMessages");
-			oSmartTable.rebindTable();
 		},
 
 		onSeeAllEntries: function () {

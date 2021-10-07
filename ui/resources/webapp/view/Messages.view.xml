@@ -3,7 +3,7 @@
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
-				<smartFilterBar:SmartFilterBar id="sfbMessages" initialized="onSmartFilterBarInitialized" useToolbar="false"
+				<smartFilterBar:SmartFilterBar id="sfbMessages" entitySet="GetMessages" useToolbar="false"
 					considerSelectionVariants="false" visible="false">
 					<smartFilterBar:controlConfiguration >
 						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
@@ -16,9 +16,10 @@
 						<FlexItemData shrinkFactor="0"/>
 					</smartFilterBar:layoutData>
 				</smartFilterBar:SmartFilterBar>
-				<smartTable:SmartTable id="stMessages" smartFilterId="sfbMessages" tableType="ResponsiveTable" useTablePersonalisation="true"
+				<smartTable:SmartTable id="stMessages" entitySet="GetMessages" smartFilterId="sfbMessages" tableType="ResponsiveTable" useTablePersonalisation="true"
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
-					initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable">
+					initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" enableAutoBinding="true"
+					requestAtLeastFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>

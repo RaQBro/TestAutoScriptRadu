@@ -33,7 +33,6 @@
 						</OverflowToolbar>
 					</smartTable:customToolbar>
 					<Table id="tJobs" growing="true">
-						<!--<ColumnListItem highlight="{path:'JOB_STATUS',formatter:'.formatRowHighlight'}"/>-->
 						<columns>
 							<Column>
 								<customData>
