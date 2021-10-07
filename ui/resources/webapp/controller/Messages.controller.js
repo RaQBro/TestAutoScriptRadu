@@ -12,24 +12,24 @@ sap.ui.define([
 
 		onInit: function () {
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("messages").attachPatternMatched(this._onObjectMatched, this);
 		},
 
 		_onObjectMatched: function (oEvent) {
 
-			this.openBusyDialog();
+			let jobID = oEvent.getParameter("arguments").jobID;
 
-			var jobID = oEvent.getParameter("arguments").jobID;
+			this.openBusyDialog();
 
 			this._setupView(jobID);
 		},
 
 		_setupView: function (jobID) {
-			
+
 			var oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
-			
+
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.handleControlVisibleState("saveBtn", false);
 			this.applyFiltersFromParameters(jobID);
@@ -69,21 +69,25 @@ sap.ui.define([
 
 		applyFiltersFromParameters: function (jobID) {
 
-			var oView = this.getView();
-			var oSmartTable = oView.byId("stMessages");
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stMessages");
 
-			var sJobName = jobID || null;
+			let sJobName = jobID || null;
 
 			if (sJobName !== null) {
 
 				this.oTableSearchState = [];
 				this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
-				oView.byId("btnSeeAllEntries").setVisible(true);
+
+				this.handleControlVisibleState("btnSeeAllEntries", true);
+
 				oSmartTable.rebindTable();
 			} else {
 
 				this.oTableSearchState = [];
-				this.getView().byId("btnSeeAllEntries").setVisible(false);
+
+				this.handleControlVisibleState("btnSeeAllEntries", false);
+
 				oSmartTable.applyVariant({
 					sort: {
 						sortItems: [{
@@ -98,8 +102,10 @@ sap.ui.define([
 		onSeeAllEntries: function () {
 
 			this.oTableSearchState = [];
-			this.getView().byId("sfbMessages").clear();
-			this.getView().byId("stMessages").applyVariant({
+
+			let oSfbMessages = this.getView().byId("sfbMessages");
+			oSfbMessages.clear();
+			oSfbMessages.applyVariant({
 				sort: {
 					sortItems: [{
 						columnKey: "JOB_ID",
@@ -108,28 +114,33 @@ sap.ui.define([
 				}
 			});
 
-			this.getView().byId("stMessages").rebindTable();
-			this.getView().byId("btnSeeAllEntries").setVisible(false);
+			oSfbMessages.rebindTable();
+
+			this.handleControlVisibleState("btnSeeAllEntries", false);
 		},
 
 		onRefreshEntries: function () {
 
-			this.oView.byId("stMessages").getTable().getBinding("items").refresh();
+			let oSfbMessages = this.getView().byId("sfbMessages");
+
+			oSfbMessages.getTable().getBinding("items").refresh();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
 
-			var bindingParams = oEvent.getParameter("bindingParams");
+			let bindingParams = oEvent.getParameter("bindingParams");
+
 			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
 
 				bindingParams.filters = this.oTableSearchState;
 			}
+
 			this._renameColumns(oEvent);
 		},
 
 		formatRowHighlight: function (oValue) {
 
-			var value = "None";
+			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";

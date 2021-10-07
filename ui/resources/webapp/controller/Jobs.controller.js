@@ -37,7 +37,8 @@ sap.ui.define([
 
 		_renameColumns: function (oEvent) {
 
-			const columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
+			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
+			
 			columnNames.forEach(function (column) {
 				var header = column.getHeader();
 				if (header.getText() === "START_TIMESTAMP") {
@@ -73,21 +74,21 @@ sap.ui.define([
 
 		applyFiltersFromParameters: function () {
 
-			var oView = this.getView();
-			var oSmartTable = oView.byId("stJobs");
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stJobs");
 
-			var sJobName = jQuery.sap.getUriParameters().get("JOB_ID");
+			let sJobName = jQuery.sap.getUriParameters().get("JOB_ID");
 
 			if (sJobName !== null) {
 
 				this.oTableSearchState = [];
 				if (sJobName !== null) {
+					
 					this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
 				}
-				oView.byId("btnSeeAllEntries").setVisible(true);
-
 			} else {
-				oView.byId("stJobs").applyVariant({
+				
+				oSmartTable.applyVariant({
 					sort: {
 						sortItems: [{
 							columnKey: "START_TIMESTAMP",
@@ -96,6 +97,7 @@ sap.ui.define([
 					}
 				});
 			}
+			
 			oSmartTable.rebindTable();
 		},
 
@@ -105,13 +107,13 @@ sap.ui.define([
 			this.applyFiltersFromParameters();
 
 			// rebind table with filters
-			var oSmartTable = this.getView().byId("stJobs");
+			let oSmartTable = this.getView().byId("stJobs");
 			oSmartTable.rebindTable();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
 
-			var bindingParams = oEvent.getParameter("bindingParams");
+			let bindingParams = oEvent.getParameter("bindingParams");
 
 			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
 				bindingParams.filters = this.oTableSearchState;
@@ -122,7 +124,7 @@ sap.ui.define([
 
 		formatRowHighlight: function (oValue) {
 
-			var value = "None";
+			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";
@@ -141,7 +143,9 @@ sap.ui.define([
 		},
 
 		onViewJobLogs: function (oEvent) {
+			
 			var jID = oEvent.getSource().getBindingContext().getObject().JOB_ID;
+			
 			this.navTo("messages", {
 				jobID: jID
 			});
