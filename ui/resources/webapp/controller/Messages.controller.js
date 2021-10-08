@@ -82,21 +82,22 @@ sap.ui.define([
 				this.handleControlVisibleState("btnSeeAllEntries", true);
 
 				oSmartTable.rebindTable();
-			} else {
-
-				this.oTableSearchState = [];
-
-				this.handleControlVisibleState("btnSeeAllEntries", false);
-
-				oSmartTable.applyVariant({
-					sort: {
-						sortItems: [{
-							columnKey: "JOB_ID",
-							operation: "Descending"
-						}]
-					}
-				});
 			}
+			// } else {
+
+			// 	this.oTableSearchState = [];
+
+			// 	this.handleControlVisibleState("btnSeeAllEntries", false);
+
+			// 	oSmartTable.applyVariant({
+			// 		sort: {
+			// 			sortItems: [{
+			// 				columnKey: "JOB_ID",
+			// 				operation: "Descending"
+			// 			}]
+			// 		}
+			// 	});
+			// }
 		},
 
 		onSeeAllEntries: function () {
@@ -113,8 +114,10 @@ sap.ui.define([
 					}]
 				}
 			});
+			
+			let stMessages = this.getView().byId("stMessages");
 
-			oSfbMessages.rebindTable();
+			stMessages.rebindTable();
 
 			this.handleControlVisibleState("btnSeeAllEntries", false);
 		},

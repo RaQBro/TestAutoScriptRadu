@@ -3,7 +3,7 @@
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
-				<smartFilterBar:SmartFilterBar id="sfbMessages" entitySet="GetMessages" useToolbar="false"
+				<smartFilterBar:SmartFilterBar id="sfbMessages" entitySet="GetMessages" persistencyKey="pk_messages" useToolbar="false"
 					considerSelectionVariants="false" visible="false">
 					<smartFilterBar:controlConfiguration >
 						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
