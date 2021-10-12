@@ -75,7 +75,7 @@ sap.ui.define([
 			let sJobName = jobID || null;
 
 			if (sJobName !== null) {
-
+				
 				this.oTableSearchState = [];
 				this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
 
@@ -124,9 +124,12 @@ sap.ui.define([
 
 		onRefreshEntries: function () {
 
-			let oSfbMessages = this.getView().byId("sfbMessages");
+			let stMessages = this.getView().byId("stMessages");
 
-			oSfbMessages.getTable().getBinding("items").refresh();
+			stMessages.rebindTable();
+			// let oSfbMessages = this.getView().byId("sfbMessages");
+
+			// oSfbMessages.getTable().getBinding("items").refresh();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
