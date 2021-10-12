@@ -83,21 +83,6 @@ sap.ui.define([
 
 				oSmartTable.rebindTable();
 			}
-			// } else {
-
-			// 	this.oTableSearchState = [];
-
-			// 	this.handleControlVisibleState("btnSeeAllEntries", false);
-
-			// 	oSmartTable.applyVariant({
-			// 		sort: {
-			// 			sortItems: [{
-			// 				columnKey: "JOB_ID",
-			// 				operation: "Descending"
-			// 			}]
-			// 		}
-			// 	});
-			// }
 		},
 
 		onSeeAllEntries: function () {
@@ -127,9 +112,6 @@ sap.ui.define([
 			let stMessages = this.getView().byId("stMessages");
 
 			stMessages.rebindTable();
-			// let oSfbMessages = this.getView().byId("sfbMessages");
-
-			// oSfbMessages.getTable().getBinding("items").refresh();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
