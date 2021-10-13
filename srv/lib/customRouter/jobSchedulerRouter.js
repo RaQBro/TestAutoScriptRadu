@@ -20,8 +20,8 @@ const express = require("express");
  * @name jobSchedulerRouter.js
  */
 
-const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 const JobScheduler = require(global.appRoot + "/lib/routerService/jobSchedulerService.js").JobSchedulerService;
+const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
 

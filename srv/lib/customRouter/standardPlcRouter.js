@@ -16,8 +16,8 @@ const express = require("express");
  * @name standardPlcRouter.js
  */
 
-const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
+const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
 const sOperation = "Dummy Operation"; // operation of the service/job

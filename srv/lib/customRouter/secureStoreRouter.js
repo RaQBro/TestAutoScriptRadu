@@ -16,9 +16,9 @@ const express = require("express");
  * @name secureStoreRouter.js
  */
 
-const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
-const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
+const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
 

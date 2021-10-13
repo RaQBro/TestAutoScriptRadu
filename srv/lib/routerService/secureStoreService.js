@@ -13,8 +13,8 @@ const hdbext = require("@sap/hdbext");
  */
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
-const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Code = MessageLibrary.Code;
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;

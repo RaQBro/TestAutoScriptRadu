@@ -22,11 +22,11 @@ const express = require("express");
  * @name extensibilityRouter.js
  */
 
-const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
-const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 

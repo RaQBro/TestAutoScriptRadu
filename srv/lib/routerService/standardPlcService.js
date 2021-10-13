@@ -12,9 +12,7 @@ const _ = require("underscore");
  */
 
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js").PlcDispatcher;
-const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
-
-const Message = MessageLibrary.Message;
+const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
 /** @class
  * @classdesc Standard PLC services

@@ -12,9 +12,7 @@ const async = require("async");
  */
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
-
-const Message = MessageLibrary.Message;
+const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
 /** @class
  * @class desc Extensibility PLC services
