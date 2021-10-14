@@ -1,0 +1,10 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<Dialog id="howToDialog" title="{i18n>howToDialogTitle}" resizable="true" draggable="false">
+		<content>
+			<FormattedText htmlText="{/HTML}"/>
+		</content>
+		<beginButton>
+			<Button text="{i18n>okBtn}" press=".onHowToDialogOk"/>
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>
