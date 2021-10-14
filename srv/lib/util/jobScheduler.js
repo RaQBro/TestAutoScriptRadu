@@ -287,6 +287,28 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
+	 * Used to get all messages of one job
+	 * 
+	 * @param {integer} iJobId - the job id
+	 * @return {array} aMessages - the messages from the job
+	 */
+	async getMessagesOfJobWithId(iJobId) {
+
+		const hdbClient = await DatabaseClass.createConnection();
+		const connection = new DatabaseClass(hdbClient);
+		const statement = await connection.preparePromisified(
+			`
+				select * from "sap.plc.extensibility::template_application.t_messages"
+				where and JOB_ID = ?;
+			`
+		);
+		const aMessages = await connection.statementExecPromisified(statement, [iJobId]);
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+
+		return aMessages.slice();
+	}
+
+	/** @function
 	 * Used to generate the job status. Success if no errors / Done if completed with errors
 	 * 
 	 * @param {integer} iJobId - the job id
@@ -303,6 +325,7 @@ class JobSchedulerUtil {
 			`
 		);
 		const aResultCount = await connection.statementExecPromisified(statement, [iJobId]);
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 		return parseInt(aResultCount[0].COUNT, 10) > 0 ? "Done" : "Success";
 	}

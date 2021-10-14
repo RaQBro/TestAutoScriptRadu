@@ -146,13 +146,16 @@ class ExtensibilityRouter {
 			.doService(request)
 
 			// handle success execution of the service
-			.then(function (oServiceResponse) {
+			.then(async function (oServiceResponse) {
 
 				const iStatusCode = oServiceResponse.STATUS_CODE;
 				const oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
 				// add service response body to job log entry
 				JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
+
+				// write end of the job into t_messages only for jobs (fake or real)
+				await Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message", undefined, sOperation);
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -162,17 +165,27 @@ class ExtensibilityRouter {
 
 				} else {
 
+					// get all messages from the job
+					const aMessages = await JobSchedulerUtil.getMessagesOfJobWithId(request.JOB_ID);
+
 					// return service response body for web request
 					if (request.IS_ONLINE_MODE === true) {
-						response.type(sContentType).status(iStatusCode).send(oServiceResponseBody);
+
+						// decide what to send as response
+						let oResponseBody = request.JOB_ID === undefined ? oServiceResponseBody : aMessages;
+
+						// send response
+						response.type(sContentType).status(iStatusCode).send(oResponseBody);
 					}
 
 				}
-				Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message");
 			})
 
 			// handle errors from then function
 			.catch(async function (err) {
+
+				// write end of the job into t_messages only for jobs (fake or real)
+				await Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message", undefined, sOperation);
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -197,7 +210,6 @@ class ExtensibilityRouter {
 					}
 
 				}
-				Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message");
 			});
 		});
 
