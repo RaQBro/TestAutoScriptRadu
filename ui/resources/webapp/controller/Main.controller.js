@@ -71,6 +71,26 @@ sap.ui.define([
 			oController._aboutDialog.close();
 		},
 
+		/** @function used when How To is pressed from the user details*/
+		onHowToPress: function () {
+			var oView = this.getView(),
+				oController = oView.getController();
+			// instantiate dialog
+			if (!oController._howToDialog) {
+				oController._howToDialog = sap.ui.xmlfragment("webapp.ui.view.fragment.HowToDialog", oController);
+				oView.addDependent(this._howToDialog);
+			}
+			// open dialog
+			oController._howToDialog.open();
+		},
+
+		/** @function used when OK is pressed from the  How To from the user details*/
+		onHowToDialogOk: function () {
+			var oView = this.getView(),
+				oController = oView.getController();
+			oController._howToDialog.close();
+		},
+
 		/** @function called when logout is pressed*/
 		onLogoutPress: function () {
 			sap.m.URLHelper.redirect("/logout");

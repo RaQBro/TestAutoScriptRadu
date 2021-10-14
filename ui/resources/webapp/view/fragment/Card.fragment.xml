@@ -3,7 +3,8 @@
 		<f:content>
 			<l:VerticalLayout class="sapUiContentPadding">
 				<m:List>
-					<m:StandardListItem title="{i18n>cardAboutTitle}" icon="sap-icon://hint" type="Active" press="onAboutPress"/>
+					<m:StandardListItem title="{i18n>cardHowToTitle}" icon="sap-icon://hint" type="Active" press="onHowToPress"/>
+					<m:StandardListItem title="{i18n>cardAboutTitle}" icon="sap-icon://information" type="Active" press="onAboutPress"/>
 					<m:StandardListItem title="{i18n>cardSignOut}" icon="sap-icon://log" type="Active" press="onLogoutPress"/>
 				</m:List>
 			</l:VerticalLayout>

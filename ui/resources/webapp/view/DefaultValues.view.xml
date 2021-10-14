@@ -12,6 +12,9 @@
 					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions"/>
 				</form:content>
 			</form:SimpleForm>
+			<form:SimpleForm id="frmRichTextEditor" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}" >
+				
+			</form:SimpleForm>
 		</content>
 		<footer>
 			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
