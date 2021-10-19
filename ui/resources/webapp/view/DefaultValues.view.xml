@@ -1,5 +1,5 @@
 <mvc:View id="defaultValuesView" controllerName="webapp.ui.controller.DefaultValues" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" displayBlock="true">
+	xmlns:form="sap.ui.layout.form" xmlns:rte="sap.ui.richtexteditor" xmlns:core="sap.ui.core" displayBlock="true">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<form:SimpleForm id="frmDefaultValues" editable="true" layout="ColumnLayout" title="{i18n>defaultValueTitle}">
@@ -12,9 +12,9 @@
 					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions"/>
 				</form:content>
 			</form:SimpleForm>
-			<form:SimpleForm id="frmRichTextEditor" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}" >
-				
-			</form:SimpleForm>
+			<form:SimpleForm id="frmRTE" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}" />
+			<rte:RichTextEditor id="txtRTE" customToolbar="true" showGroupFont="true" showGroupLink="true" showGroupInsert="true"
+				width="98%" class="sapUiMediumMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin" />
 		</content>
 		<footer>
 			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>

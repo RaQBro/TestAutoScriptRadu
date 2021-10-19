@@ -41,6 +41,7 @@ sap.ui.define([
 			this.setNoProjects();
 			this.setNoCalculations();
 			this.setNoVersions();
+			this.setRTEValue();
 
 			this.setSideContentSelectedKey("defaultValues");
 
@@ -109,6 +110,24 @@ sap.ui.define([
 				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
+		
+		setRTEValue: function () {
+
+			var oView = this.getView();
+			var oRTEControl = oView.byId("txtRTE");
+
+			var oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+				return oDefaultValue.FIELD_NAME === "RTE";
+			});
+
+			if (oRTE !== null && oRTE !== undefined) {
+
+				oRTEControl.setValue(oRTE.FIELD_VALUE);
+			} else {
+
+				this.handleControlEnabledState("saveBtn", true);
+			}
+		},
 
 		/** @function Used to saved the updated default values*/
 		onSavePress: function () {
@@ -130,6 +149,12 @@ sap.ui.define([
 
 					oDefaultValues.push(kvPair);
 				}
+			});
+			
+			// add the RTE KV pair separately since the control is different from a normal input
+			oDefaultValues.push({
+				FIELD_NAME: "RTE",
+				FIELD_VALUE: oView.byId("txtRTE").getValue()
 			});
 
 			var oController = this;
