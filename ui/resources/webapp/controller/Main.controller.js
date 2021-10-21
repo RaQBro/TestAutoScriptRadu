@@ -86,15 +86,15 @@ sap.ui.define([
 		},
 
 		onAfterHowToOpen: function (oEvent) {
-			var oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+			let sRTE;
+
+			let oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === "RTE";
 			});
 
-			if (oRTE !== null && oRTE !== undefined) {
-				oEvent.getSource().getContent()[0].setHtmlText(oRTE.FIELD_VALUE);
-			} else {
-				oEvent.getSource().getContent()[0].setHtmlText("");
-			}
+			sRTE = oRTE !== null && oRTE !== undefined ? oRTE.FIELD_VALUE : "";
+
+			oEvent.getSource().getContent()[0].setHtmlText(sRTE);
 		},
 
 		/** @function used when OK is pressed from the  How To from the user details*/
