@@ -65,9 +65,6 @@ sap.ui.define([
 			if (oDefaultNoProjects !== null && oDefaultNoProjects !== undefined) {
 
 				oNoProjectsControl.setValue(oDefaultNoProjects.FIELD_VALUE);
-			} else {
-
-				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
 
@@ -85,9 +82,6 @@ sap.ui.define([
 			if (oDefaultNoCalculations !== null && oDefaultNoCalculations !== undefined) {
 
 				oNoCalculationsControl.setValue(oDefaultNoCalculations.FIELD_VALUE);
-			} else {
-
-				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
 
@@ -105,12 +99,9 @@ sap.ui.define([
 			if (oDefaultNoVersions !== null && oDefaultNoVersions !== undefined) {
 
 				oNoVersionsControl.setValue(oDefaultNoVersions.FIELD_VALUE);
-			} else {
-
-				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
-		
+
 		setRTEValue: function () {
 
 			var oView = this.getView();
@@ -123,9 +114,6 @@ sap.ui.define([
 			if (oRTE !== null && oRTE !== undefined) {
 
 				oRTEControl.setValue(oRTE.FIELD_VALUE);
-			} else {
-
-				this.handleControlEnabledState("saveBtn", true);
 			}
 		},
 
@@ -150,7 +138,7 @@ sap.ui.define([
 					oDefaultValues.push(kvPair);
 				}
 			});
-			
+
 			// add the RTE KV pair separately since the control is different from a normal input
 			oDefaultValues.push({
 				FIELD_NAME: "RTE",
@@ -187,6 +175,11 @@ sap.ui.define([
 		},
 
 		onChangeNoCalculationVersions: function () {
+
+			this.handleControlEnabledState("saveBtn", true);
+		},
+
+		onChangeRichTextEditor: function () {
 
 			this.handleControlEnabledState("saveBtn", true);
 		}

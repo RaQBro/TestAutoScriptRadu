@@ -1,7 +1,7 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<Dialog id="howToDialog" title="{i18n>howToDialogTitle}" afterOpen=".onAfterHowToOpen" resizable="true" draggable="false">
 		<content>
-			<FormattedText id="ftRTE" htmlText="{rteModel>HTML}"/>
+			<FormattedText id="ftRTE" htmlText="{rteModel>HTML}" class="sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
 		</content>
 		<beginButton>
 			<Button text="{i18n>okBtn}" press=".onHowToDialogOk"/>

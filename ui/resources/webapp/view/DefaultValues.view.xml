@@ -12,9 +12,9 @@
 					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions"/>
 				</form:content>
 			</form:SimpleForm>
-			<form:SimpleForm id="frmRTE" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}" />
-			<rte:RichTextEditor id="txtRTE" customToolbar="true" showGroupFont="true" showGroupLink="true" showGroupInsert="true"
-				width="98%" class="sapUiMediumMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin" />
+			<form:SimpleForm id="frmRTE" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}"/>
+			<rte:RichTextEditor id="txtRTE" customToolbar="true" showGroupFont="true" showGroupLink="true" showGroupInsert="true" width="99%"
+				change="onChangeRichTextEditor" class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
 		</content>
 		<footer>
 			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
