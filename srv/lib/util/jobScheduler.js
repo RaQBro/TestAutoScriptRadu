@@ -299,7 +299,7 @@ class JobSchedulerUtil {
 		const statement = await connection.preparePromisified(
 			`
 				select * from "sap.plc.extensibility::template_application.t_messages"
-				where and JOB_ID = ?;
+				where JOB_ID = ?;
 			`
 		);
 		const aMessages = await connection.statementExecPromisified(statement, [iJobId]);
