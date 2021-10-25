@@ -10,6 +10,7 @@
 		"body-parser": "latest",
 		"underscore": "latest",
 		"async": "latest",
+		"request": "latest",
 		"passport": "latest"
 	},
 	"description": "Template Application",
