@@ -1,15 +1,17 @@
 VIEW "sap.plc.extensibility::template_application.v_account"
 AS
-SELECT DISTINCT 
+select distinct
 	account.ACCOUNT_ID,
 	account.CONTROLLING_AREA_ID,
-	accountText.ACCOUNT_DESCRIPTION
-FROM "sap.plc.db::basis.t_account" as account
-LEFT OUTER JOIN "sap.plc.db::basis.t_account__text" as accountText
-ON accountText.ACCOUNT_ID = account.ACCOUNT_ID AND
-   accountText.CONTROLLING_AREA_ID = account.CONTROLLING_AREA_ID AND
-   accountText._VALID_FROM = account._VALID_FROM
-WHERE account._VALID_TO is null AND
-	  accountText._VALID_TO is null AND 
-	  (accountText.LANGUAGE = 'EN' OR accountText.LANGUAGE IS NULL)
-ORDER BY account.ACCOUNT_ID ASC;
+	account_txt.ACCOUNT_DESCRIPTION,
+	account_txt.LANGUAGE
+from "sap.plc.db::basis.t_account" as account
+left outer join "sap.plc.db::basis.t_account__text" as account_txt
+	on account.ACCOUNT_ID = account_txt.ACCOUNT_ID and
+	account.CONTROLLING_AREA_ID = account_txt.CONTROLLING_AREA_ID
+where account._valid_to is null 
+	and account_txt._valid_to is null
+	and (account_txt.LANGUAGE = 'EN' or account_txt.LANGUAGE is null)
+order by 
+	account.ACCOUNT_ID,
+	account.CONTROLLING_AREA_ID;
