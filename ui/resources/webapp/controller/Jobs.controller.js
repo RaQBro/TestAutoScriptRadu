@@ -24,10 +24,10 @@ sap.ui.define([
 		},
 
 		_setupView: function () {
-			
+
 			var oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
-			
+
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.handleControlVisibleState("saveBtn", false);
 			this.setSideContentSelectedKey("jobs");
@@ -38,7 +38,7 @@ sap.ui.define([
 		_renameColumns: function (oEvent) {
 
 			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
-			
+
 			columnNames.forEach(function (column) {
 				var header = column.getHeader();
 				if (header.getText() === "START_TIMESTAMP") {
@@ -70,44 +70,20 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {},
-
-		applyFiltersFromParameters: function () {
+		onAfterRendering: function () {
 
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stJobs");
 
-			let sJobName = jQuery.sap.getUriParameters().get("JOB_ID");
-
-			if (sJobName !== null) {
-
-				this.oTableSearchState = [];
-				if (sJobName !== null) {
-					
-					this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
+			oSmartTable.applyVariant({
+				sort: {
+					sortItems: [{
+						columnKey: "START_TIMESTAMP",
+						operation: "Descending"
+					}]
 				}
-			} else {
-				
-				oSmartTable.applyVariant({
-					sort: {
-						sortItems: [{
-							columnKey: "START_TIMESTAMP",
-							operation: "Descending"
-						}]
-					}
-				});
-			}
-			
-			oSmartTable.rebindTable();
-		},
+			});
 
-		onSmartFilterBarInitialized: function () {
-
-			// this smart filter bar is used only to be able to apply parameters - smart filter bar is not visible
-			this.applyFiltersFromParameters();
-
-			// rebind table with filters
-			let oSmartTable = this.getView().byId("stJobs");
 			oSmartTable.rebindTable();
 		},
 
@@ -143,9 +119,9 @@ sap.ui.define([
 		},
 
 		onViewJobLogs: function (oEvent) {
-			
+
 			var jID = oEvent.getSource().getBindingContext().getObject().JOB_ID;
-			
+
 			this.navTo("messages", {
 				jobID: jID
 			});
