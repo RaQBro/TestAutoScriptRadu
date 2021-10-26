@@ -621,6 +621,8 @@ class Dispatcher {
 	 */
 	async openCalculationVersion(iVersionId, bCompressedResult) {
 
+		let response;
+
 		const sQueryPath = "calculation-versions";
 		var aParams = [{
 			"name": "calculate",
@@ -647,14 +649,61 @@ class Dispatcher {
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
+			const sDeveloperInfo = `Failed to open Calculation Version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
-			return undefined;
 		} else {
-			const sMessageInfo = `Calculation version with ID '${iVersionId}' was opened with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
-			return oResponseBody.body.transactionaldata[0];
+			let sMessageInfo = `Calculation Version with ID '${iVersionId}' was opened with success!`;
+
+			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
+
+				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
+					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
+				});
+
+				if (oMessage !== undefined) {
+
+					if (oMessage.details !== undefined && oMessage.details.calculationVersionObjs !== undefined && oMessage.details.calculationVersionObjs
+						.length > 0) {
+
+						var oCalculationVersionDetails = _.find(oMessage.details.calculationVersionObjs, function (oDetailsCalculationVersion) {
+							return oDetailsCalculationVersion.id === iVersionId;
+						});
+
+						if (oCalculationVersionDetails !== undefined && oCalculationVersionDetails.openingUsers !== undefined && oCalculationVersionDetails.openingUsers
+							.length > 0) {
+							var aUsers = _.pluck(oCalculationVersionDetails.openingUsers, "id");
+						}
+					}
+					if (aUsers !== undefined && aUsers.length > 0) {
+
+						sMessageInfo =
+							`Calculation Version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): " + '${aUsers.join(", ")}'`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						sMessageInfo = `Calculation Version with ID '${iVersionId}' will be ignored since is not editable.`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+					} else {
+
+						sMessageInfo = `Calculation Version with ID '${iVersionId}' was opened in read-only mode!`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+						sMessageInfo = `Calculation Version with ID '${iVersionId}' will be ignored since is not editable.`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
+					}
+					// close Calculation Version
+					await this.closeCalculationVersion(iVersionId);
+
+					response = false;
+				}
+			}
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !==
+				undefined) {
+
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+
+				response = oResponseBody.body.transactionaldata[0];
+			}
 		}
+
+		return response;
 	}
 
 	/** @function
