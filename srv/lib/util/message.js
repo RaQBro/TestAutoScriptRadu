@@ -538,7 +538,7 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 	const statement = await connection.preparePromisified(
 		`
 			insert into "sap.plc.extensibility::template_application.t_messages"
-			( TIMESTAMP, JOB_ID, SEVERITY, TEXT, DETAILS, OPERATION ) values ( CURRENT_UTCTIMESTAMP, ?, ?, ?, ?, ? );
+			( MESSAGE_ID, TIMESTAMP, JOB_ID, SEVERITY, TEXT, DETAILS, OPERATION ) values ( (SELECT NEWUID() FROM DUMMY), CURRENT_UTCTIMESTAMP, ?, ?, ?, ?, ? );
 		`
 	);
 	await connection.statementExecPromisified(statement, [iJobIdToSave, sSeverity, sTrimmedMessage, sTrimmedDetails, sOperationToSave]);
