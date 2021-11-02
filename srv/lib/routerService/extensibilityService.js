@@ -15,7 +15,7 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
 /** @class
- * @class desc Extensibility PLC services
+ * @classdesc Extensibility PLC services
  * @name Service 
  */
 class Service {

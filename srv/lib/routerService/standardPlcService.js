@@ -1430,15 +1430,14 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Get project lifecycle surcharges
+	 * Get project activity lifecycle surcharges
 	 * 
 	 * @param {string} sProjectId - project id
-	 * @param {string} sSurcharge - material or activity
-	 * @returns {array} - project lifecycle surcharges (material or activity) or throw error
+	 * @returns {array} - project activity lifecycle surcharges or throw error
 	 */
-	async getProjectLifecycleSurcharges(sProjectId, sSurcharge) {
+	async getProjectActivityLifecycleSurcharges(sProjectId) {
 
-		const sQueryPath = `projects/${sSurcharge}-price-surcharges`;
+		const sQueryPath = "projects/activity-price-surcharges";
 		const aParams = [{
 			"name": "id",
 			"value": sProjectId
@@ -1448,16 +1447,80 @@ class Dispatcher {
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get project ${sSurcharge} price surcharges of project with ID '${sProjectId}'.`;
+			const sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
-				const sMessageInfo = `The project ${sSurcharge} price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
+				const sMessageInfo = `The project activity price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.body.transactionaldata;
 			} else {
-				const sDeveloperInfo = `Failed to get project ${sSurcharge} price surcharges of project with ID '${sProjectId}'.`;
+				const sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				return undefined;
+			}
+		}
+
+	}
+
+	/** @function
+	 * Save project activity lifecycle surcharges
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @param {object} aActivityLifecycleSurcharges - activity lifecycle surcharges
+	 * @returns {boolean} - true if success or throw error
+	 */
+	async saveProjectActivityLifecycleSurcharges(sProjectId, aActivityLifecycleSurcharges) {
+
+		const sQueryPath = "projects/activity-price-surcharges";
+		const aParams = [{
+			"name": "id",
+			"value": sProjectId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aActivityLifecycleSurcharges);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to save project activity price surcharges of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `The activity price surcharges for project with ID '${sProjectId}' were saved with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
+		}
+	}
+
+	/** @function
+	 * Get project material lifecycle surcharges
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {array} - project material lifecycle surcharges or throw error
+	 */
+	async getProjectMaterialLifecycleSurcharges(sProjectId) {
+
+		const sQueryPath = "projects/material-price-surcharges";
+		const aParams = [{
+			"name": "id",
+			"value": sProjectId
+		}];
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
+				const sMessageInfo = `The project material price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+				return oResponseBody.body.transactionaldata;
+			} else {
+				const sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 				return undefined;
 			}
@@ -1465,30 +1528,29 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Save project material or activity lifecycle surcharges
+	 * Save project material lifecycle surcharges
 	 * 
 	 * @param {string} sProjectId - project id
-	 * @param {string} sSurcharge - material or activity
-	 * @param {object} aQuantities - total quantities period values
+	 * @param {object} aMaterialLifecycleSurcharges - material lifecycle surcharges
 	 * @returns {boolean} - true if success or throw error
 	 */
-	async saveProjectSurcharges(sProjectId, sSurcharge, aQuantities) {
+	async saveProjectMaterialLifecycleSurcharges(sProjectId, aMaterialLifecycleSurcharges) {
 
-		const sQueryPath = `projects/${sSurcharge}-price-surcharges`;
+		const sQueryPath = "projects/material-price-surcharges";
 		const aParams = [{
 			"name": "id",
 			"value": sProjectId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aQuantities);
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aMaterialLifecycleSurcharges);
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save project ${sSurcharge} price surcharges of project with ID '${sProjectId}'.`;
+			const sDeveloperInfo = `Failed to save project material price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The ${sSurcharge} price surcharges for project with ID '${sProjectId}' were saved with success!`;
+			const sMessageInfo = `The material price surcharges for project with ID '${sProjectId}' were saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
