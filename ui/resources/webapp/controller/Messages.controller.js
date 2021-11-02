@@ -75,7 +75,7 @@ sap.ui.define([
 			let sJobName = jobID || null;
 
 			if (sJobName !== null) {
-				
+
 				this.oTableSearchState = [];
 				this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
 
@@ -99,7 +99,7 @@ sap.ui.define([
 					}]
 				}
 			});
-			
+
 			let stMessages = this.getView().byId("stMessages");
 
 			stMessages.rebindTable();
