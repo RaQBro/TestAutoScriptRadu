@@ -121,7 +121,7 @@ class ExtensibilityRouter {
 
 			// write entry into t_messages only for jobs (fake or real)
 			const sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-			await Message.addLog(request.JOB_ID, sMessageInfo, "message");
+			await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
 
 			// check if web or job request
 			if (helpers.isRequestFromJob(request)) {
