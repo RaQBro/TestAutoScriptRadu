@@ -585,7 +585,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Get Calculation Version from PLC
+	 * Get calculation version from PLC
 	 * 
 	 * @param {string} iVersionId - the calculation version id
 	 * @return {object} result / error - PLC response / the error
@@ -649,10 +649,10 @@ class Dispatcher {
 		const oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to open Calculation Version with ID '${iVersionId}'.`;
+			const sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 		} else {
-			let sMessageInfo = `Calculation Version with ID '${iVersionId}' was opened with success!`;
+			let sMessageInfo = `Calculation version with ID '${iVersionId}' was opened with success!`;
 
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 
@@ -677,18 +677,18 @@ class Dispatcher {
 					if (aUsers !== undefined && aUsers.length > 0) {
 
 						sMessageInfo =
-							`Calculation Version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): " + '${aUsers.join(", ")}'`;
+							`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): " + '${aUsers.join(", ")}'`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
-						sMessageInfo = `Calculation Version with ID '${iVersionId}' will be ignored since is not editable.`;
+						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 					} else {
 
-						sMessageInfo = `Calculation Version with ID '${iVersionId}' was opened in read-only mode!`;
+						sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
-						sMessageInfo = `Calculation Version with ID '${iVersionId}' will be ignored since is not editable.`;
+						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 					}
-					// close Calculation Version
+					// close calculation version
 					await this.closeCalculationVersion(iVersionId);
 
 					response = false;
@@ -1793,15 +1793,24 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * POST Version Items to PLC
+	 * Copy version items to PLC
 	 * 
 	 * @param {array} Items Array
 	 * @return {object} result / error - PLC response / the error
 	 */
 	async copyItems(aItems) {
 
-		const sQueryPath = "items?calculate=false&mode=replace&compressedResult=true";
-		const aParams = [];
+		const sQueryPath = "items";
+		const aParams = [{
+			"name": "calculate",
+			"value": "false"
+		}, {
+			"name": "mode",
+			"value": "replace"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
 
 		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
 		const oResponseBody = JSON.parse(oResponse.body);
@@ -1818,7 +1827,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Update Version Items to PLC
+	 * Update version items to PLC
 	 * 
 	 * @param {array} Items Array
 	 * @return {object} result / error - PLC response / the error
