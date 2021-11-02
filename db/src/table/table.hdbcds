@@ -5,17 +5,26 @@ context template_application {
     entity t_configuration {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);
+    }
+    technical configuration {
+        column store;
     };
 
     entity t_default_values {
         key FIELD_NAME  : String(500);
         key FIELD_VALUE : String(500);
+    }
+    technical configuration {
+        column store;
     };
 
     entity t_technical_user {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);
     }
+    technical configuration {
+        column store;
+    };
 
     entity t_job_log {
         key START_TIMESTAMP     : UTCTimestamp not null;
@@ -30,14 +39,22 @@ context template_application {
             SAP_JOB_ID          : Integer; // null for online mode
             SAP_JOB_SCHEDULE_ID : String(500); // null for online mode
             SAP_JOB_RUN_ID      : String(500); // null for online mode
+    }
+    technical configuration {
+        column store;
     };
 
     entity t_messages {
+        key MESSAGE_ID : String(32) not null;
         key TIMESTAMP : UTCTimestamp not null;
             JOB_ID    : Integer64; // Negative if online mode / Positive if job
             SEVERITY  : String(50);
             TEXT      : String(5000);
             DETAILS   : String(5000);
             OPERATION : String(500);
+    }
+    technical configuration {
+        column store;
+        unique index MESSAGE on (MESSAGE_ID, TIMESTAMP, JOB_ID) asc;
     };
 };
