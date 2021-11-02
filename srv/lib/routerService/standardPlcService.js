@@ -1712,26 +1712,6 @@ class Dispatcher {
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-
-			// for each entry, check the task status until is completed, we can't close the project until then
-			// const Persistency = $.import("sap.plc.xs.db", "persistency").Persistency;
-			// const TaskService = $.import("sap.plc.xs.service", "taskService").TaskService;
-			// const oConnectionFactory = $.import("sap.plc.xs.db.connection", "connection");
-			// const LifecycleCalculator = $.import("sap.plc.xs.followUp", "lifecycleCalculator").LifecycleVersionCalculator;
-			// var PlcSchemas = $.import("sap.plc.xs.util", "constants").PlcSchemas;
-			// var oPersistency = new Persistency(oConnectionFactory.getConnection(), PlcSchemas.Plc, "SAP_PLC_REPL");
-			// var oTaskService = new TaskService(oPersistency);
-
-			// var iTaskId = oResponseBody.body.transactionaldata[0].TASK_ID;
-			// new LifecycleCalculator(iTaskId, oPersistency, oConnectionFactory, oTaskService).calculate();
-
-			// _.each(oResponseBody.body.transactionaldata, function (oData) {
-			// 	var status = checkTaskStatus(oData.TASK_ID);
-			// 	while (status !== 'COMPLETED') {
-			// 		status = checkTaskStatus(oData.TASK_ID);
-			// 	}
-			// });
-
 			const sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
