@@ -866,6 +866,89 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * Delete the items from calculation version
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {array} aItemsToDelete - the items to be deleted
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async deleteItemsFromVersion(iVersionId, aItemsToDelete) {
+
+		const sQueryPath = "items";
+		const aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		var aBodyData = [];
+		for (var i = 0; i < aItemsToDelete.length; i++) {
+			const oItemToDelete = {
+				"ITEM_ID": aItemsToDelete[i].ITEM_ID,
+				"CALCULATION_VERSION_ID": aItemsToDelete[i].CALCULATION_VERSION_ID
+			};
+			aBodyData.push(oItemToDelete);
+		}
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to delete ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `Delete of ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
+		}
+	}
+
+	/** @function
+	 * Deactivate the items from calculation version
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {array} aItemsToDelete - the items to be deactivated
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async deactivateItemsFromVersion(iVersionId, aItemsToDeactivate) {
+
+		const sQueryPath = "items";
+		const aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		var aBodyData = [];
+		for (var i = 0; i < aItemsToDeactivate.length; i++) {
+			const oItemToDelete = {
+				"IS_ACTIVE": 0,
+				"ITEM_ID": aItemsToDeactivate[i].ITEM_ID,
+				"CALCULATION_VERSION_ID": aItemsToDeactivate[i].CALCULATION_VERSION_ID
+			};
+			aBodyData.push(oItemToDelete);
+		}
+
+		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		const oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			const sDeveloperInfo = `Failed to deactivate ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			const sMessageInfo = `Deactivate ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return true;
+		}
+	}
+
+	/** @function
 	 * Update the selected referenced items from calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
