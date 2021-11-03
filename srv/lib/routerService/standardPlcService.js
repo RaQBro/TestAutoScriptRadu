@@ -100,13 +100,13 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Create new variant for a calculation version
+	 * Create variant for a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {object} oVariant - the variant details
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async createNewVariant(iVersionId, oVariant) {
+	async createVariant(iVersionId, oVariant) {
 
 		let sQueryPath = `calculation-versions/${iVersionId}/variants`;
 		let aParams = [];
@@ -259,13 +259,13 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Save a newly calculated variant from variant matrix of a calculation version
+	 * Save a calculated variant from variant matrix of a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {integer} iVariantId - the variant ID
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async saveNewlyCalculatedVariant(iVersionId, iVariantId) {
+	async saveCalculatedVariant(iVersionId, iVariantId) {
 
 		let sQueryPath = `calculation-versions/${iVersionId}/variant-calculator/${iVariantId}`;
 		let aParams = [];
@@ -419,14 +419,14 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Create a new calculation and a new version
+	 * Create a calculation and a version
 	 * 
 	 * @param {object} oDetails - the calculation and version details
 	 * @param {string} sCalculationName - the calculation name
 	 * @param {string} sVersionName - the calculation version name
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async createNewCalculation(oDetails, sCalculationName, sVersionName) {
+	async createCalculation(oDetails, sCalculationName, sVersionName) {
 
 		let sQueryPath = "calculations";
 		let aParams = [{
@@ -487,7 +487,7 @@ class Dispatcher {
 
 		if (oResponse.statusCode !== 201) {
 			let sDeveloperInfo =
-				`Failed to create a new calculation with name '${sCalculationName}' in project with ID '${oDetails.PROJECT_ID}'.`;
+				`Failed to create a calculation with name '${sCalculationName}' in project with ID '${oDetails.PROJECT_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
@@ -546,12 +546,12 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Create new calculation version as copy of another version
+	 * Create calculation version as copy of another version
 	 * 
 	 * @param {integer} iVersionId - version id to copy
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async createNewVersionAsCopy(iVersionId) {
+	async createVersionAsCopy(iVersionId) {
 
 		let sQueryPath = "calculation-versions";
 		let aParams = [{
@@ -572,15 +572,15 @@ class Dispatcher {
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			let sDeveloperInfo = `Failed to create new version as copy of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to create a version as copy of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			let oNewCopyVersion = oResponseBody.body.transactionaldata[0];
+			let oCopyVersion = oResponseBody.body.transactionaldata[0];
 			let sMessageInfo =
-				`The version with ID '" + oNewCopyVersion.CALCULATION_VERSION_ID + "' was created with success as copy of version with ID '${iVersionId}'.`;
+				`The version with ID '${oCopyVersion.CALCULATION_VERSION_ID}' was created with success as copy of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
-			return oNewCopyVersion;
+			return oCopyVersion;
 		}
 	}
 
