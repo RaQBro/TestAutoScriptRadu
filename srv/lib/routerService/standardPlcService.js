@@ -38,7 +38,7 @@ class Dispatcher {
 	 */
 	async openVariantMatrix(iVersionId) {
 
-		let sQueryPath = "calculation-versions/" + iVersionId;
+		let sQueryPath = `calculation-versions/${iVersionId}`;
 		let aParams = [];
 
 		let oBodyData = {
@@ -62,22 +62,22 @@ class Dispatcher {
 						var aUsers = _.pluck(oMessage.details.userObjs, "id");
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
-						sMessageInfo = "Variant Matrix of calculation version with ID '" + iVersionId +
-							"' was opened in read-only mode! Locked by User(s): " + aUsers.join(", ");
+						sMessageInfo =
+							`Variant Matrix of calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): ${aUsers.join(", ")}`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 						sMessageInfo =
-							`Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable. Locked by User(s): ${aUsers}`;
+							`Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): ${aUsers.join(", ")}`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 					} else {
-						sMessageInfo = "Variant Matrix of calculation version with ID '" + iVersionId + "' is locked and was opened in read-only mode!";
+						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' is locked and was opened in read-only mode!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
-						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
+						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 					}
 					// close variant matrix
 					this.closeVariantMatrix(iVersionId);
 
-					return null;
+					return false;
 				} else {
 					let sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
@@ -156,7 +156,7 @@ class Dispatcher {
 	 */
 	async saveAllVariantsOfVersion(iVersionId, aVariantsLastModifiedOn) {
 
-		let sQueryPath = "calculation-versions/" + iVersionId + "/variants";
+		let sQueryPath = `calculation-versions/${iVersionId}/variants`;
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, aVariantsLastModifiedOn);
@@ -182,7 +182,7 @@ class Dispatcher {
 	 */
 	async deleteVariant(iVersionId, iVariantId) {
 
-		let sQueryPath = "calculation-versions/" + iVersionId + "/variants/" + iVariantId;
+		let sQueryPath = `calculation-versions/${iVersionId}/variants/${iVariantId}`;
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams);
@@ -330,7 +330,7 @@ class Dispatcher {
 	 */
 	async closeVariantMatrix(iVersionId) {
 
-		let sQueryPath = "calculation-versions/" + iVersionId;
+		let sQueryPath = `calculation-versions/${iVersionId}`;
 		let aParams = [];
 
 		let oBodyData = {
@@ -655,36 +655,31 @@ class Dispatcher {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was opened with success!`;
 
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
-
 				let oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
-
 				if (oMessage !== undefined) {
-
-					if (oMessage.details !== undefined && oMessage.details.calculationVersionObjs !== undefined && oMessage.details.calculationVersionObjs
-						.length > 0) {
+					if (oMessage.details !== undefined && oMessage.details.calculationVersionObjs !== undefined &&
+						oMessage.details.calculationVersionObjs.length > 0) {
 
 						let oCalculationVersionDetails = _.find(oMessage.details.calculationVersionObjs, function (oDetailsCalculationVersion) {
 							return oDetailsCalculationVersion.id === iVersionId;
 						});
-
 						if (oCalculationVersionDetails !== undefined && oMessage.details.userObjs !== undefined && oMessage.details.userObjs.length > 0) {
 							var aUsers = _.pluck(oMessage.details.userObjs, "id");
 						}
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
-
 						sMessageInfo =
 							`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
-						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
+						sMessageInfo =
+							`Calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): '${aUsers.join(", ")}'`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 					} else {
-
 						sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
-						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
+						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 					}
 					// close calculation version
@@ -694,8 +689,7 @@ class Dispatcher {
 				}
 			}
 			if (oResponseBody.head === undefined && oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
-				oResponseBody.body.transactionaldata[0] !==
-				undefined) {
+				oResponseBody.body.transactionaldata[0] !== undefined) {
 
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 
@@ -1086,15 +1080,18 @@ class Dispatcher {
 					await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 					// delete calculation
 					await this.deleteCalculation(iCalculationId);
+
 					return true;
 				} else {
 					let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+
 					return undefined;
 				}
 			} else {
 				let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+
 				return undefined;
 			}
 		} else {
@@ -1132,7 +1129,7 @@ class Dispatcher {
 			sMessageInfo = `Calculation with ID '${iCalculationId}' was deleted with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 
-			return null;
+			return true;
 		}
 	}
 
@@ -1394,10 +1391,10 @@ class Dispatcher {
 							var aUsers = _.pluck(oPrjDetails.openingUsers, "id");
 						}
 					}
-					if (aUsers !== undefined) {
-						sMessageInfo = `Project with ID '${sProjectId}' was opened in read-only mode! Locked by User(s): ${aUsers}`;
+					if (aUsers !== undefined && aUsers.length > 0) {
+						sMessageInfo = `Project with ID '${sProjectId}' was opened in read-only mode! Locked by User(s): ${aUsers.join(", ")}`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
-						sMessageInfo = `Project with ID '${sProjectId}' will be ignored since is not editable! Locked by User(s): ${aUsers}`;
+						sMessageInfo = `Project with ID '${sProjectId}' will be ignored since is not editable! Locked by User(s): ${aUsers.join(", ")}`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 					} else {
 						sMessageInfo = `Project with ID '${sProjectId}' is locked and was opened in read-only mode!`;
@@ -1407,21 +1404,25 @@ class Dispatcher {
 					}
 					// close project
 					this.closeProject(sProjectId);
-					return true;
+
+					return false;
 				} else {
 					let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+
 					return undefined;
 				}
 			}
-			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !==
-				undefined) {
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+				oResponseBody.body.transactionaldata[0] !== undefined) {
 				sMessageInfo = `Project with ID '${sProjectId}' was opened with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+
 				return oResponseBody.body.transactionaldata[0];
 			} else {
 				let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+
 				return undefined;
 			}
 		}
@@ -1838,8 +1839,17 @@ class Dispatcher {
 	 */
 	async getAddinConfiguration(addinGuid, addinVersion) {
 
-		let sQueryPath = "addin-configurations?guid=" + addinGuid + "&version=" + addinVersion + "&use_previous_version=false";
-		let aParams = [];
+		let sQueryPath = "addin-configurations";
+		let aParams = [{
+			"name": "guid",
+			"value": addinGuid
+		}, {
+			"name": "version",
+			"value": addinVersion
+		}, {
+			"name": "use_previous_version",
+			"value": "false"
+		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
 		let oResponseBody = JSON.parse(oResponse.body);
