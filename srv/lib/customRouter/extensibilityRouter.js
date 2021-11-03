@@ -41,10 +41,10 @@ class ExtensibilityRouter {
 
 	constructor() {
 
-		var router = express.Router();
+		let router = express.Router();
 
-		var ExtensibilityPlcService;
-		var JobSchedulerUtil = new JobScheduler();
+		let ExtensibilityPlcService;
+		let JobSchedulerUtil = new JobScheduler();
 
 		/**
 		 * Common function before all routes are processed:

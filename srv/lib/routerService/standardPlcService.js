@@ -58,8 +58,9 @@ class Dispatcher {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 				if (oMessage !== undefined) {
+					let aUsers;
 					if (oMessage.details !== undefined && oMessage.details.userObjs !== undefined && oMessage.details.userObjs.length > 0) {
-						var aUsers = _.pluck(oMessage.details.userObjs, "id");
+						aUsers = _.pluck(oMessage.details.userObjs, "id");
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
 						sMessageInfo =
@@ -659,14 +660,16 @@ class Dispatcher {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 				if (oMessage !== undefined) {
+					let aUsers;
 					if (oMessage.details !== undefined && oMessage.details.calculationVersionObjs !== undefined &&
 						oMessage.details.calculationVersionObjs.length > 0) {
 
 						let oCalculationVersionDetails = _.find(oMessage.details.calculationVersionObjs, function (oDetailsCalculationVersion) {
 							return oDetailsCalculationVersion.id === iVersionId;
 						});
+
 						if (oCalculationVersionDetails !== undefined && oMessage.details.userObjs !== undefined && oMessage.details.userObjs.length > 0) {
-							var aUsers = _.pluck(oMessage.details.userObjs, "id");
+							aUsers = _.pluck(oMessage.details.userObjs, "id");
 						}
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
@@ -1383,12 +1386,13 @@ class Dispatcher {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 				if (oMessage !== undefined) {
+					let aUsers;
 					if (oMessage.details !== undefined && oMessage.details.projectObjs !== undefined && oMessage.details.projectObjs.length > 0) {
 						let oPrjDetails = _.find(oMessage.details.projectObjs, function (oDetailsPrj) {
 							return oDetailsPrj.id === sProjectId;
 						});
 						if (oPrjDetails !== undefined && oPrjDetails.openingUsers !== undefined && oPrjDetails.openingUsers.length > 0) {
-							var aUsers = _.pluck(oPrjDetails.openingUsers, "id");
+							aUsers = _.pluck(oPrjDetails.openingUsers, "id");
 						}
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {

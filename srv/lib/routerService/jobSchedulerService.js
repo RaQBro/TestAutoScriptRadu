@@ -183,8 +183,8 @@ class JobSchedulerService {
 			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
 
-		var aSchedules = [];
-		var iNumberOfSchedules = 0;
+		let aSchedules = [];
+		let iNumberOfSchedules = 0;
 		let aBusinessObjects = ["PROJECT_ID", "CALCULATION_ID", "CALCULATION_VERSION_ID"];
 
 		// get the ids splitted into smaller arrays 
@@ -193,7 +193,7 @@ class JobSchedulerService {
 		for (let sBusinessObject of aBusinessObjects) {
 			for (let aSelectedIds of oSplittedIds[sBusinessObject]) {
 
-				var oSchedule = {
+				let oSchedule = {
 					"description": "Job scheduled on-demand",
 					"type": "one-time",
 					"data": {},
