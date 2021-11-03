@@ -152,7 +152,7 @@ class ExtensibilityRouter {
 				const oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
 				// add service response body to job log entry
-				JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
+				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
 
 				// write end of the job into t_messages only for jobs (fake or real)
 				await Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message", undefined, sOperation);
