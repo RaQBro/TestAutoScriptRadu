@@ -160,7 +160,7 @@ class PlcDispatcher {
 					"responseBody": oResponse.body
 				};
 				let sDeveloperInfo =
-					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment letiables.";
+					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
 				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
 			}
 
