@@ -65,7 +65,5 @@ resources:
     type: org.cloudfoundry.existing-service
     
   - name: secureStore
-    type: com.sap.xs.hana-securestore
-    parameters:
-      service-name: secureStore
+    type: org.cloudfoundry.existing-service
       
