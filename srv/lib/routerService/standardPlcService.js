@@ -669,15 +669,14 @@ class Dispatcher {
 							return oDetailsCalculationVersion.id === iVersionId;
 						});
 
-						if (oCalculationVersionDetails !== undefined && oCalculationVersionDetails.openingUsers !== undefined && oCalculationVersionDetails.openingUsers
-							.length > 0) {
-							var aUsers = _.pluck(oCalculationVersionDetails.openingUsers, "id");
+						if (oCalculationVersionDetails !== undefined && oMessage.details.userObjs !== undefined && oMessage.details.userObjs.length > 0) {
+							var aUsers = _.pluck(oMessage.details.userObjs, "id");
 						}
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
 
 						sMessageInfo =
-							`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): " + '${aUsers.join(", ")}'`;
+							`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable.`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
@@ -694,7 +693,8 @@ class Dispatcher {
 					response = false;
 				}
 			}
-			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !==
+			if (oResponseBody.head === undefined && oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+				oResponseBody.body.transactionaldata[0] !==
 				undefined) {
 
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
