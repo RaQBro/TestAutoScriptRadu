@@ -41,12 +41,12 @@ class JobSchedulerUtil {
 	 */
 	constructor() {
 
-		const jobOptions = xsenv.getServices({
+		let jobOptions = xsenv.getServices({
 			jobs: {
 				tag: "jobscheduler"
 			}
 		});
-		const schedulerOptions = {
+		let schedulerOptions = {
 			baseURL: jobOptions.jobs.url,
 			user: jobOptions.jobs.user,
 			password: jobOptions.jobs.password,
@@ -67,19 +67,19 @@ class JobSchedulerUtil {
 	async createJobs() {
 
 		// check if jobs needs to be created
-		const bCreateJobsAutomatically = await this.getCreateJobsAutomaticallyFromConfigurationTable();
+		let bCreateJobsAutomatically = await this.getCreateJobsAutomaticallyFromConfigurationTable();
 		if (bCreateJobsAutomatically !== true) {
 			return;
 		}
-		var that = this;
+		let that = this;
 
 		// get the full URI of this app
-		var thisApp = JSON.parse(process.env.VCAP_APPLICATION);
-		var thisAppURI = thisApp.full_application_uris[0];
+		let thisApp = JSON.parse(process.env.VCAP_APPLICATION);
+		let thisAppURI = thisApp.full_application_uris[0];
 
 		// loop over all jobs defined into config.js
 		_.each(aConfigJobs, function (oJobDetails) {
-			const oJobToFind = {
+			let oJobToFind = {
 				name: oJobDetails.name
 			};
 			// check if job exists
@@ -88,7 +88,7 @@ class JobSchedulerUtil {
 					if (error.statusCode === 404) { // now found => create job
 						// add the full URI of app to action
 						oJobDetails.action = thisAppURI + oJobDetails.action;
-						var oJobToCreate = {
+						let oJobToCreate = {
 							job: oJobDetails
 						};
 						// create job
@@ -118,21 +118,21 @@ class JobSchedulerUtil {
 	 */
 	async getCreateJobsAutomaticallyFromConfigurationTable() {
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
 
-		const statement = await connection.preparePromisified(
+		let statement = await connection.preparePromisified(
 			`
 				select * from "sap.plc.extensibility::template_application.t_configuration"
 				where FIELD_NAME = 'CREATE_JOBS_AUTOMATICALLY';
 			`
 		);
-		const aResults = await connection.statementExecPromisified(statement, []);
+		let aResults = await connection.statementExecPromisified(statement, []);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		const aCreateJobsAutomatically = aResults.slice();
+		let aCreateJobsAutomatically = aResults.slice();
 
-		var bCreateJobsAutomatically = null;
+		let bCreateJobsAutomatically = null;
 		if (aCreateJobsAutomatically.length === 1) {
 			if (aCreateJobsAutomatically[0].FIELD_VALUE === "true") {
 				bCreateJobsAutomatically = true;
@@ -154,12 +154,12 @@ class JobSchedulerUtil {
 	 */
 	updateRunLogOfSchedule(request, iResponseStatusCode, oServiceResponseBody) {
 
-		var iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
-		var iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
-		var iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
+		let iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
+		let iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
+		let iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
 
-		var bWithSuccess = true;
-		var sMessageInfo = `Job with ID '${request.JOB_ID}' completed with success!`;
+		let bWithSuccess = true;
+		let sMessageInfo = `Job with ID '${request.JOB_ID}' completed with success!`;
 
 		if (request.IS_ONLINE_MODE && (!helpers.isRequestFromJob(request) || iResponseStatusCode === undefined || oServiceResponseBody ===
 				undefined)) {
@@ -167,7 +167,7 @@ class JobSchedulerUtil {
 			bWithSuccess = false;
 		}
 
-		var oScheduleData = {
+		let oScheduleData = {
 			success: bWithSuccess,
 			message: sMessageInfo
 		};
@@ -184,7 +184,7 @@ class JobSchedulerUtil {
 			}
 		}
 
-		const oJob = {
+		let oJob = {
 			jobId: iSapJobId,
 			scheduleId: iSapScheduleId,
 			runId: iSapRunId,
@@ -211,34 +211,34 @@ class JobSchedulerUtil {
 			return;
 		}
 
-		const iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
-		const iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
-		const iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
+		let iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
+		let iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
+		let iSapRunId = request.headers["x-sap-job-run-id"] === undefined ? null : request.headers["x-sap-job-run-id"];
 
-		const sJobName = request.originalUrl === undefined ? null : request.originalUrl;
-		const sRequestBody = request.body === undefined ? null : JSON.stringify(request.body);
+		let sJobName = request.originalUrl === undefined ? null : request.originalUrl;
+		let sRequestBody = request.body === undefined ? null : JSON.stringify(request.body);
 
-		var sUserId = null;
-		var iWebRequest = null;
+		let sUserId = null;
+		let iWebRequest = null;
 
 		if (request.IS_ONLINE_MODE === true && !helpers.isRequestFromJob(request)) {
 			sUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
 		} else {
-			const TechnicalUserUtil = new TechnicalUser();
+			let TechnicalUserUtil = new TechnicalUser();
 			sUserId = await TechnicalUserUtil.getTechnicalUserFromTable();
 			if (helpers.isUndefinedOrNull(sUserId)) {
-				const sDeveloperInfo = "Please provide a technical user into administration section of application!";
-				const oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
+				let sDeveloperInfo = "Please provide a technical user into administration section of application!";
+				let oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 
 				return oPlcException;
 			}
 			iWebRequest = 0;
 		}
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-		const statement = await connection.preparePromisified(
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+		let statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
 				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
@@ -264,18 +264,18 @@ class JobSchedulerUtil {
 			return;
 		}
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
 
-		var sJobStatus = null;
+		let sJobStatus = null;
 		if (iResponseStatusCode === 200) {
 			sJobStatus = await this.generateJobStatus(request.JOB_ID);
 		} else {
 			sJobStatus = "Error";
 		}
-		const sResponseBody = oServiceResponseBody === undefined ? null : JSON.stringify(oServiceResponseBody);
+		let sResponseBody = oServiceResponseBody === undefined ? null : JSON.stringify(oServiceResponseBody);
 
-		const statement = await connection.preparePromisified(
+		let statement = await connection.preparePromisified(
 			`
 				update "sap.plc.extensibility::template_application.t_job_log"
 				set RESPONSE_BODY = ?, JOB_STATUS = ?, END_TIMESTAMP = CURRENT_UTCTIMESTAMP where START_TIMESTAMP = ?;
@@ -294,15 +294,15 @@ class JobSchedulerUtil {
 	 */
 	async getMessagesOfJobWithId(iJobId) {
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-		const statement = await connection.preparePromisified(
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+		let statement = await connection.preparePromisified(
 			`
 				select * from "sap.plc.extensibility::template_application.t_messages"
 				where JOB_ID = ?;
 			`
 		);
-		const aMessages = await connection.statementExecPromisified(statement, [iJobId]);
+		let aMessages = await connection.statementExecPromisified(statement, [iJobId]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 		return aMessages.slice();
@@ -316,15 +316,15 @@ class JobSchedulerUtil {
 	 */
 	async generateJobStatus(iJobId) {
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-		const statement = await connection.preparePromisified(
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+		let statement = await connection.preparePromisified(
 			`
 				select count(*) as COUNT from "sap.plc.extensibility::template_application.t_messages"
 				where SEVERITY = 'Error' and JOB_ID = ?;
 			`
 		);
-		const aResultCount = await connection.statementExecPromisified(statement, [iJobId]);
+		let aResultCount = await connection.statementExecPromisified(statement, [iJobId]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 		return parseInt(aResultCount[0].COUNT, 10) > 0 ? "Done" : "Success";
@@ -345,8 +345,8 @@ class JobSchedulerUtil {
 	 */
 	async generateJobIdAndJobTimestampAndJobType(request) {
 
-		var iJobId;
-		var iWebRequest;
+		let iJobId;
+		let iWebRequest;
 
 		if (helpers.isRequestFromJob(request)) {
 			// background job
@@ -371,30 +371,30 @@ class JobSchedulerUtil {
 
 		// do not generate a JOB_ID if parameter IS_ONLINE_MODE is not defined
 		if (iWebRequest === 0 || request.query.IS_ONLINE_MODE !== undefined && request.query.IS_ONLINE_MODE !== "") {
-			const hdbClient = await DatabaseClass.createConnection();
-			const connection = new DatabaseClass(hdbClient);
+			let hdbClient = await DatabaseClass.createConnection();
+			let connection = new DatabaseClass(hdbClient);
 
 			if (iWebRequest === 1) {
-				const statement = await connection.preparePromisified(
+				let statement = await connection.preparePromisified(
 					`
 					select MIN("JOB_ID") as LAST_NEGATIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
 				`
 				);
-				const aResults = await connection.statementExecPromisified(statement, []);
-				const aJobIds = aResults.slice();
+				let aResults = await connection.statementExecPromisified(statement, []);
+				let aJobIds = aResults.slice();
 				if (aJobIds[0].LAST_NEGATIVE_JOB_ID === null || aJobIds[0].LAST_NEGATIVE_JOB_ID > 0) {
 					iJobId = -1;
 				} else {
 					iJobId = parseInt(aJobIds[0].LAST_NEGATIVE_JOB_ID) - 1;
 				}
 			} else {
-				const statement = await connection.preparePromisified(
+				let statement = await connection.preparePromisified(
 					`
 					select MAX("JOB_ID") as LAST_POSITIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
 				`
 				);
-				const aResults = await connection.statementExecPromisified(statement, []);
-				const aJobIds = aResults.slice();
+				let aResults = await connection.statementExecPromisified(statement, []);
+				let aJobIds = aResults.slice();
 				if (aJobIds[0].LAST_POSITIVE_JOB_ID === null || aJobIds[0].LAST_POSITIVE_JOB_ID < 0) {
 					iJobId = 1;
 				} else {
@@ -403,13 +403,13 @@ class JobSchedulerUtil {
 			}
 
 			// get current timestamp
-			const statement = await connection.preparePromisified(
+			let statement = await connection.preparePromisified(
 				`
 				select CURRENT_UTCTIMESTAMP from dummy;
 			`
 			);
-			const aResults = await connection.statementExecPromisified(statement, []);
-			const aCurrentTimestamp = aResults.slice();
+			let aResults = await connection.statementExecPromisified(statement, []);
+			let aCurrentTimestamp = aResults.slice();
 
 			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
@@ -440,12 +440,12 @@ class JobSchedulerUtil {
 	 */
 	async splittIdsIntoSmallArrays(oRequestBody) {
 
-		var oReturnIds = {
+		let oReturnIds = {
 			"PROJECT_ID": [],
 			"CALCULATION_ID": [],
 			"CALCULATION_VERSION_ID": []
 		};
-		const aBusinessObjects = [{
+		let aBusinessObjects = [{
 			"BUSINESS_OBJECT": "PROJECT_ID",
 			"VALUE": "NUMBER_OF_PROJECTS"
 		}, {
@@ -457,14 +457,14 @@ class JobSchedulerUtil {
 		}];
 
 		// get from configuration the maximum number of ids from one array
-		const aDefaultValues = await helpers.getAllDefaultValues();
+		let aDefaultValues = await helpers.getAllDefaultValues();
 
-		for (const oBusinessObject of aBusinessObjects) {
-			var aAllIds = [];
+		for (let oBusinessObject of aBusinessObjects) {
+			let aAllIds = [];
 			if (oRequestBody[oBusinessObject.BUSINESS_OBJECT] !== undefined && oRequestBody[oBusinessObject.BUSINESS_OBJECT].length > 0) {
 				aAllIds = oRequestBody[oBusinessObject.BUSINESS_OBJECT];
 			}
-			const oDefaultValue = _.find(aDefaultValues, function (oValue) {
+			let oDefaultValue = _.find(aDefaultValues, function (oValue) {
 				return oValue.FIELD_NAME === oBusinessObject.VALUE;
 			});
 			if (!helpers.isUndefinedNullOrEmptyObject(oDefaultValue)) {

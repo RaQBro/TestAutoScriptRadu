@@ -21,13 +21,13 @@ module.exports = class {
 
 	static createConnection() {
 		return new Promise((resolve, reject) => {
-			const xsenv = require("@sap/xsenv");
-			var options = xsenv.getServices({
+			let xsenv = require("@sap/xsenv");
+			let options = xsenv.getServices({
 				hana: {
 					plan: "hdi-shared"
 				}
 			});
-			var hdbext = require("@sap/hdbext");
+			let hdbext = require("@sap/hdbext");
 			options.hana.pooling = true;
 			hdbext.createConnection(options.hana, (error, client) => {
 				if (error) {
@@ -71,7 +71,7 @@ module.exports = class {
 							results: results[0]
 						});
 					} else {
-						var output = {
+						let output = {
 							"outputScalar": outputScalar
 						};
 						for (let i = 0; i < results.length; i++) {

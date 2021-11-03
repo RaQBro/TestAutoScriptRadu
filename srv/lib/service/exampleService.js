@@ -36,28 +36,28 @@ const sOperation = "Dummy Operation"; // operation of the service/job
 async function doService(request) {
 
 	// --------------------- Global Constants and Variables ---------------------
-	var iStatusCode = 200; // service response code
-	var oServiceResponseBody = {}; // service response body
+	let iStatusCode = 200; // service response code
+	let oServiceResponseBody = {}; // service response body
 
-	const StandardPlcService = new StandardPlcDispatcher(request, sOperation);
-	const ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
+	let StandardPlcService = new StandardPlcDispatcher(request, sOperation);
+	let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
-	const sLanguage = "EN";
+	let sLanguage = "EN";
 
 	// ------------------------- Start Functions List ---------------------------
 
 	this.getFirstProject = async function () {
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-		const statement = await connection.preparePromisified(
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+		let statement = await connection.preparePromisified(
 			`
 				select TOP 1 PROJECT_ID from "sap.plc.db::basis.t_project";
 			`
 		);
 
-		const aProjectResults = await connection.statementExecPromisified(statement, []);
+		let aProjectResults = await connection.statementExecPromisified(statement, []);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-		const aProjects = aProjectResults.slice();
+		let aProjects = aProjectResults.slice();
 
 		return _.pluck(aProjects, "PROJECT_ID");
 	};
@@ -71,15 +71,15 @@ async function doService(request) {
 			return i;
 		}
 
-		var dDate = new Date();
-		var iYear = dDate.getFullYear();
-		var sMonth = addZero(dDate.getMonth() + 1);
-		var sDate = addZero(dDate.getDate());
-		var sHours = addZero(dDate.getHours());
-		var sMinutes = addZero(dDate.getMinutes());
-		var sSeconds = addZero(dDate.getSeconds());
+		let dDate = new Date();
+		let iYear = dDate.getFullYear();
+		let sMonth = addZero(dDate.getMonth() + 1);
+		let sDate = addZero(dDate.getDate());
+		let sHours = addZero(dDate.getHours());
+		let sMinutes = addZero(dDate.getMinutes());
+		let sSeconds = addZero(dDate.getSeconds());
 
-		var sCurrentDate = "";
+		let sCurrentDate = "";
 		switch (sPattern) {
 		case "YYYYMMDD hh:mm:ss":
 			sCurrentDate = iYear + "" + sMonth + "" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
@@ -135,17 +135,17 @@ async function doService(request) {
 		// 	}
 		// }
 
-		var oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
-		var sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
+		let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
+		let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
 		oServiceResponseBody.CURRENT_USER = sCurrentUser;
 
-		var sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
+		let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
 		oServiceResponseBody.CURRENT_DATE = sCurrentDate;
 
-		var sProjectId = await this.getFirstProject();
+		let sProjectId = await this.getFirstProject();
 		oServiceResponseBody.PROJECT_ID = sProjectId;
 
-		var aAllProject = await ExtensibilityPlcService.getAllProjects();
+		let aAllProject = await ExtensibilityPlcService.getAllProjects();
 		oServiceResponseBody.PROJECT = aAllProject[0];
 
 		let oVersion = await StandardPlcService.openCalculationVersion(1);
@@ -158,7 +158,7 @@ async function doService(request) {
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {
-		const oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
+		let oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
 		iStatusCode = oPlcException.code.responseCode;
 		oServiceResponseBody = oPlcException;
 	}

@@ -30,9 +30,9 @@ class StandardPlcRouter {
 
 	constructor() {
 
-		var router = express.Router();
+		let router = express.Router();
 
-		var StandardPlcService;
+		let StandardPlcService;
 
 		/**
 		 * Common function before all routes are processed
@@ -46,12 +46,12 @@ class StandardPlcRouter {
 
 		router.get("/initSession", function (request, response) {
 
-			const sLanguage = request.query.language !== undefined ? request.query.language : "EN";
+			let sLanguage = request.query.language !== undefined ? request.query.language : "EN";
 
 			StandardPlcService.initPlcSession(sLanguage).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -61,19 +61,19 @@ class StandardPlcRouter {
 			StandardPlcService.logoutPlcSession().then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
 		router.get("/openCalculationVersion", function (request, response) {
 
-			const iVersionId = request.query.versionId;
+			let iVersionId = request.query.versionId;
 
 			StandardPlcService.openCalculationVersion(iVersionId).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});

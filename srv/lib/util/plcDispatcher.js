@@ -56,7 +56,7 @@ class PlcDispatcher {
 	 */
 	async dispatchPrivateApi(sQueryPath, sMethod, aParams, oBodyData) {
 
-		var oPrivateRequestOptions = {
+		let oPrivateRequestOptions = {
 			method: sMethod,
 			url: global.plcXsjsUrl + "/xs/rest/dispatcher.xsjs/" + sQueryPath,
 			headers: {
@@ -66,12 +66,12 @@ class PlcDispatcher {
 			}
 		};
 
-		var sPrivateParams = " ";
+		let sPrivateParams = " ";
 		if (aParams !== undefined && aParams.length > 0) {
 			oPrivateRequestOptions.qs = {};
-			for (var i = 0; i < aParams.length; i++) {
-				const key = aParams[i].name;
-				const value = aParams[i].value;
+			for (let i = 0; i < aParams.length; i++) {
+				let key = aParams[i].name;
+				let value = aParams[i].value;
 				sPrivateParams += key + "=" + value + " ";
 				oPrivateRequestOptions.qs[key] = value;
 			}
@@ -81,12 +81,12 @@ class PlcDispatcher {
 			oPrivateRequestOptions.body = JSON.stringify(oBodyData);
 		}
 
-		const oResponse = await makeRequest(oPrivateRequestOptions);
+		let oResponse = await makeRequest(oPrivateRequestOptions);
 
 		try {
 			JSON.parse(oResponse.body);
 		} catch (e) {
-			const oDetails = {
+			let oDetails = {
 				"requestMethod": sMethod,
 				"requestQueryPath": sQueryPath,
 				"requestParameters": sPrivateParams,
@@ -94,7 +94,7 @@ class PlcDispatcher {
 				"responseMessage": oResponse.statusMessage,
 				"responseBody": oResponse.body
 			};
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
 			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
 		}
@@ -119,7 +119,7 @@ class PlcDispatcher {
 	 */
 	async dispatchPublicApi(sQueryPath, sMethod, aParams, oBodyData) {
 
-		var oPublicRequestOptions = {
+		let oPublicRequestOptions = {
 			method: sMethod,
 			url: global.plcPublicApiUrl + "/api/v1/" + sQueryPath,
 			headers: {
@@ -129,12 +129,12 @@ class PlcDispatcher {
 			}
 		};
 
-		var sPublicParams = " ";
+		let sPublicParams = " ";
 		if (aParams !== undefined && aParams.length > 0) {
 			oPublicRequestOptions.qs = {};
-			for (var i = 0; i < aParams.length; i++) {
-				const key = aParams[i].name;
-				const value = aParams[i].value;
+			for (let i = 0; i < aParams.length; i++) {
+				let key = aParams[i].name;
+				let value = aParams[i].value;
 				sPublicParams += key + "=" + value + " ";
 				oPublicRequestOptions.qs[key] = value;
 			}
@@ -144,14 +144,14 @@ class PlcDispatcher {
 			oPublicRequestOptions.body = JSON.stringify(oBodyData);
 		}
 
-		const oResponse = await makeRequest(oPublicRequestOptions);
+		let oResponse = await makeRequest(oPublicRequestOptions);
 
 		if (oResponse.statusCode !== 204) {
 
 			try {
 				JSON.parse(oResponse.body);
 			} catch (e) {
-				const oDetails = {
+				let oDetails = {
 					"requestMethod": sMethod,
 					"requestQueryPath": sQueryPath,
 					"requestParameters": sPublicParams,
@@ -159,8 +159,8 @@ class PlcDispatcher {
 					"responseMessage": oResponse.statusMessage,
 					"responseBody": oResponse.body
 				};
-				const sDeveloperInfo =
-					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+				let sDeveloperInfo =
+					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment letiables.";
 				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
 			}
 

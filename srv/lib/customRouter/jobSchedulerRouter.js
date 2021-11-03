@@ -33,9 +33,9 @@ class JobSchedulerRouter {
 
 	constructor() {
 
-		var router = express.Router();
+		let router = express.Router();
 
-		var JobSchedulerService = new JobScheduler();
+		let JobSchedulerService = new JobScheduler();
 
 		/**
 		 * Common function before all routes are processed
@@ -49,45 +49,45 @@ class JobSchedulerRouter {
 			JobSchedulerService.getAllJobs().then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
 		router.get("/getJobByName", function (request, response) {
 
-			const sJobName = request.query.JOB_NAME;
+			let sJobName = request.query.JOB_NAME;
 
 			JobSchedulerService.getJobByName(sJobName).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
 		router.post("/addNewSchedule", function (request, response) {
 
-			const iJobId = request.query.JOB_ID;
-			const oNewSchedule = request.body;
+			let iJobId = request.query.JOB_ID;
+			let oNewSchedule = request.body;
 
 			JobSchedulerService.addNewSchedule(iJobId, oNewSchedule).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
 		router.post("/addSchedules", function (request, response) {
 
-			const iJobId = request.query.JOB_ID;
-			const oRequestBody = request.body;
+			let iJobId = request.query.JOB_ID;
+			let oRequestBody = request.body;
 
 			JobSchedulerService.addSchedules(iJobId, oRequestBody).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});

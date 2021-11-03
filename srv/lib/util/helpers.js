@@ -15,8 +15,8 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
  * Returns a new date as string based on the number of seconds from now
  */
 function nowPlusSecondstoISOString(iNumberOfSeconds) {
-	var now = new Date();
-	var soon = new Date(now.getTime() + (iNumberOfSeconds * 1000));
+	let now = new Date();
+	let soon = new Date(now.getTime() + (iNumberOfSeconds * 1000));
 	return soon.toISOString(); // "2020-12-11T10:39:29.114Z"
 }
 
@@ -52,14 +52,14 @@ function isRequestFromJob(request) {
  * Get all configurations from table
  */
 async function getAllConfigurations() {
-	const hdbClient = await DatabaseClass.createConnection();
-	const connection = new DatabaseClass(hdbClient);
-	const statement = await connection.preparePromisified(
+	let hdbClient = await DatabaseClass.createConnection();
+	let connection = new DatabaseClass(hdbClient);
+	let statement = await connection.preparePromisified(
 		`
 			select * from "sap.plc.extensibility::template_application.t_configuration";
 		`
 	);
-	const aResults = await connection.statementExecPromisified(statement, []);
+	let aResults = await connection.statementExecPromisified(statement, []);
 	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	return aResults.slice();
 }
@@ -68,14 +68,14 @@ async function getAllConfigurations() {
  * Get all default values from table
  */
 async function getAllDefaultValues() {
-	const hdbClient = await DatabaseClass.createConnection();
-	const connection = new DatabaseClass(hdbClient);
-	const statement = await connection.preparePromisified(
+	let hdbClient = await DatabaseClass.createConnection();
+	let connection = new DatabaseClass(hdbClient);
+	let statement = await connection.preparePromisified(
 		`
 			select * from "sap.plc.extensibility::template_application.t_default_values";
 		`
 	);
-	const aResults = await connection.statementExecPromisified(statement, []);
+	let aResults = await connection.statementExecPromisified(statement, []);
 	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	return aResults.slice();
 }
@@ -99,15 +99,15 @@ function getDateByPattern(sPattern) {
 		return i;
 	}
 
-	var dDate = new Date();
-	var iYear = dDate.getFullYear();
-	var sMonth = addZero(dDate.getMonth() + 1);
-	var sDate = addZero(dDate.getDate());
-	var sHours = addZero(dDate.getHours());
-	var sMinutes = addZero(dDate.getMinutes());
-	var sSeconds = addZero(dDate.getSeconds());
+	let dDate = new Date();
+	let iYear = dDate.getFullYear();
+	let sMonth = addZero(dDate.getMonth() + 1);
+	let sDate = addZero(dDate.getDate());
+	let sHours = addZero(dDate.getHours());
+	let sMinutes = addZero(dDate.getMinutes());
+	let sSeconds = addZero(dDate.getSeconds());
 
-	var sCurrentDate = "";
+	let sCurrentDate = "";
 	switch (sPattern) {
 	case "YYYYMMDD hh:mm:ss":
 		sCurrentDate = iYear + "" + sMonth + "" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;

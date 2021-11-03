@@ -41,8 +41,8 @@ class Service {
 	 * @return {array} aResults - all projects
 	 */
 	async getAllProjects() {
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
 			`
 				select * from "sap.plc.db::basis.t_project";
@@ -59,11 +59,11 @@ class Service {
 	 */
 	async checkIfVersionIsTouchable(iVersionId) {
 
-		var bIsTouchable = false;
+		let bIsTouchable = false;
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
-		const statement = await connection.preparePromisified(
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+		let statement = await connection.preparePromisified(
 			`
 			select
 				CALCULATION_VERSION_ID,
@@ -92,9 +92,9 @@ class Service {
 		let aResultIsTouchableVersions = await connection.statementExecPromisified(statement, []);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		var aIsTouchableVersions = aResultIsTouchableVersions.slice();
+		let aIsTouchableVersions = aResultIsTouchableVersions.slice();
 		if (aIsTouchableVersions[0] !== undefined) {
-			var oTouchableVersion = aIsTouchableVersions[0];
+			let oTouchableVersion = aIsTouchableVersions[0];
 			if (
 				(oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1") &&
 				(oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
@@ -103,8 +103,8 @@ class Service {
 			) {
 				bIsTouchable = true;
 			}
-			var bIsWritable = oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1" ? true : false;
-			var bIsFrozen = oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
+			let bIsWritable = oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1" ? true : false;
+			let bIsFrozen = oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
 				oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined ? false : true;
 			await Message.addLog(this.JOB_ID,
 				"Calculation Version with ID '" + iVersionId + "': Is Touchable = " + bIsTouchable +
@@ -119,16 +119,16 @@ class Service {
 	 */
 	maintainDefaultValues(request) {
 
-		var that = this;
-		var tType = "gtt_default_values";
+		let that = this;
+		let tType = "gtt_default_values";
 
-		const hdbClient = request.db;
-		var aDefaultItems = request.body;
+		let hdbClient = request.db;
+		let aDefaultItems = request.body;
 
 		return new Promise(function (resolve, reject) {
 
-			var tName = "#" + that.userId + "_t_default_values_temp_data";
-			var fnProc = `CALL "p_maintain_t_default_values"(${tName})`;
+			let tName = "#" + that.userId + "_t_default_values_temp_data";
+			let fnProc = `CALL "p_maintain_t_default_values"(${tName})`;
 
 			async.series([
 				function (callback) {
@@ -191,7 +191,7 @@ class Service {
 
 	createTempDefaultValuesTable(client, tName, tType) {
 		return new Promise(function (resolve, reject) {
-			var sql = `CREATE LOCAL TEMPORARY TABLE ${tName} LIKE "${tType}"`;
+			let sql = `CREATE LOCAL TEMPORARY TABLE ${tName} LIKE "${tType}"`;
 			client.exec(sql, function (err, res) {
 				if (err) {
 					Message.addLog(0, "Create temp table ERROR", "error", err);
@@ -220,12 +220,12 @@ class Service {
 						defaultItem.FIELD_VALUE
 					]);
 				}
-				var tasks = defaultItems.map(createTasks);
+				let tasks = defaultItems.map(createTasks);
 
 				async.series(tasks, function (error, results) {
-					var ok = true;
-					var errIndexes = [];
-					for (var i = 0; i < results.length; i++) {
+					let ok = true;
+					let errIndexes = [];
+					for (let i = 0; i < results.length; i++) {
 						if (results[i] !== 1) {
 							ok = false;
 						} else {
@@ -262,7 +262,7 @@ class Service {
 					Message.addLog(0, "SELECT COUNT from temp table ERROR", "error", err);
 					reject(err);
 				}
-				var count = parseInt(res[0].COUNT);
+				let count = parseInt(res[0].COUNT);
 				// Message.addLog(0, "COUNT for " + tName + " = " + count, "message");
 				resolve(count);
 			});

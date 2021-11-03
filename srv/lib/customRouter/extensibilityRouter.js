@@ -105,7 +105,7 @@ class ExtensibilityRouter {
 			ExtensibilityPlcService.getAllProjects().then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
@@ -120,7 +120,7 @@ class ExtensibilityRouter {
 			}
 
 			// write entry into t_messages only for jobs (fake or real)
-			const sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+			let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
 			await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
 
 			// check if web or job request
@@ -131,7 +131,7 @@ class ExtensibilityRouter {
 				// check if should wait for service response or return a JOB_ID
 				if (request.IS_ONLINE_MODE === false) {
 					// fake/simulate background job
-					const oMessage = new Message(sMessageInfo, {
+					let oMessage = new Message(sMessageInfo, {
 						"JOB_ID": request.JOB_ID
 					});
 					// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
@@ -148,8 +148,8 @@ class ExtensibilityRouter {
 			// handle success execution of the service
 			.then(async function (oServiceResponse) {
 
-				const iStatusCode = oServiceResponse.STATUS_CODE;
-				const oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
+				let iStatusCode = oServiceResponse.STATUS_CODE;
+				let oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
 				// add service response body to job log entry
 				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
@@ -166,7 +166,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// get all messages from the job
-					const aMessages = await JobSchedulerUtil.getMessagesOfJobWithId(request.JOB_ID);
+					let aMessages = await JobSchedulerUtil.getMessagesOfJobWithId(request.JOB_ID);
 
 					// return service response body for web request
 					if (request.IS_ONLINE_MODE === true) {
@@ -199,7 +199,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// create error as service response body
-					const oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
+					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
 
 					// add service response body to job log entry
 					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);

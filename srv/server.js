@@ -39,27 +39,27 @@ global.plcPublicApiUrl = process.env.SAP_PLC_PUBLIC_API;
 //xsenv.loadEnv();
 
 // extensibility plc router
-const ExtensibilityPlc = require(global.appRoot + "/lib/customRouter/extensibilityRouter.js");
-var ExtensibilityPlcRouter = new ExtensibilityPlc.ExtensibilityRouter();
-var RouterExtensibilityPlc = ExtensibilityPlcRouter.getRouter();
+let ExtensibilityPlc = require(global.appRoot + "/lib/customRouter/extensibilityRouter.js");
+let ExtensibilityPlcRouter = new ExtensibilityPlc.ExtensibilityRouter();
+let RouterExtensibilityPlc = ExtensibilityPlcRouter.getRouter();
 
 // scheduler job router
-const JobScheduler = require(global.appRoot + "/lib/customRouter/jobSchedulerRouter.js");
-var JobSchedulerRouter = new JobScheduler.JobSchedulerRouter();
-var RouterJobScheduler = JobSchedulerRouter.getRouter();
+let JobScheduler = require(global.appRoot + "/lib/customRouter/jobSchedulerRouter.js");
+let JobSchedulerRouter = new JobScheduler.JobSchedulerRouter();
+let RouterJobScheduler = JobSchedulerRouter.getRouter();
 
 // secure store router
-const SecureStore = require(global.appRoot + "/lib/customRouter/secureStoreRouter.js");
-var SecureStoreRouter = new SecureStore.SecureStoreRouter();
-var RouterSecureStore = SecureStoreRouter.getRouter();
+let SecureStore = require(global.appRoot + "/lib/customRouter/secureStoreRouter.js");
+let SecureStoreRouter = new SecureStore.SecureStoreRouter();
+let RouterSecureStore = SecureStoreRouter.getRouter();
 
 // standard plc router
-const StandardPlc = require(global.appRoot + "/lib/customRouter/standardPlcRouter.js");
-var StandardPlcRouter = new StandardPlc.StandardPlcRouter();
-var RouterStandardPlc = StandardPlcRouter.getRouter();
+let StandardPlc = require(global.appRoot + "/lib/customRouter/standardPlcRouter.js");
+let StandardPlcRouter = new StandardPlc.StandardPlcRouter();
+let RouterStandardPlc = StandardPlcRouter.getRouter();
 
 // xsjs configurations
-var options = {
+let options = {
 	anonymous: false, // remove to authenticate calls
 	auditLog: {
 		logToConsole: true
@@ -114,10 +114,10 @@ try {
 }
 
 // initialize xsjs server
-var xsjsApp = xsjs(options);
+let xsjsApp = xsjs(options);
 
 // initialize Express App for XSA UAA and HDBEXT Middleware
-var expressApp = express();
+let expressApp = express();
 
 expressApp.use(bodyParser.urlencoded({
 	extended: true
@@ -156,13 +156,13 @@ expressApp.listen(port, function () {
 });
 
 // token lifecycle at 1 minute (get & refresh)
-var UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
-var UAAToken = new UaaToken.UAAToken();
+let UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
+let UAAToken = new UaaToken.UAAToken();
 UAAToken.checkToken();
 setInterval(function () {
 	UAAToken.checkToken();
 }, 60 * 1000); // every minute
 
 // create job(s) at first run
-const JobSchedulerUtil = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
+let JobSchedulerUtil = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
 new JobSchedulerUtil().createJobs();

@@ -35,21 +35,21 @@ class TechnicalUserUtil {
 	 */
 	async getTechnicalUserFromTable() {
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
 
-		const statement = await connection.preparePromisified(
+		let statement = await connection.preparePromisified(
 			`
 				select * from "sap.plc.extensibility::template_application.t_technical_user"
 				where FIELD_NAME = 'TECHNICAL_USER';
 			`
 		);
-		const aResults = await connection.statementExecPromisified(statement, []);
+		let aResults = await connection.statementExecPromisified(statement, []);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		const aTechnicalUser = aResults.slice();
+		let aTechnicalUser = aResults.slice();
 
-		var sTechnicalUser = null;
+		let sTechnicalUser = null;
 		if (aTechnicalUser.length === 1) {
 			sTechnicalUser = aTechnicalUser[0].FIELD_VALUE;
 		}
@@ -66,10 +66,10 @@ class TechnicalUserUtil {
 
 		sTechnicalUser = (sTechnicalUser === undefined) ? null : sTechnicalUser;
 
-		const hdbClient = await DatabaseClass.createConnection();
-		const connection = new DatabaseClass(hdbClient);
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
 
-		const statement = await connection.preparePromisified(
+		let statement = await connection.preparePromisified(
 			`
 				upsert "sap.plc.extensibility::template_application.t_technical_user" values ( 'TECHNICAL_USER', ? )
 				where FIELD_NAME = 'TECHNICAL_USER';

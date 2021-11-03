@@ -38,23 +38,23 @@ class Dispatcher {
 	 */
 	async openVariantMatrix(iVersionId) {
 
-		const sQueryPath = "calculation-versions/" + iVersionId;
-		const aParams = [];
+		let sQueryPath = "calculation-versions/" + iVersionId;
+		let aParams = [];
 
-		const oBodyData = {
+		let oBodyData = {
 			"LOCK": {
 				"CONTEXT": "variant_matrix",
 				"IS_WRITEABLE": 1
 			}
 		};
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
-		var sMessageInfo;
+		let sMessageInfo;
 		if (oResponse.statusCode !== 200) {
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
-				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
+				let oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 				if (oMessage !== undefined) {
@@ -79,14 +79,14 @@ class Dispatcher {
 
 					return null;
 				} else {
-					const sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
+					let sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 
 					return undefined;
 				}
 			} else {
 
-				const sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
+				let sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 
 				return undefined;
@@ -108,10 +108,10 @@ class Dispatcher {
 	 */
 	async createNewVariant(iVersionId, oVariant) {
 
-		const sQueryPath = `calculation-versions/${iVersionId}/variants`;
-		const aParams = [];
+		let sQueryPath = `calculation-versions/${iVersionId}/variants`;
+		let aParams = [];
 
-		var oBodyData = {
+		let oBodyData = {
 			"VARIANT_NAME": oVariant.VARIANT_NAME,
 			"COMMENT": oVariant.COMMENT,
 			"VARIANT_TYPE": oVariant.VARIANT_TYPE !== undefined ? oVariant.VARIANT_TYPE : 0,
@@ -121,9 +121,9 @@ class Dispatcher {
 			"SALES_PRICE_CURRENCY_ID": oVariant.SALES_PRICE_CURRENCY_ID,
 			"ITEMS": []
 		};
-		for (var i = 0; i < oVariant.ITEMS.length; i++) {
-			const oItem = oVariant.ITEMS[i];
-			const oVariantItem = {
+		for (let i = 0; i < oVariant.ITEMS.length; i++) {
+			let oItem = oVariant.ITEMS[i];
+			let oVariantItem = {
 				"ITEM_ID": oItem.ITEM_ID,
 				"IS_INCLUDED": oItem.IS_INCLUDED,
 				"QUANTITY_STATE": oItem.QUANTITY_STATE,
@@ -133,15 +133,15 @@ class Dispatcher {
 			oBodyData.ITEMS.push(oVariantItem);
 		}
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo = `Failed to create variant for calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to create variant for calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variant with name '${oVariant.VARIANT_NAME}' for version with ID '${iVersionId}' was created with success!`;
+			let sMessageInfo = `Variant with name '${oVariant.VARIANT_NAME}' for version with ID '${iVersionId}' was created with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -156,18 +156,18 @@ class Dispatcher {
 	 */
 	async saveAllVariantsOfVersion(iVersionId, aVariantsLastModifiedOn) {
 
-		const sQueryPath = "calculation-versions/" + iVersionId + "/variants";
-		const aParams = [];
+		let sQueryPath = "calculation-versions/" + iVersionId + "/variants";
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, aVariantsLastModifiedOn);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, aVariantsLastModifiedOn);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save all variants of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to save all variants of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variants of calculation version with ID '${iVersionId}' were saved with success!`;
+			let sMessageInfo = `Variants of calculation version with ID '${iVersionId}' were saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -182,18 +182,18 @@ class Dispatcher {
 	 */
 	async deleteVariant(iVersionId, iVariantId) {
 
-		const sQueryPath = "calculation-versions/" + iVersionId + "/variants/" + iVariantId;
-		const aParams = [];
+		let sQueryPath = "calculation-versions/" + iVersionId + "/variants/" + iVariantId;
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to delete variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to delete variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was deleted with success!`;
+			let sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was deleted with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 
 			return true;
@@ -209,10 +209,10 @@ class Dispatcher {
 	 */
 	async calculateVariant(iVersionId, oVariant) {
 
-		const sQueryPath = `calculation-versions/${iVersionId}/variant-calculator`;
-		const aParams = [];
+		let sQueryPath = `calculation-versions/${iVersionId}/variant-calculator`;
+		let aParams = [];
 
-		var oBodyData = {
+		let oBodyData = {
 			"EXCHANGE_RATE_TYPE_ID": oVariant.EXCHANGE_RATE_TYPE_ID,
 			"REPORT_CURRENCY_ID": oVariant.REPORT_CURRENCY_ID,
 			"SALES_PRICE_CURRENCY_ID": oVariant.SALES_PRICE_CURRENCY_ID,
@@ -224,35 +224,35 @@ class Dispatcher {
 				"QUANTITY_UOM_ID": []
 			}
 		};
-		for (var i = 0; i < oVariant.ITEMS.length; i++) {
-			const oItem = oVariant.ITEMS[i];
+		for (let i = 0; i < oVariant.ITEMS.length; i++) {
+			let oItem = oVariant.ITEMS[i];
 
-			const iItemId = oItem.ITEM_ID !== undefined ? oItem.ITEM_ID : null;
+			let iItemId = oItem.ITEM_ID !== undefined ? oItem.ITEM_ID : null;
 			oBodyData.ITEMS.ITEM_ID.push(iItemId);
 
-			const iQuantity = oItem.QUANTITY !== undefined ? oItem.QUANTITY : null;
+			let iQuantity = oItem.QUANTITY !== undefined ? oItem.QUANTITY : null;
 			oBodyData.ITEMS.QUANTITY.push(iQuantity);
 
-			const iQuantityState = oItem.QUANTITY_STATE !== undefined ? oItem.QUANTITY_STATE : null;
+			let iQuantityState = oItem.QUANTITY_STATE !== undefined ? oItem.QUANTITY_STATE : null;
 			oBodyData.ITEMS.QUANTITY_STATE.push(iQuantityState);
 
-			const sQuantityUomId = oItem.QUANTITY_UOM_ID !== undefined ? oItem.QUANTITY_UOM_ID : null;
+			let sQuantityUomId = oItem.QUANTITY_UOM_ID !== undefined ? oItem.QUANTITY_UOM_ID : null;
 			oBodyData.ITEMS.QUANTITY_UOM_ID.push(sQuantityUomId);
 		}
 
-		var aBodyData = [];
+		let aBodyData = [];
 		aBodyData.push(oBodyData);
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to calculate the variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}' was calculated with success!`;
+			let sMessageInfo = `Variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}' was calculated with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -267,19 +267,19 @@ class Dispatcher {
 	 */
 	async saveNewlyCalculatedVariant(iVersionId, iVariantId) {
 
-		const sQueryPath = `calculation-versions/${iVersionId}/variant-calculator/${iVariantId}`;
-		const aParams = [];
+		let sQueryPath = `calculation-versions/${iVersionId}/variant-calculator/${iVariantId}`;
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to save the variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was saved with success!`;
+			let sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -296,26 +296,26 @@ class Dispatcher {
 	 */
 	async generateVersionFromVariant(iVersionId, iVariantId, iTargetCalculationId, sCalculationVersionName) {
 
-		const sQueryPath = `calculation-versions/${iVersionId}/variant-generator/${iVariantId}`;
-		const aParams = [];
+		let sQueryPath = `calculation-versions/${iVersionId}/variant-generator/${iVariantId}`;
+		let aParams = [];
 
-		const oBodyData = {
+		let oBodyData = {
 			"TARGET_CALCULATION_ID": iTargetCalculationId,
 			"CALCULATION_VERSION_NAME": sCalculationVersionName
 		};
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to generate a version in calculation with ID '${iTargetCalculationId}' from variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const oResult = oResponseBody.body.transactionaldata[0];
-			const iNewVersionId = oResult.LAST_GENERATED_VERSION_ID;
-			const sMessageInfo =
+			let oResult = oResponseBody.body.transactionaldata[0];
+			let iNewVersionId = oResult.LAST_GENERATED_VERSION_ID;
+			let sMessageInfo =
 				`Version with ID '${iNewVersionId}' and name '${sCalculationVersionName}' was generated with success into calculation with ID '${iTargetCalculationId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResult;
@@ -330,25 +330,25 @@ class Dispatcher {
 	 */
 	async closeVariantMatrix(iVersionId) {
 
-		const sQueryPath = "calculation-versions/" + iVersionId;
-		const aParams = [];
+		let sQueryPath = "calculation-versions/" + iVersionId;
+		let aParams = [];
 
-		const oBodyData = {
+		let oBodyData = {
 			"LOCK": {
 				"CONTEXT": "variant_matrix",
 				"IS_WRITEABLE": 0
 			}
 		};
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to close variant matrix of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to close variant matrix of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was closed with success!`;
+			let sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was closed with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -363,10 +363,10 @@ class Dispatcher {
 	 */
 	async setVersionToCurrent(iVersionId, oCalculationDetails) {
 
-		const sQueryPath = "calculations";
-		const aParams = [];
+		let sQueryPath = "calculations";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_ID": oCalculationDetails.CALCULATION_ID,
 			"CALCULATION_NAME": oCalculationDetails.CALCULATION_NAME,
 			"CURRENT_CALCULATION_VERSION_ID": iVersionId,
@@ -374,16 +374,16 @@ class Dispatcher {
 			"PROJECT_ID": oCalculationDetails.PROJECT_ID
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to set version with ID '${iVersionId}' as current in calculation with ID '${oCalculationDetails.CALCULATION_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo =
+			let sMessageInfo =
 				`Version with ID '${iVersionId}' from calculation with ID '${oCalculationDetails.CALCULATION_ID}' was set as current with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
@@ -398,21 +398,21 @@ class Dispatcher {
 	 */
 	async getCalculation(iCalculationId) {
 
-		const sQueryPath = "calculations";
-		const aParams = [{
+		let sQueryPath = "calculations";
+		let aParams = [{
 			"name": "calculation_id",
 			"value": iCalculationId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get calculation with ID '${iCalculationId}'.`;
+			let sDeveloperInfo = `Failed to get calculation with ID '${iCalculationId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Calculation with ID '${iCalculationId}' was retrieved with success!`;
+			let sMessageInfo = `Calculation with ID '${iCalculationId}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -428,8 +428,8 @@ class Dispatcher {
 	 */
 	async createNewCalculation(oDetails, sCalculationName, sVersionName) {
 
-		const sQueryPath = "calculations";
-		const aParams = [{
+		let sQueryPath = "calculations";
+		let aParams = [{
 			"name": "action",
 			"value": "create"
 		}, {
@@ -438,8 +438,8 @@ class Dispatcher {
 		}];
 
 		if (oDetails.VALUATION_DATE === undefined || oDetails.VALUATION_DATE === null || oDetails.VALUATION_DATE === "") {
-			const sTodayDate = new Date().toISOString();
-			const sToday = sTodayDate.split(/[t,T]/)[0];
+			let sTodayDate = new Date().toISOString();
+			let sToday = sTodayDate.split(/[t,T]/)[0];
 			oDetails.VALUATION_DATE = sToday + "T00:00:00Z";
 		} else {
 			if (oDetails.VALUATION_DATE.length > 10) {
@@ -447,7 +447,7 @@ class Dispatcher {
 			}
 		}
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"PROJECT_ID": oDetails.PROJECT_ID,
 			"CALCULATION_ID": -1,
 			"CALCULATION_NAME": sCalculationName,
@@ -482,26 +482,26 @@ class Dispatcher {
 			}]
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to create a new calculation with name '${sCalculationName}' in project with ID '${oDetails.PROJECT_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sProjectId = oDetails.PROJECT_ID;
-			const oNewCalculation = oResponseBody.body.transactionaldata[0];
-			const sCalculationId = oNewCalculation.CALCULATION_ID;
-			const sNewCalculationName = oNewCalculation.CALCULATION_NAME;
-			const oNewVersion = oNewCalculation.CALCULATION_VERSIONS[0];
-			const sVersionId = oNewVersion.CALCULATION_VERSION_ID;
-			const sNewVersionName = oNewVersion.CALCULATION_VERSION_NAME;
-			const sCalcMessageInfo =
+			let sProjectId = oDetails.PROJECT_ID;
+			let oNewCalculation = oResponseBody.body.transactionaldata[0];
+			let sCalculationId = oNewCalculation.CALCULATION_ID;
+			let sNewCalculationName = oNewCalculation.CALCULATION_NAME;
+			let oNewVersion = oNewCalculation.CALCULATION_VERSIONS[0];
+			let sVersionId = oNewVersion.CALCULATION_VERSION_ID;
+			let sNewVersionName = oNewVersion.CALCULATION_VERSION_NAME;
+			let sCalcMessageInfo =
 				`The calculation with ID '${sCalculationId}' and name '${sNewCalculationName}' was created with success in project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sCalcMessageInfo, "message");
-			const sVersMessageInfo =
+			let sVersMessageInfo =
 				`The version with ID '${sVersionId}' and name '${sNewVersionName}' was created with success in calculation with ID '${sCalculationId}'.`;
 			await Message.addLog(this.JOB_ID, sVersMessageInfo, "message");
 			return oResponseBody;
@@ -516,8 +516,8 @@ class Dispatcher {
 	 */
 	async saveCalculationVersion(oVersion) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "calculate",
 			"value": "false"
 		}, {
@@ -525,21 +525,21 @@ class Dispatcher {
 			"value": "save"
 		}];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_ID": oVersion.CALCULATION_ID,
 			"CALCULATION_VERSION_ID": oVersion.CALCULATION_VERSION_ID,
 			"CALCULATION_VERSION_NAME": oVersion.CALCULATION_VERSION_NAME
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
+			let sDeveloperInfo = `Failed to save calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' was saved with success!`;
+			let sMessageInfo = `Calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' was saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -553,8 +553,8 @@ class Dispatcher {
 	 */
 	async createNewVersionAsCopy(iVersionId) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "calculate",
 			"value": "false"
 		}, {
@@ -568,16 +568,16 @@ class Dispatcher {
 			"value": "true"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo = `Failed to create new version as copy of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to create new version as copy of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const oNewCopyVersion = oResponseBody.body.transactionaldata[0];
-			const sMessageInfo =
+			let oNewCopyVersion = oResponseBody.body.transactionaldata[0];
+			let sMessageInfo =
 				`The version with ID '" + oNewCopyVersion.CALCULATION_VERSION_ID + "' was created with success as copy of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oNewCopyVersion;
@@ -592,21 +592,21 @@ class Dispatcher {
 	 */
 	async getCalculationVersion(iVersionId) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "id",
 			"value": iVersionId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to get calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Calculation version with ID '${iVersionId}' was retrieved with success!`;
+			let sMessageInfo = `Calculation version with ID '${iVersionId}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -623,8 +623,8 @@ class Dispatcher {
 
 		let response;
 
-		const sQueryPath = "calculation-versions";
-		var aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "calculate",
 			"value": "false"
 		}, {
@@ -645,18 +645,18 @@ class Dispatcher {
 			});
 		}
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 		} else {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was opened with success!`;
 
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 
-				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
+				let oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 
@@ -665,7 +665,7 @@ class Dispatcher {
 					if (oMessage.details !== undefined && oMessage.details.calculationVersionObjs !== undefined && oMessage.details.calculationVersionObjs
 						.length > 0) {
 
-						var oCalculationVersionDetails = _.find(oMessage.details.calculationVersionObjs, function (oDetailsCalculationVersion) {
+						let oCalculationVersionDetails = _.find(oMessage.details.calculationVersionObjs, function (oDetailsCalculationVersion) {
 							return oDetailsCalculationVersion.id === iVersionId;
 						});
 
@@ -716,8 +716,8 @@ class Dispatcher {
 	 */
 	async addReferenceItem(iVersionId, iItemId, iReferenceVersionId) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -725,23 +725,23 @@ class Dispatcher {
 			"value": "false"
 		}];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId,
 			"ITEM_CATEGORY_ID": 10,
 			"ITEM_ID": iItemId,
 			"REFERENCED_CALCULATION_VERSION_ID": iReferenceVersionId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to reference version with ID '${iReferenceVersionId}' into calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Calculation version with ID '${iVersionId}' was referenced with success into version with ID '${iVersionId}'.`;
+			let sMessageInfo = `Calculation version with ID '${iVersionId}' was referenced with success into version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody.body.transactionaldata;
 		}
@@ -758,8 +758,8 @@ class Dispatcher {
 	 */
 	async addMaterialItem(iVersionId, oParentItem, iPredecessorItemId, sDescription) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -770,7 +770,7 @@ class Dispatcher {
 			"value": "false"
 		}];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId,
 			"ITEM_CATEGORY_ID": 2,
 			"ITEM_DESCRIPTION": sDescription !== undefined ? sDescription : null,
@@ -793,15 +793,15 @@ class Dispatcher {
 				null) ? oParentItem.TRANSACTION_CURRENCY_ID : "EUR"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
-			const sDeveloperInfo = `Failed to add material item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to add material item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Material item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
+			let sMessageInfo = `Material item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody.body.transactionaldata;
 		}
@@ -818,8 +818,8 @@ class Dispatcher {
 	 */
 	async addVariableItem(iVersionId, oParentItem, iPredecessorItemId, sDescription) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -830,7 +830,7 @@ class Dispatcher {
 			"value": "false"
 		}];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId,
 			"ITEM_CATEGORY_ID": 8,
 			"ITEM_DESCRIPTION": sDescription !== undefined ? sDescription : null,
@@ -850,16 +850,16 @@ class Dispatcher {
 				null) ? oParentItem.TRANSACTION_CURRENCY_ID : "EUR"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
-			const sDeveloperInfo =
+			let sDeveloperInfo =
 				`Failed to add variable item with description '${sDescription}'  in calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Variable item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
+			let sMessageInfo = `Variable item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody.body.transactionaldata;
 		}
@@ -874,8 +874,8 @@ class Dispatcher {
 	 */
 	async deleteItemsFromVersion(iVersionId, aItemsToDelete) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -883,24 +883,24 @@ class Dispatcher {
 			"value": "true"
 		}];
 
-		var aBodyData = [];
-		for (var i = 0; i < aItemsToDelete.length; i++) {
-			const oItemToDelete = {
+		let aBodyData = [];
+		for (let i = 0; i < aItemsToDelete.length; i++) {
+			let oItemToDelete = {
 				"ITEM_ID": aItemsToDelete[i].ITEM_ID,
 				"CALCULATION_VERSION_ID": aItemsToDelete[i].CALCULATION_VERSION_ID
 			};
 			aBodyData.push(oItemToDelete);
 		}
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to delete ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to delete ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Delete of ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
+			let sMessageInfo = `Delete of ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -915,8 +915,8 @@ class Dispatcher {
 	 */
 	async deactivateItemsFromVersion(iVersionId, aItemsToDeactivate) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -924,9 +924,9 @@ class Dispatcher {
 			"value": "true"
 		}];
 
-		var aBodyData = [];
-		for (var i = 0; i < aItemsToDeactivate.length; i++) {
-			const oItemToDelete = {
+		let aBodyData = [];
+		for (let i = 0; i < aItemsToDeactivate.length; i++) {
+			let oItemToDelete = {
 				"IS_ACTIVE": 0,
 				"ITEM_ID": aItemsToDeactivate[i].ITEM_ID,
 				"CALCULATION_VERSION_ID": aItemsToDeactivate[i].CALCULATION_VERSION_ID
@@ -934,15 +934,15 @@ class Dispatcher {
 			aBodyData.push(oItemToDelete);
 		}
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to deactivate ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to deactivate ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Deactivate ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
+			let sMessageInfo = `Deactivate ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -957,15 +957,15 @@ class Dispatcher {
 	 */
 	async updateReferencedItemsFromVersion(iVersionId, aItemsToUpdate) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}];
 
-		var aBodyData = [];
-		for (var i = 0; i < aItemsToUpdate.length; i++) {
-			const oItemToUpdate = {
+		let aBodyData = [];
+		for (let i = 0; i < aItemsToUpdate.length; i++) {
+			let oItemToUpdate = {
 				"ITEM_ID": aItemsToUpdate[i].ITEM_ID,
 				"ITEM_CATEGORY_ID": aItemsToUpdate[i].ITEM_CATEGORY_ID,
 				"CALCULATION_VERSION_ID": aItemsToUpdate[i].CALCULATION_VERSION_ID,
@@ -974,15 +974,15 @@ class Dispatcher {
 			aBodyData.push(oItemToUpdate);
 		}
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to update referenced items of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to update referenced items of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Update referenced items of version with ID '${iVersionId}' was done with success!`;
+			let sMessageInfo = `Update referenced items of version with ID '${iVersionId}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -996,25 +996,25 @@ class Dispatcher {
 	 */
 	async freezeCalculationVersion(iVersionId) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "action",
 			"value": "freeze"
 		}];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to freeze calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to freeze calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Calculation version with ID '${iVersionId}' was frozen with success!`;
+			let sMessageInfo = `Calculation version with ID '${iVersionId}' was frozen with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1028,8 +1028,8 @@ class Dispatcher {
 	 */
 	async closeCalculationVersion(iVersionId) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "calculate",
 			"value": "false"
 		}, {
@@ -1037,19 +1037,19 @@ class Dispatcher {
 			"value": "close"
 		}];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to close calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to close calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Calculation version with ID '${iVersionId}' was closed with success!`;
+			let sMessageInfo = `Calculation version with ID '${iVersionId}' was closed with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1064,20 +1064,20 @@ class Dispatcher {
 	 */
 	async deleteCalculationVersion(iVersionId, iCalculationId) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [];
+		let sQueryPath = "calculation-versions";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
-		var sMessageInfo;
+		let sMessageInfo;
 		if (oResponse.statusCode !== 200) {
 			if (oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
-				var aErrorMessages = _.filter(oResponseBody.head.messages, function (oMessage) {
+				let aErrorMessages = _.filter(oResponseBody.head.messages, function (oMessage) {
 					return oMessage.code === "CALCULATIONVERSION_IS_SINGLE_ERROR" || oMessage.code === "DELETE_CURRENT_VERSION_ERROR";
 				});
 				if (aErrorMessages.length > 0 && iCalculationId !== undefined) {
@@ -1088,12 +1088,12 @@ class Dispatcher {
 					await this.deleteCalculation(iCalculationId);
 					return true;
 				} else {
-					const sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+					let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 					return undefined;
 				}
 			} else {
-				const sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+				let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 				return undefined;
 			}
@@ -1113,19 +1113,19 @@ class Dispatcher {
 	 */
 	async deleteCalculation(iCalculationId) {
 
-		const sQueryPath = "calculations";
-		const aParams = [];
+		let sQueryPath = "calculations";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_ID": iCalculationId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
-		var sMessageInfo;
+		let sMessageInfo;
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to delete calculation with ID '${iCalculationId}'.`;
+			let sDeveloperInfo = `Failed to delete calculation with ID '${iCalculationId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
@@ -1143,8 +1143,8 @@ class Dispatcher {
 	 */
 	async getStatuses() {
 
-		const sQueryPath = "statuses";
-		const aParams = [{
+		let sQueryPath = "statuses";
+		let aParams = [{
 			"name": "skip",
 			"value": 0
 		}, {
@@ -1152,20 +1152,20 @@ class Dispatcher {
 			"value": "texts"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = "Failed to get calculation version statuses from the system.";
+			let sDeveloperInfo = "Failed to get calculation version statuses from the system.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
 		} else {
 			if (oResponseBody.entities !== undefined) {
-				const sMessageInfo = "The statuses of calculation version were retrieved with success!";
+				let sMessageInfo = "The statuses of calculation version were retrieved with success!";
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.entities;
 			} else {
-				const sDeveloperInfo = "Failed to get calculation version statuses from the system.";
+				let sDeveloperInfo = "Failed to get calculation version statuses from the system.";
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
 			}
@@ -1181,23 +1181,23 @@ class Dispatcher {
 	 */
 	async updateStatusOfCalculationVersion(iVersionId, sStatusId) {
 
-		const sQueryPath = "calculationVersions";
-		const aParams = [];
+		let sQueryPath = "calculationVersions";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"calculationVersionId": iVersionId,
 			"statusId": sStatusId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to add status witn ID '${sStatusId}' at the calculation with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to add status witn ID '${sStatusId}' at the calculation with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The status with ID '${sStatusId}' was added with success at calculation with ID '${iVersionId}'.`;
+			let sMessageInfo = `The status with ID '${sStatusId}' was added with success at calculation with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1211,22 +1211,22 @@ class Dispatcher {
 	 */
 	async deleteStatusOfCalculationVersion(iVersionId) {
 
-		const sQueryPath = "calculationVersions";
-		const aParams = [];
+		let sQueryPath = "calculationVersions";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"calculationVersionId": iVersionId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to delete the status of calculation with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to delete the status of calculation with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The status of calculation version ID '${iVersionId}' was deleted with success.`;
+			let sMessageInfo = `The status of calculation version ID '${iVersionId}' was deleted with success.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1241,23 +1241,23 @@ class Dispatcher {
 	 */
 	async addCalculationTag(iEntityId, sTagName) {
 
-		const sQueryPath = "tags/calculationTags";
-		const aParams = [];
+		let sQueryPath = "tags/calculationTags";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"entityId": iEntityId,
 			"tagName": sTagName
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation with ID '${iEntityId}'.`;
+			let sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The tag with name '${sTagName}' was added with success at calculation with ID '${iEntityId}'.`;
+			let sMessageInfo = `The tag with name '${sTagName}' was added with success at calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1272,22 +1272,22 @@ class Dispatcher {
 	 */
 	async deleteCalculationTag(iEntityId, sTagName) {
 
-		const sQueryPath = "tags/calculationTags";
-		const aParams = [];
+		let sQueryPath = "tags/calculationTags";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"entityId": iEntityId,
 			"tagName": sTagName
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "DELETE", aParams, aBodyData);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "DELETE", aParams, aBodyData);
 
 		if (oResponse.statusCode !== 204) {
-			const sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from calculation with ID '${iEntityId}'.`;
+			let sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.body, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The tag with name '${sTagName}' was deleted with success from calculation with ID '${iEntityId}'.`;
+			let sMessageInfo = `The tag with name '${sTagName}' was deleted with success from calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1302,23 +1302,23 @@ class Dispatcher {
 	 */
 	async addCalculationVersionTag(iEntityId, sTagName) {
 
-		const sQueryPath = "tags/calculationVersionTags";
-		const aParams = [];
+		let sQueryPath = "tags/calculationVersionTags";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"entityId": iEntityId,
 			"tagName": sTagName
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation version with ID '${iEntityId}'.`;
+			let sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The tag with name '${sTagName}' was added with success at version with ID '${iEntityId}'.`;
+			let sMessageInfo = `The tag with name '${sTagName}' was added with success at version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1333,22 +1333,22 @@ class Dispatcher {
 	 */
 	async deleteCalculationVersionTag(iEntityId, sTagName) {
 
-		const sQueryPath = "tags/calculationVersionTags";
-		const aParams = [];
+		let sQueryPath = "tags/calculationVersionTags";
+		let aParams = [];
 
-		const aBodyData = [{
+		let aBodyData = [{
 			"entityId": iEntityId,
 			"tagName": sTagName
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "DELETE", aParams, aBodyData);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "DELETE", aParams, aBodyData);
 
 		if (oResponse.statusCode !== 204) {
-			const sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from version with ID '${iEntityId}'.`;
+			let sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.body, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The tag with name '${sTagName}' was deleted with success from version with ID '${iEntityId}'.`;
+			let sMessageInfo = `The tag with name '${sTagName}' was deleted with success from version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1362,32 +1362,32 @@ class Dispatcher {
 	 */
 	async openProject(sProjectId) {
 
-		const sQueryPath = "projects";
-		const aParams = [{
+		let sQueryPath = "projects";
+		let aParams = [{
 			"name": "action",
 			"value": "open"
 		}];
 
-		const oBodyData = {
+		let oBodyData = {
 			"PROJECT_ID": sProjectId
 		};
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			var sMessageInfo;
+			let sMessageInfo;
 			if (oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
-				var oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
+				let oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 				if (oMessage !== undefined) {
 					if (oMessage.details !== undefined && oMessage.details.projectObjs !== undefined && oMessage.details.projectObjs.length > 0) {
-						var oPrjDetails = _.find(oMessage.details.projectObjs, function (oDetailsPrj) {
+						let oPrjDetails = _.find(oMessage.details.projectObjs, function (oDetailsPrj) {
 							return oDetailsPrj.id === sProjectId;
 						});
 						if (oPrjDetails !== undefined && oPrjDetails.openingUsers !== undefined && oPrjDetails.openingUsers.length > 0) {
@@ -1409,7 +1409,7 @@ class Dispatcher {
 					this.closeProject(sProjectId);
 					return true;
 				} else {
-					const sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
+					let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 					return undefined;
 				}
@@ -1420,7 +1420,7 @@ class Dispatcher {
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.body.transactionaldata[0];
 			} else {
-				const sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 				return undefined;
 			}
@@ -1435,26 +1435,26 @@ class Dispatcher {
 	 */
 	async getLifecycleConfigurations(sProjectId) {
 
-		const sQueryPath = `lifecycleConfigurations/${sProjectId}`;
-		const aParams = [{
+		let sQueryPath = `lifecycleConfigurations/${sProjectId}`;
+		let aParams = [{
 			"name": "skip",
 			"value": 0
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
 		} else {
 			if (oResponseBody.entities !== undefined) {
-				const sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were retrieved with success!`;
+				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were retrieved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.entities;
 			} else {
-				const sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
 			}
@@ -1469,23 +1469,23 @@ class Dispatcher {
 	 */
 	async saveLifecycleConfigurations(sProjectId, aLifecycleConfigurations) {
 
-		const sQueryPath = "lifecycleConfigurations";
-		const aParams = [];
+		let sQueryPath = "lifecycleConfigurations";
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleConfigurations);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleConfigurations);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
 		} else {
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
-				const sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were saved with success!`;
+				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were saved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.entities;
 			} else {
-				const sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
 			}
@@ -1500,27 +1500,27 @@ class Dispatcher {
 	 */
 	async getLifecycleQuantities(sProjectId) {
 
-		const sQueryPath = `lifecycleQuantities/${sProjectId}`;
-		const aParams = [{
+		let sQueryPath = `lifecycleQuantities/${sProjectId}`;
+		let aParams = [{
 			"name": "skip",
 			"value": 0
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
 		} else {
 
 			if (oResponseBody.entities !== undefined) {
-				const sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were retrieved with success!`;
+				let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were retrieved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.entities;
 			} else {
-				const sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
 			}
@@ -1536,24 +1536,24 @@ class Dispatcher {
 	 */
 	async saveLifecycleQuantities(sProjectId, aLifecycleQuantities) {
 
-		const sQueryPath = "lifecycleQuantities";
-		const aParams = [];
+		let sQueryPath = "lifecycleQuantities";
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
 		} else {
 
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
-				const sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were saved with success!`;
+				let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were saved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.entities;
 			} else {
-				const sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
 			}
@@ -1569,26 +1569,26 @@ class Dispatcher {
 	 */
 	async getProjectActivityLifecycleSurcharges(sProjectId) {
 
-		const sQueryPath = "projects/activity-price-surcharges";
-		const aParams = [{
+		let sQueryPath = "projects/activity-price-surcharges";
+		let aParams = [{
 			"name": "id",
 			"value": sProjectId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
-				const sMessageInfo = `The project activity price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
+				let sMessageInfo = `The project activity price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.body.transactionaldata;
 			} else {
-				const sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 				return undefined;
 			}
@@ -1605,21 +1605,21 @@ class Dispatcher {
 	 */
 	async saveProjectActivityLifecycleSurcharges(sProjectId, aActivityLifecycleSurcharges) {
 
-		const sQueryPath = "projects/activity-price-surcharges";
-		const aParams = [{
+		let sQueryPath = "projects/activity-price-surcharges";
+		let aParams = [{
 			"name": "id",
 			"value": sProjectId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aActivityLifecycleSurcharges);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aActivityLifecycleSurcharges);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save project activity price surcharges of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to save project activity price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The activity price surcharges for project with ID '${sProjectId}' were saved with success!`;
+			let sMessageInfo = `The activity price surcharges for project with ID '${sProjectId}' were saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1633,26 +1633,26 @@ class Dispatcher {
 	 */
 	async getProjectMaterialLifecycleSurcharges(sProjectId) {
 
-		const sQueryPath = "projects/material-price-surcharges";
-		const aParams = [{
+		let sQueryPath = "projects/material-price-surcharges";
+		let aParams = [{
 			"name": "id",
 			"value": sProjectId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
-				const sMessageInfo = `The project material price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
+				let sMessageInfo = `The project material price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 				return oResponseBody.body.transactionaldata;
 			} else {
-				const sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
+				let sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 				return undefined;
 			}
@@ -1668,21 +1668,21 @@ class Dispatcher {
 	 */
 	async saveProjectMaterialLifecycleSurcharges(sProjectId, aMaterialLifecycleSurcharges) {
 
-		const sQueryPath = "projects/material-price-surcharges";
-		const aParams = [{
+		let sQueryPath = "projects/material-price-surcharges";
+		let aParams = [{
 			"name": "id",
 			"value": sProjectId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aMaterialLifecycleSurcharges);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aMaterialLifecycleSurcharges);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to save project material price surcharges of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to save project material price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `The material price surcharges for project with ID '${sProjectId}' were saved with success!`;
+			let sMessageInfo = `The material price surcharges for project with ID '${sProjectId}' were saved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1695,8 +1695,8 @@ class Dispatcher {
 	 */
 	async calculateProjectLifecycleCosts(sProjectId) {
 
-		const sQueryPath = "projects";
-		const aParams = [{
+		let sQueryPath = "projects";
+		let aParams = [{
 			"name": "id",
 			"value": sProjectId
 		}, {
@@ -1704,15 +1704,15 @@ class Dispatcher {
 			"value": "calculate_lifecycle_versions"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to calculate project lifecycle costs of project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to calculate project lifecycle costs of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
+			let sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1726,17 +1726,17 @@ class Dispatcher {
 	 */
 	async checkTaskStatus(sTaskId) {
 
-		const sQueryPath = "tasks";
-		const aParams = [{
+		let sQueryPath = "tasks";
+		let aParams = [{
 			"name": "id",
 			"value": sTaskId
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get the status of task with ID '${sTaskId}'.`;
+			let sDeveloperInfo = `Failed to get the status of task with ID '${sTaskId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		}
@@ -1752,26 +1752,26 @@ class Dispatcher {
 	 */
 	async closeProject(sProjectId) {
 
-		const sQueryPath = "projects";
-		const aParams = [{
+		let sQueryPath = "projects";
+		let aParams = [{
 			"name": "action",
 			"value": "close"
 		}];
 
-		const oBodyData = {
+		let oBodyData = {
 			"PROJECT_ID": sProjectId
 		};
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to close project with ID '${sProjectId}'.`;
+			let sDeveloperInfo = `Failed to close project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
 
-			const sMessageInfo = `Project with ID '${sProjectId}' was closed with success!`;
+			let sMessageInfo = `Project with ID '${sProjectId}' was closed with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
@@ -1785,21 +1785,21 @@ class Dispatcher {
 	 */
 	async initPlcSession(sLanguage) {
 
-		const sQueryPath = "init-session";
-		const aParams = [{
+		let sQueryPath = "init-session";
+		let aParams = [{
 			"name": "language",
 			"value": sLanguage
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
+			let sDeveloperInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = "Init PLC session with success!";
+			let sMessageInfo = "Init PLC session with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1812,18 +1812,18 @@ class Dispatcher {
 	 */
 	async logoutPlcSession() {
 
-		const sQueryPath = "logout";
-		const aParams = [];
+		let sQueryPath = "logout";
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = "Failed to logout from PLC. If this error persists, please contact your system administrator!";
+			let sDeveloperInfo = "Failed to logout from PLC. If this error persists, please contact your system administrator!";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = "Logout from PLC with success!";
+			let sMessageInfo = "Logout from PLC with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1838,18 +1838,18 @@ class Dispatcher {
 	 */
 	async getAddinConfiguration(addinGuid, addinVersion) {
 
-		const sQueryPath = "addin-configurations?guid=" + addinGuid + "&version=" + addinVersion + "&use_previous_version=false";
-		const aParams = [];
+		let sQueryPath = "addin-configurations?guid=" + addinGuid + "&version=" + addinVersion + "&use_previous_version=false";
+		let aParams = [];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to get addin configuration with ID '${addinGuid}' and version '${addinVersion}'.`;
+			let sDeveloperInfo = `Failed to get addin configuration with ID '${addinGuid}' and version '${addinVersion}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = `Addin configuration with ID '${addinGuid}' and version '${addinVersion}' was retrieved with success!`;
+			let sMessageInfo = `Addin configuration with ID '${addinGuid}' and version '${addinVersion}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1863,8 +1863,8 @@ class Dispatcher {
 	 */
 	async copyItems(aItems) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "false"
 		}, {
@@ -1875,15 +1875,15 @@ class Dispatcher {
 			"value": "true"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 201) {
-			const sDeveloperInfo = "Failed to copy version items to PLC.";
+			let sDeveloperInfo = "Failed to copy version items to PLC.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = "Copy version items to PLC with success!";
+			let sMessageInfo = "Copy version items to PLC with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1897,8 +1897,8 @@ class Dispatcher {
 	 */
 	async updateItems(iVersionId, aBodyData) {
 
-		const sQueryPath = "items";
-		const aParams = [{
+		let sQueryPath = "items";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -1906,15 +1906,15 @@ class Dispatcher {
 			"value": "true"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo =
+			let sMessageInfo =
 				`'${aBodyData.length}' item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
@@ -1928,21 +1928,21 @@ class Dispatcher {
 	 */
 	async getMetadata() {
 
-		const sQueryPath = "transportation";
-		const aParams = [{
+		let sQueryPath = "transportation";
+		let aParams = [{
 			"name": "businessObjects",
 			"value": "customizing"
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = "Failed to get metadata from PLC.";
+			let sDeveloperInfo = "Failed to get metadata from PLC.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo = "Metadata from PLC was retrieved with success!";
+			let sMessageInfo = "Metadata from PLC was retrieved with success!";
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody;
 		}
@@ -1956,8 +1956,8 @@ class Dispatcher {
 	 */
 	async updateMasterData(oCalculatonVersion) {
 
-		const sQueryPath = "calculation-versions";
-		const aParams = [{
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
 			"name": "calculate",
 			"value": "true"
 		}, {
@@ -1971,7 +1971,7 @@ class Dispatcher {
 			"value": "true"
 		}];
 
-		var aBodyData = [{
+		let aBodyData = [{
 			"CALCULATION_ID": oCalculatonVersion.CALCULATION_ID,
 			"CALCULATION_VERSION_ID": oCalculatonVersion.CALCULATION_VERSION_ID,
 			"CALCULATION_VERSION_NAME": oCalculatonVersion.CALCULATION_VERSION_NAME,
@@ -1989,15 +1989,15 @@ class Dispatcher {
 			"SELECTED_TOTAL_COMPONENT_SPLIT": oCalculatonVersion.SELECTED_TOTAL_COMPONENT_SPLIT
 		}];
 
-		const oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		const oResponseBody = JSON.parse(oResponse.body);
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			const sDeveloperInfo = `Failed to update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
+			let sDeveloperInfo = `Failed to update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			const sMessageInfo =
+			let sMessageInfo =
 				`Update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return oResponseBody.body.transactionaldata[0];

@@ -22,7 +22,7 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
  * This object is containg the error messages from standard PLC
  * Is used in order to maintain a consistency with standard PLC backend services
  */
-var Code = Object.freeze({
+let Code = Object.freeze({
 	GENERAL_VALIDATION_ERROR: {
 		code: "GENERAL_VALIDATION_ERROR",
 		responseCode: 500
@@ -509,7 +509,7 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 		return;
 	}
 
-	var sSeverity = "";
+	let sSeverity = "";
 	if (sType.toLowerCase() === "error") {
 		sSeverity = "Error";
 	}
@@ -520,22 +520,22 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 		sSeverity = "Info";
 	}
 	// details
-	var sTrimmedDetails = null;
-	const sDetails = oDetails !== undefined && oDetails !== null ? JSON.stringify(oDetails) : null;
+	let sTrimmedDetails = null;
+	let sDetails = oDetails !== undefined && oDetails !== null ? JSON.stringify(oDetails) : null;
 	if (sDetails !== null) {
 		sTrimmedDetails = sDetails.length > 5000 ? sDetails.substring(0, 5000 - 3) + "..." : sDetails;
 	}
 	// operation
-	const sOperationToSave = sOperation !== undefined && sOperation !== null ? sOperation : null;
+	let sOperationToSave = sOperation !== undefined && sOperation !== null ? sOperation : null;
 	// message
-	const sTrimmedMessage = sMessage.length > 5000 ? sMessage.substring(0, 5000 - 3) + "..." : sMessage;
+	let sTrimmedMessage = sMessage.length > 5000 ? sMessage.substring(0, 5000 - 3) + "..." : sMessage;
 	// job id
-	const iJobIdToSave = iJobId !== undefined ? iJobId : null;
+	let iJobIdToSave = iJobId !== undefined ? iJobId : null;
 
-	const hdbClient = await DatabaseClass.createConnection();
-	const connection = new DatabaseClass(hdbClient);
+	let hdbClient = await DatabaseClass.createConnection();
+	let connection = new DatabaseClass(hdbClient);
 
-	const statement = await connection.preparePromisified(
+	let statement = await connection.preparePromisified(
 		`
 			insert into "sap.plc.extensibility::template_application.t_messages"
 			( MESSAGE_ID, TIMESTAMP, JOB_ID, SEVERITY, TEXT, DETAILS, OPERATION ) values ( (SELECT NEWUID() FROM DUMMY), CURRENT_UTCTIMESTAMP, ?, ?, ?, ?, ? );
@@ -579,7 +579,7 @@ PlcException.prototype.constructor = PlcException;
  */
 PlcException.createPlcException = async function (oException, iJobId) {
 
-	var oPlcException, sLogMessage;
+	let oPlcException, sLogMessage;
 
 	// create exception
 	if (oException instanceof PlcException) {

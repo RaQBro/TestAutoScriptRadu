@@ -30,10 +30,10 @@ class SecureStoreRouter {
 
 	constructor() {
 
-		var router = express.Router();
+		let router = express.Router();
 
-		var SecureStoreService = new SecureStore();
-		var TechnicalUserUtil = new TechnicalUser();
+		let SecureStoreService = new SecureStore();
+		let TechnicalUserUtil = new TechnicalUser();
 
 		/**
 		 * Common function before all routes are processed
@@ -44,50 +44,50 @@ class SecureStoreRouter {
 
 		router.get("/retrieve", function (request, response) {
 
-			const sKey = request.query.KEY;
+			let sKey = request.query.KEY;
 
 			SecureStoreService.retrieveKey(sKey).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
 		router.post("/insert", function (request, response) {
 
-			const sKey = request.query.KEY;
-			const sValue = request.body.VALUE;
+			let sKey = request.query.KEY;
+			let sValue = request.body.VALUE;
 
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
 
 				TechnicalUserUtil.upsertTechnicalUserIntoTable(sKey).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
-					const oPlcException = await PlcException.createPlcException(err);
+					let oPlcException = await PlcException.createPlcException(err);
 					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
 
 		router.get("/delete", function (request, response) {
 
-			const sKey = request.query.KEY;
-			const sValue = null;
+			let sKey = request.query.KEY;
+			let sValue = null;
 
 			SecureStoreService.deleteKey(sKey).then(function (result) {
 
 				TechnicalUserUtil.upsertTechnicalUserIntoTable(sValue).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
-					const oPlcException = await PlcException.createPlcException(err);
+					let oPlcException = await PlcException.createPlcException(err);
 					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
 			}).catch(async function (err) {
-				const oPlcException = await PlcException.createPlcException(err);
+				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});

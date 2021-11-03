@@ -55,7 +55,7 @@ class UAAToken {
 	 */
 	hasValidToken() {
 
-		var isValid = false;
+		let isValid = false;
 
 		if (this.TOKEN_EXPIRE !== null) {
 
@@ -90,16 +90,16 @@ class UAAToken {
 			return;
 		}
 
-		const sTechnicalUser = await this.TechnicalUserUtil.getTechnicalUserFromTable();
+		let sTechnicalUser = await this.TechnicalUserUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
 			return;
 		}
-		const sTechnicalPassword = await this.SecureStoreService.retrieveKey(sTechnicalUser, true);
+		let sTechnicalPassword = await this.SecureStoreService.retrieveKey(sTechnicalUser, true);
 		if (helpers.isUndefinedNullOrEmptyString(sTechnicalPassword)) {
 			return;
 		}
 
-		var authForm = {
+		let authForm = {
 			"grant_type": "password",
 			"client_id": this.uaaService.clientid,
 			"client_secret": this.uaaService.clientsecret,
@@ -108,10 +108,10 @@ class UAAToken {
 			"response_type": "token"
 		};
 
-		var formData = querystring.stringify(authForm);
-		var contentLength = formData.length;
+		let formData = querystring.stringify(authForm);
+		let contentLength = formData.length;
 
-		var that = this;
+		let that = this;
 
 		request({
 				headers: {
@@ -132,10 +132,10 @@ class UAAToken {
 				}
 
 				try {
-					var tokenResp = JSON.parse(body);
+					let tokenResp = JSON.parse(body);
 					// Message.addLog(0, "BEARER_TOKEN Response: ", "message", tokenResp);
 
-					var expire = new Date();
+					let expire = new Date();
 					expire.setSeconds(expire.getSeconds() + parseInt(tokenResp.expires_in));
 
 					that.ACCES_TOKEN = tokenResp.access_token;
