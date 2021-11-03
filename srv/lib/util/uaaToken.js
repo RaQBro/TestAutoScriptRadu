@@ -59,13 +59,12 @@ class UAAToken {
 
 		if (this.TOKEN_EXPIRE !== null) {
 
-			const epochTicks = 621355968000000000;
-			const ticksPerMillisecond = 10000;
+			let ticksPerSecond = 1000;
 
-			var nowCheck = new Date();
-			var nowCheckTicks = epochTicks + (nowCheck.getTime() * ticksPerMillisecond);
+			let nowCheck = new Date();
+			let nowCheckTicks = nowCheck.getTime() + ticksPerSecond * 120;
 
-			var tokenExpireTicks = epochTicks + (this.TOKEN_EXPIRE.getTime() * ticksPerMillisecond);
+			let tokenExpireTicks = this.TOKEN_EXPIRE.getTime();
 
 			if (tokenExpireTicks > nowCheckTicks && this.ACCES_TOKEN !== null && this.ACCES_TOKEN.length > 10) {
 				isValid = true;
