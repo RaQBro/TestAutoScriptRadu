@@ -248,8 +248,7 @@ class Dispatcher {
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			let sDeveloperInfo =
-				`Failed to calculate the variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to calculate the variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
@@ -275,8 +274,7 @@ class Dispatcher {
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			let sDeveloperInfo =
-				`Failed to save the variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to save the variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
@@ -673,8 +671,7 @@ class Dispatcher {
 						}
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
-						sMessageInfo =
-							`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
+						sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning");
 						sMessageInfo =
 							`Calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): '${aUsers.join(", ")}'`;
@@ -733,8 +730,7 @@ class Dispatcher {
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
-			let sDeveloperInfo =
-				`Failed to reference version with ID '${iReferenceVersionId}' into calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to reference version with ID '${iReferenceVersionId}' into calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
@@ -851,8 +847,7 @@ class Dispatcher {
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
-			let sDeveloperInfo =
-				`Failed to add variable item with description '${sDescription}'  in calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to add variable item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
@@ -1928,8 +1923,7 @@ class Dispatcher {
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			let sMessageInfo =
-				`'${aBodyData.length}' item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
+			let sMessageInfo = `'${aBodyData.length}' item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 			return true;
 		}
