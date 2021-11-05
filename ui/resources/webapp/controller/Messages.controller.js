@@ -65,7 +65,23 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {},
+		onAfterRendering: function () {
+
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stMessages");
+
+			oSmartTable.applyVariant({
+				sort: {
+					sortItems: [{
+						columnKey: "TIMESTAMP",
+						operation: "Descending"
+					}]
+				}
+			});
+
+			oSmartTable.rebindTable();
+
+		},
 
 		applyFiltersFromParameters: function (jobID) {
 
