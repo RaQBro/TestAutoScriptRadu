@@ -688,8 +688,8 @@ class Dispatcher {
 					response = false;
 				}
 			}
-			if (oResponseBody.head === undefined && oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
-				oResponseBody.body.transactionaldata[0] !== undefined) {
+			if (oResponseBody.head !== undefined && oResponseBody.head.messages === undefined && oResponseBody.body !== undefined &&
+				oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !== undefined) {
 
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message");
 
