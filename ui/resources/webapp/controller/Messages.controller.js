@@ -18,21 +18,20 @@ sap.ui.define([
 
 		_onObjectMatched: function (oEvent) {
 
-			let jobID = oEvent.getParameter("arguments").jobID;
+			let iJobId = oEvent.getParameter("arguments").jobID;
 
 			this.openBusyDialog();
 
-			this._setupView(jobID);
+			this._setupView(iJobId);
 		},
 
-		_setupView: function (jobID) {
+		_setupView: function (iJobId) {
 
 			var oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
 
-			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.handleControlVisibleState("saveBtn", false);
-			this.applyFiltersFromParameters(jobID);
+			this.applyFiltersFromParameters(iJobId);
 			this.setSideContentSelectedKey("messages");
 
 			this.closeBusyDialog();
@@ -67,17 +66,16 @@ sap.ui.define([
 		/** @function called after onInit*/
 		onAfterRendering: function () {},
 
-		applyFiltersFromParameters: function (jobID) {
+		applyFiltersFromParameters: function (iJobId) {
 
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stMessages");
 
-			let sJobName = jobID || null;
+			if (iJobId !== undefined) {
 
-			if (sJobName !== null) {
+				this.bSeeAllEntries = false;
 
-				this.oTableSearchState = [];
-				this.oTableSearchState.push(new Filter("JOB_ID", FilterOperator.EQ, sJobName));
+				this.oTableSearchByJobId = new Filter("JOB_ID", FilterOperator.EQ, iJobId);
 
 				this.handleControlVisibleState("btnSeeAllEntries", true);
 
@@ -87,11 +85,13 @@ sap.ui.define([
 
 		onSeeAllEntries: function () {
 
-			this.oTableSearchState = [];
+			this.bSeeAllEntries = true;
+			this.oTableSearchByJobId = undefined;
 
-			let oSfbMessages = this.getView().byId("sfbMessages");
-			oSfbMessages.clear();
-			oSfbMessages.applyVariant({
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stMessages");
+
+			oSmartTable.applyVariant({
 				sort: {
 					sortItems: [{
 						columnKey: "JOB_ID",
@@ -100,27 +100,32 @@ sap.ui.define([
 				}
 			});
 
-			let stMessages = this.getView().byId("stMessages");
-
-			stMessages.rebindTable();
+			oSmartTable.rebindTable();
 
 			this.handleControlVisibleState("btnSeeAllEntries", false);
 		},
 
 		onRefreshEntries: function () {
 
-			let stMessages = this.getView().byId("stMessages");
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stMessages");
 
-			stMessages.rebindTable();
+			oSmartTable.rebindTable();
 		},
 
 		onBeforeRebindTable: function (oEvent) {
 
 			let bindingParams = oEvent.getParameter("bindingParams");
 
-			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
+			if (this.bSeeAllEntries !== undefined && this.bSeeAllEntries === true) {
 
-				bindingParams.filters = this.oTableSearchState;
+				bindingParams.filters = [];
+				this.bSeeAllEntries = false;
+
+			} else if (this.oTableSearchByJobId !== undefined) {
+
+				bindingParams.filters.push(this.oTableSearchByJobId);
+
 			}
 
 			this._renameColumns(oEvent);
