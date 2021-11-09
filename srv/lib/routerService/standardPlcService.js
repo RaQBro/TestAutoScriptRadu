@@ -1966,6 +1966,53 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * GET metadata (t_metadata info) from PLC
+	 * @param {string} sPath - the metadata path
+	 * @param {string} sBusinessObject - the metadata business object
+	 * @param {string} sColumnId - the metadata column
+	 * @param {string} isCustom - flag if should return all the custom fields for master data objects
+	 * 
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getMetadata(sPath, sBusinessObject, sColumnId, isCustom) {
+
+		let sQueryPath = "customfieldsformula";
+		let aParams = [{
+			"name": "path",
+			"value": sPath
+		}, {
+			"name": "business_object",
+			"value": sBusinessObject
+		}];
+
+		if (sColumnId !== undefined && sColumnId !== "") {
+			aParams.push({
+				"name": "column",
+				"value": sColumnId
+			});
+		}
+		if (isCustom !== undefined && isCustom === true) {
+			aParams.push({
+				"name": "is_custom",
+				"value": isCustom
+			});
+		}
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			let sDeveloperInfo = "Failed to get metadata from PLC.";
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			let sMessageInfo = "Metadata from PLC was retrieved with success!";
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
+			return oResponseBody.body.METADATA;
+		}
+	}
+
+	/** @function
 	 * Update master data for calculation version
 	 * 
 	 * @param {object} oCalculatonVersion - the calculation version
