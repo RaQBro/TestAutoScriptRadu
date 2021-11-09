@@ -52,7 +52,7 @@ class ExtensibilityRouter {
 		 */
 		router.use(async function (request, response, next) {
 
-			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobType(request);
+			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
 			ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 			next();
 

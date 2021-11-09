@@ -13,6 +13,7 @@ const makeRequest = util.promisify(require("request"));
  */
 
 const Code = require(global.appRoot + "/lib/util/message").Code;
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
 
 /** @class
@@ -32,10 +33,10 @@ class PlcDispatcher {
 	 */
 	constructor(request) {
 
-		if ((request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true) || request.user.id !== undefined) {
-			this.token = request.authInfo.getAppToken();
-		} else {
+		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === false)) {
 			this.token = global.TECHNICAL_BEARER_TOKEN; // bearer token generated from technical user
+		} else {
+			this.token = request.authInfo.getAppToken(); // request token
 		}
 
 	}
