@@ -6,7 +6,7 @@ const _ = require("underscore");
 /**
  * @fileOverview
  * 
- * Helper functionality used to:
+ * Helper functionality used to validate an array of items:
  *		- delete all unnecessary properties of Items based on PLC metadata in order to avoid validation errors
  *		- delete some fields that should not be in all parent (assembly) items
  * 
