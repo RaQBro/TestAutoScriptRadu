@@ -607,7 +607,16 @@ class Dispatcher {
 		} else {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message");
-			return oResponseBody;
+
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+				oResponseBody.body.transactionaldata[0] !== undefined && oResponseBody.body.transactionaldata[0].CALCULATION_VERSIONS !== undefined &&
+				oResponseBody.body.transactionaldata[0].CALCULATION_VERSIONS[0] !== undefined) {
+
+				return oResponseBody.body.transactionaldata[0].CALCULATION_VERSIONS[0];
+			} else {
+				return undefined;
+			}
+
 		}
 	}
 
@@ -1960,9 +1969,10 @@ class Dispatcher {
 	 * Update master data for calculation version
 	 * 
 	 * @param {object} oCalculatonVersion - the calculation version
+	 * @param {boolean} bCompressedResult - flag if the response should be compressed
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async updateMasterData(oCalculatonVersion) {
+	async updateMasterData(oCalculatonVersion, bCompressedResult) {
 
 		let sQueryPath = "calculation-versions";
 		let aParams = [{
@@ -1972,12 +1982,16 @@ class Dispatcher {
 			"name": "updateMasterdataTimestamp",
 			"value": "true"
 		}, {
-			"name": "compressedResult",
-			"value": "true"
-		}, {
 			"name": "loadMasterdata",
 			"value": "true"
 		}];
+
+		if (bCompressedResult !== undefined && bCompressedResult === true) {
+			aParams.push({
+				"name": "compressedResult",
+				"value": "true"
+			});
+		}
 
 		let aBodyData = [{
 			"CALCULATION_ID": oCalculatonVersion.CALCULATION_ID,
