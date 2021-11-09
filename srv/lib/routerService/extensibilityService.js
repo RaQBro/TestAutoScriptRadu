@@ -11,6 +11,7 @@ const async = require("async");
  * @name extensibilityService.js
  */
 
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
@@ -28,7 +29,7 @@ class Service {
 		this.JOB_ID = request.JOB_ID;
 		this.Operation = sOperation;
 
-		if (request.IS_ONLINE_MODE === true) {
+		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === false)) {
 			this.userId = request.user.id.toUpperCase(); // request user
 		} else {
 			this.userId = global.TECHNICAL_USER; // technical user
