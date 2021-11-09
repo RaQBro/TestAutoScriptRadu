@@ -161,8 +161,8 @@ class JobSchedulerUtil {
 		let bWithSuccess = true;
 		let sMessageInfo = `Job with ID '${request.JOB_ID}' completed with success!`;
 
-		if (request.IS_ONLINE_MODE === true &&
-			(!helpers.isRequestFromJob(request) || iResponseStatusCode === undefined || oServiceResponseBody === undefined)) {
+		if (request.IS_ONLINE_MODE && (!helpers.isRequestFromJob(request) || iResponseStatusCode === undefined || oServiceResponseBody ===
+				undefined)) {
 			sMessageInfo = "Error update run log: Please provide request, response status code and response body as parameters!";
 			bWithSuccess = false;
 		}
@@ -208,7 +208,7 @@ class JobSchedulerUtil {
 	async insertJobLogEntryIntoTable(request) {
 
 		if (request.JOB_ID === undefined) {
-			return undefined;
+			return;
 		}
 
 		let iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
@@ -221,7 +221,7 @@ class JobSchedulerUtil {
 		let sUserId = null;
 		let iWebRequest = null;
 
-		if (request.IS_ONLINE_MODE === true) {
+		if (request.IS_ONLINE_MODE === true && !helpers.isRequestFromJob(request)) {
 			sUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
 		} else {
@@ -230,7 +230,7 @@ class JobSchedulerUtil {
 			if (helpers.isUndefinedOrNull(sUserId)) {
 				let sDeveloperInfo = "Please provide a technical user into administration section of application!";
 				let oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
-				// return exception if technical user is not provided
+
 				return oPlcException;
 			}
 			iWebRequest = 0;
@@ -250,8 +250,6 @@ class JobSchedulerUtil {
 			sRequestBody, null, iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-
-		return undefined;
 	}
 
 	/** @function
@@ -345,7 +343,7 @@ class JobSchedulerUtil {
 	 * @param {object} request - web request / job request
 	 * @return {integer} iJobId - the generated job id / undefined if IS_ONLINE_MODE undefined
 	 */
-	async generateJobIdAndJobTimestampAndJobTypeAndJobUser(request) {
+	async generateJobIdAndJobTimestampAndJobType(request) {
 
 		let iJobId;
 		let iWebRequest;
@@ -372,7 +370,7 @@ class JobSchedulerUtil {
 		request.IS_ONLINE_MODE = iWebRequest === 1 ? true : false;
 
 		// do not generate a JOB_ID if parameter IS_ONLINE_MODE is not defined
-		if (iWebRequest === 0 || (request.query.IS_ONLINE_MODE !== undefined && request.query.IS_ONLINE_MODE !== "")) {
+		if (iWebRequest === 0 || request.query.IS_ONLINE_MODE !== undefined && request.query.IS_ONLINE_MODE !== "") {
 			let hdbClient = await DatabaseClass.createConnection();
 			let connection = new DatabaseClass(hdbClient);
 
@@ -416,8 +414,8 @@ class JobSchedulerUtil {
 			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 			// set USER_ID to request
-			if (request.IS_ONLINE_MODE === true) {
-				request.USER_ID = request.user.id.toUpperCase(); // request user
+			if ((request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true) || request.user.id !== undefined) {
+				request.USER_ID = request.user.id.toUpperCase();
 			} else {
 				request.USER_ID = global.TECHNICAL_USER; // technical user
 			}
