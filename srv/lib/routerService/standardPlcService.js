@@ -1943,7 +1943,7 @@ class Dispatcher {
 	 * 
 	 * @return {object} result / error - PLC response / the error
 	 */
-	async getMetadata() {
+	async getTransportationMetadata() {
 
 		let sQueryPath = "transportation";
 		let aParams = [{
