@@ -1,6 +1,8 @@
 /*eslint-env node, es6 */
 "use strict";
 
+const _ = require("underscore");
+
 /**
  * @fileOverview
  * 
@@ -144,6 +146,38 @@ function getDateByPattern(sPattern) {
 	return sCurrentDate;
 }
 
+/** @function
+ * Useful to decompressed an array from standard PLC service response - compressed with transposeResultArrayOfObjects() from PLC Standard
+ */
+function decompressedResultArray(aArray) {
+
+	let aReturn = [];
+
+	if (_.isArray(aArray) && aArray.length > 0) {
+
+		// first object contain the columns names
+		let aColumns = aArray[0];
+
+		// start the loop with second object (contain the value)
+		for (let i = 1; i < aArray.length; i++) {
+
+			let oReturn = {};
+			let aValues = aArray[i];
+
+			for (let j = 0; j < aColumns.length; j++) {
+
+				let sColumn = aColumns[j];
+				oReturn[sColumn] = aValues[j];
+
+			}
+
+			aReturn.push(oReturn);
+		}
+	}
+
+	return aReturn;
+}
+
 module.exports = {
 	nowPlusSecondstoISOString,
 	isUndefinedOrNull,
@@ -153,5 +187,6 @@ module.exports = {
 	getAllConfigurations,
 	getAllDefaultValues,
 	chunkIntoSmallArrays,
-	getDateByPattern
+	getDateByPattern,
+	decompressedResultArray
 };
