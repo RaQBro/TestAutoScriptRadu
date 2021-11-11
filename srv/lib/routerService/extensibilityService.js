@@ -78,7 +78,7 @@ class Service {
 					item.VERSION_ID,
 					calcVersion.IS_FROZEN
 				from "sap.plc.db::basis.t_calculation_version" calcVersion
-					inner join "sap.plc.db::basis.t_open_calculation_versions" openCalcVersion
+					left outer join "sap.plc.db::basis.t_open_calculation_versions" openCalcVersion
 						on openCalcVersion.CALCULATION_VERSION_ID = calcVersion.CALCULATION_VERSION_ID
 							and SESSION_ID = '${this.userId}'
 					left outer join (select distinct(item.referenced_calculation_version_id) as VERSION_ID
