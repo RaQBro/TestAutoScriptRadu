@@ -20,7 +20,7 @@ const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/stand
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
-const sOperation = "Dummy Operation"; // operation of the service/job
+const sOperation = "Dummy Operation"; // operation of the service / job
 
 /** @class
  * @classdesc Standard PLC router

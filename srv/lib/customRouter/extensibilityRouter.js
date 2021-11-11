@@ -31,7 +31,7 @@ const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
 const sContentType = "application/json";
-const sOperation = "Dummy Operation"; // operation of the service/job
+const sOperation = "Dummy Operation"; // operation of the service / job
 
 /** @class
  * @classdesc Extensibility PLC router
@@ -155,7 +155,9 @@ class ExtensibilityRouter {
 				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
 
 				// write end of the job into t_messages only for jobs (fake or real)
-				await Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message", undefined, sOperation);
+				await Message.addLog(request.JOB_ID,
+					`Job with ID '${request.JOB_ID}' ended!`,
+					"message", undefined, sOperation);
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -185,7 +187,9 @@ class ExtensibilityRouter {
 			.catch(async function (err) {
 
 				// write end of the job into t_messages only for jobs (fake or real)
-				await Message.addLog(request.JOB_ID, `Job with ID '${request.JOB_ID}' ended!`, "message", undefined, sOperation);
+				await Message.addLog(request.JOB_ID,
+					`Job with ID '${request.JOB_ID}' ended!`,
+					"message", undefined, sOperation);
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {

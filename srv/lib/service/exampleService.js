@@ -23,7 +23,7 @@ const PlcException = MessageLibrary.PlcException;
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
 
-const sOperation = "Dummy Operation"; // operation of the service/job
+const sOperation = "Dummy Operation"; // operation of the service / job
 
 /** @function
  * Used to execute the custom business logic
@@ -154,7 +154,9 @@ async function doService(request) {
 			await StandardPlcService.closeCalculationVersion(1);
 		}
 
-		await Message.addLog(request.JOB_ID, "Example how to add operation at the messages.", "message", undefined, sOperation);
+		await Message.addLog(request.JOB_ID,
+			"Example how to add operation at the messages.",
+			"message", undefined, sOperation);
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {
