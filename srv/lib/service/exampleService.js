@@ -154,11 +154,11 @@ async function doService(request) {
 			await StandardPlcService.closeCalculationVersion(1);
 		}
 
-		await Message.addLog(request.JOB_ID, "Example how to add operation at the messages.", "message", undefined, "TEST_OPERATION");
+		await Message.addLog(request.JOB_ID, "Example how to add operation at the messages.", "message", undefined, sOperation);
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {
-		let oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
+		let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
 		iStatusCode = oPlcException.code.responseCode;
 		oServiceResponseBody = oPlcException;
 	}

@@ -575,9 +575,10 @@ PlcException.prototype.constructor = PlcException;
  * 
  * @param {object} oException - the error exception
  * @param {integer} iJobId - the job id needed to save the message
+ * @param {string} sOperation - the operation/category of the message if necessary
  * @return {PlcException} oPlcException - the new PlcException error object 
  */
-PlcException.createPlcException = async function (oException, iJobId) {
+PlcException.createPlcException = async function (oException, iJobId, sOperation) {
 
 	let oPlcException, sLogMessage;
 
@@ -591,7 +592,7 @@ PlcException.createPlcException = async function (oException, iJobId) {
 	}
 
 	// save message log
-	await Message.addLog(iJobId, sLogMessage, "error", oPlcException);
+	await Message.addLog(iJobId, sLogMessage, "error", oPlcException, sOperation);
 
 	// return exception
 	return oPlcException;

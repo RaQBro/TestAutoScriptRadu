@@ -199,7 +199,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// create error as service response body
-					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID);
+					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
 
 					// add service response body to job log entry
 					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);
