@@ -31,6 +31,8 @@ sap.ui.define([
 			this.handleControlVisibleState("saveBtn", false);
 			this.setSideContentSelectedKey("jobs");
 
+			this.onAfterRendering();
+
 			this.closeBusyDialog();
 		},
 
@@ -78,14 +80,24 @@ sap.ui.define([
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stJobs");
 
-			oSmartTable.applyVariant({
-				sort: {
-					sortItems: [{
-						columnKey: "START_TIMESTAMP",
-						operation: "Descending"
-					}]
-				}
-			});
+			let oExistingVariant = oSmartTable.fetchVariant();
+
+			if (oExistingVariant !== undefined) {
+
+				oSmartTable.applyVariant(oExistingVariant);
+
+			} else {
+
+				oSmartTable.applyVariant({
+					sort: {
+						sortItems: [{
+							columnKey: "START_TIMESTAMP",
+							operation: "Descending"
+						}]
+					}
+				});
+
+			}
 
 			oSmartTable.rebindTable();
 		},
