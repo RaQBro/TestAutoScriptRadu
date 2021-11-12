@@ -12,7 +12,7 @@ sap.ui.define([
 
 		onInit: function () {
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("jobs").attachPatternMatched(this._onObjectMatched, this);
 		},
 
@@ -25,10 +25,9 @@ sap.ui.define([
 
 		_setupView: function () {
 
-			var oView = this.getView();
+			let oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
 
-			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.handleControlVisibleState("saveBtn", false);
 			this.setSideContentSelectedKey("jobs");
 
@@ -40,7 +39,7 @@ sap.ui.define([
 			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
 
 			columnNames.forEach(function (column) {
-				var header = column.getHeader();
+				let header = column.getHeader();
 				if (header.getText() === "START_TIMESTAMP") {
 					header.setText(this.getResourceBundleText("jobStartTimestamp"));
 				} else if (header.getText() === "END_TIMESTAMP") {
@@ -120,10 +119,10 @@ sap.ui.define([
 
 		onViewJobLogs: function (oEvent) {
 
-			var jID = oEvent.getSource().getBindingContext().getObject().JOB_ID;
+			let iJobId = oEvent.getSource().getBindingContext().getObject().JOB_ID;
 
 			this.navTo("messages", {
-				jobID: jID
+				jobID: iJobId
 			});
 		}
 	});

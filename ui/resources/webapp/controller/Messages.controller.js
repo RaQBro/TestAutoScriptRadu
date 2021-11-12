@@ -27,7 +27,7 @@ sap.ui.define([
 
 		_setupView: function (iJobId) {
 
-			var oView = this.getView();
+			let oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
 
 			this.handleControlVisibleState("saveBtn", false);
@@ -43,10 +43,10 @@ sap.ui.define([
 				return;
 			}
 
-			const columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
+			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
 
 			columnNames.forEach(function (column) {
-				var header = column.getHeader();
+				let header = column.getHeader();
 				if (header.getText() === "TIMESTAMP") {
 					header.setText(this.getResourceBundleText("colTimestamp"));
 				} else if (header.getText() === "JOB_ID") {
