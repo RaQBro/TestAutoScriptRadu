@@ -36,6 +36,10 @@ sap.ui.define([
 
 		_renameColumns: function (oEvent) {
 
+			if (!oEvent.getSource().getAggregation("items")[1]) {
+				return;
+			}
+
 			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
 
 			columnNames.forEach(function (column) {
@@ -87,12 +91,6 @@ sap.ui.define([
 		},
 
 		onBeforeRebindTable: function (oEvent) {
-
-			let bindingParams = oEvent.getParameter("bindingParams");
-
-			if (this.oTableSearchState !== undefined && this.oTableSearchState.length > 0) {
-				bindingParams.filters = this.oTableSearchState;
-			}
 
 			this._renameColumns(oEvent);
 		},

@@ -18,9 +18,9 @@ sap.ui.define([
 
 		_onObjectMatched: function (oEvent) {
 
-			let iJobId = oEvent.getParameter("arguments").jobID;
-
 			this.openBusyDialog();
+
+			let iJobId = oEvent.getParameter("arguments").jobID;
 
 			this._setupView(iJobId);
 		},
@@ -31,8 +31,9 @@ sap.ui.define([
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
 
 			this.handleControlVisibleState("saveBtn", false);
-			this.applyFiltersFromParameters(iJobId);
 			this.setSideContentSelectedKey("messages");
+
+			this.applyFiltersFromParameters(iJobId);
 
 			this.closeBusyDialog();
 		},
