@@ -64,7 +64,11 @@ sap.ui.define([
 		},
 
 		/** @function called after onInit*/
-		onAfterRendering: function () {},
+		onAfterRendering: function () {
+
+			this.applyFiltersFromParameters();
+
+		},
 
 		applyFiltersFromParameters: function (iJobId) {
 
@@ -73,11 +77,49 @@ sap.ui.define([
 
 			if (iJobId !== undefined) {
 
-				this.bSeeAllEntries = false;
-
 				this.oTableSearchByJobId = new Filter("JOB_ID", FilterOperator.EQ, iJobId);
 
 				this.handleControlVisibleState("btnSeeAllEntries", true);
+
+				oSmartTable.applyVariant({
+					"filter": {
+						"filterItems": [{
+							"columnKey": "JOB_ID",
+							"operation": "EQ",
+							"exclude": false,
+							"value1": iJobId,
+							"value2": null
+						}]
+					},
+					sort: {
+						sortItems: [{
+							columnKey: "TIMESTAMP",
+							operation: "Ascending"
+						}]
+					}
+				});
+				oSmartTable.rebindTable();
+
+			} else {
+
+				let oExistingVariant = oSmartTable.fetchVariant();
+
+				if (oExistingVariant !== undefined) {
+
+					oSmartTable.applyVariant(oExistingVariant);
+
+				} else {
+
+					oSmartTable.applyVariant({
+						sort: {
+							sortItems: [{
+								columnKey: "TIMESTAMP",
+								operation: "Descending"
+							}]
+						}
+					});
+
+				}
 
 				oSmartTable.rebindTable();
 			}
@@ -94,7 +136,7 @@ sap.ui.define([
 			oSmartTable.applyVariant({
 				sort: {
 					sortItems: [{
-						columnKey: "JOB_ID",
+						columnKey: "TIMESTAMP",
 						operation: "Descending"
 					}]
 				}
@@ -120,11 +162,8 @@ sap.ui.define([
 			if (this.bSeeAllEntries !== undefined && this.bSeeAllEntries === true) {
 
 				bindingParams.filters = [];
+
 				this.bSeeAllEntries = false;
-
-			} else if (this.oTableSearchByJobId !== undefined) {
-
-				bindingParams.filters.push(this.oTableSearchByJobId);
 
 			}
 
