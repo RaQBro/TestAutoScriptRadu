@@ -99,7 +99,6 @@ sap.ui.define([
 						}]
 					}
 				});
-				oSmartTable.rebindTable();
 
 			} else {
 
@@ -121,7 +120,9 @@ sap.ui.define([
 					});
 
 				}
+			}
 
+			if (oSmartTable.isInitialised()) {
 				oSmartTable.rebindTable();
 			}
 		},

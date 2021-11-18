@@ -99,7 +99,9 @@ sap.ui.define([
 
 			}
 
-			oSmartTable.rebindTable();
+			if (oSmartTable.isInitialised()) {
+				oSmartTable.rebindTable();
+			}
 		},
 
 		onBeforeRebindTable: function (oEvent) {

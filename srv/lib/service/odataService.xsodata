@@ -33,7 +33,7 @@ service{
 		delete forbidden;
 		
 		// ------------------------------------ Get Messages Data ------------------------------------
-		"sap.plc.extensibility::template_application.t_messages" as "GetMessages" keys ("TIMESTAMP")
+		"sap.plc.extensibility::template_application.t_messages" as "GetMessages" keys ("MESSAGE_ID", "TIMESTAMP")
 		create forbidden
 		update forbidden
 		delete forbidden;
@@ -46,4 +46,5 @@ annotations {
 settings {
      metadata cache-control "no-cache"; 
      content cache-control "no-cache";
+     support null;
 }
