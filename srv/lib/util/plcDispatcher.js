@@ -33,10 +33,10 @@ class PlcDispatcher {
 	 */
 	constructor(request) {
 
-		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === false)) {
-			this.token = global.TECHNICAL_BEARER_TOKEN; // bearer token generated from technical user
-		} else {
+		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true)) {
 			this.token = request.authInfo.getAppToken(); // request token
+		} else {
+			this.token = global.TECHNICAL_BEARER_TOKEN; // bearer token generated from technical user
 		}
 
 	}
