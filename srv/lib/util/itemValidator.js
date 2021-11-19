@@ -299,7 +299,6 @@ class ItemValidator {
 			if (hasChildren) {
 				delete aValidatedItems[iIndex].PRICE_FIXED_PORTION;
 				delete aValidatedItems[iIndex].PRICE_VARIABLE_PORTION;
-				delete aValidatedItems[iIndex].PRICE_TRANSACTION_CURRENCY_ID;
 				delete aValidatedItems[iIndex].TRANSACTION_CURRENCY_ID;
 				delete aValidatedItems[iIndex].PRICE_UNIT;
 				delete aValidatedItems[iIndex].PRICE_UNIT_UOM_ID;
