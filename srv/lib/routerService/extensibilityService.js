@@ -29,10 +29,10 @@ class Service {
 		this.JOB_ID = request.JOB_ID;
 		this.Operation = sOperation;
 
-		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === true)) {
-			this.userId = request.user.id.toUpperCase(); // request user
-		} else {
+		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === false)) {
 			this.userId = global.TECHNICAL_USER; // technical user
+		} else {
+			this.userId = request.user.id.toUpperCase(); // request user
 		}
 	}
 
