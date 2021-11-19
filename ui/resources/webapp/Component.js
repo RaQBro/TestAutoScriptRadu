@@ -1,9 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"webapp/ui/model/models",
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/core/utils/Constants"
-], function (UIComponent, models, BackendConnector, Constants) {
+], function (UIComponent, FakeLrepConnectorLocalStorage, models, BackendConnector, Constants) {
 	"use strict";
 
 	return UIComponent.extend("webapp.ui.Component", {
@@ -17,6 +18,9 @@ sap.ui.define([
 		},
 
 		init: function () {
+
+			FakeLrepConnectorLocalStorage.enableFakeConnector();
+
 			// call the init function of the parent
 			var i18nModel = new sap.ui.model.resource.ResourceModel({
 				bundleUrl: "/webapp/i18n/i18n.properties",
@@ -113,6 +117,11 @@ sap.ui.define([
 					window.location.href = "/logout";
 				}
 			);
+		},
+
+		destroy: function () {
+			FakeLrepConnectorLocalStorage.disableFakeConnector();
+			UIComponent.prototype.destroy.apply(this, arguments);
 		}
 	});
 });
