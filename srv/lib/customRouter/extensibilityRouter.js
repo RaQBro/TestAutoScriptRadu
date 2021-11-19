@@ -43,7 +43,6 @@ class ExtensibilityRouter {
 
 		let router = express.Router();
 
-		let ExtensibilityPlcService;
 		let JobSchedulerUtil = new JobScheduler();
 
 		/**
@@ -53,7 +52,6 @@ class ExtensibilityRouter {
 		router.use(async function (request, response, next) {
 
 			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
-			ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 			next();
 
 		});
@@ -92,6 +90,8 @@ class ExtensibilityRouter {
 		 */
 		router.post("/maintainDefaultValues", function (request, response) {
 
+			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
+
 			ExtensibilityPlcService.maintainDefaultValues(request, response)
 				.then(function (resp) {
 					response.send(resp);
@@ -101,6 +101,8 @@ class ExtensibilityRouter {
 		});
 
 		router.get("/getAllProjects", function (request, response) {
+
+			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
 			ExtensibilityPlcService.getAllProjects().then(function (result) {
 				response.type(sContentType).status(200).send(result);
