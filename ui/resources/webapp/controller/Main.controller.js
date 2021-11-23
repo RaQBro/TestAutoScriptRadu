@@ -20,9 +20,9 @@ sap.ui.define([
 
 			if (oUserDetails.Error === true) {
 
-				this.navTo("error", {
-					item: JSON.stringify(oUserDetails)
-				});
+				sap.ui.getCore().oApplicationError = oUserDetails;
+
+				this.navTo("error");
 			} else {
 
 				var avatarBtn = this.getView().byId("avatarBtn");

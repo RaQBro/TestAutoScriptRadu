@@ -1,33 +1,37 @@
 sap.ui.define([
 	"./BaseController",
 	"sap/m/MessageStrip",
-	"sap/ui/core/MessageType"
-], function (BaseController, MessageStrip, MessageType) {
+	"sap/ui/core/MessageType",
+	"sap/ui/core/MessageType",
+	"webapp/ui/core/utils/MessageHelpers",
+	"webapp/ui/toolBarMessages/ToolBarMessages"
+], function (BaseController, MessageStrip, MessageType, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
 	return BaseController.extend("webapp.ui.controller.Error", {
-		/**
-		 * @file ErrorController -  
-		 */
+
+		ToolBarMessages: ToolBarMessages,
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.getRoute("error").attachMatched(this._popUpMessage, this);
+
+			this.oButtonPopover = this.byId("buttonMessagePopover");
 		},
 
 		/** @function called when an error from get user details appears */
-		_popUpMessage: function (oEvent) {
-			var oParam = oEvent.getParameter("arguments").item;
-			var oErrorMessageStrip = new MessageStrip({
-				text: JSON.parse(oParam).BODY,
-				type: MessageType.Error,
-				showIcon: true,
-				showCloseButton: false
-			});
+		_popUpMessage: function () {
+			if (!sap.ui.getCore().oApplicationError) {
+				return;
+			}
+			let oApplicationError = sap.ui.getCore().oApplicationError;
 
-			this.getView().byId("oVerticalContent").addContent(oErrorMessageStrip);
+			MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
+				false, null, this.oButtonPopover);
+
+			this.oButtonPopover.firePress();
 		}
 	});
 });
