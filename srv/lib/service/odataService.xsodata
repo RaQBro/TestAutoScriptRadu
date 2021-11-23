@@ -9,31 +9,31 @@
 
 service{
 		// ------------------------------------ Get Configuration Data ------------------------------------
-		"sap.plc.extensibility::template_application.t_configuration" as "GetConfiguration" keys ("FIELD_NAME", "FIELD_VALUE")
+		"sap.plc.extensibility::template_application.v_configuration" as "GetConfiguration" keys ("FIELD_NAME")
 		create forbidden
 		update forbidden
 		delete forbidden;
 		
 		// ------------------------------------ Get Default Values Data ------------------------------------
-		"sap.plc.extensibility::template_application.t_default_values" as "GetDefaultValues" keys ("FIELD_NAME", "FIELD_VALUE")
+		"sap.plc.extensibility::template_application.v_default_values" as "GetDefaultValues" keys ("FIELD_NAME", "FIELD_VALUE")
 		create forbidden
 		update forbidden
 		delete forbidden;
 		
 		// ------------------------------------ Get Technical User ------------------------------------
-		"sap.plc.extensibility::template_application.t_technical_user" as "GetTechnicalUser" keys ("FIELD_NAME")
+		"sap.plc.extensibility::template_application.v_technical_user" as "GetTechnicalUser" keys ("FIELD_NAME")
 		create forbidden
 		update forbidden
 		delete forbidden;
 		
 		// ------------------------------------ Get Job Logs Data ------------------------------------
-		"sap.plc.extensibility::template_application.t_job_log" as "GetJobLogs" keys ("START_TIMESTAMP")
+		"sap.plc.extensibility::template_application.v_job_log" as "GetJobLogs" keys ("START_TIMESTAMP")
 		create forbidden
 		update forbidden
 		delete forbidden;
 		
 		// ------------------------------------ Get Messages Data ------------------------------------
-		"sap.plc.extensibility::template_application.t_messages" as "GetMessages" keys ("MESSAGE_ID", "TIMESTAMP")
+		"sap.plc.extensibility::template_application.v_messages" as "GetMessages" keys ("MESSAGE_ID", "TIMESTAMP")
 		create forbidden
 		update forbidden
 		delete forbidden;
