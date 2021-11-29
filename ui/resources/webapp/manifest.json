@@ -40,7 +40,8 @@
 			"phone": true
 		},
 		"supportedThemes": [
-			"sap_fiori_3"
+			"sap_fiori_3",
+			"sap_horizon"
 		]
 	},
 
@@ -52,7 +53,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.95.0",
+			"minUI5Version": "1.96.1",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
