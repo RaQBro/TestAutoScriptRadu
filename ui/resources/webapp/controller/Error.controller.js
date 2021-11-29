@@ -2,7 +2,6 @@ sap.ui.define([
 	"./BaseController",
 	"sap/m/MessageStrip",
 	"sap/ui/core/MessageType",
-	"sap/ui/core/MessageType",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 ], function (BaseController, MessageStrip, MessageType, MessageHelpers, ToolBarMessages) {
