@@ -97,14 +97,15 @@ class Service {
 		if (aIsTouchableVersions[0] !== undefined) {
 			let oTouchableVersion = aIsTouchableVersions[0];
 			if (
-				(oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1") &&
+				(oTouchableVersion.IS_WRITEABLE === null || oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1") &&
 				(oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
 					oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined) &&
 				(oTouchableVersion.VERSION_ID === "null" || oTouchableVersion.VERSION_ID === null || oTouchableVersion.VERSION_ID === undefined)
 			) {
 				bIsTouchable = true;
 			}
-			let bIsWritable = oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1" ? true : false;
+			let bIsWritable = oTouchableVersion.IS_WRITEABLE === null || oTouchableVersion.IS_WRITEABLE === 1 ||
+				oTouchableVersion.IS_WRITEABLE === "1" ? true : false;
 			let bIsFrozen = oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
 				oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined ? false : true;
 			await Message.addLog(this.JOB_ID,
