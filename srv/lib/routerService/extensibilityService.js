@@ -73,7 +73,7 @@ class Service {
 				IS_FROZEN
 			from (
 				select
-					openCalcVersion.CALCULATION_VERSION_ID,
+					calcVersion.CALCULATION_VERSION_ID,
 					openCalcVersion.IS_WRITEABLE,
 					item.VERSION_ID,
 					calcVersion.IS_FROZEN
