@@ -111,7 +111,7 @@ class Service {
 			await Message.addLog(this.JOB_ID,
 				"Calculation Version with ID '" + iVersionId + "': Is Touchable = " + bIsTouchable +
 				". Is Writable = " + bIsWritable + ". Is Frozen = " + bIsFrozen + ".",
-				"message", undefined, this.sOperation);
+				"message", undefined, this.Operation);
 		}
 
 		return bIsTouchable;
