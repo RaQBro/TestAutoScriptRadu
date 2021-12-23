@@ -6,11 +6,11 @@
 		"logoutPage": "/webapp/auth/logoff.html"
 	},
 	"routes": [{
-		"source": "^/service/(.*).xsjs",
+		"source": "^/service/(.*).xsodata",
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
-		"source": "^/service/(.*).xsodata",
+		"source": "^/standard/plc/(.*)$",
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
@@ -26,10 +26,6 @@
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
-		"source": "^/standard/plc/(.*)$",
-		"destination": "tapp_srv_api",
-		"authenticationType": "xsuaa"
-	}, {
 		"source": "^/webapp/auth/logoff.html$",
 		"localDir": "resources",
 		"authenticationType": "none",
@@ -37,9 +33,20 @@
 	}, {
 		"source": "^/webapp/img/(.*).png",
 		"localDir": "resources",
-		"authenticationType": "none"
+		"authenticationType": "none",
+		"csrfProtection": false
 	}, {
-		"source": "/(.*)",
+		"source": "^/webapp/index.html",
+		"localDir": "resources",
+		"authenticationType": "xsuaa",
+		"csrfProtection": true
+	}, {
+		"source": "^/webapp/(.+)$",
+		"localDir": "resources",
+		"authenticationType": "xsuaa",
+		"csrfProtection": true
+	}, {
+		"source": "^/webapp/",
 		"localDir": "resources",
 		"authenticationType": "xsuaa"
 	}]
