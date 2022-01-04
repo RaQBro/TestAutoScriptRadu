@@ -15,7 +15,7 @@ const express = require("express");
  *		- POST /extensibility/plc/maintainDefaultValues
  *		- GET /extensibility/plc/getAllProjects
  *		- GET /extensibility/plc/exampleService?IS_ONLINE_MODE=true/false
- *							- undefined or true if onlime mode (web request) - no entries in logs/messages if undefined for web request
+ *							- undefined or true if online mode (web request) - no entries in logs/messages if undefined for web request
  *							- false if fake background job (web request)
  *							- must be undefined in case of background job (job request) - with entries in logs/messages for job request
  * 
