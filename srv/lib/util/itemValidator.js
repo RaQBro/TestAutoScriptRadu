@@ -1,4 +1,5 @@
 /*eslint-env node, es6 */
+/*eslint eqeqeq: 0 */
 "use strict";
 
 const _ = require("underscore");
@@ -45,7 +46,7 @@ class ItemValidator {
 
 		let sColRegex = /^CUST_[A-Z][A-Z0-9_]*$/;
 		let aCustomFields = _.filter(aMetaData, function (oPropertyMetadata) {
-			return oPropertyMetadata.IS_CUSTOM === 1 && oPropertyMetadata.UOM_CURRENCY_FLAG !== 1;
+			return oPropertyMetadata.IS_CUSTOM == 1 && oPropertyMetadata.UOM_CURRENCY_FLAG != 1;
 		});
 		_.each(aCustomFields, function (oPropertyValue) {
 
@@ -188,7 +189,7 @@ class ItemValidator {
 					return;
 				}
 				aPropertyMetadataAttributes = _.filter(aPropertyMetadata[0].ATTRIBUTES, function (oAttributeMetadata) {
-					return oAttributeMetadata.ITEM_CATEGORY_ID === oInput.categoryId && oAttributeMetadata.SUBITEM_STATE === oInput.subitemState;
+					return oAttributeMetadata.ITEM_CATEGORY_ID == oInput.categoryId && oAttributeMetadata.SUBITEM_STATE === oInput.subitemState;
 				});
 				if (aPropertyMetadataAttributes.length === 0) {
 					delete oInput.entity[sPropertyKey];
