@@ -1721,6 +1721,13 @@ class Dispatcher {
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
+			for (let oData of oResponseBody.body.transactionaldata) {
+				let status = await this.checkTaskStatus(oData.TASK_ID);
+				while (status !== "COMPLETED") {
+					status = await this.checkTaskStatus(oData.TASK_ID);
+				}
+			}
+
 			let sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
 			return true;
