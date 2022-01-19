@@ -11,6 +11,7 @@ const _ = require("underscore");
  * @name standardPlcService.js
  */
 
+const Helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js").PlcDispatcher;
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
@@ -1731,7 +1732,7 @@ class Dispatcher {
 				let status;
 
 				do {
-					await this.sleep(1500);
+					await Helpers.sleep(1500);
 					status = await this.checkTaskStatus(oData.TASK_ID);
 
 					if (status === "CANCELED" || status === "FAILED") {

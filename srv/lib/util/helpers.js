@@ -178,6 +178,10 @@ function decompressedResultArray(aArray) {
 	return aReturn;
 }
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 module.exports = {
 	nowPlusSecondstoISOString,
 	isUndefinedOrNull,
@@ -188,5 +192,6 @@ module.exports = {
 	getAllDefaultValues,
 	chunkIntoSmallArrays,
 	getDateByPattern,
-	decompressedResultArray
+	decompressedResultArray,
+	sleep
 };
