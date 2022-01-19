@@ -1711,9 +1711,16 @@ class Dispatcher {
 		}, {
 			"name": "action",
 			"value": "calculate_lifecycle_versions"
+		}, {
+			"name": "overwriteManualVersions",
+			"value": "true"
 		}];
 
-		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let aBodyData = [{
+			"oneTimeCostItemDescription": "Distributed Costs"
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
