@@ -11,6 +11,7 @@ const _ = require("underscore");
  * @name standardPlcService.js
  */
 
+const Helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js").PlcDispatcher;
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
@@ -1711,26 +1712,43 @@ class Dispatcher {
 		}, {
 			"name": "action",
 			"value": "calculate_lifecycle_versions"
+		}, {
+			"name": "overwriteManualVersions",
+			"value": "true"
 		}];
 
-		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+		let aBodyData = [{
+			"oneTimeCostItemDescription": "Distributed Costs"
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
 		let oResponseBody = JSON.parse(oResponse.body);
 
 		if (oResponse.statusCode !== 200) {
 			let sDeveloperInfo = `Failed to calculate project lifecycle costs of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
-			return undefined;
 		} else {
 			for (let oData of oResponseBody.body.transactionaldata) {
-				let status = await this.checkTaskStatus(oData.TASK_ID);
-				while (status !== "COMPLETED") {
+				let status;
+
+				do {
+					await Helpers.sleep(1500);
 					status = await this.checkTaskStatus(oData.TASK_ID);
+
+					if (status === "CANCELED" || status === "FAILED") {
+						let sMessageInfo = `Task was Canceled/Failed and Project lifecycle costs for project with ID '${sProjectId}' failed to calculate.`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation);
+
+						break;
+					}
+				}
+				while (status !== "COMPLETED" && status !== "CANCELED" && status !== "FAILED");
+
+				if (status === "COMPLETED") {
+					let sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
 				}
 			}
-
-			let sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
-			return true;
 		}
 	}
 
