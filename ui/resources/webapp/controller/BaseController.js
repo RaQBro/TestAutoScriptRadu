@@ -20,12 +20,6 @@ sap.ui.define([
 		 * Please write new functions above this comment
 		 */
 
-		/**
-		 * @type {array}
-		 * used globally for show meesages of the application
-		 */
-		mViewsData: {},
-
 		onInit: function () {
 			ToolBarMessages.initialiseMessagePopover.call(this);
 		},
