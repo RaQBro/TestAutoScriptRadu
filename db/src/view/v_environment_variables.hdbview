@@ -1,0 +1,6 @@
+VIEW "sap.plc.extensibility::template_application.v_environment_variables"
+AS
+SELECT 
+	FIELD_NAME, 
+	FIELD_VALUE
+FROM "sap.plc.extensibility::template_application.t_environment_variables"

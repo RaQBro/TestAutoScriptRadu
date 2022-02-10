@@ -60,7 +60,7 @@ let RouterStandardPlc = StandardPlcRouter.getRouter();
 
 // xsjs configurations
 let options = {
-	anonymous: false, // remove to authenticate calls
+	//anonymous: false, // remove to authenticate calls
 	auditLog: {
 		logToConsole: true
 	}, // change to auditlog service for productive scenarios
@@ -95,7 +95,7 @@ try {
 try {
 	options = Object.assign(options, xsenv.getServices({
 		uaa: {
-			tag: "xsuaa"
+			name: "tapp-uaa-service"
 		}
 	}));
 } catch (err) {
@@ -130,7 +130,7 @@ expressApp.use(bodyParser.raw());
 // authentication Module Configuration
 passport.use("JWT", new xssec.JWTStrategy(xsenv.getServices({
 	uaa: {
-		tag: "xsuaa"
+		name: "tapp-uaa-service"
 	}
 }).uaa));
 expressApp.use(passport.initialize());

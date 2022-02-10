@@ -207,7 +207,7 @@ class Service {
 
 	insertIntoTempDefaultValuesTable(client, tName, defaultItems) {
 		return new Promise(function (resolve, reject) {
-			client.prepare(`INSERT INTO ${tName} VALUES(?, ?)`, function (err, statement) {
+			client.prepare(`INSERT INTO ${tName} VALUES(?, ?, ?)`, function (err, statement) {
 				if (err) {
 					Message.addLog(0, "Prepare insert temp table ERROR", "error", err);
 					if (!statement.exec) {
@@ -220,7 +220,8 @@ class Service {
 				function createTasks(defaultItem) {
 					return statement.exec.bind(statement, [
 						defaultItem.FIELD_NAME,
-						defaultItem.FIELD_VALUE
+						defaultItem.FIELD_VALUE,
+						defaultItem.FIELD_DESCRIPTION
 					]);
 				}
 				let tasks = defaultItems.map(createTasks);

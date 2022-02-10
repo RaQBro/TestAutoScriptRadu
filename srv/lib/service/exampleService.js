@@ -139,24 +139,37 @@ async function doService(request) {
 		let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
 		oServiceResponseBody.CURRENT_USER = sCurrentUser;
 
-		let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
-		oServiceResponseBody.CURRENT_DATE = sCurrentDate;
+		// let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
+		// oServiceResponseBody.CURRENT_DATE = sCurrentDate;
 
-		let sProjectId = await this.getFirstProject();
-		oServiceResponseBody.PROJECT_ID = sProjectId;
+		// let sProjectId = await this.getFirstProject();
+		// oServiceResponseBody.PROJECT_ID = sProjectId;
 
-		let aAllProject = await ExtensibilityPlcService.getAllProjects();
-		oServiceResponseBody.PROJECT = aAllProject[0];
+		// let aAllProject = await ExtensibilityPlcService.getAllProjects();
+		// oServiceResponseBody.PROJECT = aAllProject[0];
 
-		let oVersion = await StandardPlcService.openCalculationVersion(1);
+		// let oVersion = await StandardPlcService.openCalculationVersion(1);
 
-		if (oVersion !== undefined) {
-			await StandardPlcService.closeCalculationVersion(1);
+		// if (oVersion !== undefined) {
+		// 	await StandardPlcService.closeCalculationVersion(1);
+		// }
+
+		// await Message.addLog(request.JOB_ID,
+		// 	"Example how to add operation at the messages.",
+		// 	"message", undefined, sOperation);
+		let aProjects = ["PROJECT_1", "PROJECT_2", "PROJECT_3", "PROJECT_4", "PROJECT_5", "PRROJECT_6", "PROJECT_7", "PROJECT_8", "PROJECT_9",
+			"PROJECT_10", "PROJECT_11"
+		];
+
+		for (let sProjectId of aProjects) {
+			let oProjectData = await StandardPlcService.openProject(sProjectId);
+			if (oProjectData !== undefined && oProjectData !== false) {
+				// calculate lifecycle costs
+				await StandardPlcService.calculateProjectLifecycleCosts(sProjectId);
+				// close project
+				await StandardPlcService.closeProject(sProjectId);
+			}
 		}
-
-		await Message.addLog(request.JOB_ID,
-			"Example how to add operation at the messages.",
-			"message", undefined, sOperation);
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {

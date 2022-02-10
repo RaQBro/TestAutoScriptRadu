@@ -17,7 +17,7 @@
 						</tnt:NavigationListItem>
 						<tnt:NavigationListItem text="{i18n>Configuration}" icon="sap-icon://action-settings">
 							<tnt:NavigationListItem text="{i18n>DefaultValuesView}" icon="sap-icon://employee" key="defaultValues"/>
-							<tnt:NavigationListItem text="{i18n>TechnicalUser}" icon="sap-icon://building" key="technicalUser"/>
+							<tnt:NavigationListItem text="{i18n>EnvironmentVariables}" icon="sap-icon://building" key="environmentVariables"/>
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
 				</tnt:fixedItem>

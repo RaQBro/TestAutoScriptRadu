@@ -16,8 +16,7 @@ const querystring = require("querystring");
  */
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
-// const Message = require(global.appRoot + "/lib/util/message.js").Message;
-const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
 
 /** @class
@@ -34,13 +33,13 @@ class UAAToken {
 		// get UAA service
 		this.uaaService = xsenv.getServices({
 			uaa: {
-				tag: "xsuaa"
+				name: "tapp-uaa-service"
 			}
 		}).uaa;
 		// get UAA service URL
 		this.tokenUrl = this.uaaService.url + "/oauth/token";
 
-		this.TechnicalUserUtil = new TechnicalUser();
+		this.EnvironmentVariablesUtil = new EnvironmentVariables();
 		this.SecureStoreService = new SecureStore();
 
 		this.ACCES_TOKEN = null;
@@ -68,9 +67,6 @@ class UAAToken {
 
 			if (tokenExpireTicks > nowCheckTicks && this.ACCES_TOKEN !== null && this.ACCES_TOKEN.length > 10) {
 				isValid = true;
-				// Message.addLog(0, "Token isValid is TRUE - nowCheckTicks = " + nowCheckTicks + ", tokenExpireTicks = " + tokenExpireTicks, "message");
-			} else {
-				// Message.addLog(0, "Token isValid is FALSE - nowCheckTicks = " + nowCheckTicks + ", tokenExpireTicks = " + tokenExpireTicks, "error");
 			}
 		}
 
@@ -80,7 +76,7 @@ class UAAToken {
 	/** @function
 	 * Used to call the auth token service in order to get a new token by using:
 	 *		- the client id and client secret from XSUAA service
-	 *		- the technical user retrieved from t_technical_user table
+	 *		- the technical user retrieved from t_environment_variables table
 	 *		- the password of technical user retrieved from secure store
 	 * The retrieved token is saved into the global variable
 	 */
@@ -90,10 +86,21 @@ class UAAToken {
 			return;
 		}
 
-		let sTechnicalUser = await this.TechnicalUserUtil.getTechnicalUserFromTable();
+		let sClientId = await this.EnvironmentVariablesUtil.getClientIdFromTable();
+		if (helpers.isUndefinedOrNull(sClientId)) {
+			return;
+		}
+
+		let sClientSecret = await this.SecureStoreService.retrieveKey(sClientId, true);
+		if (helpers.isUndefinedOrNull(sClientSecret)) {
+			return;
+		}
+
+		let sTechnicalUser = await this.EnvironmentVariablesUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
 			return;
 		}
+
 		let sTechnicalPassword = await this.SecureStoreService.retrieveKey(sTechnicalUser, true);
 		if (helpers.isUndefinedNullOrEmptyString(sTechnicalPassword)) {
 			return;
@@ -101,8 +108,8 @@ class UAAToken {
 
 		let authForm = {
 			"grant_type": "password",
-			"client_id": this.uaaService.clientid,
-			"client_secret": this.uaaService.clientsecret,
+			"client_id": sClientId,
+			"client_secret": sClientSecret,
 			"username": sTechnicalUser,
 			"password": sTechnicalPassword,
 			"response_type": "token"
@@ -126,15 +133,11 @@ class UAAToken {
 			function (error, response, body) {
 
 				if (error || response.statusCode !== 200) {
-					// Message.addLog(0, "BEARER_TOKEN request failed. Body: ", "error", body);
-					// Message.addLog(0, "BEARER_TOKEN request failed. Error: ", "error", error);
 					return;
 				}
 
 				try {
 					let tokenResp = JSON.parse(body);
-					// Message.addLog(0, "BEARER_TOKEN Response: ", "message", tokenResp);
-
 					let expire = new Date();
 					expire.setSeconds(expire.getSeconds() + parseInt(tokenResp.expires_in));
 
@@ -147,9 +150,8 @@ class UAAToken {
 					// add technical user to global variable
 					global.TECHNICAL_USER = sTechnicalUser.toUpperCase();
 
-					// Message.addLog(0, "BEARER_TOKEN : ", "message", tokenResp.access_token);
 				} catch (err) {
-					// Message.addLog(0, "[UAAToken ERROR]", "error", err);
+					// err
 				}
 			});
 	}

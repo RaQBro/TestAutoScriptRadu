@@ -13,7 +13,7 @@ const jobsc = require("@sap/jobs-client");
  */
 
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
-const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -111,8 +111,8 @@ class JobSchedulerService {
 	 */
 	async addNewSchedule(iJobId, oNewSchedule) {
 
-		let TechnicalUserUtil = new TechnicalUser();
-		let sTechnicalUser = await TechnicalUserUtil.getTechnicalUserFromTable();
+		let EnvironmentVariablesUtil = new EnvironmentVariables();
+		let sTechnicalUser = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
 			let sDeveloperInfo = "Please provide a technical user into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
@@ -156,8 +156,8 @@ class JobSchedulerService {
 	 */
 	async addSchedules(iJobId, oRequestBody) {
 
-		let TechnicalUserUtil = new TechnicalUser();
-		let sTechnicalUser = await TechnicalUserUtil.getTechnicalUserFromTable();
+		let EnvironmentVariablesUtil = new EnvironmentVariables();
+		let sTechnicalUser = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
 			let sDeveloperInfo = "Please provide a technical user into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);

@@ -10,6 +10,10 @@ begin
 
 	delete from "sap.plc.extensibility::template_application.t_default_values" where FIELD_NAME in (select distinct FIELD_NAME from :INPUT_TABLE);
 	
-	upsert "sap.plc.extensibility::template_application.t_default_values" (FIELD_NAME, FIELD_VALUE) select distinct FIELD_NAME, FIELD_VALUE from :INPUT_TABLE where FIELD_VALUE is not null;
+	upsert "sap.plc.extensibility::template_application.t_default_values" (FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION) 
+		select FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION from :INPUT_TABLE 
+		where 
+			FIELD_VALUE is not null or 
+			FIELD_DESCRIPTION is not null;
 	    
 end

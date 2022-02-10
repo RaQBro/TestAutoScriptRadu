@@ -3,7 +3,7 @@
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
-				<smartFilterBar:SmartFilterBar id="sfbJobs" entitySet="GetJobLogs" persistencyKey="pk_jobs" useToolbar="false"
+				<smartFilterBar:SmartFilterBar id="sfbJobs" entitySet="job-jogs" persistencyKey="pk_jobs" useToolbar="false"
 					considerSelectionVariants="false" visible="false">
 					<smartFilterBar:controlConfiguration>
 						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
@@ -19,7 +19,7 @@
 						<FlexItemData shrinkFactor="0"/>
 					</smartFilterBar:layoutData>
 				</smartFilterBar:SmartFilterBar>
-				<smartTable:SmartTable id="stJobs" entitySet="GetJobLogs" smartFilterId="sfbJobs" tableType="ResponsiveTable" useTablePersonalisation="true"
+				<smartTable:SmartTable id="stJobs" entitySet="job-logs" smartFilterId="sfbJobs" tableType="ResponsiveTable" useTablePersonalisation="true"
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
 					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,START_TIMESTAMP,END_TIMESTAMP" enableAutoBinding="true"
 					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,START_TIMESTAMP,END_TIMESTAMP" beforeRebindTable="onBeforeRebindTable">

@@ -66,7 +66,7 @@ class ExtensibilityRouter {
 		/**
 		 * Endpoint for authenticated user details fetch
 		 */
-		router.get("/userDetails", function (request, response) {
+		router.get("/user-details", function (request, response) {
 			response.type(sContentType).status(200).send({
 				"givenName": request.authInfo.getGivenName(),
 				"familyName": request.authInfo.getFamilyName(),
@@ -74,10 +74,31 @@ class ExtensibilityRouter {
 			});
 		});
 
+		router.get("/check-authorization", function (request, response) {
+			if (helpers.isUndefinedNullOrEmptyString(request.query) && helpers.isUndefinedNullOrEmptyString(request.query.ID)) {
+				let sQueryString = request.query.ID;
+
+				if (sQueryString === "defaultValues") {
+					if (request.authInfo && request.authInfo.checkScope("$XSAPPNAME.DV_Display") && request.authInfo.checkScope(
+							"$XSAPPNAME.DV_Maintain")) {
+						response.type(sContentType).status(200).send();
+					}
+					if (request.authInfo && request.authInfo.checkScope("$XSAPPNAME.DV_Display") && !request.authInfo.checkScope(
+							"$XSAPPNAME.DV_Maintain")) {
+						response.type(sContentType).status(401).send();
+					}
+					if (request.authInfo && !request.authInfo.checkScope("$XSAPPNAME.DV_Display") && !request.authInfo.checkScope(
+							"$XSAPPNAME.DV_Maintain")) {
+						response.type(sContentType).status(403).send();
+					}
+				}
+			}
+		});
+
 		/**
 		 * Endpoint for plc application routes fetch
 		 */
-		router.get("/applicationRoutes", function (request, response) {
+		router.get("/application-routes", function (request, response) {
 			response.type(sContentType).status(200).send({
 				"web": global.plcWebUrl,
 				"xsjs": global.plcXsjsUrl,
@@ -88,7 +109,7 @@ class ExtensibilityRouter {
 		/**
 		 * Endpoint for maintaining the default values
 		 */
-		router.post("/maintainDefaultValues", function (request, response) {
+		router.post("/maintain-default-values", function (request, response) {
 
 			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
@@ -100,7 +121,7 @@ class ExtensibilityRouter {
 				});
 		});
 
-		router.get("/getAllProjects", function (request, response) {
+		router.get("/get-all-projects", function (request, response) {
 
 			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
@@ -112,7 +133,7 @@ class ExtensibilityRouter {
 			});
 		});
 
-		router.get("/exampleService", async function (request, response) {
+		router.get("/example-service", async function (request, response) {
 
 			// create job log entry
 			let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);

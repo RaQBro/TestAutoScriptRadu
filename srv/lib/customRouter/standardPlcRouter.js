@@ -44,7 +44,7 @@ class StandardPlcRouter {
 
 		});
 
-		router.get("/initSession", function (request, response) {
+		router.get("/init-session", function (request, response) {
 
 			let sLanguage = request.query.language !== undefined ? request.query.language : "EN";
 
@@ -56,7 +56,7 @@ class StandardPlcRouter {
 			});
 		});
 
-		router.get("/logoutSession", function (request, response) {
+		router.get("/logout-session", function (request, response) {
 
 			StandardPlcService.logoutPlcSession().then(function (result) {
 				response.type(sContentType).status(200).send(result);
@@ -66,7 +66,7 @@ class StandardPlcRouter {
 			});
 		});
 
-		router.get("/openCalculationVersion", function (request, response) {
+		router.get("/open-calculation-version", function (request, response) {
 
 			let iVersionId = request.query.versionId;
 

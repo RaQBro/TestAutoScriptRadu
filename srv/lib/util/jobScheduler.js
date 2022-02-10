@@ -23,7 +23,7 @@ const aConfigJobs = require(global.appRoot + "/config.js").aJobs;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const PlcException = MessageLibrary.PlcException;
@@ -225,8 +225,8 @@ class JobSchedulerUtil {
 			sUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
 		} else {
-			let TechnicalUserUtil = new TechnicalUser();
-			sUserId = await TechnicalUserUtil.getTechnicalUserFromTable();
+			let EnvironmentVariablesUtil = new EnvironmentVariables();
+			sUserId = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
 			if (helpers.isUndefinedOrNull(sUserId)) {
 				let sDeveloperInfo = "Please provide a technical user into administration section of application!";
 				let oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);

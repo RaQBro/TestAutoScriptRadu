@@ -1,0 +1,75 @@
+{
+	"xsappname": "template-application",
+	"scopes": [{
+		"name": "$XSAPPNAME.DV_Display",
+		"description": "Display Default Values data"
+	}, {
+		"name": "$XSAPPNAME.DV_Maintain",
+		"description": "Maintain Default Values data"
+	}, {
+		"name": "$XSAPPNAME.EV_Display",
+		"description": "Display Environment Variables data"
+	}, {
+		"name": "$XSAPPNAME.EV_Maintain",
+		"description": "Maintain Environment Variables data"
+	}, {
+		"name": "$XSAPPNAME.V_Display",
+		"description": "Display view data"
+	}, {
+		"name": "$XSAPPNAME.V_Maintain",
+		"description": "Maintain view data"
+	}, {
+		"name": "$XSAPPNAME.J_Display",
+		"description": "Display jobs data"
+	}, {
+		"name": "$XSAPPNAME.M_Display",
+		"description": "Display messages data"
+	}],
+	"role-templates": [{
+		"name": "DefaultValues_Display_RT",
+		"description": "Role for displaying Default Values data",
+		"scope-references": [
+			"$XSAPPNAME.DV_Display"
+		]
+	}, {
+		"name": "DefaultValues_Admin_RT",
+		"description": "Role for displaying and maintaining Default Values data",
+		"scope-references": [
+			"$XSAPPNAME.DV_Display",
+			"$XSAPPNAME.DV_Maintain"
+		]
+	}, {
+		"name": "EnvironmentVariables_Display_RT",
+		"description": "Role for displaying Environment Variables data",
+		"scope-references": [
+			"$XSAPPNAME.EV_Display"
+		]
+	}, {
+		"name": "EnvironmentVariables_Admin_RT",
+		"description": "Role for displaying and maintaining Environment Variables data",
+		"scope-references": [
+			"$XSAPPNAME.EV_Display",
+			"$XSAPPNAME.EV_Maintain"
+		]
+	}, {
+		"name": "View_Display_RT",
+		"description": "Role for displaying View data",
+		"scope-references": [
+			"$XSAPPNAME.V_Display"
+		]
+	}, {
+		"name": "View_Admin_RT",
+		"description": "Role for displaying and maintaining View data",
+		"scope-references": [
+			"$XSAPPNAME.V_Display",
+			"$XSAPPNAME.V_Maintain"
+		]
+	}, {
+		"name": "JobsMessages_Display_RT",
+		"description": "Role for displaying Jobs and Messages data",
+		"scope-references": [
+			"$XSAPPNAME.J_Display",
+			"$XSAPPNAME.M_Display"
+		]
+	}]
+}

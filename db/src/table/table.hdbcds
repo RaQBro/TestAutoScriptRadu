@@ -1,7 +1,6 @@
 namespace sap.plc.extensibility;
 
 context template_application {
-
     entity t_configuration {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);
@@ -11,14 +10,15 @@ context template_application {
     };
 
     entity t_default_values {
-        key FIELD_NAME  : String(500);
-        key FIELD_VALUE : String(500);
+        key FIELD_NAME        : String(500) not null;
+        key FIELD_VALUE       : String(500);
+            FIELD_DESCRIPTION : hana.CLOB;
     }
     technical configuration {
         column store;
     };
 
-    entity t_technical_user {
+    entity t_environment_variables {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);
     }

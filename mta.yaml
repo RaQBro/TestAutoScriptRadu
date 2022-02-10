@@ -29,7 +29,7 @@ modules:
     requires:
       - name: tapp_db
       - name: tapp_hdi_db
-      - name: xsac-plc-uaa-service
+      - name: tapp-uaa-service
       - name: jobScheduler
       - name: secureStore
       
@@ -37,7 +37,7 @@ modules:
     type: html5
     path: ui
     requires:
-      - name: xsac-plc-uaa-service
+      - name: tapp-uaa-service
       - name: tapp_srv_api
         group: destinations
         properties:
@@ -58,9 +58,9 @@ resources:
     properties:
       plc-standard-grantor-service: '${service-name}'
       
-  - name: xsac-plc-uaa-service
+  - name: tapp-uaa-service
     type: org.cloudfoundry.existing-service
-    
+      
   - name: jobScheduler
     type: org.cloudfoundry.existing-service
     

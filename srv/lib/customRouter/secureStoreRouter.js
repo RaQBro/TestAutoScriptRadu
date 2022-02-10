@@ -17,7 +17,8 @@ const express = require("express");
  */
 
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
-const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+//const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
+const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
@@ -33,7 +34,7 @@ class SecureStoreRouter {
 		let router = express.Router();
 
 		let SecureStoreService = new SecureStore();
-		let TechnicalUserUtil = new TechnicalUser();
+		let EnvironmentVariablesUtil = new EnvironmentVariables();
 
 		/**
 		 * Common function before all routes are processed
@@ -58,12 +59,12 @@ class SecureStoreRouter {
 
 			let sKey = request.query.KEY;
 			let sValue = request.body.VALUE;
+			let sDescription = request.body.TECHNICAL_NAME;
 
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
-
-				TechnicalUserUtil.upsertTechnicalUserIntoTable(sKey).then(function () {
+				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sKey, sDescription).then(function () {
 					response.type(sContentType).status(200).send(result);
-				}).catch(async function (err) {
+				}).then(function () {}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);
 					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});
@@ -73,14 +74,14 @@ class SecureStoreRouter {
 			});
 		});
 
-		router.get("/delete", function (request, response) {
+		router.post("/delete", function (request, response) {
 
 			let sKey = request.query.KEY;
-			let sValue = null;
+			let sValue = request.body.VALUE;
+			let sDescription = request.body.TECHNICAL_NAME;
 
 			SecureStoreService.deleteKey(sKey).then(function (result) {
-
-				TechnicalUserUtil.upsertTechnicalUserIntoTable(sValue).then(function () {
+				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sValue, sDescription).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);

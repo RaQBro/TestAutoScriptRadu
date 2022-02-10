@@ -2,5 +2,6 @@ VIEW "sap.plc.extensibility::template_application.v_default_values"
 AS
 SELECT 
 	FIELD_NAME, 
-	FIELD_VALUE
+	FIELD_VALUE,
+	FIELD_DESCRIPTION
 FROM "sap.plc.extensibility::template_application.t_default_values"

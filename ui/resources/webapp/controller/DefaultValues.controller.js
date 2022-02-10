@@ -113,7 +113,7 @@ sap.ui.define([
 
 			if (oRTE !== null && oRTE !== undefined) {
 
-				oRTEControl.setValue(oRTE.FIELD_VALUE);
+				oRTEControl.setValue(oRTE.FIELD_DESCRIPTION);
 			}
 		},
 
@@ -142,7 +142,8 @@ sap.ui.define([
 			// add the RTE KV pair separately since the control is different from a normal input
 			oDefaultValues.push({
 				FIELD_NAME: "RTE",
-				FIELD_VALUE: oView.byId("txtRTE").getValue()
+				FIELD_VALUE: null,
+				FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
 			});
 
 			var oController = this;

@@ -3,18 +3,18 @@ sap.ui.define([], function () {
 
 	var serviceOdata = "/services.xsodata";
 	var authUrl = "/extensibility/plc/token";
-	var projectsGetUrl = "/extensibility/plc/getAllProjects";
-	var userDetails = "/extensibility/plc/userDetails";
-	var jobDetails = "/scheduler/job/getAllJobs";
-	var initPlcSession = "/standard/plc/initSession";
-	var plcLogout = "/standard/plc/logoutSession";
-	var getConfig = "/service/odataService.xsodata/GetConfiguration?$format=json";
-	var getDefaultValues = "/service/odataService.xsodata/GetDefaultValues?$format=json";
-	var getTechnicalUser = "/service/odataService.xsodata/GetTechnicalUser?$format=json";
-	var addNewSchedule = "/scheduler/job/addNewSchedule";
+	var projectsGetUrl = "/extensibility/plc/get-all-projects";
+	var userDetails = "/extensibility/plc/user-details";
+	var jobDetails = "/scheduler/job/get-all-jobs";
+	var initPlcSession = "/standard/plc/init-session";
+	var plcLogout = "/standard/plc/logout-session";
+	var getConfig = "/service/odataService.xsodata/configuration?$format=json";
+	var getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
+	var getEnvironmentVariables = "/service/odataService.xsodata/environment-variables?$format=json";
+	var addNewSchedule = "/scheduler/job/add-new-schedule";
 	var getToken = "/extensibility/plc/token";
 	var setSecStore = "/secure/store/insert?KEY={KEY}";
-	var setDefaultValues = "/extensibility/plc/maintainDefaultValues";
+	var setDefaultValues = "/extensibility/plc/maintain-default-values";
 	var deleteSecStore = "/secure/store/delete?KEY={KEY}";
 
 	var mURLConstants = {
@@ -26,7 +26,7 @@ sap.ui.define([], function () {
 		INIT_PLC_SESSION: initPlcSession,
 		GET_CONFIGURATION: getConfig,
 		GET_DEFAULT_VALUES: getDefaultValues,
-		GET_TECHNICAL_USER: getTechnicalUser,
+		GET_ENVIRONMENT_VARIABLES: getEnvironmentVariables,
 		ADD_NEW_SCHEDULE: addNewSchedule,
 		LOGOUT_PLC: plcLogout,
 		GET_TOKEN: getToken,
