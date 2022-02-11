@@ -70,7 +70,7 @@ class PlcDispatcher {
 		let sPrivateParams = " ";
 		if (aParams !== undefined && aParams.length > 0) {
 			oPrivateRequestOptions.qs = {};
-			for (let oPram of aParams.length) {
+			for (let oPram of aParams) {
 				let key = oPram.name;
 				let value = oPram.value;
 				sPrivateParams += key + "=" + value + " ";
@@ -133,7 +133,7 @@ class PlcDispatcher {
 		let sPublicParams = " ";
 		if (aParams !== undefined && aParams.length > 0) {
 			oPublicRequestOptions.qs = {};
-			for (let oPram of aParams.length) {
+			for (let oPram of aParams) {
 				let key = oPram.name;
 				let value = oPram.value;
 				sPublicParams += key + "=" + value + " ";

@@ -123,7 +123,7 @@ class Dispatcher {
 			"SALES_PRICE_CURRENCY_ID": oVariant.SALES_PRICE_CURRENCY_ID,
 			"ITEMS": []
 		};
-		for (let oItem of oVariant.ITEMS.length) {
+		for (let oItem of oVariant.ITEMS) {
 			let oVariantItem = {
 				"ITEM_ID": oItem.ITEM_ID,
 				"IS_INCLUDED": oItem.IS_INCLUDED,
@@ -225,7 +225,7 @@ class Dispatcher {
 				"QUANTITY_UOM_ID": []
 			}
 		};
-		for (let oItem of oVariant.ITEMS.length) {
+		for (let oItem of oVariant.ITEMS) {
 			let iItemId = oItem.ITEM_ID !== undefined ? oItem.ITEM_ID : null;
 			oBodyData.ITEMS.ITEM_ID.push(iItemId);
 
@@ -883,7 +883,7 @@ class Dispatcher {
 		}];
 
 		let aBodyData = [];
-		for (let oItem of aItemsToDelete.length) {
+		for (let oItem of aItemsToDelete) {
 			let oItemToDelete = {
 				"ITEM_ID": oItem.ITEM_ID,
 				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID
@@ -924,7 +924,7 @@ class Dispatcher {
 		}];
 
 		let aBodyData = [];
-		for (let oItem of aItemsToDeactivate.length) {
+		for (let oItem of aItemsToDeactivate) {
 			let oItemToDelete = {
 				"IS_ACTIVE": 0,
 				"ITEM_ID": oItem.ITEM_ID,
@@ -963,7 +963,7 @@ class Dispatcher {
 		}];
 
 		let aBodyData = [];
-		for (let oItem of aItemsToUpdate.length) {
+		for (let oItem of aItemsToUpdate) {
 			let oItemToUpdate = {
 				"ITEM_ID": oItem.ITEM_ID,
 				"ITEM_CATEGORY_ID": oItem.ITEM_CATEGORY_ID,
