@@ -112,9 +112,11 @@ class JobSchedulerService {
 	async addNewSchedule(iJobId, oNewSchedule) {
 
 		let EnvironmentVariablesUtil = new EnvironmentVariables();
+
+		let sClientId = await EnvironmentVariablesUtil.getClientIdFromTable();
 		let sTechnicalUser = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
-			let sDeveloperInfo = "Please provide a technical user into administration section of application!";
+		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+			let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 		}
 
@@ -157,9 +159,11 @@ class JobSchedulerService {
 	async addSchedules(iJobId, oRequestBody) {
 
 		let EnvironmentVariablesUtil = new EnvironmentVariables();
+
+		let sClientId = await EnvironmentVariablesUtil.getClientIdFromTable();
 		let sTechnicalUser = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
-			let sDeveloperInfo = "Please provide a technical user into administration section of application!";
+		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+			let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 		}
 

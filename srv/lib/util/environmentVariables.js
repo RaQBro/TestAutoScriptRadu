@@ -22,9 +22,7 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
  */
 class EnvironmentVariablesUtil {
 
-	constructor() {
-
-	}
+	constructor() {}
 
 	/** @function
 	 * Used to retrieve from t_environment_variables the value of TECHNICAL_USER

@@ -219,6 +219,7 @@ class JobSchedulerUtil {
 		let sRequestBody = request.body === undefined ? null : JSON.stringify(request.body);
 
 		let sUserId = null;
+		let sClientId = null;
 		let iWebRequest = null;
 
 		if (request.IS_ONLINE_MODE === true) {
@@ -226,12 +227,12 @@ class JobSchedulerUtil {
 			iWebRequest = 1;
 		} else {
 			let EnvironmentVariablesUtil = new EnvironmentVariables();
+			sClientId = await EnvironmentVariablesUtil.getClientIdFromTable();
 			sUserId = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
-			if (helpers.isUndefinedOrNull(sUserId)) {
-				let sDeveloperInfo = "Please provide a technical user into administration section of application!";
-				let oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
+			if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sUserId)) {
+				let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 				// return exception if technical user is not provided
-				return oPlcException;
+				return new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 			}
 			iWebRequest = 0;
 		}

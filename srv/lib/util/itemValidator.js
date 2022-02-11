@@ -261,8 +261,7 @@ class ItemValidator {
 		let oPropertyMetadataAttributesCache = new Map();
 
 		let aValidatedItems = [];
-		for (let i = 0; i < aItems.length; i++) {
-			let oItem = aItems[i];
+		for (let oItem of aItems.length) {
 
 			// depending if an update of a single item shall be updated or a mass update is requested iSubitemState
 			// must be determined differently; for mass update look in the request if an item has children; for
@@ -290,25 +289,25 @@ class ItemValidator {
 		}
 
 		// all parent (assembly) items should not have some fields
-		for (let iIndex = 0; iIndex < aValidatedItems.length; iIndex++) {
+		for (let oItem of aValidatedItems.length) {
 
 			let aChildren = aValidatedItems.filter(function (item) {
-				return item.PARENT_ITEM_ID === aValidatedItems[iIndex].ITEM_ID;
+				return item.PARENT_ITEM_ID === oItem.ITEM_ID;
 			});
 			let hasChildren = aChildren.length > 0 ? true : false;
 
 			if (hasChildren) {
-				delete aValidatedItems[iIndex].PRICE_FIXED_PORTION;
-				delete aValidatedItems[iIndex].PRICE_VARIABLE_PORTION;
-				delete aValidatedItems[iIndex].TRANSACTION_CURRENCY_ID;
-				delete aValidatedItems[iIndex].PRICE_UNIT;
-				delete aValidatedItems[iIndex].PRICE_UNIT_UOM_ID;
+				delete oItem.PRICE_FIXED_PORTION;
+				delete oItem.PRICE_VARIABLE_PORTION;
+				delete oItem.TRANSACTION_CURRENCY_ID;
+				delete oItem.PRICE_UNIT;
+				delete oItem.PRICE_UNIT_UOM_ID;
 			} else {
-				if (aValidatedItems[iIndex].PRICE_FIXED_PORTION === null) {
-					aValidatedItems[iIndex].PRICE_FIXED_PORTION = 0;
+				if (oItem.PRICE_FIXED_PORTION === null) {
+					oItem.PRICE_FIXED_PORTION = 0;
 				}
-				if (aValidatedItems[iIndex].PRICE_VARIABLE_PORTION === null) {
-					aValidatedItems[iIndex].PRICE_VARIABLE_PORTION = 0;
+				if (oItem.PRICE_VARIABLE_PORTION === null) {
+					oItem.PRICE_VARIABLE_PORTION = 0;
 				}
 			}
 		}

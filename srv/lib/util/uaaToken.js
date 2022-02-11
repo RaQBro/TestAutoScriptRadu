@@ -87,22 +87,12 @@ class UAAToken {
 		}
 
 		let sClientId = await this.EnvironmentVariablesUtil.getClientIdFromTable();
-		if (helpers.isUndefinedOrNull(sClientId)) {
-			return;
-		}
-
 		let sClientSecret = await this.SecureStoreService.retrieveKey(sClientId, true);
-		if (helpers.isUndefinedOrNull(sClientSecret)) {
-			return;
-		}
-
 		let sTechnicalUser = await this.EnvironmentVariablesUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
-			return;
-		}
-
 		let sTechnicalPassword = await this.SecureStoreService.retrieveKey(sTechnicalUser, true);
-		if (helpers.isUndefinedNullOrEmptyString(sTechnicalPassword)) {
+
+		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sClientSecret) ||
+			helpers.isUndefinedOrNull(sTechnicalUser) || helpers.isUndefinedNullOrEmptyString(sTechnicalPassword)) {
 			return;
 		}
 

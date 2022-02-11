@@ -123,8 +123,7 @@ class Dispatcher {
 			"SALES_PRICE_CURRENCY_ID": oVariant.SALES_PRICE_CURRENCY_ID,
 			"ITEMS": []
 		};
-		for (let i = 0; i < oVariant.ITEMS.length; i++) {
-			let oItem = oVariant.ITEMS[i];
+		for (let oItem of oVariant.ITEMS.length) {
 			let oVariantItem = {
 				"ITEM_ID": oItem.ITEM_ID,
 				"IS_INCLUDED": oItem.IS_INCLUDED,
@@ -226,9 +225,7 @@ class Dispatcher {
 				"QUANTITY_UOM_ID": []
 			}
 		};
-		for (let i = 0; i < oVariant.ITEMS.length; i++) {
-			let oItem = oVariant.ITEMS[i];
-
+		for (let oItem of oVariant.ITEMS.length) {
 			let iItemId = oItem.ITEM_ID !== undefined ? oItem.ITEM_ID : null;
 			oBodyData.ITEMS.ITEM_ID.push(iItemId);
 
@@ -886,10 +883,10 @@ class Dispatcher {
 		}];
 
 		let aBodyData = [];
-		for (let i = 0; i < aItemsToDelete.length; i++) {
+		for (let oItem of aItemsToDelete.length) {
 			let oItemToDelete = {
-				"ITEM_ID": aItemsToDelete[i].ITEM_ID,
-				"CALCULATION_VERSION_ID": aItemsToDelete[i].CALCULATION_VERSION_ID
+				"ITEM_ID": oItem.ITEM_ID,
+				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID
 			};
 			aBodyData.push(oItemToDelete);
 		}
@@ -927,11 +924,11 @@ class Dispatcher {
 		}];
 
 		let aBodyData = [];
-		for (let i = 0; i < aItemsToDeactivate.length; i++) {
+		for (let oItem of aItemsToDeactivate.length) {
 			let oItemToDelete = {
 				"IS_ACTIVE": 0,
-				"ITEM_ID": aItemsToDeactivate[i].ITEM_ID,
-				"CALCULATION_VERSION_ID": aItemsToDeactivate[i].CALCULATION_VERSION_ID
+				"ITEM_ID": oItem.ITEM_ID,
+				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID
 			};
 			aBodyData.push(oItemToDelete);
 		}
@@ -966,12 +963,12 @@ class Dispatcher {
 		}];
 
 		let aBodyData = [];
-		for (let i = 0; i < aItemsToUpdate.length; i++) {
+		for (let oItem of aItemsToUpdate.length) {
 			let oItemToUpdate = {
-				"ITEM_ID": aItemsToUpdate[i].ITEM_ID,
-				"ITEM_CATEGORY_ID": aItemsToUpdate[i].ITEM_CATEGORY_ID,
-				"CALCULATION_VERSION_ID": aItemsToUpdate[i].CALCULATION_VERSION_ID,
-				"REFERENCED_CALCULATION_VERSION_ID": aItemsToUpdate[i].CURRENT_CALCULATION_VERSION_ID
+				"ITEM_ID": oItem.ITEM_ID,
+				"ITEM_CATEGORY_ID": oItem.ITEM_CATEGORY_ID,
+				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID,
+				"REFERENCED_CALCULATION_VERSION_ID": oItem.CURRENT_CALCULATION_VERSION_ID
 			};
 			aBodyData.push(oItemToUpdate);
 		}

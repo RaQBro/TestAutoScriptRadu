@@ -25,9 +25,7 @@ const PlcException = MessageLibrary.PlcException;
  */
 class SecureStoreService {
 
-	constructor() {
-
-	}
+	constructor() {}
 
 	/** @function
 	 * Used to retrieve from the secure store the password of technical user
