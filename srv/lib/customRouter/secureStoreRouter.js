@@ -17,7 +17,6 @@ const express = require("express");
  */
 
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
-//const TechnicalUser = require(global.appRoot + "/lib/util/technicalUser.js").TechnicalUserUtil;
 const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 

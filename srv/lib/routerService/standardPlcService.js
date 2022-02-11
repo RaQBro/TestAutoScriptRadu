@@ -2110,9 +2110,8 @@ class Dispatcher {
 		});
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParameters, aMaterials);
-		let oResponseBody = oResponse.body;
 
-		return oResponseBody;
+		return oResponse.body;
 	}
 
 	async upsertMaterialPlant(aMaterialPlants) {
@@ -2130,9 +2129,8 @@ class Dispatcher {
 		});
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParameters, aMaterialPlants);
-		let oResponseBody = oResponse.body;
 
-		return oResponseBody;
+		return oResponse.body;
 	}
 
 	async upsertMaterialPrices(aMaterialPrices) {
@@ -2146,9 +2144,8 @@ class Dispatcher {
 		});
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParameters, aMaterialPrices);
-		let oResponseBody = oResponse.body;
 
-		return oResponseBody;
+		return oResponse.body;
 	}
 
 }
