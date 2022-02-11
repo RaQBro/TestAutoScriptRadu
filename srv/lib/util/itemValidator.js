@@ -261,7 +261,7 @@ class ItemValidator {
 		let oPropertyMetadataAttributesCache = new Map();
 
 		let aValidatedItems = [];
-		for (let oItem of aItems.length) {
+		for (let oItem of aItems) {
 
 			// depending if an update of a single item shall be updated or a mass update is requested iSubitemState
 			// must be determined differently; for mass update look in the request if an item has children; for
@@ -289,7 +289,7 @@ class ItemValidator {
 		}
 
 		// all parent (assembly) items should not have some fields
-		for (let oItem of aValidatedItems.length) {
+		for (let oItem of aValidatedItems) {
 
 			let aChildren = aValidatedItems.filter(function (item) {
 				return item.PARENT_ITEM_ID === oItem.ITEM_ID;
