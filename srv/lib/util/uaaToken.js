@@ -96,7 +96,7 @@ class UAAToken {
 			return;
 		}
 
-		let sClientSecret = await this.SecureStoreService.retrieveKey("test", true);
+		let sClientSecret = await this.SecureStoreService.retrieveKey(sClientId, true);
 		if (sClientSecret instanceof PlcException || sClientSecret instanceof Message || helpers.isUndefinedNullOrEmptyString(sClientSecret)) {
 			return;
 		}
