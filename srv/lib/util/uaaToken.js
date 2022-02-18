@@ -19,6 +19,10 @@ const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
 
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Message = MessageLibrary.Message;
+const PlcException = MessageLibrary.PlcException;
+
 /** @class
  * @classdesc UAA token utility helpers
  * @name UAAToken 
@@ -87,12 +91,19 @@ class UAAToken {
 		}
 
 		let sClientId = await this.EnvironmentVariablesUtil.getClientIdFromTable();
-		let sClientSecret = await this.SecureStoreService.retrieveKey(sClientId, true);
 		let sTechnicalUser = await this.EnvironmentVariablesUtil.getTechnicalUserFromTable();
-		let sTechnicalPassword = await this.SecureStoreService.retrieveKey(sTechnicalUser, true);
+		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+			return;
+		}
 
-		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sClientSecret) ||
-			helpers.isUndefinedOrNull(sTechnicalUser) || helpers.isUndefinedNullOrEmptyString(sTechnicalPassword)) {
+		let sClientSecret = await this.SecureStoreService.retrieveKey(sClientId, true);
+		if (sClientSecret instanceof PlcException || sClientSecret instanceof Message || helpers.isUndefinedNullOrEmptyString(sClientSecret)) {
+			return;
+		}
+
+		let sTechnicalPassword = await this.SecureStoreService.retrieveKey(sTechnicalUser, true);
+		if (sTechnicalPassword instanceof PlcException || sTechnicalPassword instanceof Message ||
+			helpers.isUndefinedNullOrEmptyString(sTechnicalPassword)) {
 			return;
 		}
 

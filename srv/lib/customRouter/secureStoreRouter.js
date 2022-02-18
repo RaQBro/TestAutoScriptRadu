@@ -47,7 +47,11 @@ class SecureStoreRouter {
 			let sKey = request.query.KEY;
 
 			SecureStoreService.retrieveKey(sKey).then(function (result) {
-				response.type(sContentType).status(200).send(result);
+				if (result instanceof PlcException) {
+					response.type(sContentType).status(result.code.responseCode).send(result);
+				} else {
+					response.type(sContentType).status(200).send(result);
+				}
 			}).catch(async function (err) {
 				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
@@ -63,7 +67,7 @@ class SecureStoreRouter {
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
 				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sKey, sDescription).then(function () {
 					response.type(sContentType).status(200).send(result);
-				}).then(function () {}).catch(async function (err) {
+				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);
 					response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 				});

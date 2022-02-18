@@ -53,7 +53,7 @@ To create a new XSA Project (naming convention: **test-project-application**)
 >**2. set variables**
 >xs set-running-environment-variable-group '{"SAP_PLC_XSJS":"https://x99.plc.c.eu-de-2.cloud.sap:51033", "SAP_PLC_PUBLIC_API":"https://x99.plc.c.eu-de-2.cloud.sap:51045", "SAP_PLC_WEB":"https://x99.plc.c.eu-de-2.cloud.sap:51054"}'
 
-Testing can be done via **app_ui_endpoint + /extensibility/plc/applicationRoutes**
+Testing can be done via **app_ui_endpoint + /extensibility/plc/application-routes**
 Ideally, if the response is empty, an error has to be thrown and the app should not be initialised
 
 The default configuration values are stored into t_default_values table and could be changed by editing the t_default_values.csv file and then build the db module.

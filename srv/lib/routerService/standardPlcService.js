@@ -2035,6 +2035,39 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * GET all masterdata custom fields from PLC
+	 * 
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getMasterdataCustomFields() {
+
+		let sQueryPath = "customfieldsformula";
+		let aParams = [{
+			"name": "business_object",
+			"value": "Masterdata"
+		}, {
+			"name": "is_custom",
+			"value": "true"
+		}, {
+			"name": "lock",
+			"value": "false"
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = JSON.parse(oResponse.body);
+
+		if (oResponse.statusCode !== 200) {
+			let sDeveloperInfo = "Failed to get masterdata custom fields from PLC.";
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			let sMessageInfo = "Masterdata custom fields from PLC were retrieved with success!";
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			return oResponseBody.body.METADATA;
+		}
+	}
+
+	/** @function
 	 * Update master data for calculation version
 	 * 
 	 * @param {object} oCalculatonVersion - the calculation version

@@ -38,10 +38,6 @@ class SecureStoreService {
 	 */
 	async retrieveKey(sKey, bReturnValue) {
 
-		if (helpers.isUndefinedOrNull(sKey)) {
-			let sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=TECHNICAL_USER_NAME";
-			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
-		}
 		let oInputParams = {
 			KEY: sKey,
 			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
@@ -49,21 +45,28 @@ class SecureStoreService {
 		};
 		let client = await this.getSecureStore();
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
+
+			if (helpers.isUndefinedOrNull(sKey)) {
+				let sDeveloperInfo = "Please provide URL parameter KEY. E.g.: ?KEY=TECHNICAL_USER_NAME";
+				let oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo);
+				resolve(oPlcException);
+			}
+
 			hdbext.loadProcedure(client, "SYS", "USER_SECURESTORE_RETRIEVE", (err, sp) => {
 				if (err) {
 					let sDeveloperInfo = `Failed to retrieve key '${sKey}' from secure store!`;
 					let oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, err);
-					reject(oPlcException);
+					resolve(oPlcException);
 				}
 				sp(oInputParams, (error, parameters) => {
 					if (error) {
 						let sDeveloperInfo = `Failed to retrieve key '${sKey}' from secure store!`;
 						let oPlcException = new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, undefined, error);
-						reject(oPlcException);
+						resolve(oPlcException);
 					}
 					if (bReturnValue === true) {
-						if (parameters.VALUE) {
+						if (!helpers.isUndefinedOrNull(parameters) && !helpers.isUndefinedOrNull(parameters.VALUE)) {
 							resolve(parameters.VALUE.toString("utf8"));
 						} else {
 							resolve("");
@@ -76,7 +79,7 @@ class SecureStoreService {
 						} else {
 							let sDeveloperInfo = `Value of Key '${sKey}' not found into secure store!`;
 							let oPlcException = new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
-							reject(oPlcException);
+							resolve(oPlcException);
 						}
 					}
 				});
