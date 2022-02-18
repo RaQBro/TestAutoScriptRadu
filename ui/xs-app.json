@@ -39,7 +39,8 @@
 		"source": "^/webapp/index.html",
 		"localDir": "resources",
 		"authenticationType": "xsuaa",
-		"csrfProtection": true
+		"csrfProtection": true,
+		"cacheControl": "no-cache, no-store, must-revalidate"
 	}, {
 		"source": "^/webapp/(.+)$",
 		"localDir": "resources",
