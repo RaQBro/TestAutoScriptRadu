@@ -4,5 +4,6 @@
 			press=".ToolBarMessages.onMessagePopoverPress"/>
 		<ToolbarSpacer/>
 		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress" visible="true"/>
+		<Button id="editBtn" icon="sap-icon://edit" type="Emphasized" text="{i18n>Edit}" press="onEditPress" visible="true"/>
 	</Toolbar>
 </core:FragmentDefinition>

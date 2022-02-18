@@ -75,23 +75,33 @@ class ExtensibilityRouter {
 		});
 
 		router.get("/check-authorization", function (request, response) {
-			if (helpers.isUndefinedNullOrEmptyString(request.query) && helpers.isUndefinedNullOrEmptyString(request.query.ID)) {
-				let sQueryString = request.query.ID;
+			if (!helpers.isUndefinedNullOrEmptyString(request.query) && !helpers.isUndefinedNullOrEmptyString(request.query.ID)) {
 
-				if (sQueryString === "defaultValues") {
-					if (request.authInfo && request.authInfo.checkScope("$XSAPPNAME.DV_Display") && request.authInfo.checkScope(
-							"$XSAPPNAME.DV_Maintain")) {
-						response.type(sContentType).status(200).send();
-					}
-					if (request.authInfo && request.authInfo.checkScope("$XSAPPNAME.DV_Display") && !request.authInfo.checkScope(
-							"$XSAPPNAME.DV_Maintain")) {
-						response.type(sContentType).status(401).send();
-					}
-					if (request.authInfo && !request.authInfo.checkScope("$XSAPPNAME.DV_Display") && !request.authInfo.checkScope(
-							"$XSAPPNAME.DV_Maintain")) {
-						response.type(sContentType).status(403).send();
-					}
+				let sDisplayScope = "$XSAPPNAME." + request.query.ID + "_Display";
+				let sMaintainScope = "$XSAPPNAME." + request.query.ID + "_Maintain";
+
+				if (request.authInfo && request.authInfo.checkScope(sDisplayScope) && request.authInfo.checkScope(
+						sMaintainScope)) {
+					response.type(sContentType).status(200).send({
+						"display": true,
+						"maintain": true
+					});
 				}
+				if (request.authInfo && request.authInfo.checkScope(sDisplayScope) && !request.authInfo.checkScope(
+						sMaintainScope)) {
+					response.type(sContentType).status(200).send({
+						"display": true,
+						"maintain": false
+					});
+				}
+				if (request.authInfo && !request.authInfo.checkScope(sDisplayScope) && !request.authInfo.checkScope(
+						sMaintainScope)) {
+					response.type(sContentType).status(200).send({
+						"display": false,
+						"maintain": false
+					});
+				}
+
 			}
 		});
 

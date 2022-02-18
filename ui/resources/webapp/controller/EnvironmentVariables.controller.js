@@ -13,11 +13,19 @@ sap.ui.define([
 	return Controller.extend("webapp.ui.controller.EnvironmentVariables", {
 
 		ToolBarMessages: ToolBarMessages,
+		oAuth: {},
 
 		onInit: function () {
 
-			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("environmentVariables").attachPatternMatched(this._onObjectMatched, this);
+			this.oAuth = this.checkAuthorization("EV");
+			if (this.oAuth.display === true) {
+				let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.getRoute("environmentVariables").attachPatternMatched(this._onObjectMatched, this);
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+
 		},
 
 		_onObjectMatched: function () {
@@ -32,6 +40,7 @@ sap.ui.define([
 
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
+			this.handleControlVisibleState("editBtn", true);
 
 			this.setSideContentSelectedKey("environmentVariables");
 
@@ -67,6 +76,21 @@ sap.ui.define([
 
 			this.maintainEnvironmentVariables();
 			this.getEnvironmentVariables();
+
+		},
+
+		onEditPress: function () {
+			if (this.oAuth.maintain === true) {
+				this.handleControlEnabledState("editBtn", false);
+				this.handleControlEditableState("clientId", true);
+				this.handleControlEditableState("clientSecret", true);
+				this.handleControlEditableState("technicalUsername", true);
+				this.handleControlEditableState("technicalPassword", true);
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+
 		},
 
 		maintainEnvironmentVariables: function () {
@@ -83,6 +107,12 @@ sap.ui.define([
 				this.insertIntoSecureStore(sClientId, sClientSecret, technicalNameClient);
 
 				this.handleControlEnabledState("saveBtn", false);
+				this.handleControlEnabledState("editBtn", true);
+				this.handleControlEditableState("clientId", false);
+				this.handleControlEditableState("clientSecret", false);
+				this.handleControlEditableState("technicalUsername", false);
+				this.handleControlEditableState("technicalPassword", false);
+
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsEnvironmentVariables"), null, null,
 					"Error",

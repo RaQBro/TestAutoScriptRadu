@@ -5,16 +5,16 @@
 			<l:VerticalLayout class="sapUiContentPadding" width="50%">
 				<Text text="{i18n>infoTextClientId}"/>
 				<Label text="{i18n>clientId}" labelFor="clientId"/>
-				<Input id="clientId" placeholder="{i18n>clientIdPlaceholder}" change="onChangeClientId"></Input>
+				<Input id="clientId" placeholder="{i18n>clientIdPlaceholder}" change="onChangeClientId" editable="false"></Input>
 				<Label text="{i18n>clientSecret}" labelFor="clientSecret"/>
-				<Input id="clientSecret" placeholder="{i18n>clientSecretPlaceholder}" type="Password" change="onChangeClientSecret"></Input>
+				<Input id="clientSecret" placeholder="{i18n>clientSecretPlaceholder}" type="Password" change="onChangeClientSecret" editable="false"></Input>
 			</l:VerticalLayout>
 			<l:VerticalLayout class="sapUiContentPadding" width="50%">
 				<Text text="{i18n>infoTextTechnicalUser}"/>
 				<Label text="{i18n>technicalUsername}" labelFor="technicalUsername"/>
-				<Input id="technicalUsername" placeholder="{i18n>technicalUsernamePlaceholder}" change="onChangeUsername"></Input>
+				<Input id="technicalUsername" placeholder="{i18n>technicalUsernamePlaceholder}" change="onChangeUsername" editable="false"></Input>
 				<Label text="{i18n>technicalPassword}" labelFor="technicalPassword"/>
-				<Input id="technicalPassword" placeholder="{i18n>technicalPasswordPlaceholder}" type="Password" change="onChangePassword"></Input>
+				<Input id="technicalPassword" placeholder="{i18n>technicalPasswordPlaceholder}" type="Password" change="onChangePassword" editable="false"></Input>
 			</l:VerticalLayout>
 		</content>
 		<footer>

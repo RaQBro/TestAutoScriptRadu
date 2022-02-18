@@ -1,20 +1,23 @@
 <mvc:View id="defaultValuesView" controllerName="webapp.ui.controller.DefaultValues" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	xmlns:form="sap.ui.layout.form" xmlns:rte="sap.ui.richtexteditor" xmlns:core="sap.ui.core" displayBlock="true">
+	xmlns:form="sap.ui.layout.form" xmlns:rte="sap.ui.richtexteditor" xmlns:cde="sap.ui.codeeditor" xmlns:core="sap.ui.core" displayBlock="true">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<form:SimpleForm id="frmDefaultValues" editable="true" layout="ColumnLayout" title="{i18n>defaultValueTitle}">
 				<form:content>
 					<Label text="{i18n>noProjectsPerJob}"/>
-					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects"/>
+					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects" editable="false"/>
 					<Label text="{i18n>noCalculationsPerJob}"/>
-					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS" change="onChangeNoCalculations"/>
+					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS" change="onChangeNoCalculations" editable="false"/>
 					<Label text="{i18n>noVersionsPerJob}"/>
-					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions"/>
+					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions" editable="false"/>
 				</form:content>
 			</form:SimpleForm>
 			<form:SimpleForm id="frmRTE" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}"/>
-			<rte:RichTextEditor id="txtRTE" customToolbar="true" showGroupFont="true" showGroupLink="true" showGroupInsert="true" width="99%"
-				change="onChangeRichTextEditor" class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
+			<rte:RichTextEditor id="txtRTE" editable="false" customToolbar="true" showGroupFont="true" showGroupLink="true" showGroupInsert="true"
+				width="99%" change="onChangeRichTextEditor" class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
+			<form:SimpleForm id="frmCDE" editable="true" visible="false" layout="ColumnLayout" title="{i18n>CodeEditorTitle}"/>
+			<cde:CodeEditor id="txtCDE" editable="false" visible="false" type="json" height="500px" change="onChangeCodeEditor"
+				class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
 		</content>
 		<footer>
 			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>

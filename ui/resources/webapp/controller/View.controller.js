@@ -1,7 +1,8 @@
 sap.ui.define([
 	"./BaseController",
-	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, ToolBarMessages) {
+	"webapp/ui/toolBarMessages/ToolBarMessages",
+	"webapp/ui/core/utils/MessageHelpers"
+], function (Controller, ToolBarMessages, MessageHelpers) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.View", {
 
@@ -9,8 +10,15 @@ sap.ui.define([
 
 		onInit: function () {
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("view").attachPatternMatched(this._onObjectMatched, this);
+			let oAuth = this.checkAuthorization("V");
+			if (oAuth.display === true) {
+				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.getRoute("view").attachPatternMatched(this._onObjectMatched, this);
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+
 		},
 
 		onAfterRendering: function () {
@@ -44,6 +52,9 @@ sap.ui.define([
 
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", false);
+
+			this.handleControlEnabledState("editBtn", false);
+			this.handleControlVisibleState("editBtn", false);
 
 			this.setSideContentSelectedKey("view");
 

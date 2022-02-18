@@ -18,11 +18,19 @@ sap.ui.define([
 		 */
 
 		ToolBarMessages: ToolBarMessages,
+		oAuth: {},
 
 		onInit: function () {
 
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
+			this.oAuth = this.checkAuthorization("DV");
+			if (this.oAuth.display === true) {
+				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+
 		},
 
 		_onObjectMatched: function () {
@@ -37,11 +45,13 @@ sap.ui.define([
 
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
+			this.handleControlVisibleState("editBtn", true);
 
 			this.setNoProjects();
 			this.setNoCalculations();
 			this.setNoVersions();
 			this.setRTEValue();
+			this.setCDEValue();
 
 			this.setSideContentSelectedKey("defaultValues");
 
@@ -117,6 +127,21 @@ sap.ui.define([
 			}
 		},
 
+		setCDEValue: function () {
+
+			var oView = this.getView();
+			var oCDEControl = oView.byId("txtCDE");
+
+			var oCDE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+				return oDefaultValue.FIELD_NAME === "CDE";
+			});
+
+			if (oCDE !== null && oCDE !== undefined) {
+
+				oCDEControl.setValue(oCDE.FIELD_DESCRIPTION);
+			}
+		},
+
 		/** @function Used to saved the updated default values*/
 		onSavePress: function () {
 			var oView = this.getView(),
@@ -146,6 +171,12 @@ sap.ui.define([
 				FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
 			});
 
+			oDefaultValues.push({
+				FIELD_NAME: "CDE",
+				FIELD_VALUE: null,
+				FIELD_DESCRIPTION: oView.byId("txtCDE").getValue()
+			});
+
 			var oController = this;
 
 			var onSuccess = function () {
@@ -156,6 +187,15 @@ sap.ui.define([
 				// get new default values
 				oController.getDefaultValues();
 				oController.handleControlEnabledState("saveBtn", false);
+				oController.handleControlEnabledState("editBtn", true);
+
+				// make input fields readonly
+				oController.handleControlEditableState("txtRTE", false);
+				oController.handleControlEditableState("txtCDE", false);
+				oController.handleControlEditableState("inProjPerjob", false);
+				oController.handleControlEditableState("inCalcPerjob", false);
+				oController.handleControlEditableState("inVersPerjob", false);
+
 			};
 			var onError = function () {
 
@@ -163,6 +203,22 @@ sap.ui.define([
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);
+		},
+
+		onEditPress: function () {
+
+			if (this.oAuth.maintain === true) {
+				this.handleControlEditableState("txtRTE", true);
+				this.handleControlEditableState("txtCDE", true);
+				this.handleControlEditableState("inProjPerjob", true);
+				this.handleControlEditableState("inCalcPerjob", true);
+				this.handleControlEditableState("inVersPerjob", true);
+				this.handleControlEnabledState("editBtn", false);
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+
 		},
 
 		onChangeNoProjects: function () {
@@ -181,6 +237,11 @@ sap.ui.define([
 		},
 
 		onChangeRichTextEditor: function () {
+
+			this.handleControlEnabledState("saveBtn", true);
+		},
+
+		onChangeCodeEditor: function () {
 
 			this.handleControlEnabledState("saveBtn", true);
 		}

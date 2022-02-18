@@ -97,6 +97,10 @@ sap.ui.define([
 			this.byId(controlId).setEnabled(state);
 		},
 
+		handleControlEditableState: function (controlId, state) {
+			this.byId(controlId).setEditable(state);
+		},
+
 		/** @function used to handle the visibility of a control
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
@@ -262,6 +266,40 @@ sap.ui.define([
 			this.navTo("messages", {
 				jobID: oEvent.getParameters().item.getBindingContext("message").getObject().technicalDetails.JOB_ID
 			});
+		},
+
+		/** @function used to check user authorization
+		 * @param {string} sScopeId - id used in xs-security.json for a custom scope (part of string before '_Maintain' or '_Display')
+		 * example for Default Values View we have $XSAPPNAME.DV_Display". Scope ID here will be "DV"
+		 **/
+		checkAuthorization: function (sScopeId) {
+			let oController = this;
+			let oAuth = {};
+
+			let onSuccess = function (oData) {
+				oAuth = {
+					display: oData.display,
+					maintain: oData.maintain
+				};
+			};
+
+			let onError = function (error) {
+				var oButtonPopover = oController.byId("buttonMessagePopover");
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAuth") && ":" && error.status && "-" &&
+					error.statusText, null, null, "Error",
+					oController.oView.sViewName.substring(oController.oView.sViewName.lastIndexOf(".") + 1) //View Name
+					, false, null, oButtonPopover);
+			};
+
+			BackendConnector.doGet({
+				constant: "GET_AUTH",
+				parameters: {
+					ID: sScopeId
+				}
+			}, onSuccess, onError, true);
+
+			return oAuth;
+
 		}
 	});
 });

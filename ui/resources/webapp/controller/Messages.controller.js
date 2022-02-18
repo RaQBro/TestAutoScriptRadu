@@ -3,17 +3,23 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/v2/ODataModel",
-	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages) {
+	"webapp/ui/toolBarMessages/ToolBarMessages",
+	"webapp/ui/core/utils/MessageHelpers"
+], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages, MessageHelpers) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.Messages", {
 
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
-
-			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("messages").attachPatternMatched(this._onObjectMatched, this);
+			let oAuth = this.checkAuthorization("M");
+			if (oAuth.display === true) {
+				let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.getRoute("messages").attachPatternMatched(this._onObjectMatched, this);
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
 		},
 
 		_onObjectMatched: function (oEvent) {
@@ -31,6 +37,7 @@ sap.ui.define([
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
 
 			this.handleControlVisibleState("saveBtn", false);
+			this.handleControlVisibleState("editBtn", false);
 			this.setSideContentSelectedKey("messages");
 
 			this.applyFiltersFromParameters(iJobId);
