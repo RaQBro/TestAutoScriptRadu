@@ -53,7 +53,7 @@ sap.ui.define([
 			this.closeBusyDialog();
 		},
 
-		_renameColumns: function (oEvent) {
+		renameColumns: function (oEvent) {
 
 			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
@@ -184,7 +184,7 @@ sap.ui.define([
 
 			}
 
-			this._renameColumns(oEvent);
+			this.renameColumns(oEvent);
 		},
 
 		formatRowHighlight: function (oValue) {

@@ -2,7 +2,7 @@
 	xmlns:core="sap.ui.core">
 	<Page showHeader="false" showFooter="false" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
-			<MessageStrip text="Missing authorization." type="Error" showIcon="true" showCloseButton="false"></MessageStrip>
+			<MessageStrip text="{i18n>errorNoAuth}" type="Error" showIcon="true" showCloseButton="false"></MessageStrip>
 		</content>
 	</Page>
 </mvc:View>
