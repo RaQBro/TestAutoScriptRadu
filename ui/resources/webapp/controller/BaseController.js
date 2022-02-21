@@ -285,10 +285,10 @@ sap.ui.define([
 
 			let onError = function (error) {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAuth") && ":" && error.status && "-" &&
-					error.statusText, null, null, "Error",
-					oController.oView.sViewName.substring(oController.oView.sViewName.lastIndexOf(".") + 1) //View Name
-					, false, null, oButtonPopover);
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAuth"),
+					error.status + "-" + error.statusText, null, "Error",
+					oController.oView.sViewName.substring(oController.oView.sViewName.lastIndexOf(".") + 1), //View Name
+					false, null, oButtonPopover);
 			};
 
 			BackendConnector.doGet({
