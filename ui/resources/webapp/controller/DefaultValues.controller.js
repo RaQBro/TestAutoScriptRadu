@@ -22,24 +22,29 @@ sap.ui.define([
 
 		onInit: function () {
 
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("DV");
-			if (this.oAuth.display === true) {
-				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-				oRouter.getRoute("defaultValues").attachPatternMatched(this._onObjectMatched, this);
-			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
-					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
-			}
 
+			if (this.oAuth.display) {
+				oRouter.getRoute("defaultValues").attachPatternMatched(this.onObjectMatched, this);
+			} else {
+				this.getView().setVisible(false);
+				oRouter.getRoute("defaultValues").attachPatternMatched(this.onUnauthorizedMatched, this);
+			}
 		},
 
-		_onObjectMatched: function () {
+		onObjectMatched: function () {
 
 			this.openBusyDialog();
-			this._setupView();
+			this.setupView();
 		},
 
-		_setupView: function () {
+		onUnauthorizedMatched: function () {
+
+			this.navTo("error");
+		},
+
+		setupView: function () {
 
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 

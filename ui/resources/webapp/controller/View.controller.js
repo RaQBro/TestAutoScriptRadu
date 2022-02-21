@@ -2,26 +2,60 @@ sap.ui.define([
 	"./BaseController",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers"
-], function (Controller, ToolBarMessages, MessageHelpers) {
+], function (Controller, ToolBarMessages) {
 	"use strict";
+
 	return Controller.extend("webapp.ui.controller.View", {
 
 		ToolBarMessages: ToolBarMessages,
+		oAuth: {},
 
 		onInit: function () {
 
-			let oAuth = this.checkAuthorization("V");
-			if (oAuth.display === true) {
-				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-				oRouter.getRoute("view").attachPatternMatched(this._onObjectMatched, this);
-			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
-					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
-			}
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			this.oAuth = this.checkAuthorization("V");
 
+			if (this.oAuth.display) {
+				oRouter.getRoute("view").attachPatternMatched(this.onObjectMatched, this);
+			} else {
+				this.getView().setVisible(false);
+				oRouter.getRoute("view").attachPatternMatched(this.onUnauthorizedMatched, this);
+			}
 		},
 
-		onAfterRendering: function () {
+		onAfterRendering: function () {},
+
+		onObjectMatched: function () {
+
+			this.openBusyDialog();
+			this.setupView();
+			this.initialiseViewLogic();
+		},
+
+		onUnauthorizedMatched: function () {
+
+			this.navTo("error");
+		},
+
+		setupView: function () {
+
+			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
+			this.mViewSettingsDialogs = {};
+
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+
+			this.handleControlEnabledState("saveBtn", false);
+			this.handleControlVisibleState("saveBtn", false);
+
+			this.handleControlEnabledState("editBtn", false);
+			this.handleControlVisibleState("editBtn", false);
+
+			this.setSideContentSelectedKey("view");
+
+			this.closeBusyDialog();
+		},
+
+		initialiseViewLogic: function () {
 
 			// Get configuration
 			this.getConfiguration(this.getViewName("item"));
@@ -37,37 +71,13 @@ sap.ui.define([
 			this.handleWindowClose();
 		},
 
-		_onObjectMatched: function () {
-
-			this.openBusyDialog();
-			this._setupView();
-		},
-
-		_setupView: function () {
-
-			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
-			this._mViewSettingsDialogs = {};
-
-			this.oButtonPopover = this.byId("buttonMessagePopover");
-
-			this.handleControlEnabledState("saveBtn", false);
-			this.handleControlVisibleState("saveBtn", false);
-
-			this.handleControlEnabledState("editBtn", false);
-			this.handleControlVisibleState("editBtn", false);
-
-			this.setSideContentSelectedKey("view");
-
-			this.closeBusyDialog();
-		},
-
 		onExit: function () {
 
-			var oDialogKey,
+			let oDialogKey,
 				oDialogValue;
 
-			for (oDialogKey in this._mViewSettingsDialogs) {
-				oDialogValue = this._mViewSettingsDialogs[oDialogKey];
+			for (oDialogKey in this.mViewSettingsDialogs) {
+				oDialogValue = this.mViewSettingsDialogs[oDialogKey];
 				if (oDialogValue) {
 					oDialogValue.destroy();
 				}

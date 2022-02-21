@@ -5,32 +5,38 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers"
-], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages, MessageHelpers) {
+], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.Jobs", {
 
 		ToolBarMessages: ToolBarMessages,
+		oAuth: {},
 
 		onInit: function () {
 
-			let oAuth = this.checkAuthorization("J");
-			if (oAuth.display === true) {
-				let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-				oRouter.getRoute("jobs").attachPatternMatched(this._onObjectMatched, this);
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			this.oAuth = this.checkAuthorization("J");
+
+			if (this.oAuth.display) {
+				oRouter.getRoute("jobs").attachPatternMatched(this.onObjectMatched, this);
 			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
-					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+				this.getView().setVisible(false);
+				oRouter.getRoute("jobs").attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
-		_onObjectMatched: function () {
+		onObjectMatched: function () {
 
 			this.openBusyDialog();
-
-			this._setupView();
+			this.setupView();
 		},
 
-		_setupView: function () {
+		onUnauthorizedMatched: function () {
+
+			this.navTo("error");
+		},
+
+		setupView: function () {
 
 			let oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
@@ -44,7 +50,7 @@ sap.ui.define([
 			this.closeBusyDialog();
 		},
 
-		_renameColumns: function (oEvent) {
+		renameColumns: function (oEvent) {
 
 			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
@@ -114,7 +120,7 @@ sap.ui.define([
 
 		onBeforeRebindTable: function (oEvent) {
 
-			this._renameColumns(oEvent);
+			this.renameColumns(oEvent);
 		},
 
 		formatRowHighlight: function (oValue) {

@@ -165,7 +165,7 @@
 					"viewId": "errorView",
 					"viewName": "Error",
 					"viewType": "XML",
-					"transition": "slide",
+					"transition": "show",
 					"clearAggregation": true
 				}
 			}

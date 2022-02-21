@@ -5,33 +5,41 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers"
-], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages, MessageHelpers) {
+], function (Controller, Filter, FilterOperator, ODataModel, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.Messages", {
 
 		ToolBarMessages: ToolBarMessages,
+		oAuth: {},
 
 		onInit: function () {
-			let oAuth = this.checkAuthorization("M");
-			if (oAuth.display === true) {
-				let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-				oRouter.getRoute("messages").attachPatternMatched(this._onObjectMatched, this);
+
+			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			this.oAuth = this.checkAuthorization("M");
+
+			if (this.oAuth.display) {
+				oRouter.getRoute("messages").attachPatternMatched(this.onObjectMatched, this);
 			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
-					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+				this.getView().setVisible(false);
+				oRouter.getRoute("messages").attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
-		_onObjectMatched: function (oEvent) {
+		onObjectMatched: function (oEvent) {
 
 			this.openBusyDialog();
 
 			let iJobId = oEvent.getParameter("arguments").jobID;
 
-			this._setupView(iJobId);
+			this.setupView(iJobId);
 		},
 
-		_setupView: function (iJobId) {
+		onUnauthorizedMatched: function () {
+
+			this.navTo("error");
+		},
+
+		setupView: function (iJobId) {
 
 			let oView = this.getView();
 			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
