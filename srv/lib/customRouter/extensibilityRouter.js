@@ -76,7 +76,6 @@ class ExtensibilityRouter {
 
 		router.get("/check-authorization", function (request, response) {
 			if (!helpers.isUndefinedNullOrEmptyString(request.query) && !helpers.isUndefinedNullOrEmptyString(request.query.ID)) {
-
 				let sDisplayScope = "$XSAPPNAME." + request.query.ID + "_Display";
 				let sMaintainScope = "$XSAPPNAME." + request.query.ID + "_Maintain";
 
@@ -101,7 +100,8 @@ class ExtensibilityRouter {
 						"maintain": false
 					});
 				}
-
+			} else {
+				response.type(sContentType).status(401).send();
 			}
 		});
 
