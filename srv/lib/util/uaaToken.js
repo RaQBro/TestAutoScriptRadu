@@ -86,13 +86,13 @@ class UAAToken {
 	 */
 	async checkToken() {
 
-		if (this.hasValidToken()) {
-			return;
-		}
-
 		let sClientId = await this.EnvironmentVariablesUtil.getClientIdFromTable();
 		let sTechnicalUser = await this.EnvironmentVariablesUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+			return;
+		}
+
+		if (sTechnicalUser === global.TECHNICAL_USER && this.hasValidToken()) {
 			return;
 		}
 
