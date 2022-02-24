@@ -26,7 +26,7 @@ module.exports.aJobs = [{
 	"active": true,
 	"startTime": helpers.nowPlusSecondstoISOString(0),
 	// the action must be maintained because after job creation this cannot be changed/added from job dashboard  
-	"action": "/extensibility/plc/exampleService",
+	"action": "/extensibility/plc/example-service",
 	"schedules": [{
 
 		/**
