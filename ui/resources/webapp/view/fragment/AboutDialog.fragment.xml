@@ -1,11 +1,42 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
-	<Dialog id="aboutDialog" title="{i18n>aboutDialogTitle}" contentWidth="25rem" draggable="false" horizontalScrolling="false">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
+	<Dialog id="aboutDialog" title="{i18n>aboutDialogTitle}" contentWidth="30%" draggable="false" horizontalScrolling="false"
+		verticalScrolling="false">
 		<content>
-			<VBox>
-				<form:SimpleForm editable="false">
-					<Label text="TBD"/>
-					<Text text="Maybe later ... "/>
-				</form:SimpleForm>
+			<VBox class="sapUiSmallMargin">
+				<f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Application" adjustLabelSpan="false" singleContainerFullSize="false">
+					<f:content>
+						<l:HorizontalLayout class="sapUiContentPadding">
+							<l:VerticalLayout width="15rem">
+								<Label text="{i18n>frameworkId}"/>
+								<Text id="frameID" text="{aboutModel>/frameId}"/>
+							</l:VerticalLayout>
+							<l:VerticalLayout>
+								<Label text="{i18n>frameworkVersion}"/>
+								<Text text="{aboutModel>/frameVersion}"/>
+							</l:VerticalLayout>
+						</l:HorizontalLayout>
+					</f:content>
+				</f:SimpleForm>
+				<f:SimpleForm editable="false" title="Environment" layout="ResponsiveGridLayout" singleContainerFullSize="false" adjustLabelSpan="false">
+					<f:content>
+						<l:HorizontalLayout id="envHL" class="sapUiContentPadding">
+							<l:VerticalLayout id="envVL1" width="15rem">
+								<Label text="{i18n>dType}"/>
+								<Text id="inputDevice" text="{aboutModel>/deviceType}"/>
+								<Label text="{i18n>theme}" class="sapUiTinyMarginTop"/>
+								<Text text="{aboutModel>/theme}"/>
+								<Label text="{i18n>touchInput}" class="sapUiTinyMarginTop"/>
+								<Text text="{aboutModel>/touchInput} "/>
+							</l:VerticalLayout>
+							<l:VerticalLayout id="envVL2">
+								<Label text="{i18n>optimisedTouch}"/>
+								<Text text="{aboutModel>/optimisedTouch}"/>
+								<Label text="{i18n>userAgent}" class="sapUiTinyMarginTop"/>
+								<Text text="{aboutModel>/userAgent}" width="50%"/>
+							</l:VerticalLayout>
+						</l:HorizontalLayout>
+					</f:content>
+				</f:SimpleForm>
 			</VBox>
 		</content>
 		<beginButton>

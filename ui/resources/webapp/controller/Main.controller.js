@@ -28,8 +28,47 @@ sap.ui.define([
 				var avatarBtn = this.getView().byId("avatarBtn");
 				avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
 			}
+			this.onRenderingAboutBtn();
 		},
+		onRenderingAboutBtn: function () {
+			let isPhone = sap.ui.Device.system.phone;
+			let isTablet = sap.ui.Device.system.tablet;
+			let isDesktop = sap.ui.Device.system.desktop;
+			let isCombi = sap.ui.Device.system.combi;
+			let device = "";
+			let optimised = "";
+			let supportTouch = "";
+			if (isPhone) {
+				device = "Phone";
+				optimised = "Yes";
+			} else if (isCombi) {
+				device = "Combi";
+				optimised = "No";
+			} else if (isDesktop) {
+				device = "Desktop";
+				optimised = "No";
+			} else if (isTablet) {
+				device = "Tablet";
+				optimised = "Yes";
+			}
+			if (sap.ui.Device.support.touch) {
+				supportTouch = "Yes";
+			} else {
+				supportTouch = "No";
+			}
+			let aboutModel = {
 
+				frameId: "UI5",
+				frameVersion: sap.ui.version,
+				dType: device,
+				theme: "",
+				touchInput: supportTouch,
+				optimisedTouch: optimised,
+				userAgent: navigator.userAgent
+			};
+			let oModel = new sap.ui.model.json.JSONModel(aboutModel);
+			this.getView().setModel(oModel, "aboutModel");
+		},
 		/** @function called after onInit*/
 		onAfterRendering: function () {},
 
@@ -55,12 +94,14 @@ sap.ui.define([
 		/** @function used when About is pressed from the user details*/
 		onAboutPress: function () {
 			var oView = this.getView(),
-				oController = oView.getController();
+				oController = oView.getController(),
+				oAboutModel = oView.getModel("aboutModel");
 			// instantiate dialog
 			if (!oController._aboutDialog) {
 				oController._aboutDialog = sap.ui.xmlfragment("webapp.ui.view.fragment.AboutDialog", oController);
 				oView.addDependent(this._aboutDialog);
 			}
+			oAboutModel.setProperty("/theme", sap.ui.getCore().getConfiguration().getTheme());
 			// open dialog
 			oController._aboutDialog.open();
 		},
@@ -81,6 +122,7 @@ sap.ui.define([
 				oController._howToDialog = sap.ui.xmlfragment("webapp.ui.view.fragment.HowToDialog", oController);
 				oView.addDependent(this._howToDialog);
 			}
+
 			// open dialog
 			oController._howToDialog.open();
 		},
