@@ -191,6 +191,30 @@ sap.ui.define([
 		onChangeClientSecret: function () {
 
 			this.handleControlEnabledState("saveBtn", true);
+		},
+
+		logoutPress: function () {
+			let oView = this.getView();
+			let oController = oView.getController();
+			let sMessage;
+
+			var onSuccess = function (result) {
+				sMessage = {
+					type: "Success"
+				};
+
+				MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to logout technical user.`,
+					result.message,
+					null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
+			};
+			var onError = function (oXHR, sTextStatus, sErrorThrown) {
+				sMessage = {
+					type: "Error"
+				};
+				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+			BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
 		}
 	});
 

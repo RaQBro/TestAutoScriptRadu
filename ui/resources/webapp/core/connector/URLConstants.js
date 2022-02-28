@@ -17,6 +17,7 @@ sap.ui.define([], function () {
 	var setDefaultValues = "/extensibility/plc/maintain-default-values";
 	var deleteSecStore = "/secure/store/delete?KEY={KEY}";
 	var getAuthorization = "/extensibility/plc/check-authorization?ID={ID}";
+	var logoutService = "/extensibility/plc/logout-service?IS_ONLINE_MODE=false";
 
 	var mURLConstants = {
 		AUTH_URL: authUrl,
@@ -34,7 +35,8 @@ sap.ui.define([], function () {
 		DELETE_SEC_STORE: deleteSecStore,
 		SET_DEFAULT_VALUES: setDefaultValues,
 		SET_SEC_STORE: setSecStore,
-		GET_AUTH: getAuthorization
+		GET_AUTH: getAuthorization,
+		LOGOUT_SERVICE: logoutService
 	};
 
 	return Object.freeze(mURLConstants);
