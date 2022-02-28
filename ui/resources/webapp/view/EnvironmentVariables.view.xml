@@ -18,7 +18,7 @@
 			</l:VerticalLayout>
 		</content>
 		<footer>
-			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessagesAndLogout" type="XML"/>
+			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
 		</footer>
 	</Page>
 </mvc:View>
