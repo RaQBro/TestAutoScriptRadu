@@ -88,7 +88,8 @@ class UAAToken {
 
 		let sClientId = await this.EnvironmentVariablesUtil.getClientIdFromTable();
 		let sTechnicalUser = await this.EnvironmentVariablesUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+		let sApplicationName = await this.EnvironmentVariablesUtil.getApplicationNameFromTable();
+		if (helpers.isUndefinedOrNull(sApplicationName) || helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
 			return;
 		}
 

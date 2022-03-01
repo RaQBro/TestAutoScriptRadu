@@ -62,10 +62,10 @@ class SecureStoreRouter {
 
 			let sKey = request.query.KEY;
 			let sValue = request.body.VALUE;
-			let sDescription = request.body.TECHNICAL_NAME;
+			let sFieldName = request.body.FIELD_NAME;
 
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
-				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sKey, sDescription).then(function () {
+				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sKey, sFieldName).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);
@@ -81,10 +81,10 @@ class SecureStoreRouter {
 
 			let sKey = request.query.KEY;
 			let sValue = request.body.VALUE;
-			let sDescription = request.body.TECHNICAL_NAME;
+			let sFieldName = request.body.FIELD_NAME;
 
 			SecureStoreService.deleteKey(sKey).then(function (result) {
-				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sValue, sDescription).then(function () {
+				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sValue, sFieldName).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);

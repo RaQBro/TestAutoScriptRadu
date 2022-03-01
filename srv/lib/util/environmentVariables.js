@@ -106,5 +106,29 @@ class EnvironmentVariablesUtil {
 		await connection.statementExecPromisified(statement, [sTechnicalName, sValue]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	}
+
+	async getApplicationNameFromTable() {
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+
+		let statement = await connection.preparePromisified(
+			`
+				select * from "sap.plc.extensibility::template_application.t_environment_variables"
+				where FIELD_NAME = 'APPLICATION_NAME';
+			
+			`
+		);
+		let aResults = await connection.statementExecPromisified(statement, []);
+		hdbClient.close();
+
+		let aApplicationName = aResults.slice();
+
+		let sApplicationName = null;
+		if (aApplicationName.lenght === 1) {
+			sApplicationName = aApplicationName[0].FIELD_VALUE;
+		}
+		return sApplicationName;
+	}
+
 }
 exports.EnvironmentVariablesUtil = module.exports.EnvironmentVariablesUtil = EnvironmentVariablesUtil;
