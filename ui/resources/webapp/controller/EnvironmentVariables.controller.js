@@ -46,7 +46,7 @@ sap.ui.define([
 			this.handleControlEnabledState("saveBtn", false);
 			this.handleControlVisibleState("saveBtn", true);
 			this.handleControlVisibleState("editBtn", true);
-			this.handleControlVisibleState("logout", true);
+			this.handleControlVisibleState("logoutBtn", true);
 
 			this.setSideContentSelectedKey("environmentVariables");
 
@@ -69,7 +69,7 @@ sap.ui.define([
 			if (sTechnicalUser) {
 				if (sTechnicalUser.FIELD_VALUE !== null) {
 					this.getView().byId("technicalUsername").setValue(sTechnicalUser.FIELD_VALUE);
-					this.handleControlEnabledState("logout", true);
+					this.handleControlEnabledState("logoutBtn", true);
 				}
 			}
 			if (sClientId) {
