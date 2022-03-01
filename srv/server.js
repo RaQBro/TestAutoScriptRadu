@@ -60,7 +60,7 @@ let RouterStandardPlc = StandardPlcRouter.getRouter();
 
 // xsjs configurations
 let options = {
-	//anonymous: false, // remove to authenticate calls
+	// anonymous: false, // remove to authenticate calls
 	auditLog: {
 		logToConsole: true
 	}, // change to auditlog service for productive scenarios

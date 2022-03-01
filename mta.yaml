@@ -60,7 +60,7 @@ resources:
       
   - name: tapp-uaa-service
     type: org.cloudfoundry.existing-service
-      
+    
   - name: jobScheduler
     type: org.cloudfoundry.existing-service
     

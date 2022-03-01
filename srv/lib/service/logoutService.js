@@ -4,12 +4,9 @@
 /**
  * @fileOverview
  * 
- * Example service containing sections for:
- *		- global constants and variables
- *		- custom functions
- *		- custom business logic
+ * Service used to logout technical user from PLC
  * 
- * @name exampleService.js
+ * @name logoutService.js
  */
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
