@@ -10,6 +10,7 @@
  */
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
@@ -38,10 +39,20 @@ async function doService(request) {
 		// ------------------------- Start Business Logic ---------------------------
 
 		let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
-		let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
-		oServiceResponseBody.CURRENT_USER = sCurrentUser;
+		if (oInitPlcSession !== undefined) {
 
-		await StandardPlcService.logoutPlcSession();
+			let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
+			oServiceResponseBody.CURRENT_USER = sCurrentUser;
+
+			let oLogoutFromPlc = await StandardPlcService.logoutPlcSession();
+			if (oLogoutFromPlc !== undefined) {
+
+				await Message.addLog(request.JOB_ID,
+					`Technical user: ${sCurrentUser}!`,
+					"message", undefined, sOperation);
+
+			}
+		}
 
 		// -------------------------- End Business Logic ----------------------------
 	} catch (err) {
