@@ -1,15 +1,10 @@
 sap.ui.define([
 	"./BaseController",
-	"sap/m/MessageStrip",
-	"sap/ui/core/MessageType",
-	"webapp/ui/core/utils/MessageHelpers",
-	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (BaseController, MessageStrip, MessageType, MessageHelpers, ToolBarMessages) {
+	"webapp/ui/core/utils/MessageHelpers"
+], function (BaseController, MessageHelpers) {
 	"use strict";
 
 	return BaseController.extend("webapp.ui.controller.Error", {
-
-		ToolBarMessages: ToolBarMessages,
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {

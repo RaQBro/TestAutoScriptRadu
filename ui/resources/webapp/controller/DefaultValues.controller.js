@@ -1,11 +1,9 @@
 /* global _:true */
 sap.ui.define([
 	"./BaseController",
-	"sap/ui/core/library",
 	"webapp/ui/core/connector/BackendConnector",
-	"webapp/ui/core/utils/MessageHelpers",
-	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (BaseController, library, BackendConnector, MessageHelpers, ToolBarMessages) {
+	"webapp/ui/core/utils/MessageHelpers"
+], function (BaseController, BackendConnector, MessageHelpers) {
 	"use strict";
 
 	return BaseController.extend("webapp.ui.controller.DefaultValues", {
@@ -17,7 +15,6 @@ sap.ui.define([
 		 * gets the i18n model, creates message popover, disabling save button from footer
 		 */
 
-		ToolBarMessages: ToolBarMessages,
 		oAuth: {},
 
 		onInit: function () {

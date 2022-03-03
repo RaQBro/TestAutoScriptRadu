@@ -1,13 +1,10 @@
 sap.ui.define([
-	"./BaseController",
-	"webapp/ui/toolBarMessages/ToolBarMessages",
-	"webapp/ui/core/utils/MessageHelpers"
-], function (Controller, ToolBarMessages) {
+	"./BaseController"
+], function (Controller) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.View", {
 
-		ToolBarMessages: ToolBarMessages,
 		oAuth: {},
 
 		onInit: function () {

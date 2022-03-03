@@ -2,9 +2,8 @@
 sap.ui.define([
 	"./BaseController",
 	"webapp/ui/core/connector/BackendConnector",
-	"webapp/ui/core/utils/MessageHelpers",
-	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
+	"webapp/ui/core/utils/MessageHelpers"
+], function (Controller, BackendConnector, MessageHelpers) {
 	"use strict";
 
 	const technicalNameUser = "TECHNICAL_USER";
@@ -13,7 +12,6 @@ sap.ui.define([
 
 	return Controller.extend("webapp.ui.controller.EnvironmentVariables", {
 
-		ToolBarMessages: ToolBarMessages,
 		oAuth: {},
 
 		onInit: function () {
