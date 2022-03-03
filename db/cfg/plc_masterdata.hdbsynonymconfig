@@ -125,6 +125,18 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_costing_sheet": {
+		"target": {
+			"object": "sap.plc.db::basis.t_costing_sheet",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_costing_sheet__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_costing_sheet__text",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_currency": {
 		"target": {
 			"object": "sap.plc.db::basis.t_currency",

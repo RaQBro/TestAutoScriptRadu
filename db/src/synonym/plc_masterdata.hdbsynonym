@@ -20,6 +20,8 @@
 	"sap.plc.db::basis.t_cost_center": {},
 	"sap.plc.db::basis.t_cost_center_ext": {},
 	"sap.plc.db::basis.t_cost_center__text": {},
+	"sap.plc.db::basis.t_costing_sheet": {},
+	"sap.plc.db::basis.t_costing_sheet__text": {},
 	"sap.plc.db::basis.t_currency": {},
 	"sap.plc.db::basis.t_currency__text": {},
 	"sap.plc.db::basis.t_currency_conversion": {},
