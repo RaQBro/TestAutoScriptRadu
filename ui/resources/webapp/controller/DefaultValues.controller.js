@@ -2,20 +2,15 @@
 sap.ui.define([
 	"./BaseController",
 	"webapp/ui/core/connector/BackendConnector",
-	"webapp/ui/core/utils/MessageHelpers"
-], function (BaseController, BackendConnector, MessageHelpers) {
+	"webapp/ui/core/utils/MessageHelpers",
+	"webapp/ui/toolBarMessages/ToolBarMessages"
+], function (BaseController, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
 	return BaseController.extend("webapp.ui.controller.DefaultValues", {
-		/**
-		 * @file ConfigurationController here is logic for the Configuration view
-		 */
-
-		/** @function called when the controller is initialized
-		 * gets the i18n model, creates message popover, disabling save button from footer
-		 */
 
 		oAuth: {},
+		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
 

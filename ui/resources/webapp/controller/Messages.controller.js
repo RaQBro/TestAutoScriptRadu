@@ -1,12 +1,14 @@
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (Controller, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"webapp/ui/toolBarMessages/ToolBarMessages"
+], function (Controller, Filter, FilterOperator, ToolBarMessages) {
 	"use strict";
 	return Controller.extend("webapp.ui.controller.Messages", {
 
 		oAuth: {},
+		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
 
