@@ -71,6 +71,30 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_component_split": {
+		"target": {
+			"object": "sap.plc.db::basis.t_component_split",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_component_split__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_component_split__text",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_confidence_level": {
+		"target": {
+			"object": "sap.plc.db::basis.t_confidence_level",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_confidence_level__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_confidence_level__text",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_controlling_area": {
 		"target": {
 			"object": "sap.plc.db::basis.t_controlling_area",
@@ -131,9 +155,21 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_design_office__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_design_office__text",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_dimension": {
 		"target": {
 			"object": "sap.plc.db::basis.t_dimension",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_dimension__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_dimension__text",
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
