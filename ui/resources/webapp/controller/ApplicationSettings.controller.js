@@ -11,10 +11,10 @@ sap.ui.define([
 	const technicalNameClient = "CLIENT_ID";
 	const technicalApplicationName = "APPLICATION_NAME";
 
-	return Controller.extend("webapp.ui.controller.EnvironmentVariables", {
+	return Controller.extend("webapp.ui.controller.ApplicationSettings", {
 
-		oAuth: {},
 		ToolBarMessages: ToolBarMessages,
+		oAuth: {},
 
 		onInit: function () {
 
@@ -22,10 +22,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("EV");
 
 			if (this.oAuth.display === true) {
-				oRouter.getRoute("environmentVariables").attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute("applicationSettings").attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute("environmentVariables").attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute("applicationSettings").attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
@@ -49,25 +49,25 @@ sap.ui.define([
 			this.handleControlVisibleState("editBtn", true);
 			this.handleControlVisibleState("logoutBtn", true);
 
-			this.setSideContentSelectedKey("environmentVariables");
+			this.setSideContentSelectedKey("applicationSettings");
 
-			this.handleMaintainEnvironmentVariables();
+			this.handleMaintainApplicationSettings();
 
 			this.closeBusyDialog();
 		},
 
 		onAfterRendering: function () {},
 
-		handleMaintainEnvironmentVariables: function () {
+		handleMaintainApplicationSettings: function () {
 
-			let aEnvironmentVariable = sap.ui.getCore().aEnvironmentVariable;
-			let sTechnicalUser = _.find(aEnvironmentVariable, (item) => {
+			let aApplicationSettings = sap.ui.getCore().aApplicationSettings;
+			let sTechnicalUser = _.find(aApplicationSettings, (item) => {
 				return item.FIELD_NAME === "TECHNICAL_USER";
 			});
-			let sClientId = _.find(aEnvironmentVariable, (item) => {
+			let sClientId = _.find(aApplicationSettings, (item) => {
 				return item.FIELD_NAME === "CLIENT_ID";
 			});
-			let sApplicationName = _.find(aEnvironmentVariable, (item) => {
+			let sApplicationName = _.find(aApplicationSettings, (item) => {
 				return item.FIELD_NAME === "APPLICATION_NAME";
 			});
 			if (sTechnicalUser) {
@@ -90,8 +90,8 @@ sap.ui.define([
 
 		onSavePress: function () {
 
-			this.maintainEnvironmentVariables();
-			this.getEnvironmentVariables();
+			this.maintainApplicationSettings();
+			this.getApplicationSettings();
 
 		},
 
@@ -111,7 +111,7 @@ sap.ui.define([
 
 		},
 
-		maintainEnvironmentVariables: function () {
+		maintainApplicationSettings: function () {
 
 			let sTechnicalUsername = this.getView().byId("technicalUsername").getValue();
 			let sTechnicalPassword = this.getView().byId("technicalPassword").getValue();
@@ -136,7 +136,7 @@ sap.ui.define([
 				this.handleControlEditableState("appName", false);
 
 			} else {
-				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsEnvironmentVariables"), null, null,
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsApplicationSettings"), null, null,
 					"Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
@@ -171,12 +171,12 @@ sap.ui.define([
 				};
 
 			let onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainEnvironmentVariables"), null, null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainApplicationSettings"), null, null,
 					"Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
 			let onError = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainEnvironmentVariables"), null, null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainApplicationSettings"), null, null,
 					"Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 

@@ -10,7 +10,7 @@ sap.ui.define([], function () {
 	var plcLogout = "/standard/plc/logout-session";
 	var getConfig = "/service/odataService.xsodata/configuration?$format=json";
 	var getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
-	var getEnvironmentVariables = "/service/odataService.xsodata/environment-variables?$format=json";
+	var getApplicationSettings = "/service/odataService.xsodata/application-settings?$format=json";
 	var addNewSchedule = "/scheduler/job/add-new-schedule";
 	var getToken = "/extensibility/plc/token";
 	var setSecStore = "/secure/store/insert?KEY={KEY}";
@@ -28,7 +28,7 @@ sap.ui.define([], function () {
 		INIT_PLC_SESSION: initPlcSession,
 		GET_CONFIGURATION: getConfig,
 		GET_DEFAULT_VALUES: getDefaultValues,
-		GET_ENVIRONMENT_VARIABLES: getEnvironmentVariables,
+		GET_APPLICATION_SETTINGS: getApplicationSettings,
 		ADD_NEW_SCHEDULE: addNewSchedule,
 		LOGOUT_PLC: plcLogout,
 		GET_TOKEN: getToken,

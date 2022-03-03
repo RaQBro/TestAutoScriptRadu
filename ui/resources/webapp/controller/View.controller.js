@@ -60,8 +60,8 @@ sap.ui.define([
 			this.getConfiguration(this.getViewName("item"));
 			// Get default values
 			this.getDefaultValues(this.getViewName("item"));
-			// Get environment variables
-			this.getEnvironmentVariables(this.getViewName("item"));
+			// Get application settings
+			this.getApplicationSettings(this.getViewName("item"));
 			// Get all jobs
 			this.getAllJobs(this.getViewName("item"));
 			// Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true

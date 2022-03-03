@@ -111,9 +111,9 @@
 				"pattern": "defaultValues",
 				"target": ["defaultValues"]
 			}, {
-				"name": "environmentVariables",
-				"pattern": "environmentVariables",
-				"target": ["environmentVariables"]
+				"name": "applicationSettings",
+				"pattern": "applicationSettings",
+				"target": ["applicationSettings"]
 			}, {
 				"name": "jobs",
 				"pattern": "jobs",
@@ -142,9 +142,9 @@
 					"transition": "slide",
 					"clearAggregation": true
 				},
-				"environmentVariables": {
-					"viewId": "environmentVariablesView",
-					"viewName": "EnvironmentVariables",
+				"applicationSettings": {
+					"viewId": "applicationSettingsView",
+					"viewName": "ApplicationSettings",
 					"viewType": "XML",
 					"transition": "slide",
 					"clearAggregation": true

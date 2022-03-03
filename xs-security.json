@@ -7,11 +7,11 @@
 		"name": "$XSAPPNAME.DV_Maintain",
 		"description": "Maintain Default Values data"
 	}, {
-		"name": "$XSAPPNAME.EV_Display",
-		"description": "Display Environment Variables data"
+		"name": "$XSAPPNAME.AS_Display",
+		"description": "Display Application Settings data"
 	}, {
-		"name": "$XSAPPNAME.EV_Maintain",
-		"description": "Maintain Environment Variables data"
+		"name": "$XSAPPNAME.AS_Maintain",
+		"description": "Maintain Application Settings data"
 	}, {
 		"name": "$XSAPPNAME.V_Display",
 		"description": "Display view data"
@@ -39,14 +39,14 @@
 			"$XSAPPNAME.DV_Maintain"
 		]
 	}, {
-		"name": "EnvironmentVariables_Display_RT",
-		"description": "Role for displaying Environment Variables data",
+		"name": "ApplicationSettings_Display_RT",
+		"description": "Role for displaying Application Settings data",
 		"scope-references": [
 			"$XSAPPNAME.EV_Display"
 		]
 	}, {
-		"name": "EnvironmentVariables_Admin_RT",
-		"description": "Role for displaying and maintaining Environment Variables data",
+		"name": "ApplicationSettings_Admin_RT",
+		"description": "Role for displaying and maintaining Application Settings data",
 		"scope-references": [
 			"$XSAPPNAME.EV_Display",
 			"$XSAPPNAME.EV_Maintain"

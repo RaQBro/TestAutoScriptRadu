@@ -189,18 +189,18 @@ sap.ui.define([
 
 		/** @function used to get the technical user and client id
 		 */
-		getEnvironmentVariables: function (sViewName) {
+		getApplicationSettings: function (sViewName) {
 			var oController = this;
 			var onSuccess = function (oData) {
-				sap.ui.getCore().aEnvironmentVariable = oData.d.results;
+				sap.ui.getCore().aApplicationSettings = oData.d.results;
 			};
 			var onError = function () {
 				var oButtonPopover = oController.byId("buttonMessagePopover");
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetEnvironmentVariables"), null, null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetApplicationSettings"), null, null,
 					"Error",
 					sViewName, false, null, oButtonPopover);
 			};
-			BackendConnector.doGet("GET_ENVIRONMENT_VARIABLES", onSuccess, onError, true);
+			BackendConnector.doGet("GET_APPLICATION_SETTINGS", onSuccess, onError, true);
 		},
 
 		/** @function used to get details of all existing jobs

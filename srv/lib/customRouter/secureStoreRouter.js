@@ -17,7 +17,7 @@ const express = require("express");
  */
 
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
-const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
@@ -33,7 +33,7 @@ class SecureStoreRouter {
 		let router = express.Router();
 
 		let SecureStoreService = new SecureStore();
-		let EnvironmentVariablesUtil = new EnvironmentVariables();
+		let ApplicationSettingsUtil = new ApplicationSettings();
 
 		/**
 		 * Common function before all routes are processed
@@ -65,7 +65,7 @@ class SecureStoreRouter {
 			let sFieldName = request.body.FIELD_NAME;
 
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
-				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sKey, sFieldName).then(function () {
+				ApplicationSettingsUtil.upsertApplicationSettingsIntoTable(sKey, sFieldName).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);
@@ -84,7 +84,7 @@ class SecureStoreRouter {
 			let sFieldName = request.body.FIELD_NAME;
 
 			SecureStoreService.deleteKey(sKey).then(function (result) {
-				EnvironmentVariablesUtil.upsertEnvironmnetVariablesIntoTable(sValue, sFieldName).then(function () {
+				ApplicationSettingsUtil.upsertApplicationSettingsIntoTable(sValue, sFieldName).then(function () {
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);

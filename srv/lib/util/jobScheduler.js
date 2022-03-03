@@ -23,7 +23,7 @@ const aConfigJobs = require(global.appRoot + "/config.js").aJobs;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const PlcException = MessageLibrary.PlcException;
@@ -226,9 +226,9 @@ class JobSchedulerUtil {
 			sUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
 		} else {
-			let EnvironmentVariablesUtil = new EnvironmentVariables();
-			sClientId = await EnvironmentVariablesUtil.getClientIdFromTable();
-			sUserId = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
+			let ApplicationSettingsUtil = new ApplicationSettings();
+			sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
+			sUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable();
 			if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sUserId)) {
 				let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 				// return exception if technical user is not provided

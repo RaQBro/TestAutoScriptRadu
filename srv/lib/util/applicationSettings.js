@@ -4,14 +4,14 @@
 /**
  * @fileOverview
  * 
- * Helper functions used to get/set technical user and client id  into environment variables table
+ * Helper functions used to get/set technical user and client id  into application settings table
  * A value for TECHNICAL_USER/CLIENT_ID property will be set when a technical user and client id is maintained into secure store:
  *		- insert into secure store => key property from secure store will be set for TECHNICAL_USER/CLIENT_ID property
  *		- delete from secure store => null value will be set for TECHNICAL_USER/CLIENT_ID property
- * null value is the default value of TECHNICAL_USER/CLIENT_ID property from environment variables table
+ * null value is the default value of TECHNICAL_USER/CLIENT_ID property from application settings table
  * null value is returned in case no technical user / client id is maintained into secure store
  * 
- * @name environmentVariables.js
+ * @name applicationSettings.js
  */
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
@@ -20,12 +20,12 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
  * @classdesc Technical user utility helpers
  * @name TechnicalUserUtil 
  */
-class EnvironmentVariablesUtil {
+class ApplicationSettingsUtil {
 
 	constructor() {}
 
 	/** @function
-	 * Used to retrieve from t_environment_variables the value of TECHNICAL_USER
+	 * Used to retrieve from t_application_settings the value of TECHNICAL_USER
 	 * 
 	 * @default sTechnicalUser = null
 	 * @return {boolean/null} sTechnicalUser - the technical user
@@ -38,7 +38,7 @@ class EnvironmentVariablesUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				select * from "sap.plc.extensibility::template_application.t_environment_variables"
+				select * from "sap.plc.extensibility::template_application.t_application_settings"
 				where FIELD_NAME = 'TECHNICAL_USER';
 			`
 		);
@@ -55,7 +55,7 @@ class EnvironmentVariablesUtil {
 	}
 
 	/** @function
-	 * Used to retrieve from t_environment_variables the value of CLIENT_ID
+	 * Used to retrieve from t_application_settings the value of CLIENT_ID
 	 * 
 	 * @default sClientId = null
 	 * @return {boolean/null} sClientId - the PLC CLient Id
@@ -68,7 +68,7 @@ class EnvironmentVariablesUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				select * from "sap.plc.extensibility::template_application.t_environment_variables"
+				select * from "sap.plc.extensibility::template_application.t_application_settings"
 				where FIELD_NAME = 'CLIENT_ID';
 			`
 		);
@@ -85,12 +85,12 @@ class EnvironmentVariablesUtil {
 	}
 
 	/** @function
-	 * Used to upsert into t_environment_variables the value of TECHNICAL_USER or CLIENT_ID
+	 * Used to upsert into t_application_settings the value of TECHNICAL_USER or CLIENT_ID
 	 * 
 	 * @param {string} sValue - the technical user or client id
 	 * @default sTechnicalUser = null
 	 */
-	async upsertEnvironmnetVariablesIntoTable(sValue, sTechnicalName) {
+	async upsertApplicationSettingsIntoTable(sValue, sTechnicalName) {
 
 		sValue = (sValue === undefined) ? null : sValue;
 
@@ -99,7 +99,7 @@ class EnvironmentVariablesUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				upsert "sap.plc.extensibility::template_application.t_environment_variables" values ( ?, ? )
+				upsert "sap.plc.extensibility::template_application.t_application_settings" values ( ?, ? )
 				where FIELD_NAME = '${sTechnicalName}';
 			`
 		);
@@ -113,7 +113,7 @@ class EnvironmentVariablesUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				select * from "sap.plc.extensibility::template_application.t_environment_variables"
+				select * from "sap.plc.extensibility::template_application.t_application_settings"
 				where FIELD_NAME = 'APPLICATION_NAME';
 			
 			`
@@ -131,4 +131,4 @@ class EnvironmentVariablesUtil {
 	}
 
 }
-exports.EnvironmentVariablesUtil = module.exports.EnvironmentVariablesUtil = EnvironmentVariablesUtil;
+exports.ApplicationSettingsUtil = module.exports.ApplicationSettingsUtil = ApplicationSettingsUtil;

@@ -18,7 +18,7 @@ context template_application {
         column store;
     };
 
-    entity t_environment_variables {
+    entity t_application_settings {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);
     }

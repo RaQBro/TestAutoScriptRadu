@@ -13,7 +13,7 @@ const jobsc = require("@sap/jobs-client");
  */
 
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
-const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -111,10 +111,10 @@ class JobSchedulerService {
 	 */
 	async addNewSchedule(iJobId, oNewSchedule) {
 
-		let EnvironmentVariablesUtil = new EnvironmentVariables();
+		let ApplicationSettingsUtil = new ApplicationSettings();
 
-		let sClientId = await EnvironmentVariablesUtil.getClientIdFromTable();
-		let sTechnicalUser = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
+		let sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
+		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
 			let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
@@ -158,10 +158,10 @@ class JobSchedulerService {
 	 */
 	async addSchedules(iJobId, oRequestBody) {
 
-		let EnvironmentVariablesUtil = new EnvironmentVariables();
+		let ApplicationSettingsUtil = new ApplicationSettings();
 
-		let sClientId = await EnvironmentVariablesUtil.getClientIdFromTable();
-		let sTechnicalUser = await EnvironmentVariablesUtil.getTechnicalUserFromTable();
+		let sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
+		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
 		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
 			let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);

@@ -16,7 +16,7 @@ const querystring = require("querystring");
  */
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
-const EnvironmentVariables = require(global.appRoot + "/lib/util/environmentVariables.js").EnvironmentVariablesUtil;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -43,7 +43,7 @@ class UAAToken {
 		// get UAA service URL
 		this.tokenUrl = this.uaaService.url + "/oauth/token";
 
-		this.EnvironmentVariablesUtil = new EnvironmentVariables();
+		this.ApplicationSettingsUtil = new ApplicationSettings();
 		this.SecureStoreService = new SecureStore();
 
 		this.ACCES_TOKEN = null;
@@ -80,15 +80,15 @@ class UAAToken {
 	/** @function
 	 * Used to call the auth token service in order to get a new token by using:
 	 *		- the client id and client secret from XSUAA service
-	 *		- the technical user retrieved from t_environment_variables table
+	 *		- the technical user retrieved from t_application_settings table
 	 *		- the password of technical user retrieved from secure store
 	 * The retrieved token is saved into the global variable
 	 */
 	async checkToken() {
 
-		let sClientId = await this.EnvironmentVariablesUtil.getClientIdFromTable();
-		let sTechnicalUser = await this.EnvironmentVariablesUtil.getTechnicalUserFromTable();
-		let sApplicationName = await this.EnvironmentVariablesUtil.getApplicationNameFromTable();
+		let sClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
+		let sTechnicalUser = await this.ApplicationSettingsUtil.getTechnicalUserFromTable();
+		let sApplicationName = await this.ApplicationSettingsUtil.getApplicationNameFromTable();
 		if (helpers.isUndefinedOrNull(sApplicationName) || helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
 			return;
 		}
