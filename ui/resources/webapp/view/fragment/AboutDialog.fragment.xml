@@ -22,7 +22,7 @@
 						<l:HorizontalLayout id="envHL" class="sapUiContentPadding">
 							<l:VerticalLayout id="envVL1" width="15rem">
 								<Label text="{i18n>dType}"/>
-								<Text id="inputDevice" text="{aboutModel>/deviceType}"/>
+								<Text id="inputDevice" text="{aboutModel>/dType}"/>
 								<Label text="{i18n>theme}" class="sapUiTinyMarginTop"/>
 								<Text text="{aboutModel>/theme}"/>
 								<Label text="{i18n>touchInput}" class="sapUiTinyMarginTop"/>
