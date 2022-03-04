@@ -42,14 +42,14 @@
 		"name": "ApplicationSettings_Display_RT",
 		"description": "Role for displaying Application Settings data",
 		"scope-references": [
-			"$XSAPPNAME.EV_Display"
+			"$XSAPPNAME.AS_Display"
 		]
 	}, {
 		"name": "ApplicationSettings_Admin_RT",
 		"description": "Role for displaying and maintaining Application Settings data",
 		"scope-references": [
-			"$XSAPPNAME.EV_Display",
-			"$XSAPPNAME.EV_Maintain"
+			"$XSAPPNAME.AS_Display",
+			"$XSAPPNAME.AS_Maintain"
 		]
 	}, {
 		"name": "View_Display_RT",
