@@ -40,7 +40,7 @@ To create a new XSA Project (naming convention: **test-project-application**)
 
 8. Test app: build db module; build & run srv module; build & run ui module.
 
-**Add Global Application Settings (SPACE Specific) to store the plc endpoints (xsjs, publicApi and web)
+**Add Global Environment Variables (SPACE Specific) to store the plc endpoints (xsjs, publicApi and web)
 !!! Can be done only with xs cli**
 
 >Documentation:
@@ -51,7 +51,7 @@ To create a new XSA Project (naming convention: **test-project-application**)
 >**1. logon**
 > xs login -a https://x99.plc.c.eu-de-2.cloud.sap:30030 -u USER -p PASSWORD -s PROD --skip-ssl-validation
 >**2. set variables**
->xs set-running-application-settings-group '{"SAP_PLC_XSJS":"https://x99.plc.c.eu-de-2.cloud.sap:51033", "SAP_PLC_PUBLIC_API":"https://x99.plc.c.eu-de-2.cloud.sap:51045", "SAP_PLC_WEB":"https://x99.plc.c.eu-de-2.cloud.sap:51054"}'
+>xs set-running-environment-variable-group '{"SAP_PLC_XSJS":"https://x99.plc.c.eu-de-2.cloud.sap:51033", "SAP_PLC_PUBLIC_API":"https://x99.plc.c.eu-de-2.cloud.sap:51045", "SAP_PLC_WEB":"https://x99.plc.c.eu-de-2.cloud.sap:51054"}'
 
 Testing can be done via **app_ui_endpoint + /extensibility/plc/application-routes**
 Ideally, if the response is empty, an error has to be thrown and the app should not be initialised
