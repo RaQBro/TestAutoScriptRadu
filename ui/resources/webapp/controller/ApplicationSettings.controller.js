@@ -19,7 +19,7 @@ sap.ui.define([
 		onInit: function () {
 
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			this.oAuth = this.checkAuthorization("EV");
+			this.oAuth = this.checkAuthorization("AS");
 
 			if (this.oAuth.display === true) {
 				oRouter.getRoute("applicationSettings").attachPatternMatched(this.onObjectMatched, this);
