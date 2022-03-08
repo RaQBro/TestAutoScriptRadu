@@ -41,7 +41,7 @@ class PlcDispatcher {
 	 * 
 	 * @throws {@link PlcException}
 	 * <br> HTTP Status Code: 500 - GENERAL_UNEXPECTED_EXCEPTION
-	 * <br> Message: Please check if technical user is maintained and if PLC endpoints are maintained into global application settings.
+	 * <br> Message: Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.
 	 * 
 	 * @param {string} sQueryPath - the URL query path to an individual endpoint. Example: "init-session" or "administration"
 	 * @param {string} sMethod - the HTTP method. Example: "GET" or "POST"
@@ -90,7 +90,7 @@ class PlcDispatcher {
 				"responseBody": oResponse.body
 			};
 			let sDeveloperInfo =
-				"Please check if technical user is maintained and if PLC endpoints are maintained into global application settings.";
+				"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
 			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
 		}
 
@@ -104,7 +104,7 @@ class PlcDispatcher {
 	 * 
 	 * @throws {@link PlcException}
 	 * <br> HTTP Status Code: 500 - GENERAL_UNEXPECTED_EXCEPTION
-	 * <br> Message: Please check if technical user is maintained and if PLC endpoints are maintained into global application settings.
+	 * <br> Message: Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.
 	 * 
 	 * @param {string} sQueryPath - the URL query path to an individual endpoint. Example: "folders" or "priceSources"
 	 * @param {string} sMethod - the HTTP method. Example: "PUT" or "DELETE"
@@ -155,7 +155,7 @@ class PlcDispatcher {
 					"responseBody": oResponse.body
 				};
 				let sDeveloperInfo =
-					"Please check if technical user is maintained and if PLC endpoints are maintained into global application settings.";
+					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
 				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
 			}
 
