@@ -182,6 +182,22 @@ function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/** @function
+ * Used to execute a select SQL statement 
+ */
+async function statementExecPromisified(sSQLstmt, aQueryParameters) {
+
+	let aQueryParams = aQueryParameters !== undefined ? aQueryParameters : [];
+
+	let hdbClient = await DatabaseClass.createConnection();
+	let connection = new DatabaseClass(hdbClient);
+	let statement = await connection.preparePromisified(sSQLstmt);
+	let aResults = await connection.statementExecPromisified(statement, aQueryParams);
+	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+
+	return aResults.slice();
+}
+
 module.exports = {
 	nowPlusSecondstoISOString,
 	isUndefinedOrNull,
@@ -193,5 +209,6 @@ module.exports = {
 	chunkIntoSmallArrays,
 	getDateByPattern,
 	decompressedResultArray,
-	sleep
+	sleep,
+	statementExecPromisified
 };
