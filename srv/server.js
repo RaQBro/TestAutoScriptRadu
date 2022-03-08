@@ -17,7 +17,7 @@ const bodyParser = require("body-parser");
  * 
  * Server configuration file:
  *		- is adding to global variable the application root director used for import: require(global.appRoot + "/lib/...
- *		- is adding to global variable the PLC endpoints defined into global application settings and used in plcDispatcher.js
+ *		- is adding to global variable the PLC endpoints defined into global environment variables and used in plcDispatcher.js
  *		- imports the custom defined routers
  *		- initialize xsjs server with HANA db, UAA, Secure Store configurations
  *		- initialize express application with authentication module configuration XSA UAA
