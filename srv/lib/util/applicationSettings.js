@@ -124,7 +124,7 @@ class ApplicationSettingsUtil {
 		let aApplicationName = aResults.slice();
 
 		let sApplicationName = null;
-		if (aApplicationName.lenght === 1) {
+		if (aApplicationName.length === 1) {
 			sApplicationName = aApplicationName[0].FIELD_VALUE;
 		}
 		return sApplicationName;
