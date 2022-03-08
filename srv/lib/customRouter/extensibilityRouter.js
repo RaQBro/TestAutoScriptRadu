@@ -10,14 +10,17 @@ const express = require("express");
  * Extensibility PLC Router
  * Requests used to call the custom backend services:
  *		- GET /extensibility/plc/token
- *		- GET /extensibility/plc/userDetails
- *		- GET /extensibility/plc/applicationRoutes
+ *		- GET /extensibility/plc/user-details
+ *		- GET /extensibility/plc/application-routes
  *		- POST /extensibility/plc/maintainDefaultValues
- *		- GET /extensibility/plc/getAllProjects
- *		- GET /extensibility/plc/exampleService?IS_ONLINE_MODE=true/false
+ *		- GET /extensibility/plc/get-all-projects
+ *		- GET /extensibility/plc/example-service?IS_ONLINE_MODE=true/false
  *							- undefined or true if online mode (web request) - no entries in logs/messages if undefined for web request
  *							- false if fake background job (web request)
  *							- must be undefined in case of background job (job request) - with entries in logs/messages for job request
+ *		- GET /extensibility/plc/check-authorization
+ *		- GET /extensibility/plc/logout-service
+ *							
  * 
  * @name extensibilityRouter.js
  */
