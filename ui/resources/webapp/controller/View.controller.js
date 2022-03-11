@@ -37,17 +37,15 @@ sap.ui.define([
 		},
 
 		setupView: function () {
+			const myView = "default";
+			const pageModel = "pageModel";
+
+			this.getView().setModel(this.getPageModel(myView), pageModel);
 
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this.mViewSettingsDialogs = {};
 
 			this.oButtonPopover = this.byId("buttonMessagePopover");
-
-			this.handleControlEnabledState("saveBtn", false);
-			this.handleControlVisibleState("saveBtn", false);
-
-			this.handleControlEnabledState("editBtn", false);
-			this.handleControlVisibleState("editBtn", false);
 
 			this.setSideContentSelectedKey("view");
 

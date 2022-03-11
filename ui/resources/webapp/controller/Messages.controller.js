@@ -38,12 +38,11 @@ sap.ui.define([
 		},
 
 		setupView: function (iJobId) {
+			const myView = "messages";
+			const pageModel = "pageModel";
 
-			let oView = this.getView();
-			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
+			this.getView().setModel(this.getPageModel(myView), pageModel);
 
-			this.handleControlVisibleState("saveBtn", false);
-			this.handleControlVisibleState("editBtn", false);
 			this.setSideContentSelectedKey("messages");
 
 			this.applyFiltersFromParameters(iJobId);

@@ -16,8 +16,8 @@ sap.ui.define([
 
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("DV");
-
-			if (this.oAuth.display) {
+			
+            if (this.oAuth.display) {
 				oRouter.getRoute("defaultValues").attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
@@ -38,11 +38,11 @@ sap.ui.define([
 
 		setupView: function () {
 
-			this.oButtonPopover = this.byId("buttonMessagePopover");
+			const myView = "defaultValues";
+			const pageModel = "pageModel";
 
-			this.handleControlEnabledState("saveBtn", false);
-			this.handleControlVisibleState("saveBtn", true);
-			this.handleControlVisibleState("editBtn", true);
+			this.getView().setModel(this.getPageModel(myView), pageModel);
+
 
 			this.setNoProjects();
 			this.setNoCalculations();
@@ -183,8 +183,6 @@ sap.ui.define([
 
 				// get new default values
 				oController.getDefaultValues();
-				oController.handleControlEnabledState("saveBtn", false);
-				oController.handleControlEnabledState("editBtn", true);
 
 				// make input fields readonly
 				oController.handleControlEditableState("txtRTE", false);

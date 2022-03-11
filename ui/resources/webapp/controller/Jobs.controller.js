@@ -33,12 +33,11 @@ sap.ui.define([
 		},
 
 		setupView: function () {
+			const myView = "jobs";
+			const pageModel = "pageModel";
 
-			let oView = this.getView();
-			oView.setModel(this.getOwnerComponent().getModel("serviceModel"));
+			this.getView().setModel(this.getPageModel(myView), pageModel);
 
-			this.handleControlVisibleState("saveBtn", false);
-			this.handleControlVisibleState("editBtn", false);
 			this.setSideContentSelectedKey("jobs");
 
 			this.onAfterRendering();

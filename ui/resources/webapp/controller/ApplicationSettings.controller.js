@@ -30,9 +30,9 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function () {
-
 			this.openBusyDialog();
 			this.setupView();
+
 		},
 
 		onUnauthorizedMatched: function () {
@@ -41,13 +41,10 @@ sap.ui.define([
 		},
 
 		setupView: function () {
+			const myView = "applicationSettings";
+			const pageModel = "pageModel";
 
-			this.oButtonPopover = this.byId("buttonMessagePopover");
-
-			this.handleControlEnabledState("saveBtn", false);
-			this.handleControlVisibleState("saveBtn", true);
-			this.handleControlVisibleState("editBtn", true);
-			this.handleControlVisibleState("logoutBtn", true);
+			this.getView().setModel(this.getPageModel(myView), pageModel);
 
 			this.setSideContentSelectedKey("applicationSettings");
 

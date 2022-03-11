@@ -1,0 +1,42 @@
+{
+	"applicationSettings": {
+		"saveEnabled": false,
+		"saveVisible": true,
+		"logoutEnabled": true,
+		"logoutVisible": true,
+		"editEnabled": true,
+		"editVisible": true
+	},
+	"defaultValues": {
+		"saveEnabled": false,
+		"saveVisible": true,
+		"logoutEnabled": false,
+		"logoutVisible": false,
+		"editEnabled": true,
+		"editVisible": true
+	},
+	"messages": {
+		"saveEnabled": false,
+		"saveVisible": false,
+		"logoutEnabled": false,
+		"logoutVisible": false,
+		"editEnabled": false,
+		"editVisible": false
+	},
+	"jobs": {
+		"saveEnabled": false,
+		"saveVisible": false,
+		"logoutEnabled": false,
+		"logoutVisible": false,
+		"editEnabled": false,
+		"editVisible": false
+	},
+	"default": {
+		"saveEnabled": false,
+		"saveVisible": true,
+		"logoutEnabled": false,
+		"logoutVisible": false,
+		"editEnabled": false,
+		"editVisible": false
+	}
+}
