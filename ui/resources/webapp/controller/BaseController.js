@@ -60,7 +60,10 @@ sap.ui.define([
 		getResourceBundle: function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
-
+		/** @function Used to get toolBarMessages model*/
+		getToolBarMessagesModel: function () {
+			return this.getOwnerComponent().getModel("toolBarMessagesModel");
+		},
 		/** @function used to open BusyDialog
 		 */
 		openBusyDialog: function () {
@@ -300,6 +303,12 @@ sap.ui.define([
 
 			return oAuth;
 
+		},
+		getPageModel: function (view) {
+			let fullModel = this.getToolBarMessagesModel();
+			let data = fullModel.oData[view] || fullModel.oData.default || {};
+
+			return new sap.ui.model.json.JSONModel(data);
 		}
 	});
 });

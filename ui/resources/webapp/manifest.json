@@ -14,6 +14,10 @@
 			"version": "0.0.0"
 		},
 		"dataSources": {
+			"toolBarMessages": {
+				"uri": "toolBarMessages/ToolbarMessagesModel.json",
+				"type": "JSON"
+			},
 			"serviceDS": {
 				"uri": "/service/odataService.xsodata",
 				"type": "OData",
@@ -86,6 +90,10 @@
 				},
 				"dataSource": "serviceDS",
 				"preload": false
+			},
+			"toolBarMessagesModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "toolBarMessages"
 			}
 		},
 		"resources": {
