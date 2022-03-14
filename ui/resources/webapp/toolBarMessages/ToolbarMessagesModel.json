@@ -33,7 +33,7 @@
 	},
 	"default": {
 		"saveEnabled": false,
-		"saveVisible": true,
+		"saveVisible": false,
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
