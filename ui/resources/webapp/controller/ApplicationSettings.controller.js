@@ -10,6 +10,7 @@ sap.ui.define([
 	const technicalNameUser = "TECHNICAL_USER";
 	const technicalNameClient = "CLIENT_ID";
 	const technicalApplicationName = "APPLICATION_NAME";
+	const sViewName = "applicationSettings";
 
 	return Controller.extend("webapp.ui.controller.ApplicationSettings", {
 
@@ -22,10 +23,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("AS");
 
 			if (this.oAuth.display === true) {
-				oRouter.getRoute("applicationSettings").attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute("applicationSettings").attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
@@ -41,14 +42,12 @@ sap.ui.define([
 		},
 
 		setupView: function () {
-			const myView = "applicationSettings";
-			const pageModel = "pageModel";
 
-			this.getView().setModel(this.getPageModel(myView), pageModel);
-            
-           	this.oButtonPopover = this.byId("buttonMessagePopover");
+			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
 
-			this.setSideContentSelectedKey("applicationSettings");
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+
+			this.setSideContentSelectedKey(sViewName);
 
 			this.handleMaintainApplicationSettings();
 

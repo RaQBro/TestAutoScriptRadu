@@ -3,6 +3,7 @@ sap.ui.define([
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 ], function (Controller, ToolBarMessages) {
 	"use strict";
+	const sViewName = "jobs";
 	return Controller.extend("webapp.ui.controller.Jobs", {
 
 		oAuth: {},
@@ -14,10 +15,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("J");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute("jobs").attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute("jobs").attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
@@ -33,12 +34,10 @@ sap.ui.define([
 		},
 
 		setupView: function () {
-			const myView = "jobs";
-			const pageModel = "pageModel";
 
-			this.getView().setModel(this.getPageModel(myView), pageModel);
+			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
 
-			this.setSideContentSelectedKey("jobs");
+			this.setSideContentSelectedKey(sViewName);
 
 			this.onAfterRendering();
 

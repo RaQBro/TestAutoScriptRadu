@@ -5,6 +5,7 @@ sap.ui.define([
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 ], function (Controller, Filter, FilterOperator, ToolBarMessages) {
 	"use strict";
+	const sViewName = "messages";
 	return Controller.extend("webapp.ui.controller.Messages", {
 
 		oAuth: {},
@@ -16,10 +17,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("M");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute("messages").attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute("messages").attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
@@ -38,10 +39,8 @@ sap.ui.define([
 		},
 
 		setupView: function (iJobId) {
-			const myView = "messages";
-			const pageModel = "pageModel";
 
-			this.getView().setModel(this.getPageModel(myView), pageModel);
+			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
 
 			this.setSideContentSelectedKey("messages");
 

@@ -6,7 +6,7 @@ sap.ui.define([
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 ], function (BaseController, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
-
+	const sViewName = "defaultValues";
 	return BaseController.extend("webapp.ui.controller.DefaultValues", {
 
 		oAuth: {},
@@ -16,12 +16,12 @@ sap.ui.define([
 
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("DV");
-			
-            if (this.oAuth.display) {
-				oRouter.getRoute("defaultValues").attachPatternMatched(this.onObjectMatched, this);
+
+			if (this.oAuth.display) {
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute("defaultValues").attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
@@ -38,11 +38,7 @@ sap.ui.define([
 
 		setupView: function () {
 
-			const myView = "defaultValues";
-			const pageModel = "pageModel";
-
-			this.getView().setModel(this.getPageModel(myView), pageModel);
-
+			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
 
 			this.setNoProjects();
 			this.setNoCalculations();
@@ -50,7 +46,7 @@ sap.ui.define([
 			this.setRTEValue();
 			this.setCDEValue();
 
-			this.setSideContentSelectedKey("defaultValues");
+			this.setSideContentSelectedKey(sViewName);
 
 			this.closeBusyDialog();
 		},

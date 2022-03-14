@@ -3,7 +3,7 @@ sap.ui.define([
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 ], function (Controller, ToolBarMessages) {
 	"use strict";
-
+	const sViewName = "view";
 	return Controller.extend("webapp.ui.controller.View", {
 
 		oAuth: {},
@@ -15,10 +15,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("V");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute("view").attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute("view").attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
@@ -37,10 +37,8 @@ sap.ui.define([
 		},
 
 		setupView: function () {
-			const myView = "default";
-			const pageModel = "pageModel";
 
-			this.getView().setModel(this.getPageModel(myView), pageModel);
+			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
 
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this.mViewSettingsDialogs = {};
