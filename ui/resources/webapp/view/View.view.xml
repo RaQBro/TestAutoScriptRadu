@@ -2,8 +2,8 @@
 	displayBlock="true">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
-			<Button id="online" text="online" visible="true" press="onOnlinePress" type="Emphasized" enabled="true"/>
-			<Button id="offline" text="offline" visible="true" press="onOfflinePress" type="Emphasized" enabled="true"/>
+			<Button id="online" text="{i18n>jobOnlineBtn}" visible="true" press="onOnlinePress" type="Emphasized" enabled="true"/>
+			<Button id="offline" text="{i18n>jobOfflineBtn}" visible="true" press="onOfflinePress" type="Emphasized" enabled="true"/>
 		</content>
 		<footer>
 			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
