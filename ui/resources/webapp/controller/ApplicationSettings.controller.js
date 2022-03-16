@@ -157,7 +157,7 @@ sap.ui.define([
 				}
 			};
 
-			BackendConnector.doPost(url, data, onSuccess, onError, false);
+			BackendConnector.doPost(url, data, onSuccess, onError, true);
 		},
 
 		insertIntoSecureStore: function (sKey, sValue, sFieldName) {
@@ -185,7 +185,7 @@ sap.ui.define([
 				}
 			};
 
-			BackendConnector.doPost(url, data, onSuccess, onError, false);
+			BackendConnector.doPost(url, data, onSuccess, onError, true);
 		},
 
 		onChangeUsername: function () {

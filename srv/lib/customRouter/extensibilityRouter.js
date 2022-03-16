@@ -12,7 +12,7 @@ const express = require("express");
  *		- GET /extensibility/plc/token
  *		- GET /extensibility/plc/user-details
  *		- GET /extensibility/plc/application-routes
- *		- POST /extensibility/plc/maintainDefaultValues
+ *		- POST /extensibility/plc/maintain-default-values
  *		- GET /extensibility/plc/get-all-projects
  *		- GET /extensibility/plc/example-service?IS_ONLINE_MODE=true/false
  *							- undefined or true if online mode (web request) - no entries in logs/messages if undefined for web request

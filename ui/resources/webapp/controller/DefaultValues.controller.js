@@ -158,17 +158,20 @@ sap.ui.define([
 			});
 
 			// add the RTE KV pair separately since the control is different from a normal input
-			oDefaultValues.push({
-				FIELD_NAME: "RTE",
-				FIELD_VALUE: null,
-				FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
-			});
-
-			oDefaultValues.push({
-				FIELD_NAME: "CDE",
-				FIELD_VALUE: null,
-				FIELD_DESCRIPTION: oView.byId("txtCDE").getValue()
-			});
+			if (oView.byId("txtRTE").getValue()) {
+				oDefaultValues.push({
+					FIELD_NAME: "RTE",
+					FIELD_VALUE: "",
+					FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
+				});
+			}
+			if (oView.byId("txtCDE").getValue()) {
+				oDefaultValues.push({
+					FIELD_NAME: "CDE",
+					FIELD_VALUE: "",
+					FIELD_DESCRIPTION: oView.byId("txtCDE").getValue()
+				});
+			}
 
 			var oController = this;
 

@@ -71,5 +71,11 @@
 			"$XSAPPNAME.J_Display",
 			"$XSAPPNAME.M_Display"
 		]
+	}, {
+		"name": "UaaUser_RT",
+		"description": "Uaa User",
+		"scope-references": [
+			"uaa.user"
+		]
 	}]
 }

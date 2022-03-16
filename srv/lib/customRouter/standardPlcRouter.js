@@ -11,7 +11,7 @@ const express = require("express");
  * Requests used to call the standard PLC backend services:
  *		- GET /standard/plc/init-session?language=EN
  *		- GET /standard/plc/logout-session
- *		- GET /standard/plc/openCalculationVersion?versionId=1000
+ *		- GET /standard/plc/open-calculation-version?versionId=1000
  * 
  * @name standardPlcRouter.js
  */
