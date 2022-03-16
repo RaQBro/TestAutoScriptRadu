@@ -18,6 +18,8 @@ sap.ui.define([], function () {
 	var deleteSecStore = "/secure/store/delete?KEY={KEY}";
 	var getAuthorization = "/extensibility/plc/check-authorization?ID={ID}";
 	var logoutService = "/extensibility/plc/logout-service?IS_ONLINE_MODE=false";
+	var jobOfflineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=false";
+	var jobOnlineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=true";
 
 	var mURLConstants = {
 		AUTH_URL: authUrl,
@@ -36,7 +38,9 @@ sap.ui.define([], function () {
 		SET_DEFAULT_VALUES: setDefaultValues,
 		SET_SEC_STORE: setSecStore,
 		GET_AUTH: getAuthorization,
-		LOGOUT_SERVICE: logoutService
+		LOGOUT_SERVICE: logoutService,
+		JOB_START_OFFLINE: jobOfflineStart,
+		JOB_START_ONLINE: jobOnlineStart
 	};
 
 	return Object.freeze(mURLConstants);

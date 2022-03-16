@@ -1,7 +1,11 @@
 sap.ui.define([
 	"./BaseController",
+	"sap/m/library",
+	"webapp/ui/core/connector/BackendConnector",
+	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, ToolBarMessages) {
+
+], function (Controller, mobileLibrary, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 	const sViewName = "view";
 	return Controller.extend("webapp.ui.controller.View", {
@@ -77,6 +81,49 @@ sap.ui.define([
 					oDialogValue.destroy();
 				}
 			}
+		},
+		onOnlinePress: function () {
+			let oView = this.getView();
+			let oController = oView.getController();
+			let sMessage;
+
+			var onSuccess = function (result) {
+				sMessage = {
+					type: "Success"
+				};
+
+				MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started.`,
+					result.message,
+					null, sMessage.type, oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
+			};
+			var onError = function (oXHR, sTextStatus, sErrorThrown) {
+				sMessage = {
+					type: "Error"
+				};
+				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+					oController.getViewName("item"), false, null, oController.oButtonPopover);
+			};
+			BackendConnector.doGet("JOB_START_OFFLINE", onSuccess, onError, true);
+		},
+		onOfflinePress: function () {
+			let oView = this.getView();
+			let oController = oView.getController();
+			let sMessage;
+
+			var onSuccess = function () {
+				sMessage = {
+					type: "Success"
+				};
+				mobileLibrary.URLHelper.redirect("#/jobs", true);
+			};
+			var onError = function (oXHR, sTextStatus, sErrorThrown) {
+				sMessage = {
+					type: "Error"
+				};
+				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+					oController.getViewName("item"), false, null, oController.oButtonPopover);
+			};
+			BackendConnector.doGet("JOB_START_ONLINE", onSuccess, onError, true);
 		}
 	});
 
