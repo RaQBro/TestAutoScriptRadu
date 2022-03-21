@@ -24,25 +24,52 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function () {
-
 			this.openBusyDialog();
 			this.setupView();
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
-
 			this.setSideContentSelectedKey(this.sViewName);
 
+			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
 			this.onAfterRendering();
 
-			this.closeBusyDialog();
+		},
+
+		onAfterRendering: function () {
+
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stJobs");
+
+			let oExistingVariant = oSmartTable.fetchVariant();
+
+			if (oExistingVariant !== undefined) {
+
+				oSmartTable.applyVariant(oExistingVariant);
+
+			} else {
+
+				oSmartTable.applyVariant({
+					sort: {
+						sortItems: [{
+							columnKey: "START_TIMESTAMP",
+							operation: "Descending"
+						}]
+					}
+				});
+
+			}
+
+			if (oSmartTable.isInitialised()) {
+				oSmartTable.rebindTable();
+			}
 		},
 
 		renameColumns: function (oEvent) {
@@ -81,36 +108,6 @@ sap.ui.define([
 					header.setText(this.getResourceBundleText("colSapJobScheduleId"));
 				}
 			}.bind(this));
-		},
-
-		/** @function called after onInit*/
-		onAfterRendering: function () {
-
-			let oView = this.getView();
-			let oSmartTable = oView.byId("stJobs");
-
-			let oExistingVariant = oSmartTable.fetchVariant();
-
-			if (oExistingVariant !== undefined) {
-
-				oSmartTable.applyVariant(oExistingVariant);
-
-			} else {
-
-				oSmartTable.applyVariant({
-					sort: {
-						sortItems: [{
-							columnKey: "START_TIMESTAMP",
-							operation: "Descending"
-						}]
-					}
-				});
-
-			}
-
-			if (oSmartTable.isInitialised()) {
-				oSmartTable.rebindTable();
-			}
 		},
 
 		onBeforeRebindTable: function (oEvent) {

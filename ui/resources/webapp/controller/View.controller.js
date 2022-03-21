@@ -21,6 +21,7 @@ sap.ui.define([
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
+
 		},
 
 		onAfterRendering: function () {},
@@ -30,25 +31,22 @@ sap.ui.define([
 			this.openBusyDialog();
 			this.setupView();
 			this.initialiseViewLogic();
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+			this.setSideContentSelectedKey(this.sViewName);
 
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this.mViewSettingsDialogs = {};
 
-			this.oButtonPopover = this.byId("buttonMessagePopover");
-
-			this.setSideContentSelectedKey(this.sViewName);
-
-			this.closeBusyDialog();
 		},
 
 		initialiseViewLogic: function () {

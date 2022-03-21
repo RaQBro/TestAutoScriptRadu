@@ -22,7 +22,7 @@ sap.ui.define([
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("AS");
 
-			if (this.oAuth.display === true) {
+			if (this.oAuth.display) {
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
@@ -33,25 +33,21 @@ sap.ui.define([
 		onObjectMatched: function () {
 			this.openBusyDialog();
 			this.setupView();
-
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
-
 			this.oButtonPopover = this.byId("buttonMessagePopover");
-
 			this.setSideContentSelectedKey(this.sViewName);
 
 			this.handleMaintainApplicationSettings();
 
-			this.closeBusyDialog();
 		},
 
 		onAfterRendering: function () {},

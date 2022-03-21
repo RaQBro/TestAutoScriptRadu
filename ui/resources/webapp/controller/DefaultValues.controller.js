@@ -4,10 +4,10 @@ sap.ui.define([
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (BaseController, BackendConnector, MessageHelpers, ToolBarMessages) {
+], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
-	return BaseController.extend("webapp.ui.controller.DefaultValues", {
+	return Controller.extend("webapp.ui.controller.DefaultValues", {
 
 		oAuth: {},
 		sViewName: "defaultValues",
@@ -27,19 +27,19 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function () {
-
 			this.openBusyDialog();
 			this.setupView();
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.setSideContentSelectedKey(this.sViewName);
 
 			this.setNoProjects();
 			this.setNoCalculations();
@@ -47,12 +47,8 @@ sap.ui.define([
 			this.setRTEValue();
 			this.setCDEValue();
 
-			this.setSideContentSelectedKey(this.sViewName);
-
-			this.closeBusyDialog();
 		},
 
-		/** @function called after onInit*/
 		onAfterRendering: function () {},
 
 		setNoProjects: function () {

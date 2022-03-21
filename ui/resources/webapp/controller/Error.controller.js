@@ -2,10 +2,10 @@ sap.ui.define([
 	"./BaseController",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (BaseController, MessageHelpers, ToolBarMessages) {
+], function (Controller, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
-	return BaseController.extend("webapp.ui.controller.Error", {
+	return Controller.extend("webapp.ui.controller.Error", {
 
 		ToolBarMessages: ToolBarMessages,
 
