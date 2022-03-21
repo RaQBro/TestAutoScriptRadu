@@ -46,7 +46,7 @@ sap.ui.define([
 
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 
-			this.setSideContentSelectedKey("view");
+			this.setSideContentSelectedKey(this.sViewName);
 
 			this.closeBusyDialog();
 		},

@@ -43,7 +43,7 @@ sap.ui.define([
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
 
-			this.setSideContentSelectedKey("messages");
+			this.setSideContentSelectedKey(this.sViewName);
 
 			this.applyFiltersFromParameters(iJobId);
 
