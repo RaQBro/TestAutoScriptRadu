@@ -81,7 +81,12 @@ sap.ui.define([
 				}
 			}
 		},
+		
 		onOnlinePress: function () {
+			mobileLibrary.URLHelper.redirect("/extensibility/plc/example-service?IS_ONLINE_MODE=true", true);
+		},
+		
+		onOfflinePress: function () {
 			let oView = this.getView();
 			let oController = oView.getController();
 			let sMessage;
@@ -90,7 +95,6 @@ sap.ui.define([
 				sMessage = {
 					type: "Success"
 				};
-
 				MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started.`,
 					result.message,
 					null, sMessage.type, oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
@@ -103,26 +107,6 @@ sap.ui.define([
 					oController.getViewName("item"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doGet("JOB_START_OFFLINE", onSuccess, onError, true);
-		},
-		onOfflinePress: function () {
-			let oView = this.getView();
-			let oController = oView.getController();
-			let sMessage;
-
-			var onSuccess = function () {
-				sMessage = {
-					type: "Success"
-				};
-				mobileLibrary.URLHelper.redirect("#/jobs", true);
-			};
-			var onError = function (oXHR, sTextStatus, sErrorThrown) {
-				sMessage = {
-					type: "Error"
-				};
-				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
-					oController.getViewName("item"), false, null, oController.oButtonPopover);
-			};
-			BackendConnector.doGet("JOB_START_ONLINE", onSuccess, onError, true);
 		}
 	});
 
