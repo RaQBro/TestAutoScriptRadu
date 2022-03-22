@@ -7,10 +7,11 @@ sap.ui.define([
 
 ], function (Controller, mobileLibrary, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
-	const sViewName = "view";
+
 	return Controller.extend("webapp.ui.controller.View", {
 
 		oAuth: {},
+		sViewName: "view",
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
@@ -19,11 +20,12 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("V");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
+
 		},
 
 		onAfterRendering: function () {},
@@ -33,25 +35,22 @@ sap.ui.define([
 			this.openBusyDialog();
 			this.setupView();
 			this.initialiseViewLogic();
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
-			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
+			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.oButtonPopover = this.byId("buttonMessagePopover");
+			this.setSideContentSelectedKey(this.sViewName);
 
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this.mViewSettingsDialogs = {};
 
-			this.oButtonPopover = this.byId("buttonMessagePopover");
-
-			this.setSideContentSelectedKey("view");
-
-			this.closeBusyDialog();
 		},
 
 		initialiseViewLogic: function () {

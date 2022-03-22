@@ -3,10 +3,11 @@ sap.ui.define([
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 ], function (Controller, ToolBarMessages) {
 	"use strict";
-	const sViewName = "jobs";
+
 	return Controller.extend("webapp.ui.controller.Jobs", {
 
 		oAuth: {},
+		sViewName: "jobs",
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
@@ -15,33 +16,60 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("J");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
 		onObjectMatched: function () {
-
 			this.openBusyDialog();
 			this.setupView();
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
-			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
+			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.setSideContentSelectedKey(this.sViewName);
 
-			this.setSideContentSelectedKey(sViewName);
-
+			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
 			this.onAfterRendering();
 
-			this.closeBusyDialog();
+		},
+
+		onAfterRendering: function () {
+
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stJobs");
+
+			let oExistingVariant = oSmartTable.fetchVariant();
+
+			if (oExistingVariant !== undefined) {
+
+				oSmartTable.applyVariant(oExistingVariant);
+
+			} else {
+
+				oSmartTable.applyVariant({
+					sort: {
+						sortItems: [{
+							columnKey: "START_TIMESTAMP",
+							operation: "Descending"
+						}]
+					}
+				});
+
+			}
+
+			if (oSmartTable.isInitialised()) {
+				oSmartTable.rebindTable();
+			}
 		},
 
 		renameColumns: function (oEvent) {
@@ -80,36 +108,6 @@ sap.ui.define([
 					header.setText(this.getResourceBundleText("colSapJobScheduleId"));
 				}
 			}.bind(this));
-		},
-
-		/** @function called after onInit*/
-		onAfterRendering: function () {
-
-			let oView = this.getView();
-			let oSmartTable = oView.byId("stJobs");
-
-			let oExistingVariant = oSmartTable.fetchVariant();
-
-			if (oExistingVariant !== undefined) {
-
-				oSmartTable.applyVariant(oExistingVariant);
-
-			} else {
-
-				oSmartTable.applyVariant({
-					sort: {
-						sortItems: [{
-							columnKey: "START_TIMESTAMP",
-							operation: "Descending"
-						}]
-					}
-				});
-
-			}
-
-			if (oSmartTable.isInitialised()) {
-				oSmartTable.rebindTable();
-			}
 		},
 
 		onBeforeRebindTable: function (oEvent) {

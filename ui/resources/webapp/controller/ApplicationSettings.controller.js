@@ -10,48 +10,44 @@ sap.ui.define([
 	const technicalNameUser = "TECHNICAL_USER";
 	const technicalNameClient = "CLIENT_ID";
 	const technicalApplicationName = "APPLICATION_NAME";
-	const sViewName = "applicationSettings";
 
 	return Controller.extend("webapp.ui.controller.ApplicationSettings", {
 
-		ToolBarMessages: ToolBarMessages,
 		oAuth: {},
+		sViewName: "applicationSettings",
+		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
 
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("AS");
 
-			if (this.oAuth.display === true) {
-				oRouter.getRoute(sViewName).attachPatternMatched(this.onObjectMatched, this);
+			if (this.oAuth.display) {
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 				this.getView().setVisible(false);
-				oRouter.getRoute(sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
 
 		onObjectMatched: function () {
 			this.openBusyDialog();
 			this.setupView();
-
+			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
-
 			this.navTo("error");
 		},
 
 		setupView: function () {
 
-			this.getView().setModel(this.getPageModel(sViewName), "pageModel");
-
+			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
-
-			this.setSideContentSelectedKey(sViewName);
+			this.setSideContentSelectedKey(this.sViewName);
 
 			this.handleMaintainApplicationSettings();
 
-			this.closeBusyDialog();
 		},
 
 		onAfterRendering: function () {},
