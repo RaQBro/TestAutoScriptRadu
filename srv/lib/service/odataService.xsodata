@@ -44,6 +44,7 @@ annotations {
 }
 
 settings {
+     limits max_records = 250000;
      metadata cache-control "no-cache"; 
      content cache-control "no-cache";
      support null;
