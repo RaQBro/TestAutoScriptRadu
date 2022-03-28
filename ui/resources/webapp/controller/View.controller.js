@@ -92,12 +92,13 @@ sap.ui.define([
 
 			var onSuccess = function (result) {
 
-				MessageHelpers.addMessageToPopover.call(this, result.message, null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMessage", result.details.JOB_ID), null,
 					null, "Success", oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
-			var onError = function (oXHR, sTextStatus, sErrorThrown, result) {
+			var onError = function (oXHR, sTextStatus, sErrorThrown) {
 
-				MessageHelpers.addMessageToPopover.call(this, result.message, oXHR.responseText, sErrorThrown, "Error",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMessage", null), oXHR.responseText,
+					sErrorThrown, "Error",
 					oController.getViewName("item"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doGet("JOB_START_OFFLINE", onSuccess, onError, true);
