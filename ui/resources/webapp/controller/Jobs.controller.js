@@ -92,9 +92,7 @@ sap.ui.define([
 					header.setText(this.getResourceBundleText("colJobName"));
 				} else if (header.getText() === "JOB_STATUS") {
 					header.setText(this.getResourceBundleText("jobStatus"));
-				} else if (header.getText() === "REQUEST_USER_ID") {
-					header.setText(this.getResourceBundleText("colRUser"));
-				} else if (header.getText() === "RUN_USER_ID") {
+				} else if (header.getText() === "USER_ID") {
 					header.setText(this.getResourceBundleText("colUser"));
 				} else if (header.getText() === "IS_ONLINE_MODE") {
 					header.setText(this.getResourceBundleText("colIsOnline"));
