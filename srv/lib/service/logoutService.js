@@ -23,7 +23,7 @@ const sOperation = "Logout Service"; // operation of the service / job
  * The error is returned as service response body
  * 
  * @param {object} request - web request / job request
- * @return {object} oServiceResponseBody - the example service response body
+ * @return {object} oServiceResponseBody - the service response body
  */
 async function doService(request) {
 
