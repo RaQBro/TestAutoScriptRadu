@@ -136,8 +136,11 @@ async function doService(request) {
 		// }
 
 		let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
-		let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
-		oServiceResponseBody.CURRENT_USER = sCurrentUser;
+
+		if (oInitPlcSession !== undefined) {
+			let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
+			oServiceResponseBody.CURRENT_USER = sCurrentUser;
+		}
 
 		let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
 		oServiceResponseBody.CURRENT_DATE = sCurrentDate;
