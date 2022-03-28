@@ -5,7 +5,7 @@ sap.ui.define([
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
 
-], function (Controller, mobileLibrary, BackendConnector, MessageHelpers, ToolBarMessages) {
+], function (Controller, MobileLibrary, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.View", {
@@ -81,29 +81,24 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		onOnlinePress: function () {
-			mobileLibrary.URLHelper.redirect("/extensibility/plc/example-service?IS_ONLINE_MODE=true", true);
+			MobileLibrary.URLHelper.redirect("/extensibility/plc/example-service?IS_ONLINE_MODE=true", true);
 		},
-		
+
 		onOfflinePress: function () {
 			let oView = this.getView();
 			let oController = oView.getController();
-			let sMessage;
 
 			var onSuccess = function (result) {
-				sMessage = {
-					type: "Success"
-				};
-				MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started.`,
-					result.message,
-					null, sMessage.type, oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
+
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMessage", [result.details.JOB_ID]), null,
+					null, "Success", oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
 			var onError = function (oXHR, sTextStatus, sErrorThrown) {
-				sMessage = {
-					type: "Error"
-				};
-				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMessage"), oXHR.responseText,
+					sErrorThrown, "Error",
 					oController.getViewName("item"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doGet("JOB_START_OFFLINE", onSuccess, onError, true);

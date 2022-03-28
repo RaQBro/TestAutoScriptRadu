@@ -24,12 +24,12 @@ sap.ui.define([
 			ToolBarMessages.initialiseMessagePopover.call(this);
 		},
 
-		getResourceBundleText: function (text) {
+		getResourceBundleText: function (text, aValues) {
 			if (this.bundle === undefined || this.bundle === null) {
 				this.bundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			}
 
-			return this.bundle.getText(text);
+			return this.bundle.getText(text, aValues);
 		},
 
 		/** @function Used to get Router*/
