@@ -218,18 +218,21 @@ class JobSchedulerUtil {
 		let sJobName = request.originalUrl === undefined ? null : request.originalUrl;
 		let sRequestBody = request.body === undefined ? null : JSON.stringify(request.body);
 
-		let sUserId = null;
+		let sRunUserId = null;
+		let sRequestUserId = null;
 		let sClientId = null;
 		let iWebRequest = null;
 
+		sRequestUserId = request.user.id.toUpperCase();
+
 		if (request.IS_ONLINE_MODE === true) {
-			sUserId = request.user.id.toUpperCase();
+			sRunUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
 		} else {
 			let ApplicationSettingsUtil = new ApplicationSettings();
 			sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
-			sUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable();
-			if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sUserId)) {
+			sRunUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable();
+			if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sRunUserId)) {
 				let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 				// return exception if technical user is not provided
 				return new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
@@ -242,12 +245,12 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
-				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
+				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
-			request.JOB_TIMESTAMP, null, request.JOB_ID, sJobName, "Running", sUserId, iWebRequest,
+			request.JOB_TIMESTAMP, null, request.JOB_ID, sJobName, "Running", sRequestUserId, sRunUserId, iWebRequest,
 			sRequestBody, null, iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
@@ -334,9 +337,9 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
-	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, USER_ID and set as properties in request object
+	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, RUN_USER_ID and set as properties in request object
 	 * JOB_TIMESTAMP used to update the log entry with service response body
-	 * USER_ID contains the request user id or the technical user
+	 * RUN_USER_ID contains the request user id or the technical user
 	 * JOB_ID is used in t_messages and t_job_log tables
 	 * JOB_ID value: Negative if online mode / Positive if job (real or fake)
 	 * IS_ONLINE_MODE value: undefined or true if web request / false if job (real or fake)
@@ -416,11 +419,12 @@ class JobSchedulerUtil {
 
 			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-			// set USER_ID to request
+			// set RUN_USER_ID, REQUEST_USER_ID to request
+			request.REQUEST_USER_ID = request.user.id.toUpperCase();
 			if (request.IS_ONLINE_MODE === true) {
-				request.USER_ID = request.user.id.toUpperCase(); // request user
+				request.RUN_USER_ID = request.user.id.toUpperCase(); // request user
 			} else {
-				request.USER_ID = global.TECHNICAL_USER; // technical user
+				request.RUN_USER_ID = global.TECHNICAL_USER; // technical user
 			}
 
 			// set JOB_TIMESTAMP to request
