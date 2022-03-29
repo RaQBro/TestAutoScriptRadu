@@ -623,9 +623,10 @@ class Dispatcher {
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {boolean} bCompressedResult - flag if the response should be compressed
+	 * @param {boolean} bGetOnly - flag if the response should contain the version details no matter if it's read-only
 	 * @return {object} result / error - the opened calculation version or throw error
 	 */
-	async openCalculationVersion(iVersionId, bCompressedResult) {
+	async openCalculationVersion(iVersionId, bCompressedResult, bGetOnly) {
 
 		let response;
 
@@ -689,10 +690,18 @@ class Dispatcher {
 						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 					}
-					// close calculation version
-					await this.closeCalculationVersion(iVersionId);
+					if(bGetOnly)
+					{
+						// close calculation version
+						await this.closeCalculationVersion(iVersionId);
 
-					response = false;
+						response = oResponseBody.body.transactionaldata[0];
+					}else{
+						// close calculation version
+						await this.closeCalculationVersion(iVersionId);
+						
+						response = false;
+					}
 				}
 			}
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages === undefined && oResponseBody.body !== undefined &&
