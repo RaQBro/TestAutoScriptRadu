@@ -737,6 +737,7 @@ class Dispatcher {
 
 		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId,
+			"CHILD_ITEM_CATEGORY_ID": 10,
 			"ITEM_CATEGORY_ID": 10,
 			"ITEM_ID": iItemId,
 			"REFERENCED_CALCULATION_VERSION_ID": iReferenceVersionId
@@ -781,6 +782,7 @@ class Dispatcher {
 
 		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId,
+			"CHILD_ITEM_CATEGORY_ID": 2,
 			"ITEM_CATEGORY_ID": 2,
 			"ITEM_DESCRIPTION": sDescription !== undefined ? sDescription : null,
 			"ITEM_ID": -1,
@@ -841,6 +843,7 @@ class Dispatcher {
 
 		let aBodyData = [{
 			"CALCULATION_VERSION_ID": iVersionId,
+			"CHILD_ITEM_CATEGORY_ID": 8,
 			"ITEM_CATEGORY_ID": 8,
 			"ITEM_DESCRIPTION": sDescription !== undefined ? sDescription : null,
 			"ITEM_ID": -1,
