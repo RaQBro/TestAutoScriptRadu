@@ -82,6 +82,24 @@ async function getAllDefaultValues() {
 	return aResults.slice();
 }
 
+function recursivePropertyFinder(obj) {
+	if (obj === Object.prototype) {
+		return {};
+	} else {
+		return _.reduce(Object.getOwnPropertyNames(obj),
+			function copy(result, value) {
+				if (!_.isFunction(obj[value])) {
+					if (_.isObject(obj[value])) {
+						result[value] = recursivePropertyFinder(obj[value]);
+					} else {
+						result[value] = obj[value];
+					}
+				}
+				return result;
+			}, recursivePropertyFinder(Object.getPrototypeOf(obj)));
+	}
+}
+
 /** @function
  * Used to split an array into multiple small arrays. E.g.: a = [1,2,3,4,5,6], n = 3 => [[1,2,3], [4,5,6]]
  * @param {array} a - initial array
@@ -206,6 +224,7 @@ module.exports = {
 	isRequestFromJob,
 	getAllConfigurations,
 	getAllDefaultValues,
+	recursivePropertyFinder,
 	chunkIntoSmallArrays,
 	getDateByPattern,
 	decompressedResultArray,

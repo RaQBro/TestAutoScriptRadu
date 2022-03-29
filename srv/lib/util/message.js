@@ -15,6 +15,7 @@ const _ = require("underscore");
  * @name message.js
  */
 
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 
 /**
@@ -521,7 +522,7 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 	}
 	// details
 	let sTrimmedDetails = null;
-	let sDetails = oDetails !== undefined && oDetails !== null ? JSON.stringify(oDetails) : null;
+	let sDetails = oDetails !== undefined && oDetails !== null ? JSON.stringify(helpers.recursivePropertyFinder(oDetails)) : null;
 	if (sDetails !== null) {
 		sTrimmedDetails = sDetails.length > 5000 ? sDetails.substring(0, 5000 - 3) + "..." : sDetails;
 	}
