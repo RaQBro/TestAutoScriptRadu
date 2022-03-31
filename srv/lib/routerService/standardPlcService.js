@@ -690,16 +690,15 @@ class Dispatcher {
 						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
 					}
-					if(bGetOnly)
-					{
+					if (bGetOnly) {
 						// close calculation version
 						await this.closeCalculationVersion(iVersionId);
 
 						response = oResponseBody.body.transactionaldata[0];
-					}else{
+					} else {
 						// close calculation version
 						await this.closeCalculationVersion(iVersionId);
-						
+
 						response = false;
 					}
 				}
