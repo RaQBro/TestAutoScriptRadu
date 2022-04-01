@@ -23,7 +23,7 @@
 				<smartTable:SmartTable id="stJobs" entitySet="job-logs" smartFilterId="sfbJobs" tableType="ResponsiveTable" useTablePersonalisation="true"
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
 					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP" enableAutoBinding="true"
-					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,START_TIMESTAMP,END_TIMESTAMP" beforeRebindTable="onBeforeRebindTable">
+					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP" beforeRebindTable="onBeforeRebindTable">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>

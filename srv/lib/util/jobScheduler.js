@@ -245,7 +245,7 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
-				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS,REQUEST_USER_ID ,RUN_USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
+				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, REQUEST_USER_ID,RUN_USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
 				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
 			`
 		);
