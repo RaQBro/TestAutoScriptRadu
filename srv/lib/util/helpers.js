@@ -165,31 +165,37 @@ function getDateByPattern(sPattern) {
 }
 
 /** @function
- * Useful to decompressed an array from standard PLC service response - compressed with transposeResultArrayOfObjects() from PLC Standard
+ * Useful to decompressed an array from standard PLC service response - when a service is called with compressedResult=true parameter
  */
-function decompressedResultArray(aArray) {
+function decompressedResultArray(oInput) {
 
 	let aReturn = [];
 
-	if (_.isArray(aArray) && aArray.length > 0) {
+	if (_.isObject(oInput)) {
 
-		// first object contain the columns names
-		let aColumns = aArray[0];
+		// get all columns
+		let aColumns = _.keys(oInput);
 
-		// start the loop with second object (contain the value)
-		for (let i = 1; i < aArray.length; i++) {
+		// create a template object with columns
+		let oReturn = {};
+		for (let sColumn of aColumns) {
+			oReturn[sColumn] = null;
+		}
 
-			let oReturn = {};
-			let aValues = aArray[i];
+		// get number or values
+		let iNumberOfValues = oInput[aColumns[0]].length;
 
-			for (let j = 0; j < aColumns.length; j++) {
+		// for every value create a return object
+		for (let i = 0; i < iNumberOfValues; i++) {
+			aReturn.push(JSON.parse(JSON.stringify(oReturn)));
+		}
 
-				let sColumn = aColumns[j];
-				oReturn[sColumn] = aValues[j];
-
+		for (let sColumn of aColumns) {
+			let aValues = oInput[sColumn];
+			for (let j = 0; j < aValues.length; j++) {
+				// add value to return object
+				aReturn[j][sColumn] = aValues[j];
 			}
-
-			aReturn.push(oReturn);
 		}
 	}
 
