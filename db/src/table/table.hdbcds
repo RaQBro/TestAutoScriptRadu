@@ -32,7 +32,8 @@ context template_application {
             JOB_ID              : Integer64; // Negative if online mode / Positive if job
             JOB_NAME            : String(500);
             JOB_STATUS          : String(100);
-            USER_ID             : String(256);
+            REQUEST_USER_ID     : String(256);
+            RUN_USER_ID         : String(256);
             IS_ONLINE_MODE      : hana.TINYINT; // True - 1 if online mode / False - 0 if job
             REQUEST_BODY        : hana.CLOB;
             RESPONSE_BODY       : hana.CLOB;

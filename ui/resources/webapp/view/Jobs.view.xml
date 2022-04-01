@@ -13,7 +13,8 @@
 						<smartFilterBar:ControlConfiguration key="END_TIMESTAMP" visibleInAdvancedArea="true"
 							conditionType="sap.ui.comp.config.condition.DateRangeType" label="{i18n>jobEndTimestamp}"/>
 						<smartFilterBar:ControlConfiguration key="JOB_NAME" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobName}"/>
-						<smartFilterBar:ControlConfiguration key="USER_ID" visibleInAdvancedArea="true" label="{i18n>colUser}"/>
+						<smartFilterBar:ControlConfiguration key="REQUEST_USER_ID" visibleInAdvancedArea="true" label="{i18n>colRUser}"/>
+						<smartFilterBar:ControlConfiguration key="RUN_USER_ID" visibleInAdvancedArea="false" label="{i18n>colUser}"/>
 					</smartFilterBar:controlConfiguration>
 					<smartFilterBar:layoutData>
 						<FlexItemData shrinkFactor="0"/>
@@ -21,8 +22,8 @@
 				</smartFilterBar:SmartFilterBar>
 				<smartTable:SmartTable id="stJobs" entitySet="job-logs" smartFilterId="sfbJobs" tableType="ResponsiveTable" useTablePersonalisation="true"
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
-					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,START_TIMESTAMP,END_TIMESTAMP" enableAutoBinding="true"
-					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,START_TIMESTAMP,END_TIMESTAMP" beforeRebindTable="onBeforeRebindTable">
+					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP" enableAutoBinding="true"
+					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP" beforeRebindTable="onBeforeRebindTable">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>
