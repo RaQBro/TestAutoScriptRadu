@@ -339,8 +339,8 @@ class JobSchedulerUtil {
 	/** @function
 	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, REQUEST_USER_ID, RUN_USER_ID  and set as properties in request object
 	 * JOB_TIMESTAMP used to update the log entry with service response body
-	 * REQUEST_USER_ID ontains the request user id
-	 * RUN_USER_ID  contains the request user id or the technical user
+	 * REQUEST_USER_ID contains the user that triggered the job (request user id)
+	 * RUN_USER_ID contains the user executing the job (request user id or the technical user)
 	 * JOB_ID is used in t_messages and t_job_log tables
 	 * JOB_ID value: Negative if online mode / Positive if job (real or fake)
 	 * IS_ONLINE_MODE value: undefined or true if web request / false if job (real or fake)
