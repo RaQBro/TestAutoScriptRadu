@@ -82,6 +82,10 @@ async function getAllDefaultValues() {
 	return aResults.slice();
 }
 
+/** @function
+ * Used to get all properties of an Error object.
+ * Should be used before JSON.stringify() in order to get all error details. 
+ */
 function recursivePropertyFinder(obj) {
 	if (obj === Object.prototype) {
 		return {};
