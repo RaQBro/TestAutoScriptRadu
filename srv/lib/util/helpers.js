@@ -223,7 +223,11 @@ async function statementExecPromisified(sSQLstmt, aQueryParameters) {
 	let aResults = await connection.statementExecPromisified(statement, aQueryParams);
 	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-	return aResults.slice();
+	if (typeof aResults === "number") { // return the row count in case of insert / update / delete 
+		return aResults;
+	} else {
+		return aResults.slice();
+	}
 }
 
 module.exports = {
