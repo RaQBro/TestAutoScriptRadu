@@ -9,11 +9,11 @@ sap.ui.define([
 	return Controller.extend("webapp.ui.controller.Messages", {
 
 		oAuth: {},
+		iJobId: undefined,
 		sViewName: "messages",
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
-
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("M");
 
@@ -26,11 +26,10 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function (oEvent) {
+			this.iJobId = oEvent.getParameter("arguments").jobID;
 			this.openBusyDialog();
-
-			let iJobId = oEvent.getParameter("arguments").jobID;
-
-			this.setupView(iJobId);
+			this.setupView();
+			this.initialiseViewLogic();
 			this.closeBusyDialog();
 		},
 
@@ -38,31 +37,26 @@ sap.ui.define([
 			this.navTo("error");
 		},
 
-		setupView: function (iJobId) {
-
+		setupView: function () {
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
-			this.setSideContentSelectedKey(this.sViewName);
-
 			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
-			this.applyFiltersFromParameters(iJobId);
 
+			this.setSideContentSelectedKey(this.sViewName);
+		},
+
+		initialiseViewLogic: function () {
+			this.applyFiltersFromParameters();
 		},
 
 		onAfterRendering: function () {
-
 			this.applyFiltersFromParameters();
-
 		},
 
-		applyFiltersFromParameters: function (iJobId) {
-
+		applyFiltersFromParameters: function () {
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stMessages");
 
-			if (iJobId !== undefined) {
-
-				this.oTableSearchByJobId = new Filter("JOB_ID", FilterOperator.EQ, iJobId);
-
+			if (this.iJobId !== undefined) {
 				this.handleControlVisibleState("btnSeeAllEntries", true);
 
 				oSmartTable.applyVariant({
@@ -71,7 +65,7 @@ sap.ui.define([
 							"columnKey": "JOB_ID",
 							"operation": "EQ",
 							"exclude": false,
-							"value1": iJobId,
+							"value1": this.iJobId,
 							"value2": null
 						}]
 					},
@@ -82,17 +76,12 @@ sap.ui.define([
 						}]
 					}
 				});
-
 			} else {
-
 				let oExistingVariant = oSmartTable.fetchVariant();
 
 				if (oExistingVariant !== undefined) {
-
 					oSmartTable.applyVariant(oExistingVariant);
-
 				} else {
-
 					oSmartTable.applyVariant({
 						sort: {
 							sortItems: [{
@@ -101,7 +90,6 @@ sap.ui.define([
 							}]
 						}
 					});
-
 				}
 			}
 
@@ -110,8 +98,46 @@ sap.ui.define([
 			}
 		},
 
-		renameColumns: function (oEvent) {
+		onBeforeRebindTable: function (oEvent) {
+			let bindingParams = oEvent.getParameter("bindingParams");
 
+			if (this.bSeeAllEntries !== undefined && this.bSeeAllEntries === true) {
+				bindingParams.filters = [];
+
+				this.bSeeAllEntries = false;
+			}
+
+			this.renameColumns(oEvent);
+		},
+
+		onSeeAllEntries: function () {
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stMessages");
+
+			this.bSeeAllEntries = true;
+
+			oSmartTable.applyVariant({
+				sort: {
+					sortItems: [{
+						columnKey: "TIMESTAMP",
+						operation: "Descending"
+					}]
+				}
+			});
+
+			oSmartTable.rebindTable();
+
+			this.handleControlVisibleState("btnSeeAllEntries", false);
+		},
+
+		onRefreshEntries: function () {
+			let oView = this.getView();
+			let oSmartTable = oView.byId("stMessages");
+
+			oSmartTable.rebindTable();
+		},
+
+		renameColumns: function (oEvent) {
 			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
 			}
@@ -136,53 +162,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		onSeeAllEntries: function () {
-
-			this.bSeeAllEntries = true;
-			this.oTableSearchByJobId = undefined;
-
-			let oView = this.getView();
-			let oSmartTable = oView.byId("stMessages");
-
-			oSmartTable.applyVariant({
-				sort: {
-					sortItems: [{
-						columnKey: "TIMESTAMP",
-						operation: "Descending"
-					}]
-				}
-			});
-
-			oSmartTable.rebindTable();
-
-			this.handleControlVisibleState("btnSeeAllEntries", false);
-		},
-
-		onRefreshEntries: function () {
-
-			let oView = this.getView();
-			let oSmartTable = oView.byId("stMessages");
-
-			oSmartTable.rebindTable();
-		},
-
-		onBeforeRebindTable: function (oEvent) {
-
-			let bindingParams = oEvent.getParameter("bindingParams");
-
-			if (this.bSeeAllEntries !== undefined && this.bSeeAllEntries === true) {
-
-				bindingParams.filters = [];
-
-				this.bSeeAllEntries = false;
-
-			}
-
-			this.renameColumns(oEvent);
-		},
-
 		formatRowHighlight: function (oValue) {
-
 			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {

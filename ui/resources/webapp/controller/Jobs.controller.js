@@ -11,7 +11,6 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
-
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("J");
 
@@ -34,28 +33,25 @@ sap.ui.define([
 		},
 
 		setupView: function () {
-
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
-			this.setSideContentSelectedKey(this.sViewName);
-
 			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
-			this.onAfterRendering();
 
+			this.setSideContentSelectedKey(this.sViewName);
 		},
 
 		onAfterRendering: function () {
+			this.applyFilters();
+		},
 
+		applyFilters: function () {
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stJobs");
 
 			let oExistingVariant = oSmartTable.fetchVariant();
 
 			if (oExistingVariant !== undefined) {
-
 				oSmartTable.applyVariant(oExistingVariant);
-
 			} else {
-
 				oSmartTable.applyVariant({
 					sort: {
 						sortItems: [{
@@ -64,7 +60,6 @@ sap.ui.define([
 						}]
 					}
 				});
-
 			}
 
 			if (oSmartTable.isInitialised()) {
@@ -72,8 +67,23 @@ sap.ui.define([
 			}
 		},
 
-		renameColumns: function (oEvent) {
+		onBeforeRebindTable: function (oEvent) {
+			this.renameColumns(oEvent);
+		},
 
+		onRefreshEntries: function () {
+			this.oView.byId("stJobs").getTable().getBinding("items").refresh();
+		},
+
+		onViewJobLogs: function (oEvent) {
+			let iJobId = oEvent.getSource().getBindingContext().getObject().JOB_ID;
+
+			this.navTo("messages", {
+				jobID: iJobId
+			});
+		},
+
+		renameColumns: function (oEvent) {
 			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
 			}
@@ -112,13 +122,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		onBeforeRebindTable: function (oEvent) {
-
-			this.renameColumns(oEvent);
-		},
-
 		formatRowHighlight: function (oValue) {
-
 			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {
@@ -130,20 +134,6 @@ sap.ui.define([
 			}
 
 			return value;
-		},
-
-		onRefreshEntries: function () {
-
-			this.oView.byId("stJobs").getTable().getBinding("items").refresh();
-		},
-
-		onViewJobLogs: function (oEvent) {
-
-			let iJobId = oEvent.getSource().getBindingContext().getObject().JOB_ID;
-
-			this.navTo("messages", {
-				jobID: iJobId
-			});
 		}
 	});
 }, /* bExport= */ true);
