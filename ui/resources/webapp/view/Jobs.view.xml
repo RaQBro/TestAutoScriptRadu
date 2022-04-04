@@ -14,7 +14,7 @@
 							conditionType="sap.ui.comp.config.condition.DateRangeType" label="{i18n>jobEndTimestamp}"/>
 						<smartFilterBar:ControlConfiguration key="JOB_NAME" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobName}"/>
 						<smartFilterBar:ControlConfiguration key="REQUEST_USER_ID" visibleInAdvancedArea="true" label="{i18n>colRUser}"/>
-						<smartFilterBar:ControlConfiguration key="RUN_USER_ID" visibleInAdvancedArea="false" label="{i18n>colUser}"/>
+						<smartFilterBar:ControlConfiguration key="RUN_USER_ID" visibleInAdvancedArea="true" label="{i18n>colUser}"/>
 					</smartFilterBar:controlConfiguration>
 					<smartFilterBar:layoutData>
 						<FlexItemData shrinkFactor="0"/>
