@@ -127,7 +127,8 @@ sap.ui.define([
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";
-			} else if (oValue && oValue.toUpperCase() === "DONE" || oValue && oValue.toUpperCase() === "SUCCESS") {
+			} else if (oValue && oValue.toUpperCase() === "DONE_ERROR" || oValue && oValue.toUpperCase() === "DONE_WARNING" || oValue && oValue
+				.toUpperCase() === "SUCCESS") {
 				value = "Success";
 			} else if (oValue && oValue.toUpperCase() === "RUNNING") {
 				value = "Warning";
