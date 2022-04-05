@@ -37,7 +37,7 @@
 						<columns>
 							<Column>
 								<customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "NAV_TO_LOGS", "leadingProperty": "", "columnIndex": "5"}'/>
+									<core:CustomData key="p13nData" value='\{"columnKey": "NAV_TO_LOGS", "leadingProperty": "", "columnIndex": "6"}'/>
 								</customData>
 								<Text text="{i18n>jobLogs}"></Text>
 							</Column>
