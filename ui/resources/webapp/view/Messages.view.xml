@@ -3,22 +3,9 @@
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
-				<smartFilterBar:SmartFilterBar id="sfbMessages" entitySet="job-messages" persistencyKey="pk_messages" useToolbar="false"
-					considerSelectionVariants="false" visible="false">
-					<smartFilterBar:controlConfiguration >
-						<smartFilterBar:ControlConfiguration key="JOB_ID" visibleInAdvancedArea="true" label="{i18n>jobMessagesJobID}"/>
-						<smartFilterBar:ControlConfiguration key="TIMESTAMP" visibleInAdvancedArea="true" conditionType="sap.ui.comp.config.condition.DateRangeType"
-							label="{i18n>jobMessagesTimestamp}"/>
-						<smartFilterBar:ControlConfiguration key="SEVERITY" visibleInAdvancedArea="true" label="{i18n>colSeverity}"/>
-						<smartFilterBar:ControlConfiguration key="OPERATION" visibleInAdvancedArea="true" label="{i18n>colOperation}"/>
-					</smartFilterBar:controlConfiguration>
-					<smartFilterBar:layoutData>
-						<FlexItemData shrinkFactor="0"/>
-					</smartFilterBar:layoutData>
-				</smartFilterBar:SmartFilterBar>
-				<smartTable:SmartTable id="stMessages" entitySet="job-messages" smartFilterId="sfbMessages" tableType="ResponsiveTable"
-					useTablePersonalisation="true" showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}"
-					showRowCount="true" useExportToExcel="true" initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" enableAutoBinding="true"
+				<smartTable:SmartTable id="stMessages" entitySet="job-messages" tableType="ResponsiveTable" useTablePersonalisation="true"
+					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
+					initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" enableAutoBinding="true"
 					requestAtLeastFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable" ignoredFields="MESSAGE_ID">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
