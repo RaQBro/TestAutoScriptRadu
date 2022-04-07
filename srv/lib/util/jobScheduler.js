@@ -324,16 +324,24 @@ class JobSchedulerUtil {
 
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
-		let statement = await connection.preparePromisified(
+		let statementError = await connection.preparePromisified(
 			`
 				select count(*) as COUNT from "sap.plc.extensibility::template_application.t_messages"
 				where SEVERITY = 'Error' and JOB_ID = ?;
 			`
 		);
-		let aResultCount = await connection.statementExecPromisified(statement, [iJobId]);
+		let aResultErrorCount = await connection.statementExecPromisified(statementError, [iJobId]);
+		let statementWarning = await connection.preparePromisified(
+			`
+				select count(*) as COUNT from "sap.plc.extensibility::template_application.t_messages"
+				where SEVERITY = 'Warning' and JOB_ID = ?;
+			`
+		);
+		let aResultWarningCount = await connection.statementExecPromisified(statementWarning, [iJobId]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		return parseInt(aResultCount[0].COUNT, 10) > 0 ? "Done" : "Success";
+		return parseInt(aResultErrorCount[0].COUNT, 10) > 0 ? "Error" : (parseInt(aResultWarningCount[0].COUNT, 10) > 0 ? "Warning" :
+			"Success");
 	}
 
 	/** @function
