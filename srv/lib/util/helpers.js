@@ -180,25 +180,28 @@ function decompressedResultArray(oInput) {
 		// get all columns
 		let aColumns = _.keys(oInput);
 
-		// create a template object with columns
-		let oReturn = {};
-		for (let sColumn of aColumns) {
-			oReturn[sColumn] = null;
-		}
+		if (aColumns.length > 0) {
 
-		// get number or values
-		let iNumberOfValues = oInput[aColumns[0]].length;
+			// create a template object with columns
+			let oReturn = {};
+			for (let sColumn of aColumns) {
+				oReturn[sColumn] = null;
+			}
 
-		// for every value create a return object
-		for (let i = 0; i < iNumberOfValues; i++) {
-			aReturn.push(JSON.parse(JSON.stringify(oReturn)));
-		}
+			// get number or values
+			let iNumberOfValues = oInput[aColumns[0]].length;
 
-		for (let sColumn of aColumns) {
-			let aValues = oInput[sColumn];
-			for (let j = 0; j < aValues.length; j++) {
-				// add value to return object
-				aReturn[j][sColumn] = aValues[j];
+			// for every value create a return object
+			for (let i = 0; i < iNumberOfValues; i++) {
+				aReturn.push(JSON.parse(JSON.stringify(oReturn)));
+			}
+
+			for (let sColumn of aColumns) {
+				let aValues = oInput[sColumn];
+				for (let j = 0; j < aValues.length; j++) {
+					// add value to return object
+					aReturn[j][sColumn] = aValues[j];
+				}
 			}
 		}
 	}
