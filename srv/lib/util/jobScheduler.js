@@ -340,7 +340,7 @@ class JobSchedulerUtil {
 		let aResultWarningCount = await connection.statementExecPromisified(statementWarning, [iJobId]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		return parseInt(aResultErrorCount[0].COUNT, 10) > 0 ? "Done_Error" : (parseInt(aResultWarningCount[0].COUNT, 10) > 0 ? "Done_Warning" :
+		return parseInt(aResultErrorCount[0].COUNT, 10) > 0 ? "Error" : (parseInt(aResultWarningCount[0].COUNT, 10) > 0 ? "Warning" :
 			"Success");
 	}
 
