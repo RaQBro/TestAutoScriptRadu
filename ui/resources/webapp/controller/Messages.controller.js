@@ -1,9 +1,7 @@
 sap.ui.define([
 	"./BaseController",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, Filter, FilterOperator, ToolBarMessages) {
+], function (Controller, ToolBarMessages) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.Messages", {
