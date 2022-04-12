@@ -57,7 +57,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.99.0",
+			"minUI5Version": "1.100.1",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
@@ -70,7 +70,8 @@
 			}
 		},
 		"contentDensities": {
-			"compact": true
+			"compact": true,
+			"cozy": false
 		},
 		"models": {
 			"i18n": {
