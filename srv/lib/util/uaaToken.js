@@ -42,7 +42,7 @@ class UAAToken {
 		}).uaa;
 
 		this.plcAuthClient = axios.create({
-			baseURL: this.uaaService.url + "/oauth/token",
+			baseURL: this.uaaService.url,
 			timeout: 5000,
 			method: "POST",
 			maxRedirects: 0
@@ -51,9 +51,9 @@ class UAAToken {
 		this.ApplicationSettingsUtil = new ApplicationSettings();
 		this.SecureStoreService = new SecureStore();
 
-		this.APPLICATION_USER_ACCES_TOKEN = null;
+		this.APPLICATION_USER_ACCESS_TOKEN = null;
 		this.APPLICATION_USER_TOKEN_EXPIRE = null;
-		this.TECHNICAL_USER_ACCES_TOKEN = null;
+		this.TECHNICAL_USER_ACCESS_TOKEN = null;
 		this.TECHNICAL_USER_TOKEN_EXPIRE = null;
 	}
 
@@ -75,7 +75,7 @@ class UAAToken {
 
 			let tokenExpireTicks = this.APPLICATION_USER_TOKEN_EXPIRE.getTime();
 
-			if (tokenExpireTicks > nowCheckTicks && this.APPLICATION_USER_ACCES_TOKEN !== null && this.APPLICATION_USER_ACCES_TOKEN.length > 10) {
+			if (tokenExpireTicks > nowCheckTicks && this.APPLICATION_USER_ACCESS_TOKEN !== null && this.APPLICATION_USER_ACCESS_TOKEN.length > 10) {
 				isValid = true;
 			}
 		}
@@ -101,7 +101,7 @@ class UAAToken {
 
 			let tokenExpireTicks = this.TECHNICAL_USER_TOKEN_EXPIRE.getTime();
 
-			if (tokenExpireTicks > nowCheckTicks && this.TECHNICAL_USER_ACCES_TOKEN !== null && this.TECHNICAL_USER_ACCES_TOKEN.length > 10) {
+			if (tokenExpireTicks > nowCheckTicks && this.TECHNICAL_USER_ACCESS_TOKEN !== null && this.TECHNICAL_USER_ACCESS_TOKEN.length > 10) {
 				isValid = true;
 			}
 		}
@@ -165,7 +165,7 @@ class UAAToken {
 						let expire = new Date();
 						expire.setSeconds(expire.getSeconds() + parseInt(refreshTokenResponse.data.expires_in));
 
-						this.APPLICATION_USER_ACCES_TOKEN = refreshTokenResponse.data.access_token;
+						this.APPLICATION_USER_ACCESS_TOKEN = refreshTokenResponse.data.access_token;
 						this.APPLICATION_USER_TOKEN_EXPIRE = expire;
 					})
 					.catch(error => {
@@ -230,11 +230,11 @@ class UAAToken {
 				let expire = new Date();
 				expire.setSeconds(expire.getSeconds() + parseInt(userTokenResponse.data.expires_in));
 
-				that.TECHNICAL_USER_ACCES_TOKEN = userTokenResponse.data.access_token;
+				that.TECHNICAL_USER_ACCESS_TOKEN = userTokenResponse.data.access_token;
 				that.TECHNICAL_USER_TOKEN_EXPIRE = expire;
 
 				// add bearer token to global variable
-				global.TECHNICAL_BEARER_TOKEN = userTokenResponse.data.access_token;
+				global.TECHNICAL_USER_BEARER_TOKEN = userTokenResponse.data.access_token;
 
 				// add technical user to global variable
 				global.TECHNICAL_USER = sTechnicalUser.toUpperCase();

@@ -1,8 +1,7 @@
 /*eslint-env node, es6 */
 "use strict";
 
-const util = require("util");
-const makeRequest = util.promisify(require("request"));
+const axios = require("axios");
 const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
@@ -57,51 +56,65 @@ class PlcDispatcher {
 			this.token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 		} else {
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			this.token = UAAToken.APPLICATION_USER_ACCES_TOKEN;
+			this.token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 		}
 
-		let oPrivateRequestOptions = {
+		let oPrivateRequestClient = axios.create({
+			baseURL: global.plcXsjsUrl,
+			timeout: 5000,
 			method: sMethod,
-			url: global.plcXsjsUrl + "/xs/rest/dispatcher.xsjs/" + sQueryPath,
-			headers: {
-				"Cache-Control": "no-cache",
-				"Authorization": "Bearer " + this.token,
-				"json": true
-			}
-		};
+			maxRedirects: 0
+		});
+
+		let oParams = {};
 
 		let sPrivateParams = " ";
 		if (aParams !== undefined && aParams.length > 0) {
-			oPrivateRequestOptions.qs = {};
+			oParams.qs = {};
 			for (let oPram of aParams) {
 				let key = oPram.name;
 				let value = oPram.value;
 				sPrivateParams += key + "=" + value + " ";
-				oPrivateRequestOptions.qs[key] = value;
+				oParams.qs[key] = value;
 			}
 		}
 
-		if (oBodyData !== undefined) {
-			oPrivateRequestOptions.body = JSON.stringify(oBodyData);
-		}
+		let oResponse;
+		let that = this;
 
-		let oResponse = await makeRequest(oPrivateRequestOptions);
-
-		try {
-			JSON.parse(oResponse.body);
-		} catch (e) {
-			let oDetails = {
-				"requestMethod": sMethod,
-				"requestQueryPath": sQueryPath,
-				"requestParameters": sPrivateParams,
-				"responseCode": oResponse.statusCode,
-				"responseMessage": oResponse.statusMessage,
-				"responseBody": oResponse.body
-			};
-			let sDeveloperInfo =
-				"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
-			throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
-		}
+		await oPrivateRequestClient
+			.request({
+				url: "/xs/rest/dispatcher.xsjs/" + sQueryPath,
+				data: oBodyData !== undefined ? JSON.stringify(oBodyData) : undefined,
+				headers: {
+					"Cache-Control": "no-cache",
+					"Authorization": "Bearer " + that.token,
+					"Content-Type": "application/json"
+				},
+				params: oParams.qs
+			})
+			.then(response => {
+				oResponse = response;
+			})
+			.catch(error => {
+				try {
+					oResponse = error.response;
+					JSON.parse(oResponse.data);
+				} catch (e) {
+					oResponse = error.response;
+					let oDetails = {
+						"requestMethod": sMethod,
+						"requestQueryPath": sQueryPath,
+						"requestParameters": sPrivateParams,
+						"responseCode": error.response.status,
+						"responseMessage": error.response.statusText,
+						"responseBody": error.response.data
+					};
+					let sDeveloperInfo =
+						"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
+				}
+			});
 
 		return oResponse;
 	}
@@ -127,54 +140,65 @@ class PlcDispatcher {
 		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
 			this.token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 		} else {
-			this.token = await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
+			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
+			this.token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 		}
 
-		let oPublicRequestOptions = {
+		let oPublicRequestClient = axios.create({
+			baseURL: global.plcPublicApiUrl,
+			timeout: 5000,
 			method: sMethod,
-			url: global.plcPublicApiUrl + "/api/v1/" + sQueryPath,
-			headers: {
-				"Cache-Control": "no-cache",
-				"Authorization": "Bearer " + this.token,
-				"Content-Type": "application/json"
-			}
-		};
+			maxRedirects: 0
+		});
+
+		let oParams = {};
 
 		let sPublicParams = " ";
 		if (aParams !== undefined && aParams.length > 0) {
-			oPublicRequestOptions.qs = {};
+			oParams.qs = {};
 			for (let oPram of aParams) {
 				let key = oPram.name;
 				let value = oPram.value;
 				sPublicParams += key + "=" + value + " ";
-				oPublicRequestOptions.qs[key] = value;
+				oParams.qs[key] = value;
 			}
 		}
 
-		if (oBodyData !== undefined) {
-			oPublicRequestOptions.body = JSON.stringify(oBodyData);
-		}
+		let oResponse;
+		let that = this;
 
-		let oResponse = await makeRequest(oPublicRequestOptions);
-
-		if (oResponse.statusCode !== 204) {
-
-			try {
-				JSON.parse(oResponse.body);
-			} catch (e) {
-				let oDetails = {
-					"requestMethod": sMethod,
-					"requestQueryPath": sQueryPath,
-					"requestParameters": sPublicParams,
-					"responseCode": oResponse.statusCode,
-					"responseMessage": oResponse.statusMessage,
-					"responseBody": oResponse.body
-				};
-				let sDeveloperInfo =
-					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
-				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
-			}
-		}
+		await oPublicRequestClient
+			.request({
+				url: "/api/v1/" + sQueryPath,
+				data: oBodyData !== undefined ? JSON.stringify(oBodyData) : undefined,
+				headers: {
+					"Cache-Control": "no-cache",
+					"Authorization": "Bearer " + that.token,
+					"Content-Type": "application/json"
+				},
+				params: oParams.qs
+			})
+			.then(response => {
+				oResponse = response;
+			})
+			.catch(error => {
+				try {
+					oResponse = error.response;
+					JSON.parse(oResponse.data);
+				} catch (e) {
+					let oDetails = {
+						"requestMethod": sMethod,
+						"requestQueryPath": sQueryPath,
+						"requestParameters": sPublicParams,
+						"responseCode": error.response.status,
+						"responseMessage": error.response.statusText,
+						"responseBody": error.response.data
+					};
+					let sDeveloperInfo =
+						"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
+				}
+			});
 
 		return oResponse;
 	}

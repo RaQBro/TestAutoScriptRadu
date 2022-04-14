@@ -10,8 +10,6 @@
 		"body-parser": "latest",
 		"underscore": "latest",
 		"async": "latest",
-		"request": "latest",
-		"querystring": "latest",
 		"passport": "latest",
 		"qs": "latest",
 		"axios": "latest"

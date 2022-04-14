@@ -50,10 +50,10 @@ class Dispatcher {
 		};
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
 		let sMessageInfo;
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 				let oMessage = _.find(oResponseBody.head.messages, function (oMsg) {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
@@ -135,9 +135,9 @@ class Dispatcher {
 		}
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to create variant for calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -161,9 +161,9 @@ class Dispatcher {
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, aVariantsLastModifiedOn);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save all variants of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -187,9 +187,9 @@ class Dispatcher {
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -243,9 +243,9 @@ class Dispatcher {
 		aBodyData.push(oBodyData);
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to calculate the variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -269,9 +269,9 @@ class Dispatcher {
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save the variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -302,9 +302,9 @@ class Dispatcher {
 		};
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo =
 				`Failed to generate a version in calculation with ID '${iTargetCalculationId}' from variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
@@ -338,9 +338,9 @@ class Dispatcher {
 		};
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PATCH", aParams, oBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to close variant matrix of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -372,9 +372,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo =
 				`Failed to set version with ID '${iVersionId}' as current in calculation with ID '${oCalculationDetails.CALCULATION_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
@@ -402,9 +402,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get calculation with ID '${iCalculationId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -480,9 +480,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo =
 				`Failed to create a calculation with name '${sCalculationName}' in project with ID '${oDetails.PROJECT_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
@@ -529,9 +529,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -566,9 +566,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to create a version as copy of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -596,9 +596,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -653,9 +653,9 @@ class Dispatcher {
 		}
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 		} else {
@@ -743,9 +743,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to reference version with ID '${iReferenceVersionId}' into calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -804,9 +804,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
+		if (!(oResponse.status === 201 || oResponse.status === 200)) {
 			let sDeveloperInfo = `Failed to add material item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -862,9 +862,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (!(oResponse.statusCode === 201 || oResponse.statusCode === 200)) {
+		if (!(oResponse.status === 201 || oResponse.status === 200)) {
 			let sDeveloperInfo = `Failed to add variable item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -903,9 +903,9 @@ class Dispatcher {
 		}
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -945,9 +945,9 @@ class Dispatcher {
 		}
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to deactivate ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -985,9 +985,9 @@ class Dispatcher {
 		}
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update referenced items of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1017,9 +1017,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to freeze calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1052,9 +1052,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to close calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1082,10 +1082,10 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
 		let sMessageInfo;
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			if (oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 				let aErrorMessages = _.filter(oResponseBody.head.messages, function (oMessage) {
 					return oMessage.code === "CALCULATIONVERSION_IS_SINGLE_ERROR" || oMessage.code === "DELETE_CURRENT_VERSION_ERROR";
@@ -1134,10 +1134,10 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "DELETE", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
 		let sMessageInfo;
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete calculation with ID '${iCalculationId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1166,9 +1166,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get calculation version statuses from the system.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1203,9 +1203,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to add status witn ID '${sStatusId}' at the calculation with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
@@ -1232,9 +1232,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete the status of calculation with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
@@ -1263,9 +1263,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
@@ -1295,9 +1295,9 @@ class Dispatcher {
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "DELETE", aParams, aBodyData);
 
-		if (oResponse.statusCode !== 204) {
+		if (oResponse.status !== 204) {
 			let sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from calculation with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.body, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.data, this.Operation);
 			return undefined;
 		} else {
 			let sMessageInfo = `The tag with name '${sTagName}' was deleted with success from calculation with ID '${iEntityId}'.`;
@@ -1324,9 +1324,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation version with ID '${iEntityId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
 			return undefined;
@@ -1356,9 +1356,9 @@ class Dispatcher {
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "DELETE", aParams, aBodyData);
 
-		if (oResponse.statusCode !== 204) {
+		if (oResponse.status !== 204) {
 			let sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from version with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.body, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.data, this.Operation);
 			return undefined;
 		} else {
 			let sMessageInfo = `The tag with name '${sTagName}' was deleted with success from version with ID '${iEntityId}'.`;
@@ -1386,9 +1386,9 @@ class Dispatcher {
 		};
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1460,9 +1460,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1491,9 +1491,9 @@ class Dispatcher {
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleConfigurations);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1525,9 +1525,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1558,9 +1558,9 @@ class Dispatcher {
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1594,9 +1594,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1630,9 +1630,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aActivityLifecycleSurcharges);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save project activity price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1658,9 +1658,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1693,9 +1693,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aMaterialLifecycleSurcharges);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save project material price surcharges of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1730,9 +1730,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to calculate project lifecycle costs of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 		} else {
@@ -1775,9 +1775,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get the status of task with ID '${sTaskId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1805,9 +1805,9 @@ class Dispatcher {
 		};
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, oBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to close project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1834,9 +1834,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1858,9 +1858,9 @@ class Dispatcher {
 		let aParams = [];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to logout from PLC. If this error persists, please contact your system administrator!";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1893,9 +1893,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get addin configuration with ID '${addinGuid}' and version '${addinVersion}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1927,9 +1927,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo = "Failed to copy version items to PLC.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1958,9 +1958,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -1985,9 +1985,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get metadata from PLC.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -2032,9 +2032,9 @@ class Dispatcher {
 		}
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get metadata from PLC.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -2065,9 +2065,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get masterdata custom fields from PLC.";
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -2125,9 +2125,9 @@ class Dispatcher {
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
-		let oResponseBody = JSON.parse(oResponse.body);
+		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
@@ -2155,7 +2155,7 @@ class Dispatcher {
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParameters, aMaterials);
 
-		return oResponse.body;
+		return oResponse.data;
 	}
 
 	async upsertMaterialPlant(aMaterialPlants) {
@@ -2174,7 +2174,7 @@ class Dispatcher {
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParameters, aMaterialPlants);
 
-		return oResponse.body;
+		return oResponse.data;
 	}
 
 	async upsertMaterialPrices(aMaterialPrices) {
@@ -2189,7 +2189,7 @@ class Dispatcher {
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PUT", aParameters, aMaterialPrices);
 
-		return oResponse.body;
+		return oResponse.data;
 	}
 
 }

@@ -78,6 +78,16 @@ class StandardPlcRouter {
 			});
 		});
 
+		router.get("/status", function (request, response) {
+
+			StandardPlcService.getStatuses().then(function (result) {
+				response.type(sContentType).status(200).send(result);
+			}).catch(async function (err) {
+				let oPlcException = await PlcException.createPlcException(err);
+				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
+			});
+		});
+
 		this.router = router;
 	}
 
