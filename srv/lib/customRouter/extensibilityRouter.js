@@ -148,31 +148,42 @@ class ExtensibilityRouter {
 
 		router.get("/example-service", async function (request, response) {
 
-			// create job log entry
-			let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
-			if (oException !== undefined) {
-				response.status(oException.code.responseCode).send(oException);
-				return;
-			}
+			try {
 
-			// write entry into t_messages only for jobs (fake or real)
-			let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-			await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
-
-			// check if web or job request
-			if (helpers.isRequestFromJob(request)) {
-				// return special header to jobscheduler to know that it's async job run
-				response.status(202).send("ACCEPTED");
-			} else {
-				// check if should wait for service response or return a JOB_ID
-				if (request.IS_ONLINE_MODE === false) {
-					// fake/simulate background job
-					let oMessage = new Message(sMessageInfo, {
-						"JOB_ID": request.JOB_ID
-					});
-					// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
-					response.status(200).send(oMessage);
+				// create job log entry
+				let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
+				if (oException !== undefined) {
+					response.status(oException.code.responseCode).send(oException);
+					return;
 				}
+
+				// write entry into t_messages only for jobs (fake or real)
+				let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+				await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
+
+				// check if web or job request
+				if (helpers.isRequestFromJob(request)) {
+					// return special header to jobscheduler to know that it's async job run
+					response.status(202).send("ACCEPTED");
+				} else {
+					// check if should wait for service response or return a JOB_ID
+					if (request.IS_ONLINE_MODE === false) {
+						// fake/simulate background job
+						let oMessage = new Message(sMessageInfo, {
+							"JOB_ID": request.JOB_ID
+						});
+						// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
+						response.status(200).send(oMessage);
+					}
+				}
+
+			} catch (err) {
+
+				// return error and stop execution of the service
+				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+				response.status(oPlcException.code.responseCode).send(oPlcException);
+				return;
+
 			}
 
 			// import service
@@ -255,31 +266,42 @@ class ExtensibilityRouter {
 
 		router.get("/logout-service", async function (request, response) {
 
-			// create job log entry
-			let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
-			if (oException !== undefined) {
-				response.status(oException.code.responseCode).send(oException);
-				return;
-			}
+			try {
 
-			// write entry into t_messages only for jobs (fake or real)
-			let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-			await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
-
-			// check if web or job request
-			if (helpers.isRequestFromJob(request)) {
-				// return special header to jobscheduler to know that it's async job run
-				response.status(202).send("ACCEPTED");
-			} else {
-				// check if should wait for service response or return a JOB_ID
-				if (request.IS_ONLINE_MODE === false) {
-					// fake/simulate background job
-					let oMessage = new Message(sMessageInfo, {
-						"JOB_ID": request.JOB_ID
-					});
-					// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
-					response.status(200).send(oMessage);
+				// create job log entry
+				let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
+				if (oException !== undefined) {
+					response.status(oException.code.responseCode).send(oException);
+					return;
 				}
+
+				// write entry into t_messages only for jobs (fake or real)
+				let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+				await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
+
+				// check if web or job request
+				if (helpers.isRequestFromJob(request)) {
+					// return special header to jobscheduler to know that it's async job run
+					response.status(202).send("ACCEPTED");
+				} else {
+					// check if should wait for service response or return a JOB_ID
+					if (request.IS_ONLINE_MODE === false) {
+						// fake/simulate background job
+						let oMessage = new Message(sMessageInfo, {
+							"JOB_ID": request.JOB_ID
+						});
+						// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
+						response.status(200).send(oMessage);
+					}
+				}
+
+			} catch (err) {
+
+				// return error and stop execution of the service
+				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+				response.status(oPlcException.code.responseCode).send(oPlcException);
+				return;
+
 			}
 
 			// import service
