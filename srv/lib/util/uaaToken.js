@@ -1,9 +1,9 @@
 /*eslint-env node, es6 */
 "use strict";
 
-const request = require("request");
 const xsenv = require("@sap/xsenv");
-const querystring = require("querystring");
+const axios = require("axios");
+const qs = require("qs");
 
 /**
  * @fileOverview
@@ -40,36 +40,42 @@ class UAAToken {
 				name: "tapp-uaa-service"
 			}
 		}).uaa;
-		// get UAA service URL
-		this.tokenUrl = this.uaaService.url + "/oauth/token";
+
+		this.plcAuthClient = axios.create({
+			baseURL: this.uaaService.url + "/oauth/token",
+			timeout: 5000,
+			method: "POST",
+			maxRedirects: 0
+		});
 
 		this.ApplicationSettingsUtil = new ApplicationSettings();
 		this.SecureStoreService = new SecureStore();
 
-		this.ACCES_TOKEN = null;
-		this.TOKEN_EXPIRE = null;
-
+		this.APPLICATION_USER_ACCES_TOKEN = null;
+		this.APPLICATION_USER_TOKEN_EXPIRE = null;
+		this.TECHNICAL_USER_ACCES_TOKEN = null;
+		this.TECHNICAL_USER_TOKEN_EXPIRE = null;
 	}
 
 	/** @function
-	 * Used to check if the access token is valid based on the expiration date of actual token retrieved by calling the auth token service
+	 * Used to check if the access token of the application user is valid based on the expiration date of actual token retrieved by calling the auth token service
 	 * 
 	 * @return {boolean} isValid - true / false
 	 */
-	hasValidToken() {
+	hasApplicationUserValidToken() {
 
 		let isValid = false;
 
-		if (this.TOKEN_EXPIRE !== null) {
+		if (this.APPLICATION_USER_TOKEN_EXPIRE !== null) {
 
 			let ticksPerSecond = 1000;
 
 			let nowCheck = new Date();
 			let nowCheckTicks = nowCheck.getTime() + ticksPerSecond * 120;
 
-			let tokenExpireTicks = this.TOKEN_EXPIRE.getTime();
+			let tokenExpireTicks = this.APPLICATION_USER_TOKEN_EXPIRE.getTime();
 
-			if (tokenExpireTicks > nowCheckTicks && this.ACCES_TOKEN !== null && this.ACCES_TOKEN.length > 10) {
+			if (tokenExpireTicks > nowCheckTicks && this.APPLICATION_USER_ACCES_TOKEN !== null && this.APPLICATION_USER_ACCES_TOKEN.length > 10) {
 				isValid = true;
 			}
 		}
@@ -78,27 +84,122 @@ class UAAToken {
 	}
 
 	/** @function
-	 * Used to call the auth token service in order to get a new token by using:
-	 *		- the client id and client secret from XSUAA service
+	 * Used to check if the access token of the technical user is valid based on the expiration date of actual token retrieved by calling the auth token service
+	 * 
+	 * @return {boolean} isValid - true / false
+	 */
+	hasTechnicalUserValidToken() {
+
+		let isValid = false;
+
+		if (this.TECHNICAL_USER_TOKEN_EXPIRE !== null) {
+
+			let ticksPerSecond = 1000;
+
+			let nowCheck = new Date();
+			let nowCheckTicks = nowCheck.getTime() + ticksPerSecond * 120;
+
+			let tokenExpireTicks = this.TECHNICAL_USER_TOKEN_EXPIRE.getTime();
+
+			if (tokenExpireTicks > nowCheckTicks && this.TECHNICAL_USER_ACCES_TOKEN !== null && this.TECHNICAL_USER_ACCES_TOKEN.length > 10) {
+				isValid = true;
+			}
+		}
+
+		return isValid;
+	}
+
+	/** @function
+	 * Used to call the auth token service in order to get a new access token for the application user by using:
+	 *		- the plc client id and client secret from XSUAA service
 	 *		- the technical user retrieved from t_application_settings table
 	 *		- the password of technical user retrieved from secure store
 	 * The retrieved token is saved into the global variable
 	 */
-	async checkToken() {
+	async retrieveApplicationUserToken(token) {
 
-		let sClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
+		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
+		if (helpers.isUndefinedOrNull(sPlcClientId)) {
+			return;
+		}
+
+		if (this.hasApplicationUserValidToken()) {
+			return;
+		}
+
+		let sPlcClientSecret = await this.SecureStoreService.retrieveKey(sPlcClientId, true);
+		if (sPlcClientSecret instanceof PlcException || sPlcClientSecret instanceof Message ||
+			helpers.isUndefinedNullOrEmptyString(sPlcClientSecret)) {
+			return;
+		}
+
+		let that = this;
+
+		await this.plcAuthClient
+			.request({
+				url: "/oauth/token",
+				data: qs.stringify({
+					"client_id": sPlcClientId,
+					"grant_type": "user_token"
+				}),
+				headers: {
+					"Authorization": token,
+					"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+				}
+			})
+			.then(async userTokenResponse => {
+				await that.plcAuthClient
+					.request({
+						url: "/oauth/token",
+						data: qs.stringify({
+							"client_id": sPlcClientId,
+							"client_secret": sPlcClientSecret,
+							"grant_type": "refresh_token",
+							"refresh_token": userTokenResponse.data.refresh_token
+						}),
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+						}
+					})
+					.then(refreshTokenResponse => {
+						let expire = new Date();
+						expire.setSeconds(expire.getSeconds() + parseInt(refreshTokenResponse.data.expires_in));
+
+						this.APPLICATION_USER_ACCES_TOKEN = refreshTokenResponse.data.access_token;
+						this.APPLICATION_USER_TOKEN_EXPIRE = expire;
+					})
+					.catch(error => {
+						throw new Error("Exception during access token retrieval: " + JSON.stringify(error));
+
+					});
+			})
+			.catch(error => {
+				throw new Error("Exception during refresh token retrieval: " + JSON.stringify(error));
+			});
+	}
+
+	/** @function
+	 * Used to call the auth token service in order to get a new access token for the technical user by using:
+	 *		- the plc client id and client secret from XSUAA service
+	 *		- the technical user retrieved from t_application_settings table
+	 *		- the password of technical user retrieved from secure store
+	 * The retrieved token is saved into the global variable
+	 */
+	async retrieveTechnicalUserToken() {
+
+		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
 		let sTechnicalUser = await this.ApplicationSettingsUtil.getTechnicalUserFromTable();
-		let sApplicationName = await this.ApplicationSettingsUtil.getApplicationNameFromTable();
-		if (helpers.isUndefinedOrNull(sApplicationName) || helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+		if (helpers.isUndefinedOrNull(sPlcClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
 			return;
 		}
 
-		if (sTechnicalUser === global.TECHNICAL_USER && this.hasValidToken()) {
+		if (sTechnicalUser === global.TECHNICAL_USER && this.hasTechnicalUserValidToken()) {
 			return;
 		}
 
-		let sClientSecret = await this.SecureStoreService.retrieveKey(sClientId, true);
-		if (sClientSecret instanceof PlcException || sClientSecret instanceof Message || helpers.isUndefinedNullOrEmptyString(sClientSecret)) {
+		let sPlcClientSecret = await this.SecureStoreService.retrieveKey(sPlcClientId, true);
+		if (sPlcClientSecret instanceof PlcException || sPlcClientSecret instanceof Message ||
+			helpers.isUndefinedNullOrEmptyString(sPlcClientSecret)) {
 			return;
 		}
 
@@ -108,53 +209,38 @@ class UAAToken {
 			return;
 		}
 
-		let authForm = {
-			"grant_type": "password",
-			"client_id": sClientId,
-			"client_secret": sClientSecret,
-			"username": sTechnicalUser,
-			"password": sTechnicalPassword,
-			"response_type": "token"
-		};
-
-		let formData = querystring.stringify(authForm);
-		let contentLength = formData.length;
-
 		let that = this;
 
-		request({
+		await this.plcAuthClient
+			.request({
+				url: "/oauth/token",
+				data: qs.stringify({
+					"grant_type": "password",
+					"client_id": sPlcClientId,
+					"client_secret": sPlcClientSecret,
+					"username": sTechnicalUser,
+					"password": sTechnicalPassword,
+					"response_type": "token"
+				}),
 				headers: {
-					"Content-Length": contentLength,
-					"Content-Type": "application/x-www-form-urlencoded",
-					"Accept": "application/json"
-				},
-				uri: this.tokenUrl,
-				body: formData,
-				method: "POST"
-			},
-			function (error, response, body) {
-
-				if (error || response.statusCode !== 200) {
-					return;
+					"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
 				}
+			})
+			.then(userTokenResponse => {
+				let expire = new Date();
+				expire.setSeconds(expire.getSeconds() + parseInt(userTokenResponse.data.expires_in));
 
-				try {
-					let tokenResp = JSON.parse(body);
-					let expire = new Date();
-					expire.setSeconds(expire.getSeconds() + parseInt(tokenResp.expires_in));
+				that.TECHNICAL_USER_ACCES_TOKEN = userTokenResponse.data.access_token;
+				that.TECHNICAL_USER_TOKEN_EXPIRE = expire;
 
-					that.ACCES_TOKEN = tokenResp.access_token;
-					that.TOKEN_EXPIRE = expire;
+				// add bearer token to global variable
+				global.TECHNICAL_BEARER_TOKEN = userTokenResponse.data.access_token;
 
-					// add bearer token to global variable
-					global.TECHNICAL_BEARER_TOKEN = tokenResp.access_token;
-
-					// add technical user to global variable
-					global.TECHNICAL_USER = sTechnicalUser.toUpperCase();
-
-				} catch (err) {
-					// err
-				}
+				// add technical user to global variable
+				global.TECHNICAL_USER = sTechnicalUser.toUpperCase();
+			})
+			.catch(error => {
+				throw new Error("Exception during refresh token retrieval: " + JSON.stringify(error));
 			});
 	}
 }

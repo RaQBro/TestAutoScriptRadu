@@ -140,6 +140,7 @@ async function doService(request) {
 		if (oInitPlcSession !== undefined) {
 			let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
 			oServiceResponseBody.CURRENT_USER = sCurrentUser;
+			await Message.addLog(request.JOB_ID, `Session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
 		}
 
 		let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");

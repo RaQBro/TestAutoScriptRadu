@@ -1,7 +1,7 @@
 {
 	"name": "template_application-approuter",
 	"engines": {
-		"node": "^12.x"
+		"node": "^14.x"
 	},
 	"dependencies": {
 		"@sap/approuter": "10.11.3"

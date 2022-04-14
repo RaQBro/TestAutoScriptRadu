@@ -56,7 +56,6 @@ class ExtensibilityRouter {
 
 			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
 			next();
-
 		});
 
 		/**

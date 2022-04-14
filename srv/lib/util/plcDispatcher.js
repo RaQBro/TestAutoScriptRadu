@@ -3,6 +3,8 @@
 
 const util = require("util");
 const makeRequest = util.promisify(require("request"));
+const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 /**
  * @fileOverview
@@ -13,7 +15,6 @@ const makeRequest = util.promisify(require("request"));
  */
 
 const Code = require(global.appRoot + "/lib/util/message").Code;
-const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
 
 /** @class
@@ -31,8 +32,7 @@ class PlcDispatcher {
 	 * @param {object} request - web request / job request
 	 */
 	constructor(request) {
-
-		this.token = global.TECHNICAL_BEARER_TOKEN; // bearer token generated from technical user
+		this.request = request;
 	}
 
 	/** @function
@@ -50,6 +50,15 @@ class PlcDispatcher {
 	 * @return {object} oResponse - the response object of the service that was called
 	 */
 	async dispatchPrivateApi(sQueryPath, sMethod, aParams, oBodyData) {
+
+		let UAAToken = new UaaToken.UAAToken();
+
+		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
+			this.token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
+		} else {
+			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
+			this.token = UAAToken.APPLICATION_USER_ACCES_TOKEN;
+		}
 
 		let oPrivateRequestOptions = {
 			method: sMethod,
@@ -95,7 +104,6 @@ class PlcDispatcher {
 		}
 
 		return oResponse;
-
 	}
 
 	/** @function
@@ -113,6 +121,14 @@ class PlcDispatcher {
 	 * @return {object} oResponse - the response object of the service that was called
 	 */
 	async dispatchPublicApi(sQueryPath, sMethod, aParams, oBodyData) {
+
+		let UAAToken = new UaaToken.UAAToken();
+
+		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
+			this.token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
+		} else {
+			this.token = await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
+		}
 
 		let oPublicRequestOptions = {
 			method: sMethod,
@@ -158,11 +174,9 @@ class PlcDispatcher {
 					"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
 				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
 			}
-
 		}
 
 		return oResponse;
 	}
-
 }
 exports.PlcDispatcher = module.exports.PlcDispatcher = PlcDispatcher;
