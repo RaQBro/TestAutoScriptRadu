@@ -16,7 +16,7 @@ sap.ui.define([
 
 			BaseController.prototype.onInit.call(this);
 
-			var oUserDetails = this.getUserDetails();
+			let oUserDetails = this.getUserDetails();
 
 			if (oUserDetails.Error === true) {
 
@@ -28,8 +28,10 @@ sap.ui.define([
 				var avatarBtn = this.getView().byId("avatarBtn");
 				avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
 			}
+
 			this.onRenderingAboutBtn();
 		},
+
 		onRenderingAboutBtn: function () {
 			let isPhone = sap.ui.Device.system.phone;
 			let isTablet = sap.ui.Device.system.tablet;
@@ -38,6 +40,7 @@ sap.ui.define([
 			let device = "";
 			let optimised = "";
 			let supportTouch = "";
+
 			if (isPhone) {
 				device = "Phone";
 				optimised = "Yes";
@@ -51,13 +54,14 @@ sap.ui.define([
 				device = "Tablet";
 				optimised = "Yes";
 			}
+
 			if (sap.ui.Device.support.touch) {
 				supportTouch = "Yes";
 			} else {
 				supportTouch = "No";
 			}
-			let aboutModel = {
 
+			let aboutModel = {
 				frameId: "UI5",
 				frameVersion: sap.ui.version,
 				dType: device,
@@ -66,22 +70,27 @@ sap.ui.define([
 				optimisedTouch: optimised,
 				userAgent: navigator.userAgent
 			};
+
 			let oModel = new sap.ui.model.json.JSONModel(aboutModel);
+
 			this.getView().setModel(oModel, "aboutModel");
 		},
+
 		/** @function called after onInit*/
 		onAfterRendering: function () {},
 
 		/** @function used when the user details avatar is pressed*/
 		onIndividualPress: function () {
-			var oAvatarBtn = this.getView().byId("avatarBtn");
+			let oView = this.getView();
+			let oAvatarBtn = this.getView().byId("avatarBtn");
+
 			if (!this._oIndividuaLPopover) {
 				Fragment.load({
 					name: "webapp.ui.view.fragment.IndividualPopover",
 					controller: this
 				}).then(function (oPopover) {
 					this._oIndividuaLPopover = oPopover;
-					this.getView().addDependent(this._oIndividuaLPopover);
+					oView.addDependent(this._oIndividuaLPopover);
 					this._oIndividuaLPopover.setTitle(this.aUserDetails.givenName + " " + this.aUserDetails.familyName);
 					this._oIndividuaLPopover.openBy(oAvatarBtn);
 				}.bind(this));
@@ -93,43 +102,53 @@ sap.ui.define([
 
 		/** @function used when About is pressed from the user details*/
 		onAboutPress: function () {
-			var oView = this.getView(),
-				oController = oView.getController(),
-				oAboutModel = oView.getModel("aboutModel");
-			// instantiate dialog
-			if (!oController._aboutDialog) {
-				oController._aboutDialog = sap.ui.xmlfragment("webapp.ui.view.fragment.AboutDialog", oController);
-				oView.addDependent(this._aboutDialog);
+			let oView = this.getView();
+			let oAboutModel = oView.getModel("aboutModel");
+
+			if (!this._oAboutDialog) {
+				this._oAboutDialog = Fragment.load({
+					name: "webapp.ui.view.fragment.AboutDialog",
+					controller: this
+				}).then(function (oAboutDialog) {
+					oView.addDependent(oAboutDialog);
+					oAboutModel.setProperty("/theme", sap.ui.getCore().getConfiguration().getTheme());
+					return oAboutDialog;
+				}.bind());
 			}
-			oAboutModel.setProperty("/theme", sap.ui.getCore().getConfiguration().getTheme());
-			// open dialog
-			oController._aboutDialog.open();
+
+			this._oAboutDialog.then(function (oAboutDialog) {
+				oAboutDialog.open();
+			}.bind());
 		},
 
 		/** @function used when OK is pressed from the About from the user details*/
 		onAboutDialogOk: function () {
-			var oView = this.getView(),
-				oController = oView.getController();
-			oController._aboutDialog.close();
+			this._oAboutDialog.then((oAboutDialog) => {
+				oAboutDialog.close();
+			});
 		},
 
 		/** @function used when How To is pressed from the user details*/
 		onHowToPress: function () {
-			var oView = this.getView(),
-				oController = oView.getController();
-			// instantiate dialog
-			if (!oController._howToDialog) {
-				oController._howToDialog = sap.ui.xmlfragment("webapp.ui.view.fragment.HowToDialog", oController);
-				oView.addDependent(this._howToDialog);
+			let oView = this.getView();
+
+			if (!this._oHowToDialog) {
+				this._oHowToDialog = Fragment.load({
+					name: "webapp.ui.view.fragment.HowToDialog",
+					controller: this
+				}).then(function (oHowToDialog) {
+					oView.addDependent(oHowToDialog);
+					return oHowToDialog;
+				}.bind());
 			}
 
-			// open dialog
-			oController._howToDialog.open();
+			this._oHowToDialog.then(function (oHowToDialog) {
+				oHowToDialog.open();
+			}.bind());
 		},
 
 		onAfterHowToOpen: function (oEvent) {
 			let sRTE;
-
 			let oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === "RTE";
 			});
@@ -141,9 +160,9 @@ sap.ui.define([
 
 		/** @function used when OK is pressed from the  How To from the user details*/
 		onHowToDialogOk: function () {
-			var oView = this.getView(),
-				oController = oView.getController();
-			oController._howToDialog.close();
+			this._oHowToDialog.then((oHowToDialog) => {
+				oHowToDialog.close();
+			});
 		},
 
 		/** @function called when logout is pressed*/
@@ -153,19 +172,22 @@ sap.ui.define([
 
 		/** @function called when button the expand the toolPage from the left side*/
 		onMenuButtonPress: function () {
-			var toolPage = this.byId("toolPage");
+			let toolPage = this.byId("toolPage");
+
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
 		},
 
 		/** @function called when button the expand the toolPage from the left side*/
 		colapseSideNavigation: function () {
-			var toolPage = this.byId("toolPage");
+			let toolPage = this.byId("toolPage");
+
 			toolPage.setSideExpanded(false);
 		},
 
 		/** @function called when a view from the left list is selected and it's navigating to that specific view*/
 		onViewChange: function (oEvent) {
-			var item = oEvent.getParameter("item");
+			let item = oEvent.getParameter("item");
+
 			this.navTo(item.getKey());
 		}
 	});
