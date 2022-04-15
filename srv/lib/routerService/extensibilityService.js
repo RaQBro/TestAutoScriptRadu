@@ -226,7 +226,7 @@ class Service {
 				}
 				let tasks = defaultItems.map(createTasks);
 
-				async.series(tasks, function (results) {
+				async.series(tasks, function (error, results) {
 					let ok = true;
 					let errIndexes = [];
 					for (let i = 0; i < results.length; i++) {
