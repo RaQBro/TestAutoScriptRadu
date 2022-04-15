@@ -158,6 +158,9 @@ async function doService(request) {
 			await StandardPlcService.closeCalculationVersion(1);
 		}
 
+		let aStatus = await StandardPlcService.getStatuses();
+		oServiceResponseBody.STATUS = aStatus;
+
 		await Message.addLog(request.JOB_ID,
 			"Example how to add operation at the messages.",
 			"message", undefined, sOperation);

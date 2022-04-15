@@ -50,13 +50,18 @@ class PlcDispatcher {
 	 */
 	async dispatchPrivateApi(sQueryPath, sMethod, aParams, oBodyData) {
 
+		let bIsOnline;
+		let token;
+
 		let UAAToken = new UaaToken.UAAToken();
 
 		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
-			this.token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
+			bIsOnline = false;
+			token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 		} else {
+			bIsOnline = true;
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			this.token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 		}
 
 		let oPrivateRequestClient = axios.create({
@@ -80,7 +85,6 @@ class PlcDispatcher {
 		}
 
 		let oResponse;
-		let that = this;
 
 		await oPrivateRequestClient
 			.request({
@@ -88,7 +92,7 @@ class PlcDispatcher {
 				data: oBodyData !== undefined ? JSON.stringify(oBodyData) : undefined,
 				headers: {
 					"Cache-Control": "no-cache",
-					"Authorization": "Bearer " + that.token,
+					"Authorization": "Bearer " + token,
 					"Content-Type": "application/json"
 				},
 				params: oParams.qs
@@ -97,11 +101,10 @@ class PlcDispatcher {
 				oResponse = response;
 			})
 			.catch(error => {
-				try {
+				if (typeof (error.response.data) === "object") {
 					oResponse = error.response;
-					JSON.parse(oResponse.data);
-				} catch (e) {
-					oResponse = error.response;
+				} else {
+					let sDeveloperInfo;
 					let oDetails = {
 						"requestMethod": sMethod,
 						"requestQueryPath": sQueryPath,
@@ -110,9 +113,15 @@ class PlcDispatcher {
 						"responseMessage": error.response.statusText,
 						"responseBody": error.response.data
 					};
-					let sDeveloperInfo =
-						"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
-					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
+
+					if (bIsOnline) {
+						sDeveloperInfo =
+							"Unexpected error occured. Please try again or contact your system administrator.";
+					} else {
+						sDeveloperInfo =
+							"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+					}
+					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, error);
 				}
 			});
 
@@ -135,13 +144,18 @@ class PlcDispatcher {
 	 */
 	async dispatchPublicApi(sQueryPath, sMethod, aParams, oBodyData) {
 
+		let bIsOnline;
+		let token;
+
 		let UAAToken = new UaaToken.UAAToken();
 
 		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
-			this.token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
+			bIsOnline = false;
+			token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 		} else {
+			bIsOnline = true;
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			this.token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 		}
 
 		let oPublicRequestClient = axios.create({
@@ -165,7 +179,6 @@ class PlcDispatcher {
 		}
 
 		let oResponse;
-		let that = this;
 
 		await oPublicRequestClient
 			.request({
@@ -173,7 +186,7 @@ class PlcDispatcher {
 				data: oBodyData !== undefined ? JSON.stringify(oBodyData) : undefined,
 				headers: {
 					"Cache-Control": "no-cache",
-					"Authorization": "Bearer " + that.token,
+					"Authorization": "Bearer " + token,
 					"Content-Type": "application/json"
 				},
 				params: oParams.qs
@@ -182,10 +195,10 @@ class PlcDispatcher {
 				oResponse = response;
 			})
 			.catch(error => {
-				try {
+				if (typeof (error.response.data) === "object") {
 					oResponse = error.response;
-					JSON.parse(oResponse.data);
-				} catch (e) {
+				} else {
+					let sDeveloperInfo;
 					let oDetails = {
 						"requestMethod": sMethod,
 						"requestQueryPath": sQueryPath,
@@ -194,9 +207,15 @@ class PlcDispatcher {
 						"responseMessage": error.response.statusText,
 						"responseBody": error.response.data
 					};
-					let sDeveloperInfo =
-						"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
-					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, e);
+
+					if (bIsOnline) {
+						sDeveloperInfo =
+							"Unexpected error occured. Please try again or contact your system administrator.";
+					} else {
+						sDeveloperInfo =
+							"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+					}
+					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, error);
 				}
 			});
 
