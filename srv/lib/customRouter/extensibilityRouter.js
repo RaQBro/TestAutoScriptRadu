@@ -52,7 +52,7 @@ class ExtensibilityRouter {
 		 * Common function before all routes are processed:
 		 *		- generate an autoincrement JOB_ID based on the existing ids
 		 */
-		router.use(async function (request, response, next) {
+		router.use(async function (request, next) {
 
 			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
 			next();
@@ -62,7 +62,7 @@ class ExtensibilityRouter {
 		/**
 		 * Endpoint for X-CSRF-Token fetch
 		 */
-		router.get("/token", function (request, response) {
+		router.get("/token", function (response) {
 			response.send(true);
 		});
 
@@ -111,7 +111,7 @@ class ExtensibilityRouter {
 		/**
 		 * Endpoint for plc application routes fetch
 		 */
-		router.get("/application-routes", function (request, response) {
+		router.get("/application-routes", function (response) {
 			response.type(sContentType).status(200).send({
 				"web": global.plcWebUrl,
 				"xsjs": global.plcXsjsUrl,
