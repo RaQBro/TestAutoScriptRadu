@@ -9,7 +9,6 @@ sap.ui.define([
 
 	const technicalNameUser = "TECHNICAL_USER";
 	const technicalNameClient = "CLIENT_ID";
-	const technicalApplicationName = "APPLICATION_NAME";
 
 	return Controller.extend("webapp.ui.controller.ApplicationSettings", {
 
@@ -61,9 +60,6 @@ sap.ui.define([
 			let sClientId = _.find(aApplicationSettings, (item) => {
 				return item.FIELD_NAME === "CLIENT_ID";
 			});
-			let sApplicationName = _.find(aApplicationSettings, (item) => {
-				return item.FIELD_NAME === "APPLICATION_NAME";
-			});
 			if (sTechnicalUser) {
 				if (sTechnicalUser.FIELD_VALUE !== null) {
 					this.getView().byId("technicalUsername").setValue(sTechnicalUser.FIELD_VALUE);
@@ -73,11 +69,6 @@ sap.ui.define([
 			if (sClientId) {
 				if (sClientId.FIELD_VALUE !== null) {
 					this.getView().byId("clientId").setValue(sClientId.FIELD_VALUE);
-				}
-			}
-			if (sApplicationName) {
-				if (sApplicationName.FIELD_VALUE !== null) {
-					this.getView().byId("appName").setValue(sApplicationName.FIELD_VALUE);
 				}
 			}
 		},
@@ -96,7 +87,6 @@ sap.ui.define([
 				this.handleControlEditableState("clientSecret", true);
 				this.handleControlEditableState("technicalUsername", true);
 				this.handleControlEditableState("technicalPassword", true);
-				this.handleControlEditableState("appName", true);
 
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
@@ -111,15 +101,12 @@ sap.ui.define([
 			let sTechnicalPassword = this.getView().byId("technicalPassword").getValue();
 			let sClientId = this.getView().byId("clientId").getValue();
 			let sClientSecret = this.getView().byId("clientSecret").getValue();
-			let sApplicationName = this.getView().byId("appName").getValue();
 
-			if (sTechnicalUsername && sTechnicalPassword && sClientId && sClientSecret && sApplicationName) {
+			if (sTechnicalUsername && sTechnicalPassword && sClientId && sClientSecret) {
 				this.deleteFromSecureStore(sTechnicalUsername, technicalNameUser);
 				this.deleteFromSecureStore(sClientId, technicalNameClient);
-				this.deleteFromSecureStore(sApplicationName, technicalApplicationName);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword, technicalNameUser);
 				this.insertIntoSecureStore(sClientId, sClientSecret, technicalNameClient);
-				this.insertIntoSecureStore(sApplicationName, sApplicationName, technicalApplicationName);
 
 				this.handleControlEnabledState("saveBtn", false);
 				this.handleControlEnabledState("editBtn", true);
@@ -127,7 +114,6 @@ sap.ui.define([
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);
 				this.handleControlEditableState("technicalPassword", false);
-				this.handleControlEditableState("appName", false);
 
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsApplicationSettings"), null, null,
@@ -165,12 +151,14 @@ sap.ui.define([
 				};
 
 			let onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainApplicationSettings"), null, null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainApplicationSettings", [sKey]),
+					null, null,
 					"Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
 			let onError = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainApplicationSettings"), null, null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainApplicationSettings", [sKey]), null,
+					null,
 					"Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
@@ -200,10 +188,6 @@ sap.ui.define([
 		},
 
 		onChangeClientSecret: function () {
-
-			this.handleControlEnabledState("saveBtn", true);
-		},
-		onChangeApplicationName: function () {
 
 			this.handleControlEnabledState("saveBtn", true);
 		},

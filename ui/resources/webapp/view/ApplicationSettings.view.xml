@@ -3,9 +3,6 @@
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<l:VerticalLayout class="sapUiContentPadding" width="50%">
-				<Text text="{i18n>infoTextApplicationName}"/>
-				<Label text="{i18n>applicationName}" labelFor="appName"/>
-				<Input id="appName" placeholder="{i18n>applicationNamePlaceholder}" change="onChangeApplicationName" editable="false"></Input>
 				<Text text="{i18n>infoTextClientId}"/>
 				<Label text="{i18n>clientId}" labelFor="clientId"/>
 				<Input id="clientId" placeholder="{i18n>clientIdPlaceholder}" change="onChangeClientId" editable="false"></Input>
