@@ -2,8 +2,6 @@
 "use strict";
 
 const axios = require("axios");
-const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
-const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 /**
  * @fileOverview
@@ -14,7 +12,9 @@ const helpers = require(global.appRoot + "/lib/util/helpers.js");
  */
 
 const Code = require(global.appRoot + "/lib/util/message").Code;
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
+const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 
 /** @class
  * @classdesc PLC dispatcher utility helpers for call of public and private backend services
@@ -50,18 +50,17 @@ class PlcDispatcher {
 	 */
 	async dispatchPrivateApi(sQueryPath, sMethod, aParams, oBodyData) {
 
+		let sToken;
 		let bIsOnline;
-		let token;
-
-		let UAAToken = new UaaToken.UAAToken();
 
 		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
+			sToken = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 			bIsOnline = false;
-			token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 		} else {
-			bIsOnline = true;
+			let UAAToken = new UaaToken.UAAToken();
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			sToken = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			bIsOnline = true;
 		}
 
 		let oPrivateRequestClient = axios.create({
@@ -72,15 +71,14 @@ class PlcDispatcher {
 		});
 
 		let oParams = {};
-
 		let sPrivateParams = " ";
+
 		if (aParams !== undefined && aParams.length > 0) {
-			oParams.qs = {};
 			for (let oPram of aParams) {
 				let key = oPram.name;
 				let value = oPram.value;
 				sPrivateParams += key + "=" + value + " ";
-				oParams.qs[key] = value;
+				oParams[key] = value;
 			}
 		}
 
@@ -92,19 +90,24 @@ class PlcDispatcher {
 				data: oBodyData !== undefined ? JSON.stringify(oBodyData) : undefined,
 				headers: {
 					"Cache-Control": "no-cache",
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + sToken,
 					"Content-Type": "application/json"
 				},
-				params: oParams.qs
+				params: oParams
 			})
 			.then(response => {
+
 				oResponse = response;
+
 			})
 			.catch(error => {
-				if (typeof (error.response.data) === "object") {
+
+				if (error.response !== undefined && error.response.data !== undefined && typeof (error.response.data) === "object") {
+
 					oResponse = error.response;
-				} else {
-					let sDeveloperInfo;
+
+				} else { // unexpected error if response is not an object
+
 					let oDetails = {
 						"requestMethod": sMethod,
 						"requestQueryPath": sQueryPath,
@@ -114,9 +117,9 @@ class PlcDispatcher {
 						"responseBody": error.response.data
 					};
 
-					if (bIsOnline) {
-						sDeveloperInfo =
-							"Unexpected error occured. Please try again or contact your system administrator.";
+					let sDeveloperInfo;
+					if (bIsOnline === true) {
+						sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
 					} else {
 						sDeveloperInfo =
 							"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
@@ -144,18 +147,17 @@ class PlcDispatcher {
 	 */
 	async dispatchPublicApi(sQueryPath, sMethod, aParams, oBodyData) {
 
+		let sToken;
 		let bIsOnline;
-		let token;
-
-		let UAAToken = new UaaToken.UAAToken();
 
 		if (helpers.isRequestFromJob(this.request) || (this.request.IS_ONLINE_MODE !== undefined && this.request.IS_ONLINE_MODE === false)) {
+			sToken = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 			bIsOnline = false;
-			token = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 		} else {
-			bIsOnline = true;
+			let UAAToken = new UaaToken.UAAToken();
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			token = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			sToken = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			bIsOnline = true;
 		}
 
 		let oPublicRequestClient = axios.create({
@@ -166,15 +168,14 @@ class PlcDispatcher {
 		});
 
 		let oParams = {};
-
 		let sPublicParams = " ";
+
 		if (aParams !== undefined && aParams.length > 0) {
-			oParams.qs = {};
 			for (let oPram of aParams) {
 				let key = oPram.name;
 				let value = oPram.value;
 				sPublicParams += key + "=" + value + " ";
-				oParams.qs[key] = value;
+				oParams[key] = value;
 			}
 		}
 
@@ -186,19 +187,24 @@ class PlcDispatcher {
 				data: oBodyData !== undefined ? JSON.stringify(oBodyData) : undefined,
 				headers: {
 					"Cache-Control": "no-cache",
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + sToken,
 					"Content-Type": "application/json"
 				},
-				params: oParams.qs
+				params: oParams
 			})
 			.then(response => {
+
 				oResponse = response;
+
 			})
 			.catch(error => {
-				if (typeof (error.response.data) === "object") {
+
+				if (error.response !== undefined && error.response.data !== undefined && typeof (error.response.data) === "object") {
+
 					oResponse = error.response;
-				} else {
-					let sDeveloperInfo;
+
+				} else { // unexpected error if response is not an object
+
 					let oDetails = {
 						"requestMethod": sMethod,
 						"requestQueryPath": sQueryPath,
@@ -208,9 +214,9 @@ class PlcDispatcher {
 						"responseBody": error.response.data
 					};
 
-					if (bIsOnline) {
-						sDeveloperInfo =
-							"Unexpected error occured. Please try again or contact your system administrator.";
+					let sDeveloperInfo;
+					if (bIsOnline === true) {
+						sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
 					} else {
 						sDeveloperInfo =
 							"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";

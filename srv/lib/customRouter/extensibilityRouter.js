@@ -56,6 +56,7 @@ class ExtensibilityRouter {
 
 			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
 			next();
+
 		});
 
 		/**
@@ -150,11 +151,7 @@ class ExtensibilityRouter {
 			try {
 
 				// create job log entry
-				let oException = await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
-				if (oException !== undefined) {
-					response.status(oException.code.responseCode).send(oException);
-					return;
-				}
+				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
 				// write entry into t_messages only for jobs (fake or real)
 				let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
