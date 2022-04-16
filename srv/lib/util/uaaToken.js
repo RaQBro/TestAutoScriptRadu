@@ -20,6 +20,7 @@ const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSetti
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Code = MessageLibrary.Code;
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
@@ -58,7 +59,7 @@ class UAAToken {
 	}
 
 	/** @function
-	 * Used to check if the access token of the application user is valid based on the expiration date of actual token retrieved by calling the auth token service
+	 * Used to check if the access token of the application user is valid based on the expiration date of actual token
 	 * 
 	 * @return {boolean} isValid - true / false
 	 */
@@ -84,7 +85,7 @@ class UAAToken {
 	}
 
 	/** @function
-	 * Used to check if the access token of the technical user is valid based on the expiration date of actual token retrieved by calling the auth token service
+	 * Used to check if the access token of the technical user is valid based on the expiration date of actual token
 	 * 
 	 * @return {boolean} isValid - true / false
 	 */
@@ -112,19 +113,18 @@ class UAAToken {
 	/** @function
 	 * Used to call the auth token service in order to get a new access token for the application user by using:
 	 *		- the plc client id and client secret from XSUAA service
-	 *		- the technical user retrieved from t_application_settings table
-	 *		- the password of technical user retrieved from secure store
 	 * The retrieved token is saved into the global variable
 	 */
 	async retrieveApplicationUserToken(token) {
 
-		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
-		if (helpers.isUndefinedOrNull(sPlcClientId)) {
+		if (this.hasApplicationUserValidToken()) {
 			return;
 		}
 
-		if (this.hasApplicationUserValidToken()) {
-			return;
+		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
+		if (helpers.isUndefinedNullOrEmptyString(sPlcClientId)) {
+			let sDeveloperInfo = "Please provide a client id and client secret into administration section of application!";
+			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 		}
 
 		let sPlcClientSecret = await this.SecureStoreService.retrieveKey(sPlcClientId, true);
@@ -170,7 +170,6 @@ class UAAToken {
 					})
 					.catch(error => {
 						throw new Error("Exception during access token retrieval: " + JSON.stringify(error));
-
 					});
 			})
 			.catch(error => {
@@ -187,13 +186,17 @@ class UAAToken {
 	 */
 	async retrieveTechnicalUserToken() {
 
-		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
 		let sTechnicalUser = await this.ApplicationSettingsUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sPlcClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
+		if (helpers.isUndefinedNullOrEmptyString(sTechnicalUser)) {
 			return;
 		}
 
 		if (sTechnicalUser === global.TECHNICAL_USER && this.hasTechnicalUserValidToken()) {
+			return;
+		}
+
+		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
+		if (helpers.isUndefinedNullOrEmptyString(sPlcClientId)) {
 			return;
 		}
 

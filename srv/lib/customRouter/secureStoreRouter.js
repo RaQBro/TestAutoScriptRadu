@@ -66,6 +66,12 @@ class SecureStoreRouter {
 
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
 				ApplicationSettingsUtil.upsertApplicationSettingsIntoTable(sKey, sFieldName).then(function () {
+					// generate new technical user token (if new user or new password)
+					if (sFieldName === "TECHNICAL_USER" || sFieldName === "CLIENT_ID") {
+						let UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
+						let UAAToken = new UaaToken.UAAToken();
+						UAAToken.retrieveTechnicalUserToken();
+					}
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);
@@ -85,6 +91,10 @@ class SecureStoreRouter {
 
 			SecureStoreService.deleteKey(sKey).then(function (result) {
 				ApplicationSettingsUtil.upsertApplicationSettingsIntoTable(sValue, sFieldName).then(function () {
+					// delete technical user from global
+					if (sFieldName === "TECHNICAL_USER") {
+						global.TECHNICAL_USER = undefined;
+					}
 					response.type(sContentType).status(200).send(result);
 				}).catch(async function (err) {
 					let oPlcException = await PlcException.createPlcException(err);

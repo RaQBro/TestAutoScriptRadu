@@ -232,10 +232,9 @@ class JobSchedulerUtil {
 			let ApplicationSettingsUtil = new ApplicationSettings();
 			sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
 			sRunUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable();
-			if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sRunUserId)) {
+			if (helpers.isUndefinedNullOrEmptyString(sClientId) || helpers.isUndefinedNullOrEmptyString(sRunUserId)) {
 				let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
-				// return exception if technical user is not provided
-				return new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
+				throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 			}
 			iWebRequest = 0;
 		}
