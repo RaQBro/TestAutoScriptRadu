@@ -25,7 +25,7 @@ sap.ui.define([
 				this.navTo("error");
 			} else {
 
-				var avatarBtn = this.getView().byId("avatarBtn");
+				let avatarBtn = this.getView().byId("avatarBtn");
 				avatarBtn.setInitials(this.aUserDetails.givenName.slice(0, 1) + this.aUserDetails.familyName.slice(0, 1));
 			}
 

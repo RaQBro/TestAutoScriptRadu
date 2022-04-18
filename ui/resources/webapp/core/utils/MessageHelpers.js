@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Constants, Message) {
 	"use strict";
 
-	var MessageHelpers = {
+	let MessageHelpers = {
 		buttonIconFormatter: function (sMessageType) {
 			switch (sMessageType) {
 			case Constants.INFOMESSAGES.ERROR:

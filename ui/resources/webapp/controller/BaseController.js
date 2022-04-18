@@ -67,7 +67,7 @@ sap.ui.define([
 		/** @function used to open BusyDialog
 		 */
 		openBusyDialog: function () {
-			var oView = this.getView();
+			let oView = this.getView();
 
 			if (!this._busyDialog) {
 				this._busyDialog = Fragment.load({
@@ -115,15 +115,15 @@ sap.ui.define([
 		/** @function used to get the user details to show them on the ui
 		 */
 		getUserDetails: function () {
-			var oController = this,
+			let oController = this,
 				oUserDetails = {};
 
-			var onSuccess = function (response) {
+			let onSuccess = function (response) {
 				oUserDetails.Error = false;
 				oUserDetails.BODY = response;
 				oController.aUserDetails = response;
 			};
-			var onError = function (error) {
+			let onError = function (error) {
 				oUserDetails.Error = true;
 				oUserDetails.Message =
 					`User details could not bet loaded. If the error persists, please contact your administrator.  Error: ${error.status} - ${error.statusText}`;
@@ -137,18 +137,18 @@ sap.ui.define([
 		/** @function used to initialize the PLC session
 		 */
 		plcInitSession: function (sViewName) {
-			var oController = this;
+			let oController = this;
 
-			var sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
+			let sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "INIT_SESSION_AT_OPEN_APP";
 			});
 
 			if (sInitSesstionAtOpenApp) {
 				if (sInitSesstionAtOpenApp.FIELD_VALUE === "true") {
 
-					var onSuccess = function () {};
-					var onError = function () {
-						var oButtonPopover = oController.byId("buttonMessagePopover");
+					let onSuccess = function () {};
+					let onError = function () {
+						let oButtonPopover = oController.byId("buttonMessagePopover");
 						MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorInitPLCSession"), null, null, "Error",
 							sViewName, false, null, oButtonPopover);
 					};
@@ -161,12 +161,12 @@ sap.ui.define([
 		/** @function used to get configuration which are used in the configuration logic
 		 */
 		getConfiguration: function (sViewName) {
-			var oController = this;
-			var onSuccess = function (oData) {
+			let oController = this;
+			let onSuccess = function (oData) {
 				sap.ui.getCore().aConfiguration = oData.d.results;
 			};
-			var onError = function () {
-				var oButtonPopover = oController.byId("buttonMessagePopover");
+			let onError = function () {
+				let oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetConfiguration"), null, null, "Error",
 					sViewName, false, null, oButtonPopover);
 			};
@@ -177,12 +177,12 @@ sap.ui.define([
 		/** @function used to get default values which are used in the configuration logic
 		 */
 		getDefaultValues: function (sViewName) {
-			var oController = this;
-			var onSuccess = function (oData) {
+			let oController = this;
+			let onSuccess = function (oData) {
 				sap.ui.getCore().aDefaultValues = oData.d.results;
 			};
-			var onError = function () {
-				var oButtonPopover = oController.byId("buttonMessagePopover");
+			let onError = function () {
+				let oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetDefaultValues"), null, null, "Error",
 					sViewName, false, null, oButtonPopover);
 			};
@@ -193,12 +193,12 @@ sap.ui.define([
 		/** @function used to get the technical user and client id
 		 */
 		getApplicationSettings: function (sViewName) {
-			var oController = this;
-			var onSuccess = function (oData) {
+			let oController = this;
+			let onSuccess = function (oData) {
 				sap.ui.getCore().aApplicationSettings = oData.d.results;
 			};
-			var onError = function () {
-				var oButtonPopover = oController.byId("buttonMessagePopover");
+			let onError = function () {
+				let oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetApplicationSettings"), null, null,
 					"Error",
 					sViewName, false, null, oButtonPopover);
@@ -209,12 +209,12 @@ sap.ui.define([
 		/** @function used to get details of all existing jobs
 		 */
 		getAllJobs: function (sViewName) {
-			var oController = this;
-			var onSuccess = function (oData) {
+			let oController = this;
+			let onSuccess = function (oData) {
 				sap.ui.getCore().aAllJobs = oData.details.results;
 			};
-			var onError = function () {
-				var oButtonPopover = oController.byId("buttonMessagePopover");
+			let onError = function () {
+				let oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAllJobs"), null, null, "Error",
 					sViewName, false, null, oButtonPopover);
 			};
@@ -231,8 +231,8 @@ sap.ui.define([
 		/** @function used to add an eventlistener so when the window is closed, it triggers logout from PLC
 		 */
 		handleWindowClose: function () {
-			var oController = this;
-			var sLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
+			let oController = this;
+			let sLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "LOGOUT_AT_CLOSE_APP";
 			});
 			if (sLogoutAtCloseApp) {
@@ -245,8 +245,8 @@ sap.ui.define([
 		},
 
 		setSideContentSelectedKey: function (sViewId) {
-			var sideContent = this.getView().getParent().getParent().getSideContent();
-			var selectedKey = sideContent.getSelectedKey();
+			let sideContent = this.getView().getParent().getParent().getSideContent();
+			let selectedKey = sideContent.getSelectedKey();
 			if (selectedKey !== sViewId) {
 				sideContent.setSelectedKey(sViewId);
 			}
@@ -287,7 +287,7 @@ sap.ui.define([
 			};
 
 			let onError = function (error) {
-				var oButtonPopover = oController.byId("buttonMessagePopover");
+				let oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetAuth"),
 					error.status + "-" + error.statusText, null, "Error",
 					oController.oView.sViewName.substring(oController.oView.sViewName.lastIndexOf(".") + 1), //View Name

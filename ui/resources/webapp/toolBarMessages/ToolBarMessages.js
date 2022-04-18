@@ -3,15 +3,15 @@ sap.ui.define([
 ], function (Fragment) {
 	"use strict";
 
-	var oMessagePopover = null;
-	var initialised = false;
+	let oMessagePopover = null;
+	let initialised = false;
 
-	var toolBarMessages = {
+	let toolBarMessages = {
 
 		initialiseMessagePopover: function () {
 			if (initialised === false) {
 				initialised = true;
-				var oView = this.getView();
+				let oView = this.getView();
 				oView.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
 
 				Fragment.load({

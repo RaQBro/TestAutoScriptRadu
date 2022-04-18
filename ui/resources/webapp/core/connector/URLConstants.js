@@ -1,27 +1,27 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	var serviceOdata = "/services.xsodata";
-	var authUrl = "/extensibility/plc/token";
-	var projectsGetUrl = "/extensibility/plc/get-all-projects";
-	var userDetails = "/extensibility/plc/user-details";
-	var jobDetails = "/scheduler/job/get-all-jobs";
-	var initPlcSession = "/standard/plc/init-session";
-	var plcLogout = "/standard/plc/logout-session";
-	var getConfig = "/service/odataService.xsodata/configuration?$format=json";
-	var getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
-	var getApplicationSettings = "/service/odataService.xsodata/application-settings?$format=json";
-	var addNewSchedule = "/scheduler/job/add-new-schedule";
-	var getToken = "/extensibility/plc/token";
-	var setSecStore = "/secure/store/insert?KEY={KEY}";
-	var setDefaultValues = "/extensibility/plc/maintain-default-values";
-	var deleteSecStore = "/secure/store/delete?KEY={KEY}";
-	var getAuthorization = "/extensibility/plc/check-authorization?ID={ID}";
-	var logoutService = "/extensibility/plc/logout-service?IS_ONLINE_MODE=false";
-	var jobOfflineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=false";
-	var jobOnlineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=true";
+	let serviceOdata = "/services.xsodata";
+	let authUrl = "/extensibility/plc/token";
+	let projectsGetUrl = "/extensibility/plc/get-all-projects";
+	let userDetails = "/extensibility/plc/user-details";
+	let jobDetails = "/scheduler/job/get-all-jobs";
+	let initPlcSession = "/standard/plc/init-session";
+	let plcLogout = "/standard/plc/logout-session";
+	let getConfig = "/service/odataService.xsodata/configuration?$format=json";
+	let getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
+	let getApplicationSettings = "/service/odataService.xsodata/application-settings?$format=json";
+	let addNewSchedule = "/scheduler/job/add-new-schedule";
+	let getToken = "/extensibility/plc/token";
+	let setSecStore = "/secure/store/insert?KEY={KEY}";
+	let setDefaultValues = "/extensibility/plc/maintain-default-values";
+	let deleteSecStore = "/secure/store/delete?KEY={KEY}";
+	let getAuthorization = "/extensibility/plc/check-authorization?ID={ID}";
+	let logoutService = "/extensibility/plc/logout-service?IS_ONLINE_MODE=false";
+	let jobOfflineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=false";
+	let jobOnlineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=true";
 
-	var mURLConstants = {
+	let mURLConstants = {
 		AUTH_URL: authUrl,
 		METADATA: serviceOdata + "/$metadata",
 		PROJECTS: projectsGetUrl,

@@ -197,7 +197,7 @@ sap.ui.define([
 			let oController = oView.getController();
 			let sMessage;
 
-			var onSuccess = function (result) {
+			let onSuccess = function (result) {
 				sMessage = {
 					type: "Success"
 				};
@@ -206,7 +206,7 @@ sap.ui.define([
 					result.message,
 					null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
-			var onError = function (oXHR, sTextStatus, sErrorThrown) {
+			let onError = function (oXHR, sTextStatus, sErrorThrown) {
 				sMessage = {
 					type: "Error"
 				};

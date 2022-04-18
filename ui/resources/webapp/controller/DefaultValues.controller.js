@@ -53,12 +53,12 @@ sap.ui.define([
 
 		setNoProjects: function () {
 
-			var sNoProjectsId = "NUMBER_OF_PROJECTS";
+			let sNoProjectsId = "NUMBER_OF_PROJECTS";
 
-			var oView = this.getView();
-			var oNoProjectsControl = oView.byId("inProjPerjob");
+			let oView = this.getView();
+			let oNoProjectsControl = oView.byId("inProjPerjob");
 
-			var oDefaultNoProjects = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+			let oDefaultNoProjects = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === sNoProjectsId;
 			});
 
@@ -70,12 +70,12 @@ sap.ui.define([
 
 		setNoCalculations: function () {
 
-			var sNoCalculationsId = "NUMBER_OF_CALCULATIONS";
+			let sNoCalculationsId = "NUMBER_OF_CALCULATIONS";
 
-			var oView = this.getView();
-			var oNoCalculationsControl = oView.byId("inCalcPerjob");
+			let oView = this.getView();
+			let oNoCalculationsControl = oView.byId("inCalcPerjob");
 
-			var oDefaultNoCalculations = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+			let oDefaultNoCalculations = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === sNoCalculationsId;
 			});
 
@@ -87,12 +87,12 @@ sap.ui.define([
 
 		setNoVersions: function () {
 
-			var sNoVersionsId = "NUMBER_OF_VERSIONS";
+			let sNoVersionsId = "NUMBER_OF_VERSIONS";
 
-			var oView = this.getView();
-			var oNoVersionsControl = oView.byId("inVersPerjob");
+			let oView = this.getView();
+			let oNoVersionsControl = oView.byId("inVersPerjob");
 
-			var oDefaultNoVersions = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+			let oDefaultNoVersions = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === sNoVersionsId;
 			});
 
@@ -104,10 +104,10 @@ sap.ui.define([
 
 		setRTEValue: function () {
 
-			var oView = this.getView();
-			var oRTEControl = oView.byId("txtRTE");
+			let oView = this.getView();
+			let oRTEControl = oView.byId("txtRTE");
 
-			var oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+			let oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === "RTE";
 			});
 
@@ -119,10 +119,10 @@ sap.ui.define([
 
 		setCDEValue: function () {
 
-			var oView = this.getView();
-			var oCDEControl = oView.byId("txtCDE");
+			let oView = this.getView();
+			let oCDEControl = oView.byId("txtCDE");
 
-			var oCDE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+			let oCDE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === "CDE";
 			});
 
@@ -134,17 +134,17 @@ sap.ui.define([
 
 		/** @function Used to saved the updated default values*/
 		onSavePress: function () {
-			var oView = this.getView(),
+			let oView = this.getView(),
 				aInputs = [
 					oView.byId("inProjPerjob"),
 					oView.byId("inCalcPerjob"),
 					oView.byId("inVersPerjob")
 				];
 
-			var oDefaultValues = [];
+			let oDefaultValues = [];
 			aInputs.forEach(function (oInput) {
 				if (oInput.getValue() !== "") {
-					var kvPair = {
+					let kvPair = {
 						FIELD_NAME: oInput.getName(),
 						FIELD_VALUE: oInput.getValue()
 					};
@@ -170,9 +170,9 @@ sap.ui.define([
 				});
 			}
 
-			var oController = this;
+			let oController = this;
 
-			var onSuccess = function () {
+			let onSuccess = function () {
 
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, null, "Success",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
@@ -188,7 +188,7 @@ sap.ui.define([
 				oController.handleControlEditableState("inVersPerjob", false);
 
 			};
-			var onError = function () {
+			let onError = function () {
 
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, null, "Error",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);

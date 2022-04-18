@@ -27,7 +27,7 @@ sap.ui.define([
 			FakeLrepConnectorLocalStorage.enableFakeConnector();
 
 			// call the init function of the parent
-			var i18nModel = new sap.ui.model.resource.ResourceModel({
+			let i18nModel = new sap.ui.model.resource.ResourceModel({
 				bundleUrl: "/webapp/i18n/i18n.properties",
 				fallbackLocale: "en"
 			});
@@ -52,8 +52,8 @@ sap.ui.define([
 					constant: "AUTH_URL"
 				},
 				function (res, status, xhr) {
-					var sHeaderCsrfToken = "X-Csrf-Token";
-					var sCsrfToken = xhr.getResponseHeader(sHeaderCsrfToken);
+					let sHeaderCsrfToken = "X-Csrf-Token";
+					let sCsrfToken = xhr.getResponseHeader(sHeaderCsrfToken);
 					// for POST, PUT, and DELETE requests, add the CSRF token to the header
 					$(document).ajaxSend(function (event, jqxhr, settings) {
 						if (settings.type === "POST" || settings.type === "PUT" || settings.type === "DELETE" || settings.type === "PATCH") {
