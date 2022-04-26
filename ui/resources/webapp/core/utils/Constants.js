@@ -1,7 +1,7 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	var Constants = {
+	let Constants = {
 
 		INFOMESSAGES: {
 			ERROR: "Error",

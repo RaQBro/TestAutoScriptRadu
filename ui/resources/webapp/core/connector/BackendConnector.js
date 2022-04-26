@@ -4,7 +4,7 @@ sap.ui.define([
 ], function ($, BaseConnector) {
 	"use strict";
 
-	var BackendConnector = {
+	let BackendConnector = {
 		doGet: function (vURL, fnSuccess, fnError, bSync, dataType, oHeaders) {
 			return BaseConnector.doAjaxCall("GET", vURL, null, fnSuccess, fnError, oHeaders, true, bSync, dataType);
 		},

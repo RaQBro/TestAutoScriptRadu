@@ -3,13 +3,13 @@ sap.ui.define([
 ], function (UrlProvider) {
 	"use strict";
 
-	var BaseConnector = {
+	let BaseConnector = {
 
 		_sDefaultContentType: "application/json",
 		_sDefaultDataType: "json",
 
 		doAjaxCall: function (sHttpMethod, vURL, oData, fnSuccess, fnError, oHeaders, bExpectsResponse, bSync, dataType, contentType) {
-			var mConfiguration = {};
+			let mConfiguration = {};
 
 			mConfiguration.type = sHttpMethod;
 
@@ -42,7 +42,7 @@ sap.ui.define([
 			}
 
 			if (typeof vURL === "object") {
-				var mURLConfiguration = vURL,
+				let mURLConfiguration = vURL,
 					sQuery = mURLConfiguration.query ? mURLConfiguration.query : "";
 
 				mConfiguration.url = UrlProvider.getUrl(mURLConfiguration.constant, mURLConfiguration.parameters) + sQuery;

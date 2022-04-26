@@ -90,12 +90,12 @@ sap.ui.define([
 			let oView = this.getView();
 			let oController = oView.getController();
 
-			var onSuccess = function (result) {
+			let onSuccess = function (result) {
 
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMessage", [result.details.JOB_ID]), null,
 					null, "Success", oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
-			var onError = function (oXHR, sTextStatus, sErrorThrown) {
+			let onError = function (oXHR, sTextStatus, sErrorThrown) {
 
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMessage"), oXHR.responseText,
 					sErrorThrown, "Error",

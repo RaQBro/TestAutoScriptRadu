@@ -54,7 +54,7 @@ class JobSchedulerService {
 	 * @return {object} result / error - list of jobs / the error
 	 */
 	async getAllJobs() {
-		var that = this;
+		let that = this;
 		return new Promise(function (resolve, reject) {
 			let oJob = {};
 			that.Scheduler.fetchAllJobs(oJob, (error, result) => {
@@ -83,7 +83,7 @@ class JobSchedulerService {
 			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
 
-		var that = this;
+		let that = this;
 		return new Promise(function (resolve, reject) {
 			let oJob = {
 				name: sJobName
@@ -130,7 +130,7 @@ class JobSchedulerService {
 			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
 
-		var that = this;
+		let that = this;
 		return new Promise(function (resolve, reject) {
 			let oJob = {
 				jobId: iJobId,
