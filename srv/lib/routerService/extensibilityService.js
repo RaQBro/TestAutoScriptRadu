@@ -12,6 +12,7 @@ const async = require("async");
  */
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
+const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
@@ -34,6 +35,17 @@ class Service {
 		} else {
 			this.userId = request.user.id.toUpperCase(); // request user
 		}
+	}
+
+	/** @function
+	 * Get token from UAA of PLC for current user
+	 * 
+	 * @return {array} aResults - all projects
+	 */
+	async getUserPlcToken(request) {
+		let UAAToken = new UaaToken.UAAToken();
+		await UAAToken.retrieveApplicationUserToken(request.headers.authorization);
+		return UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 	}
 
 	/** @function
