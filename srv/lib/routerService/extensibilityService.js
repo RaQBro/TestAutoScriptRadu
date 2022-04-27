@@ -40,7 +40,7 @@ class Service {
 	/** @function
 	 * Get token from UAA of PLC for current user
 	 * 
-	 * @return {array} aResults - all projects
+	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
 	 */
 	async getUserPlcToken(request) {
 		let UAAToken = new UaaToken.UAAToken();

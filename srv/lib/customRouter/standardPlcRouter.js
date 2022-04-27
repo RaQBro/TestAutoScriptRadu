@@ -12,6 +12,7 @@ const express = require("express");
  *		- GET /standard/plc/init-session?language=EN
  *		- GET /standard/plc/logout-session
  *		- GET /standard/plc/open-calculation-version?versionId=1000
+ *		- GET /standard/plc/status
  * 
  * @name standardPlcRouter.js
  */

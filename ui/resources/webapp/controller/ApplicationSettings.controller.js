@@ -54,21 +54,21 @@ sap.ui.define([
 		handleMaintainApplicationSettings: function () {
 
 			let aApplicationSettings = sap.ui.getCore().aApplicationSettings;
-			let sTechnicalUser = _.find(aApplicationSettings, (item) => {
+			let oTechnicalUser = _.find(aApplicationSettings, (item) => {
 				return item.FIELD_NAME === "TECHNICAL_USER";
 			});
-			let sClientId = _.find(aApplicationSettings, (item) => {
+			let oClientId = _.find(aApplicationSettings, (item) => {
 				return item.FIELD_NAME === "CLIENT_ID";
 			});
-			if (sTechnicalUser) {
-				if (sTechnicalUser.FIELD_VALUE !== null) {
-					this.getView().byId("technicalUsername").setValue(sTechnicalUser.FIELD_VALUE);
+			if (oTechnicalUser !== undefined) {
+				if (oTechnicalUser.FIELD_VALUE !== null) {
+					this.getView().byId("technicalUsername").setValue(oTechnicalUser.FIELD_VALUE);
 					this.handleControlEnabledState("logoutBtn", true);
 				}
 			}
-			if (sClientId) {
-				if (sClientId.FIELD_VALUE !== null) {
-					this.getView().byId("clientId").setValue(sClientId.FIELD_VALUE);
+			if (oClientId !== undefined) {
+				if (oClientId.FIELD_VALUE !== null) {
+					this.getView().byId("clientId").setValue(oClientId.FIELD_VALUE);
 				}
 			}
 		},
