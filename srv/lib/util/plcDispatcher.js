@@ -65,7 +65,7 @@ class PlcDispatcher {
 
 		let oPrivateRequestClient = axios.create({
 			baseURL: global.plcXsjsUrl,
-			//timeout: 5000,
+			// timeout: 5000,
 			method: sMethod,
 			maxRedirects: 0
 		});
@@ -162,7 +162,7 @@ class PlcDispatcher {
 
 		let oPublicRequestClient = axios.create({
 			baseURL: global.plcPublicApiUrl,
-			//timeout: 5000,
+			// timeout: 5000,
 			method: sMethod,
 			maxRedirects: 0
 		});
