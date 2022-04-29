@@ -64,7 +64,7 @@ class ExtensibilityRouter {
 		 * Endpoint for X-CSRF-Token fetch
 		 */
 		router.get("/token", function (request, response) {
-			response.send(true);
+			response.status(200).send(true);
 		});
 
 		/**
@@ -75,7 +75,7 @@ class ExtensibilityRouter {
 			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
 			ExtensibilityPlcService.getUserPlcToken(request).then(function (result) {
-				response.type(sContentType).status(200).send(result);
+				response.status(200).send(result);
 			}).catch(async function (err) {
 				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
