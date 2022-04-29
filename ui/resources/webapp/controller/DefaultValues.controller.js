@@ -205,6 +205,8 @@ sap.ui.define([
 				this.handleControlEditableState("inCalcPerjob", true);
 				this.handleControlEditableState("inVersPerjob", true);
 				this.handleControlEnabledState("editBtn", false);
+				this.handleControlEnabledState("cancelBtn", true);
+				
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);

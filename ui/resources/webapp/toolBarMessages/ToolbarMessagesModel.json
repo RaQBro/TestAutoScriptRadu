@@ -5,7 +5,9 @@
 		"logoutEnabled": true,
 		"logoutVisible": true,
 		"editEnabled": true,
-		"editVisible": true
+		"editVisible": true,
+		"cancelEnabled": false,
+		"cancelVisible": false
 	},
 	"defaultValues": {
 		"saveEnabled": false,
@@ -13,7 +15,9 @@
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": true,
-		"editVisible": true
+		"editVisible": true,
+		"cancelEnabled": false,
+		"cancelVisible": true
 	},
 	"messages": {
 		"saveEnabled": false,
@@ -21,7 +25,9 @@
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
-		"editVisible": false
+		"editVisible": false,
+		"cancelEnabled": false,
+		"cancelVisible": false
 	},
 	"jobs": {
 		"saveEnabled": false,
@@ -29,7 +35,9 @@
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
-		"editVisible": false
+		"editVisible": false,
+		"cancelEnabled": false,
+		"cancelVisible": false
 	},
 	"default": {
 		"saveEnabled": false,
@@ -37,6 +45,8 @@
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
-		"editVisible": false
+		"editVisible": false,
+		"cancelEnabled": false,
+		"cancelVisible": false
 	}
 }
