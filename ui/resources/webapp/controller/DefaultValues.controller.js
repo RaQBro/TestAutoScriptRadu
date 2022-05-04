@@ -206,7 +206,24 @@ sap.ui.define([
 				this.handleControlEditableState("inVersPerjob", true);
 				this.handleControlEnabledState("editBtn", false);
 				this.handleControlEnabledState("cancelBtn", true);
-				
+
+			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+
+		},
+		onCancelPress: function () {
+			if (this.oAuth.maintain === true) {
+				this.handleControlEditableState("txtRTE", false);
+				this.handleControlEditableState("txtCDE", false);
+				this.handleControlEditableState("inProjPerjob", false);
+				this.handleControlEditableState("inCalcPerjob", false);
+				this.handleControlEditableState("inVersPerjob", false);
+				this.handleControlEnabledState("editBtn", true);
+				this.handleControlEnabledState("cancelBtn", false);
+				this.setupView();
+
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
