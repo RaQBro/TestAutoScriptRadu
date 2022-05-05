@@ -26,13 +26,17 @@ sap.ui.define([
 			}
 		},
 
+		onAfterRendering: function () {},
+
 		onObjectMatched: function () {
+
 			this.openBusyDialog();
 			this.setupView();
 			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
@@ -46,10 +50,13 @@ sap.ui.define([
 			this.setNoVersions();
 			this.setRTEValue();
 			this.setCDEValue();
-
 		},
 
-		onAfterRendering: function () {},
+		initialiseViewLogic: function () {
+
+			// Get default values
+			this.getDefaultValues(this.getViewName("item"));
+		},
 
 		setNoProjects: function () {
 

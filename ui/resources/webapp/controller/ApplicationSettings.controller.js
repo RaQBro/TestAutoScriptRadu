@@ -29,10 +29,13 @@ sap.ui.define([
 			}
 		},
 
+		onAfterRendering: function () {},
+
 		onObjectMatched: function () {
 
 			this.openBusyDialog();
 			this.setupView();
+			this.initialiseViewLogic();
 			this.closeBusyDialog();
 		},
 
@@ -50,7 +53,11 @@ sap.ui.define([
 			this.handleMaintainApplicationSettings();
 		},
 
-		onAfterRendering: function () {},
+		initialiseViewLogic: function () {
+
+			// Get application settings
+			this.getApplicationSettings(this.getViewName("item"));
+		},
 
 		handleMaintainApplicationSettings: function () {
 

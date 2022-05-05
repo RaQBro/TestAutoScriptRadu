@@ -21,10 +21,12 @@ sap.ui.define([
 		 */
 
 		onInit: function () {
+
 			ToolBarMessages.initialiseMessagePopover.call(this);
 		},
 
 		getResourceBundleText: function (text, aValues) {
+
 			if (this.bundle === undefined || this.bundle === null) {
 				this.bundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			}
@@ -34,6 +36,7 @@ sap.ui.define([
 
 		/** @function Used to get Router*/
 		getRouter: function () {
+
 			return UIComponent.getRouterFor(this);
 		},
 
@@ -43,32 +46,38 @@ sap.ui.define([
 		 * @param {Object} oParams containing key - value pairs for parameters
 		 */
 		navTo: function (sTarget, oParams) {
+
 			this.getRouter().navTo(sTarget, oParams);
 		},
 
 		/** @function Used to get model*/
 		getModel: function (sName) {
+
 			return this.getView().getModel(sName);
 		},
 
 		/** @function Used to set model*/
 		setModel: function (oModel, sName) {
+
 			return this.getView().setModel(oModel, sName);
 		},
 
 		/** @function Used to get translation model*/
 		getResourceBundle: function () {
+
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
 
 		/** @function Used to get toolBarMessages model*/
 		getToolBarMessagesModel: function () {
+
 			return this.getOwnerComponent().getModel("toolBarMessagesModel");
 		},
 
 		/** @function used to open BusyDialog
 		 */
 		openBusyDialog: function () {
+
 			let oView = this.getView();
 
 			if (!this._busyDialog) {
@@ -87,6 +96,7 @@ sap.ui.define([
 		},
 
 		closeBusyDialog: function () {
+
 			setTimeout(function () {
 				this._busyDialog.then((oBusyDialog) => {
 					oBusyDialog.close();
@@ -99,6 +109,7 @@ sap.ui.define([
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
 		 handleControlEnabledState: function (controlId, state) {
+
 			this.byId(controlId).setEnabled(state);
 		},
 
@@ -107,6 +118,7 @@ sap.ui.define([
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
 		handleControlEditableState: function (controlId, state) {
+
 			this.byId(controlId).setEditable(state);
 		},
 
@@ -115,12 +127,14 @@ sap.ui.define([
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
 		handleControlVisibleState: function (controlId, state) {
+
 			this.byId(controlId).setVisible(state);
 		},
 
 		/** @function used to get the user details to show them on the ui
 		 */
 		getUserDetails: function () {
+
 			let oController = this,
 				oUserDetails = {};
 
@@ -143,6 +157,7 @@ sap.ui.define([
 		/** @function used to initialize the PLC session
 		 */
 		plcInitSession: function (sViewName) {
+
 			let oController = this;
 
 			let sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
@@ -167,6 +182,7 @@ sap.ui.define([
 		/** @function used to get configuration which are used in the configuration logic
 		 */
 		getConfiguration: function (sViewName) {
+
 			let oController = this;
 			let onSuccess = function (oData) {
 				sap.ui.getCore().aConfiguration = oData.d.results;
@@ -183,6 +199,7 @@ sap.ui.define([
 		/** @function used to get default values which are used in the configuration logic
 		 */
 		getDefaultValues: function (sViewName) {
+
 			let oController = this;
 			let onSuccess = function (oData) {
 				sap.ui.getCore().aDefaultValues = oData.d.results;
@@ -215,6 +232,7 @@ sap.ui.define([
 		/** @function used to get details of all existing jobs
 		 */
 		getAllJobs: function (sViewName) {
+
 			let oController = this;
 			let onSuccess = function (oData) {
 				sap.ui.getCore().aAllJobs = oData.details.results;
@@ -231,12 +249,14 @@ sap.ui.define([
 		/** @function used to logout from PLC
 		 */
 		plcLogout: function () {
+
 			BackendConnector.doGet("LOGOUT_PLC", null, null, true);
 		},
 
 		/** @function used to add an eventlistener so when the window is closed, it triggers logout from PLC
 		 */
 		handleWindowClose: function () {
+
 			let oController = this;
 			let sLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "LOGOUT_AT_CLOSE_APP";
@@ -316,6 +336,7 @@ sap.ui.define([
 		},
 		
 		getPageModel: function (view) {
+			
 			let fullModel = this.getToolBarMessagesModel();
 			let data = fullModel.oData[view] || fullModel.oData.default || {};
 
