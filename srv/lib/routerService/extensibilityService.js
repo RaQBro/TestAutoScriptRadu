@@ -43,6 +43,7 @@ class Service {
 	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
 	 */
 	async getUserPlcToken(request) {
+
 		let UAAToken = new UaaToken.UAAToken();
 		await UAAToken.retrieveApplicationUserToken(request.headers.authorization);
 		return UAAToken.APPLICATION_USER_ACCESS_TOKEN;
@@ -54,6 +55,7 @@ class Service {
 	 * @return {array} aResults - all projects
 	 */
 	async getAllProjects() {
+
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
@@ -205,6 +207,7 @@ class Service {
 	}
 
 	createTempDefaultValuesTable(client, tName, tType) {
+
 		return new Promise(function (resolve, reject) {
 			let sql = `CREATE LOCAL TEMPORARY TABLE ${tName} LIKE "${tType}"`;
 			client.exec(sql, function (err, res) {
@@ -218,6 +221,7 @@ class Service {
 	}
 
 	insertIntoTempDefaultValuesTable(client, tName, defaultItems) {
+
 		return new Promise(function (resolve, reject) {
 			client.prepare(`INSERT INTO ${tName} VALUES(?, ?, ?)`, function (err, statement) {
 				if (err) {
@@ -260,6 +264,7 @@ class Service {
 	}
 
 	dropTempDefaultValuesTable(client, tName) {
+
 		return new Promise(function (resolve, reject) {
 			client.exec("DROP TABLE " + tName, function (err, res) {
 				if (err) {
@@ -272,6 +277,7 @@ class Service {
 	}
 
 	countTempDefaultValuesTable(client, tName) {
+
 		return new Promise(function (resolve, reject) {
 			client.exec(`SELECT COUNT(*) AS "COUNT" FROM ${tName}`, function (err, res) {
 				if (err) {
@@ -286,6 +292,7 @@ class Service {
 	}
 
 	async getProjectsJob() {
+
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
@@ -301,6 +308,7 @@ class Service {
 	}
 
 	async getCalculationsJob() {
+
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
@@ -316,6 +324,7 @@ class Service {
 	}
 
 	async getVersionsJob() {
+		
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(

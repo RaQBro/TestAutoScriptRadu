@@ -64,6 +64,7 @@ class ExtensibilityRouter {
 		 * Endpoint for X-CSRF-Token fetch
 		 */
 		router.get("/token", function (request, response) {
+
 			response.status(200).send(true);
 		});
 
@@ -86,6 +87,7 @@ class ExtensibilityRouter {
 		 * Endpoint for authenticated user details fetch
 		 */
 		router.get("/user-details", function (request, response) {
+
 			response.type(sContentType).status(200).send({
 				"givenName": request.authInfo.getGivenName(),
 				"familyName": request.authInfo.getFamilyName(),
@@ -94,6 +96,7 @@ class ExtensibilityRouter {
 		});
 
 		router.get("/check-authorization", function (request, response) {
+
 			if (!helpers.isUndefinedNullOrEmptyString(request.query) && !helpers.isUndefinedNullOrEmptyString(request.query.ID)) {
 				let sDisplayScope = "$XSAPPNAME." + request.query.ID + "_Display";
 				let sMaintainScope = "$XSAPPNAME." + request.query.ID + "_Maintain";
@@ -128,6 +131,7 @@ class ExtensibilityRouter {
 		 * Endpoint for plc application routes fetch
 		 */
 		router.get("/application-routes", function (request, response) {
+
 			response.type(sContentType).status(200).send({
 				"web": global.plcWebUrl,
 				"xsjs": global.plcXsjsUrl,
@@ -165,7 +169,6 @@ class ExtensibilityRouter {
 		router.get("/example-service", async function (request, response) {
 
 			try {
-
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
@@ -188,14 +191,12 @@ class ExtensibilityRouter {
 						response.status(200).send(oMessage);
 					}
 				}
-
 			} catch (err) {
 
 				// return error and stop execution of the service
 				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
 				response.status(oPlcException.code.responseCode).send(oPlcException);
 				return;
-
 			}
 
 			// import service
@@ -223,7 +224,6 @@ class ExtensibilityRouter {
 
 					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
-
 				} else {
 
 					// get all messages from the job
@@ -238,7 +238,6 @@ class ExtensibilityRouter {
 						// send response
 						response.type(sContentType).status(iStatusCode).send(oResponseBody);
 					}
-
 				}
 			})
 
@@ -258,7 +257,6 @@ class ExtensibilityRouter {
 
 					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, 500, err);
-
 				} else {
 
 					// create error as service response body
@@ -271,7 +269,6 @@ class ExtensibilityRouter {
 					if (request.IS_ONLINE_MODE === true) {
 						response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 					}
-
 				}
 			});
 		});
@@ -279,7 +276,6 @@ class ExtensibilityRouter {
 		router.get("/logout-service", async function (request, response) {
 
 			try {
-
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
@@ -302,14 +298,12 @@ class ExtensibilityRouter {
 						response.status(200).send(oMessage);
 					}
 				}
-
 			} catch (err) {
 
 				// return error and stop execution of the service
 				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
 				response.status(oPlcException.code.responseCode).send(oPlcException);
 				return;
-
 			}
 
 			// import service
@@ -337,7 +331,6 @@ class ExtensibilityRouter {
 
 					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
-
 				} else {
 
 					// get all messages from the job
@@ -352,7 +345,6 @@ class ExtensibilityRouter {
 						// send response
 						response.type(sContentType).status(iStatusCode).send(oResponseBody);
 					}
-
 				}
 			})
 
@@ -372,7 +364,6 @@ class ExtensibilityRouter {
 
 					// update run log of schedule
 					JobSchedulerUtil.updateRunLogOfSchedule(request, 500, err);
-
 				} else {
 
 					// create error as service response body
@@ -385,7 +376,6 @@ class ExtensibilityRouter {
 					if (request.IS_ONLINE_MODE === true) {
 						response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 					}
-
 				}
 			});
 		});

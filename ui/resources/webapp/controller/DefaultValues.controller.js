@@ -209,7 +209,6 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
-
 		},
 
 		onChangeNoProjects: function () {

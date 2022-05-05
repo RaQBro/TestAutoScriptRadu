@@ -2191,6 +2191,5 @@ class Dispatcher {
 
 		return oResponse.data;
 	}
-
 }
 exports.Dispatcher = module.exports.Dispatcher = Dispatcher;

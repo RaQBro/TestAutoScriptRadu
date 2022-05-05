@@ -1,19 +1,27 @@
-procedure "p_maintain_t_default_values" (
-    in INPUT_TABLE		"tt_default_values"
+PROCEDURE "p_maintain_t_default_values" (
+    IN INPUT_TABLE		"tt_default_values"
 )
 
 LANGUAGE SQLSCRIPT
 SQL SECURITY INVOKER
-as
+AS
 
-begin
+BEGIN
 
-	delete from "sap.plc.extensibility::template_application.t_default_values" where FIELD_NAME in (select distinct FIELD_NAME from :INPUT_TABLE);
+	DELETE FROM "sap.plc.extensibility::template_application.t_default_values"
+	WHERE FIELD_NAME IN (
+							SELECT DISTINCT 
+								FIELD_NAME 
+							FROM :INPUT_TABLE
+						);
 	
-	upsert "sap.plc.extensibility::template_application.t_default_values" (FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION) 
-		select FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION from :INPUT_TABLE 
-		where 
-			FIELD_VALUE is not null or 
-			FIELD_DESCRIPTION is not null;
+	UPSERT "sap.plc.extensibility::template_application.t_default_values" (FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION) 
+		SELECT 
+			FIELD_NAME, 
+			FIELD_VALUE, 
+			FIELD_DESCRIPTION 
+		FROM :INPUT_TABLE 
+		WHERE FIELD_VALUE IS NOT NULL
+			OR FIELD_DESCRIPTION IS NOT NULL;
 	    
-end
+END

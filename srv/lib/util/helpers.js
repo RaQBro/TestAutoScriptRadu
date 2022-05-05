@@ -17,6 +17,7 @@ const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
  * Returns a new date as string based on the number of seconds from now
  */
 function nowPlusSecondstoISOString(iNumberOfSeconds) {
+
 	let now = new Date();
 	let soon = new Date(now.getTime() + (iNumberOfSeconds * 1000));
 	return soon.toISOString(); // "2020-12-11T10:39:29.114Z"
@@ -26,6 +27,7 @@ function nowPlusSecondstoISOString(iNumberOfSeconds) {
  * Checks if the value is null or undefined
  */
 function isUndefinedOrNull(param) {
+
 	return typeof param === "undefined" || param === null;
 }
 
@@ -33,6 +35,7 @@ function isUndefinedOrNull(param) {
  * Checks if the value is null, undefined or empty string
  */
 function isUndefinedNullOrEmptyString(param) {
+
 	return typeof param === "undefined" || param === null || param === "";
 }
 
@@ -40,6 +43,7 @@ function isUndefinedNullOrEmptyString(param) {
  * Checks if the value is null, undefined or empty object
  */
 function isUndefinedNullOrEmptyObject(param) {
+
 	return typeof param === "undefined" || param === null || JSON.stringify(param) === "{}";
 }
 
@@ -47,6 +51,7 @@ function isUndefinedNullOrEmptyObject(param) {
  * Checks if request is executed from a job
  */
 function isRequestFromJob(request) {
+
 	return request.headers["x-sap-job-id"] !== undefined ? true : false;
 }
 
@@ -54,6 +59,7 @@ function isRequestFromJob(request) {
  * Get all configurations from table
  */
 async function getAllConfigurations() {
+
 	let hdbClient = await DatabaseClass.createConnection();
 	let connection = new DatabaseClass(hdbClient);
 	let statement = await connection.preparePromisified(
@@ -70,6 +76,7 @@ async function getAllConfigurations() {
  * Get all default values from table
  */
 async function getAllDefaultValues() {
+
 	let hdbClient = await DatabaseClass.createConnection();
 	let connection = new DatabaseClass(hdbClient);
 	let statement = await connection.preparePromisified(
@@ -87,6 +94,7 @@ async function getAllDefaultValues() {
  * Should be used before JSON.stringify() in order to get all error details. 
  */
 function recursivePropertyFinder(obj) {
+
 	if (obj === Object.prototype) {
 		return {};
 	} else {
@@ -111,6 +119,7 @@ function recursivePropertyFinder(obj) {
  * @return {array} array - array with arrays
  */
 function chunkIntoSmallArrays(a, n) {
+	
 	return [...Array(Math.ceil(a.length / n))].map((x, i) => a.slice(n * i, n + n * i));
 }
 
@@ -210,6 +219,7 @@ function decompressedResultArray(oInput) {
 }
 
 function sleep(ms) {
+
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 

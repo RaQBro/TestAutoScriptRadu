@@ -544,7 +544,6 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 	);
 	await connection.statementExecPromisified(statement, [iJobIdToSave, sSeverity, sTrimmedMessage, sTrimmedDetails, sOperationToSave]);
 	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-
 };
 
 /** @class
@@ -557,6 +556,7 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
  * @param {object} oInnerException - inner exception passed here
  */
 function PlcException(oCode, sMessage, oDetails, oInnerException) {
+
 	this.code = oCode;
 	this.message = sMessage;
 	this.details = oDetails;
@@ -597,7 +597,6 @@ PlcException.createPlcException = async function (oException, iJobId, sOperation
 
 	// return exception
 	return oPlcException;
-
 };
 
 module.exports.Code = Code;

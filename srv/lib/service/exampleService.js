@@ -47,6 +47,7 @@ async function doService(request) {
 	// ------------------------- Start Functions List ---------------------------
 
 	this.getFirstProject = async function () {
+		
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
@@ -140,7 +141,7 @@ async function doService(request) {
 		if (oInitPlcSession !== undefined) {
 			let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
 			oServiceResponseBody.CURRENT_USER = sCurrentUser;
-			await Message.addLog(request.JOB_ID, `Session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
+			await Message.addLog(request.JOB_ID, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
 		}
 
 		let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");

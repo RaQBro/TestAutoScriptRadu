@@ -54,6 +54,7 @@ class JobSchedulerService {
 	 * @return {object} result / error - list of jobs / the error
 	 */
 	async getAllJobs() {
+
 		let that = this;
 		return new Promise(function (resolve, reject) {
 			let oJob = {};
@@ -84,6 +85,7 @@ class JobSchedulerService {
 		}
 
 		let that = this;
+
 		return new Promise(function (resolve, reject) {
 			let oJob = {
 				name: sJobName
@@ -216,6 +218,5 @@ class JobSchedulerService {
 
 		return new Message(`The number of added new schedules is: ${iNumberOfSchedules}.`, aSchedules);
 	}
-
 }
 exports.JobSchedulerService = module.exports.JobSchedulerService = JobSchedulerService;

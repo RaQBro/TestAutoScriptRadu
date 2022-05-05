@@ -492,6 +492,5 @@ class JobSchedulerUtil {
 
 		return oReturnIds;
 	}
-
 }
 exports.JobSchedulerUtil = module.exports.JobSchedulerUtil = JobSchedulerUtil;

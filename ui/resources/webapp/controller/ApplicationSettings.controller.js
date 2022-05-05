@@ -30,12 +30,14 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function () {
+
 			this.openBusyDialog();
 			this.setupView();
 			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
@@ -46,7 +48,6 @@ sap.ui.define([
 			this.setSideContentSelectedKey(this.sViewName);
 
 			this.handleMaintainApplicationSettings();
-
 		},
 
 		onAfterRendering: function () {},
@@ -77,10 +78,10 @@ sap.ui.define([
 
 			this.maintainApplicationSettings();
 			this.getApplicationSettings();
-
 		},
 
 		onEditPress: function () {
+
 			if (this.oAuth.maintain === true) {
 				this.handleControlEnabledState("editBtn", false);
 				this.handleControlEditableState("clientId", true);
@@ -92,7 +93,6 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
-
 		},
 
 		maintainApplicationSettings: function () {
@@ -193,6 +193,7 @@ sap.ui.define([
 		},
 
 		logoutPress: function () {
+			
 			let oView = this.getView();
 			let oController = oView.getController();
 			let sMessage;
@@ -206,6 +207,7 @@ sap.ui.define([
 					result.message,
 					null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
+			
 			let onError = function (oXHR, sTextStatus, sErrorThrown) {
 				sMessage = {
 					type: "Error"

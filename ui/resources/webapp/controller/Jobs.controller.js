@@ -11,6 +11,7 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
+
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("J");
 
@@ -23,16 +24,19 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function () {
+
 			this.openBusyDialog();
 			this.setupView();
 			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
 		setupView: function () {
+
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
 			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
 
@@ -40,10 +44,12 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function () {
+
 			this.applyFilters();
 		},
 
 		applyFilters: function () {
+
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stJobs");
 
@@ -68,14 +74,17 @@ sap.ui.define([
 		},
 
 		onBeforeRebindTable: function (oEvent) {
+
 			this.renameColumns(oEvent);
 		},
 
 		onRefreshEntries: function () {
+
 			this.oView.byId("stJobs").getTable().getBinding("items").refresh();
 		},
 
 		onViewJobLogs: function (oEvent) {
+			
 			let iJobId = oEvent.getSource().getBindingContext().getObject().JOB_ID;
 
 			this.navTo("messages", {
@@ -84,6 +93,7 @@ sap.ui.define([
 		},
 
 		renameColumns: function (oEvent) {
+
 			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
 			}
@@ -123,6 +133,7 @@ sap.ui.define([
 		},
 
 		formatRowHighlight: function (oValue) {
+			
 			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {

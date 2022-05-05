@@ -60,10 +60,12 @@ sap.ui.define([
 		getResourceBundle: function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
+
 		/** @function Used to get toolBarMessages model*/
 		getToolBarMessagesModel: function () {
 			return this.getOwnerComponent().getModel("toolBarMessagesModel");
 		},
+
 		/** @function used to open BusyDialog
 		 */
 		openBusyDialog: function () {
@@ -92,19 +94,23 @@ sap.ui.define([
 			}.bind(this), 1000);
 		},
 
-		/** @function used to handle the state of a control
+		/** @function used to handle the enable state of a control
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
-		handleControlEnabledState: function (controlId, state) {
+		 handleControlEnabledState: function (controlId, state) {
 			this.byId(controlId).setEnabled(state);
 		},
 
+		/** @function used to handle the editable state of a control
+		 * @param {string} controlId - used to select the control id
+		 * @param {boolean} state - used to set the state of the control true/false
+		 */
 		handleControlEditableState: function (controlId, state) {
 			this.byId(controlId).setEditable(state);
 		},
 
-		/** @function used to handle the visibility of a control
+		/** @function used to handle the visible state of a control
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
@@ -245,6 +251,7 @@ sap.ui.define([
 		},
 
 		setSideContentSelectedKey: function (sViewId) {
+
 			let sideContent = this.getView().getParent().getParent().getSideContent();
 			let selectedKey = sideContent.getSelectedKey();
 			if (selectedKey !== sViewId) {
@@ -259,6 +266,7 @@ sap.ui.define([
 		},
 
 		getContentDensityClass: function () {
+
 			if (!this._sContentDensityClass) {
 				this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
 			}
@@ -266,6 +274,7 @@ sap.ui.define([
 		},
 
 		onMessageTitlePress: function (oEvent) {
+
 			this.navTo("messages", {
 				jobID: oEvent.getParameters().item.getBindingContext("message").getObject().technicalDetails.JOB_ID
 			});
@@ -276,6 +285,7 @@ sap.ui.define([
 		 * example for Default Values View we have $XSAPPNAME.DV_Display". Scope ID here will be "DV"
 		 **/
 		checkAuthorization: function (sScopeId) {
+
 			let oController = this;
 			let oAuth = {};
 
@@ -304,6 +314,7 @@ sap.ui.define([
 			return oAuth;
 
 		},
+		
 		getPageModel: function (view) {
 			let fullModel = this.getToolBarMessagesModel();
 			let data = fullModel.oData[view] || fullModel.oData.default || {};

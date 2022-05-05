@@ -25,7 +25,6 @@ sap.ui.define([
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
-
 		},
 
 		onAfterRendering: function () {},
@@ -39,6 +38,7 @@ sap.ui.define([
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
@@ -50,7 +50,6 @@ sap.ui.define([
 
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s
 			this.mViewSettingsDialogs = {};
-
 		},
 
 		initialiseViewLogic: function () {
@@ -61,8 +60,6 @@ sap.ui.define([
 			this.getDefaultValues(this.getViewName("item"));
 			// Get application settings
 			this.getApplicationSettings(this.getViewName("item"));
-			// Get all jobs
-			this.getAllJobs(this.getViewName("item"));
 			// Triggered to initialize the PLC session if INIT_SESSION_AT_OPEN_APP is true
 			this.plcInitSession(this.getViewName("item"));
 			// Triggered to activate the event listener for logging out of PLC when LOGOUT_AT_CLOSE_APP is true. The logout will happen on window/browser close.
@@ -83,10 +80,12 @@ sap.ui.define([
 		},
 
 		onOnlinePress: function () {
+
 			MobileLibrary.URLHelper.redirect("/extensibility/plc/example-service?IS_ONLINE_MODE=true", true);
 		},
 
 		onOfflinePress: function () {
+			
 			let oView = this.getView();
 			let oController = oView.getController();
 
