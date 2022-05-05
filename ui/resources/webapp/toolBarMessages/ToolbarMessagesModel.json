@@ -17,7 +17,7 @@
 		"editEnabled": true,
 		"editVisible": true,
 		"cancelEnabled": false,
-		"cancelVisible": true
+		"cancelVisible": false
 	},
 	"messages": {
 		"saveEnabled": false,

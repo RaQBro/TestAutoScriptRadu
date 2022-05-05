@@ -46,7 +46,6 @@ sap.ui.define([
 			this.setNoVersions();
 			this.setRTEValue();
 			this.setCDEValue();
-
 		},
 
 		onAfterRendering: function () {},
@@ -65,6 +64,9 @@ sap.ui.define([
 			if (oDefaultNoProjects !== null && oDefaultNoProjects !== undefined) {
 
 				oNoProjectsControl.setValue(oDefaultNoProjects.FIELD_VALUE);
+			} else {
+
+				oNoProjectsControl.setValue("");
 			}
 		},
 
@@ -82,6 +84,9 @@ sap.ui.define([
 			if (oDefaultNoCalculations !== null && oDefaultNoCalculations !== undefined) {
 
 				oNoCalculationsControl.setValue(oDefaultNoCalculations.FIELD_VALUE);
+			} else {
+
+				oNoCalculationsControl.setValue("");
 			}
 		},
 
@@ -99,6 +104,9 @@ sap.ui.define([
 			if (oDefaultNoVersions !== null && oDefaultNoVersions !== undefined) {
 
 				oNoVersionsControl.setValue(oDefaultNoVersions.FIELD_VALUE);
+			} else {
+
+				oNoVersionsControl.setValue("");
 			}
 		},
 
@@ -114,6 +122,9 @@ sap.ui.define([
 			if (oRTE !== null && oRTE !== undefined) {
 
 				oRTEControl.setValue(oRTE.FIELD_DESCRIPTION);
+			} else {
+
+				oRTEControl.setValue("");
 			}
 		},
 
@@ -129,6 +140,9 @@ sap.ui.define([
 			if (oCDE !== null && oCDE !== undefined) {
 
 				oCDEControl.setValue(oCDE.FIELD_DESCRIPTION);
+			} else {
+
+				oCDEControl.setValue("");
 			}
 		},
 
@@ -186,7 +200,6 @@ sap.ui.define([
 				oController.handleControlEditableState("inProjPerjob", false);
 				oController.handleControlEditableState("inCalcPerjob", false);
 				oController.handleControlEditableState("inVersPerjob", false);
-
 			};
 			let onError = function () {
 
@@ -199,36 +212,43 @@ sap.ui.define([
 		onEditPress: function () {
 
 			if (this.oAuth.maintain === true) {
+
 				this.handleControlEditableState("txtRTE", true);
 				this.handleControlEditableState("txtCDE", true);
 				this.handleControlEditableState("inProjPerjob", true);
 				this.handleControlEditableState("inCalcPerjob", true);
 				this.handleControlEditableState("inVersPerjob", true);
+				this.handleControlVisibleState("editBtn", false);
 				this.handleControlEnabledState("editBtn", false);
+				this.handleControlVisibleState("cancelBtn", true);
 				this.handleControlEnabledState("cancelBtn", true);
-
 			} else {
+
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
-
 		},
+
 		onCancelPress: function () {
+
 			if (this.oAuth.maintain === true) {
+
 				this.handleControlEditableState("txtRTE", false);
 				this.handleControlEditableState("txtCDE", false);
 				this.handleControlEditableState("inProjPerjob", false);
 				this.handleControlEditableState("inCalcPerjob", false);
 				this.handleControlEditableState("inVersPerjob", false);
+				this.handleControlVisibleState("editBtn", true);
 				this.handleControlEnabledState("editBtn", true);
 				this.handleControlEnabledState("cancelBtn", false);
-				this.setupView();
+				this.handleControlVisibleState("cancelBtn", false);
 
+				this.setupView();
 			} else {
+
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
-
 		},
 
 		onChangeNoProjects: function () {
