@@ -56,7 +56,7 @@ sap.ui.define([
 		initialiseViewLogic: function () {
 
 			// Get application settings
-			this.getApplicationSettings(this.getViewName("item"));
+			this.getApplicationSettings(this.getViewName("fixedItem"));
 		},
 
 		handleMaintainApplicationSettings: function () {

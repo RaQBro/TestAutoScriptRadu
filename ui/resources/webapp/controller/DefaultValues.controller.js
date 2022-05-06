@@ -55,7 +55,7 @@ sap.ui.define([
 		initialiseViewLogic: function () {
 
 			// Get default values
-			this.getDefaultValues(this.getViewName("item"));
+			this.getDefaultValues(this.getViewName("fixedItem"));
 		},
 
 		setNoProjects: function () {
