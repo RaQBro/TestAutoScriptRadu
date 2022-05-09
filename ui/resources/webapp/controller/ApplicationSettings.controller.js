@@ -82,17 +82,43 @@ sap.ui.define([
 
 		onEditPress: function () {
 			if (this.oAuth.maintain === true) {
-				this.handleControlEnabledState("editBtn", false);
+
 				this.handleControlEditableState("clientId", true);
 				this.handleControlEditableState("clientSecret", true);
 				this.handleControlEditableState("technicalUsername", true);
 				this.handleControlEditableState("technicalPassword", true);
+				this.handleControlEnabledState("editBtn", false);
+				this.handleControlVisibleState("editBtn", false);
+				this.handleControlEnabledState("cancelBtn", true);
+				this.handleControlVisibleState("cancelBtn", true);
 
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
 
+		},
+		onCancelPress: function () {
+
+			if (this.oAuth.maintain === true) {
+				this.handleControlEditableState("clientId", false);
+				this.handleControlEditableState("clientSecret", false);
+				this.handleControlEditableState("technicalUsername", false);
+				this.handleControlEditableState("technicalPassword", false);
+				this.handleControlVisibleState("editBtn", true);
+				this.handleControlEnabledState("editBtn", true);
+				this.handleControlEnabledState("cancelBtn", false);
+				this.handleControlVisibleState("cancelBtn", false);
+
+				this.setupView();
+				this.getView().byId("technicalPassword").setValue("");
+				this.getView().byId("clientSecret").setValue("");
+
+			} else {
+
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
 		},
 
 		maintainApplicationSettings: function () {
