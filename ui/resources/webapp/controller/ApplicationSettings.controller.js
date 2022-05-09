@@ -47,6 +47,7 @@ sap.ui.define([
 		setupView: function () {
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.pageModel = this.getModel("pageModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.setSideContentSelectedKey(this.sViewName);
 
@@ -90,13 +91,42 @@ sap.ui.define([
 		onEditPress: function () {
 
 			if (this.oAuth.maintain === true) {
-				this.handleControlEnabledState("editBtn", false);
+
+				this.pageModel.setProperty("/editEnabled", false);
+				this.pageModel.setProperty("/editVisible", false);
+				this.pageModel.setProperty("/cancelEnabled", true);
+				this.pageModel.setProperty("/cancelVisible", true);
+
 				this.handleControlEditableState("clientId", true);
 				this.handleControlEditableState("clientSecret", true);
 				this.handleControlEditableState("technicalUsername", true);
 				this.handleControlEditableState("technicalPassword", true);
 
 			} else {
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+		},
+		onCancelPress: function () {
+
+			if (this.oAuth.maintain === true) {
+
+				this.pageModel.setProperty("/editEnabled", true);
+				this.pageModel.setProperty("/editVisible", true);
+				this.pageModel.setProperty("/cancelEnabled", false);
+				this.pageModel.setProperty("/cancelVisible", false);
+
+				this.handleControlEditableState("clientId", false);
+				this.handleControlEditableState("clientSecret", false);
+				this.handleControlEditableState("technicalUsername", false);
+				this.handleControlEditableState("technicalPassword", false);
+
+				this.setupView();
+				this.getView().byId("technicalPassword").setValue("");
+				this.getView().byId("clientSecret").setValue("");
+
+			} else {
+
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
@@ -115,8 +145,9 @@ sap.ui.define([
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword, technicalNameUser);
 				this.insertIntoSecureStore(sClientId, sClientSecret, technicalNameClient);
 
-				this.handleControlEnabledState("saveBtn", false);
-				this.handleControlEnabledState("editBtn", true);
+				this.pageModel.setProperty("/saveEnabled", false);
+				this.pageModel.setProperty("/editEnabled", true);
+
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);
@@ -181,22 +212,22 @@ sap.ui.define([
 
 		onChangeUsername: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", false);
 		},
 
 		onChangePassword: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", false);
 		},
 
 		onChangeClientId: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", false);
 		},
 
 		onChangeClientSecret: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", false);
 		},
 
 		logoutPress: function () {
