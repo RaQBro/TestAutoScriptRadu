@@ -222,6 +222,7 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
+				this.pageModel.setProperty("/saveEnabled", false);
 				this.pageModel.setProperty("/editEnabled", false);
 				this.pageModel.setProperty("/editVisible", false);
 				this.pageModel.setProperty("/cancelEnabled", true);

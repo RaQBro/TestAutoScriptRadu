@@ -112,11 +112,11 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
+				this.pageModel.setProperty("/saveEnabled", false);
 				this.pageModel.setProperty("/editEnabled", true);
 				this.pageModel.setProperty("/editVisible", true);
 				this.pageModel.setProperty("/cancelEnabled", false);
 				this.pageModel.setProperty("/cancelVisible", false);
-				this.pageModel.setProperty("/saveEnabled", false);
 
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
