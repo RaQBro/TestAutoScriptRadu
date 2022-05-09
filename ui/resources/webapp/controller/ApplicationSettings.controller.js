@@ -82,15 +82,18 @@ sap.ui.define([
 
 		onEditPress: function () {
 			if (this.oAuth.maintain === true) {
+				let oView = this.getView();
+				let oPageModel = oView.getModel("pageModel");
+
+				oPageModel.setProperty("/editEnabled", false);
+				oPageModel.setProperty("/editVisible", false);
+				oPageModel.setProperty("/cancelEnabled", true);
+				oPageModel.setProperty("/cancelVisible", true);
 
 				this.handleControlEditableState("clientId", true);
 				this.handleControlEditableState("clientSecret", true);
 				this.handleControlEditableState("technicalUsername", true);
 				this.handleControlEditableState("technicalPassword", true);
-				this.handleControlEnabledState("editBtn", false);
-				this.handleControlVisibleState("editBtn", false);
-				this.handleControlEnabledState("cancelBtn", true);
-				this.handleControlVisibleState("cancelBtn", true);
 
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
@@ -101,14 +104,17 @@ sap.ui.define([
 		onCancelPress: function () {
 
 			if (this.oAuth.maintain === true) {
+				let oView = this.getView();
+				let oPageModel = oView.getModel("pageModel");
+
+				oPageModel.setProperty("/editEnabled", true);
+				oPageModel.setProperty("/editVisible", true);
+				oPageModel.setProperty("/cancelEnabled", false);
+				oPageModel.setProperty("/cancelVisible", false);
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);
 				this.handleControlEditableState("technicalPassword", false);
-				this.handleControlVisibleState("editBtn", true);
-				this.handleControlEnabledState("editBtn", true);
-				this.handleControlEnabledState("cancelBtn", false);
-				this.handleControlVisibleState("cancelBtn", false);
 
 				this.setupView();
 				this.getView().byId("technicalPassword").setValue("");
@@ -133,9 +139,12 @@ sap.ui.define([
 				this.deleteFromSecureStore(sClientId, technicalNameClient);
 				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword, technicalNameUser);
 				this.insertIntoSecureStore(sClientId, sClientSecret, technicalNameClient);
+				let oView = this.getView();
+				let oPageModel = oView.getModel("pageModel");
 
-				this.handleControlEnabledState("saveBtn", false);
-				this.handleControlEnabledState("editBtn", true);
+				oPageModel.setProperty("/saveEnabled", false);
+				oPageModel.setProperty("/editEnabled", true);
+
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);
@@ -199,23 +208,31 @@ sap.ui.define([
 		},
 
 		onChangeUsername: function () {
+			let oView = this.getView();
+			let oPageModel = oView.getModel("pageModel");
 
-			this.handleControlEnabledState("saveBtn", true);
+			oPageModel.setProperty("/saveEnabled", false);
 		},
 
 		onChangePassword: function () {
+			let oView = this.getView();
+			let oPageModel = oView.getModel("pageModel");
 
-			this.handleControlEnabledState("saveBtn", true);
+			oPageModel.setProperty("/saveEnabled", false);
 		},
 
 		onChangeClientId: function () {
+			let oView = this.getView();
+			let oPageModel = oView.getModel("pageModel");
 
-			this.handleControlEnabledState("saveBtn", true);
+			oPageModel.setProperty("/saveEnabled", false);
 		},
 
 		onChangeClientSecret: function () {
+			let oView = this.getView();
+			let oPageModel = oView.getModel("pageModel");
 
-			this.handleControlEnabledState("saveBtn", true);
+			oPageModel.setProperty("/saveEnabled", false);
 		},
 
 		logoutPress: function () {
