@@ -103,6 +103,7 @@ sap.ui.define([
 				this.handleControlEditableState("technicalPassword", true);
 
 			} else {
+
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
@@ -256,5 +257,4 @@ sap.ui.define([
 			BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
 		}
 	});
-
 }, /* bExport= */ true);
