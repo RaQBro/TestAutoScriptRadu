@@ -1480,7 +1480,69 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Save lLifecycle configurations
+	 * Create Lifecycle configurations
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {array} - Lifecycle configurations or throw error
+	 */
+	async createLifecycleConfigurations(sProjectId, aLifecycleConfigurations) {
+
+		let sQueryPath = "lifecycleConfigurations";
+		let aParams = [];
+	
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aLifecycleConfigurations);
+		let oResponseBody = oResponse.data;
+	
+		if (oResponse.statusCode !== 201) {
+			let sDeveloperInfo = `Failed to add lifecycle configurations of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
+				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were added with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				return oResponseBody.entities;
+			} else {
+				let sDeveloperInfo = `Failed to add lifecycle configurations of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+		/** @function
+	 * Update Lifecycle configurations
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @returns {array} - Lifecycle configurations or throw error
+	 */
+	async updateLifecycleConfigurations(sProjectId, aLifecycleConfigurations) {
+
+		let sQueryPath = "lifecycleConfigurations";
+		let aParams = [];
+	
+		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleConfigurations);
+		let oResponseBody = oResponse.data;
+	
+		if (oResponse.statusCode !== 200) {
+			let sDeveloperInfo = `Failed to update lifecycle configurations of project with ID '${sProjectId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			return undefined;
+		} else {
+			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
+				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were updated with success!`;
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				return oResponseBody.entities;
+			} else {
+				let sDeveloperInfo = `Failed to update lifecycle configurations of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			}
+		}
+	}
+
+	/** @function
+	 * Save Lifecycle configurations
 	 * 
 	 * @param {string} sProjectId - project id
 	 * @returns {array} - Lifecycle configurations or throw error
@@ -1544,6 +1606,70 @@ class Dispatcher {
 			}
 		}
 	}
+
+		/** @function
+	 * Create lifecycle quantities
+	 * 
+	 * @param {string} sProjectId - project id
+	 * @param {object} aQuantities - total quantities period values
+	 * @returns {boolean} - true if success or throw error
+	 */
+		 async createLifecycleQuantities(sProjectId, aLifecycleQuantities) {
+
+			let sQueryPath = "lifecycleQuantities";
+			let aParams = [];
+	
+			let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aLifecycleQuantities);
+			let oResponseBody = oResponse.data;
+	
+			if (oResponse.statusCode !== 201) {
+				let sDeveloperInfo = `Failed to create lifecycle quantities of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			} else {
+				if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
+					let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were created with success!`;
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+					return oResponseBody.entities;
+				} else {
+					let sDeveloperInfo = `Failed to create lifecycle quantities of project with ID '${sProjectId}'.`;
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+					return undefined;
+				}
+			}
+		}
+	
+		/** @function
+		 * Update lifecycle quantities
+		 * 
+		 * @param {string} sProjectId - project id
+		 * @param {object} aQuantities - total quantities period values
+		 * @returns {boolean} - true if success or throw error
+		 */
+		async updateLifecycleQuantities(sProjectId, aLifecycleQuantities) {
+	
+			let sQueryPath = "lifecycleQuantities";
+			let aParams = [];
+	
+			let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
+			let oResponseBody = oResponse.data;
+	
+			if (oResponse.statusCode !== 201) {
+				let sDeveloperInfo = `Failed to update lifecycle quantities of project with ID '${sProjectId}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				return undefined;
+			} else {
+				if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
+					let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were updated with success!`;
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+					return oResponseBody.entities;
+				} else {
+					let sDeveloperInfo = `Failed to update lifecycle quantities of project with ID '${sProjectId}'.`;
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+					return undefined;
+				}
+			}
+		}
 
 	/** @function
 	 * Save lifecycle quantities
@@ -1906,6 +2032,37 @@ class Dispatcher {
 		}
 	}
 
+	async createItems(iVersId, aItems, sMode) {
+
+		let sQueryPath = "items";
+		let aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "mode",
+			"value": sMode
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
+		let oResponseBody = oResponse.data;
+
+		if (oResponse.statusCode !== 200 && oResponse.statusCode !== 201) {
+
+			if (oResponseBody.head.messages !== undefined) {
+				await Message.addLog(this.JOB_ID, `Items for calculation version with ID '${iVersId}' not created.`, "error", oResponseBody.head.messages,
+					this.Operation);
+			}
+			return false;
+		} else {
+			await Message.addLog(this.JOB_ID,
+				`Items for calculation version with ID '${iVersId}' created successfully.`, "message", undefined, this.Operation);
+			return true;
+		}
+	}
+	
 	/** @function
 	 * Copy version items to PLC
 	 * 
