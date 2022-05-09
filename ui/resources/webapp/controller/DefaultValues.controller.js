@@ -248,6 +248,7 @@ sap.ui.define([
 				this.pageModel.setProperty("/editVisible", true);
 				this.pageModel.setProperty("/cancelEnabled", false);
 				this.pageModel.setProperty("/cancelVisible", false);
+				this.pageModel.setProperty("/saveEnabled", false);
 
 				this.handleControlEditableState("txtRTE", false);
 				this.handleControlEditableState("txtCDE", false);

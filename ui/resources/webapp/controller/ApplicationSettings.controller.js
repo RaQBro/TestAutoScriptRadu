@@ -115,6 +115,7 @@ sap.ui.define([
 				this.pageModel.setProperty("/editVisible", true);
 				this.pageModel.setProperty("/cancelEnabled", false);
 				this.pageModel.setProperty("/cancelVisible", false);
+				this.pageModel.setProperty("/saveEnabled", false);
 
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
@@ -212,26 +213,26 @@ sap.ui.define([
 
 		onChangeUsername: function () {
 
-			this.pageModel.setProperty("/saveEnabled", false);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangePassword: function () {
 
-			this.pageModel.setProperty("/saveEnabled", false);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeClientId: function () {
 
-			this.pageModel.setProperty("/saveEnabled", false);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeClientSecret: function () {
 
-			this.pageModel.setProperty("/saveEnabled", false);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		logoutPress: function () {
-			
+
 			let oView = this.getView();
 			let oController = oView.getController();
 			let sMessage;
@@ -245,7 +246,7 @@ sap.ui.define([
 					result.message,
 					null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
-			
+
 			let onError = function (oXHR, sTextStatus, sErrorThrown) {
 				sMessage = {
 					type: "Error"
