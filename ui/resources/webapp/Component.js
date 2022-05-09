@@ -75,6 +75,7 @@ sap.ui.define([
 		 * Set number of minutes left till automatic logout
 		 */
 		_setInactivityTimeout: function (timeouMillisec) {
+
 			this.countdown = timeouMillisec;
 			this.resetCountdown = this.countdown;
 		},
@@ -83,6 +84,7 @@ sap.ui.define([
 		 * Set number of minutes left till automatic logout
 		 */
 		_resetInactivityTimeout: function () {
+
 			this.countdown = this.resetCountdown;
 		},
 
@@ -90,12 +92,14 @@ sap.ui.define([
 		 * Begin counting tracking inactivity
 		 */
 		_startInactivityTimer: function () {
+
 			this.intervalHandle = setInterval(function () {
 				this._inactivityCountdown();
 			}.bind(this), Constants.timeout.TEN_SECONDS);
 		},
 
 		stopInactivityTimer: function () {
+
 			if (this.intervalHandle !== null) {
 				clearInterval(this.intervalHandle);
 				this.intervalHandle = null;
@@ -103,6 +107,7 @@ sap.ui.define([
 		},
 
 		_inactivityCountdown: function () {
+
 			this.countdown -= Constants.timeout.TEN_SECONDS;
 			if (this.countdown <= 0) {
 				this._ping();
@@ -110,6 +115,7 @@ sap.ui.define([
 		},
 
 		_ping: function () {
+
 			BackendConnector.doGet({
 					constant: "AUTH_URL"
 				},
@@ -125,6 +131,7 @@ sap.ui.define([
 		},
 
 		destroy: function () {
+			
 			FakeLrepConnectorLocalStorage.disableFakeConnector();
 			UIComponent.prototype.destroy.apply(this, arguments);
 		}

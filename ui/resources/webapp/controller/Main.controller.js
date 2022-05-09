@@ -12,6 +12,7 @@ sap.ui.define([
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {
+
 			this.getView().addStyleClass(BaseController.prototype.getContentDensityClass.call(this));
 
 			BaseController.prototype.onInit.call(this);
@@ -33,6 +34,7 @@ sap.ui.define([
 		},
 
 		onRenderingAboutBtn: function () {
+
 			let isPhone = sap.ui.Device.system.phone;
 			let isTablet = sap.ui.Device.system.tablet;
 			let isDesktop = sap.ui.Device.system.desktop;
@@ -81,6 +83,7 @@ sap.ui.define([
 
 		/** @function used when the user details avatar is pressed*/
 		onIndividualPress: function () {
+
 			let oView = this.getView();
 			let oAvatarBtn = this.getView().byId("avatarBtn");
 
@@ -102,6 +105,7 @@ sap.ui.define([
 
 		/** @function used when About is pressed from the user details*/
 		onAboutPress: function () {
+
 			let oView = this.getView();
 			let oAboutModel = oView.getModel("aboutModel");
 
@@ -123,6 +127,7 @@ sap.ui.define([
 
 		/** @function used when OK is pressed from the About from the user details*/
 		onAboutDialogOk: function () {
+
 			this._oAboutDialog.then((oAboutDialog) => {
 				oAboutDialog.close();
 			});
@@ -130,6 +135,7 @@ sap.ui.define([
 
 		/** @function used when How To is pressed from the user details*/
 		onHowToPress: function () {
+
 			let oView = this.getView();
 
 			if (!this._oHowToDialog) {
@@ -148,6 +154,7 @@ sap.ui.define([
 		},
 
 		onAfterHowToOpen: function (oEvent) {
+
 			let sRTE;
 			let oRTE = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
 				return oDefaultValue.FIELD_NAME === "RTE";
@@ -160,6 +167,7 @@ sap.ui.define([
 
 		/** @function used when OK is pressed from the  How To from the user details*/
 		onHowToDialogOk: function () {
+
 			this._oHowToDialog.then((oHowToDialog) => {
 				oHowToDialog.close();
 			});
@@ -167,11 +175,13 @@ sap.ui.define([
 
 		/** @function called when logout is pressed*/
 		onLogoutPress: function () {
+
 			sap.m.URLHelper.redirect("/logout");
 		},
 
 		/** @function called when button the expand the toolPage from the left side*/
 		onMenuButtonPress: function () {
+
 			let toolPage = this.byId("toolPage");
 
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
@@ -179,6 +189,7 @@ sap.ui.define([
 
 		/** @function called when button the expand the toolPage from the left side*/
 		colapseSideNavigation: function () {
+
 			let toolPage = this.byId("toolPage");
 
 			toolPage.setSideExpanded(false);
@@ -186,6 +197,7 @@ sap.ui.define([
 
 		/** @function called when a view from the left list is selected and it's navigating to that specific view*/
 		onViewChange: function (oEvent) {
+			
 			let item = oEvent.getParameter("item");
 
 			this.navTo(item.getKey());

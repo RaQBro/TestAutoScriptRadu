@@ -26,13 +26,17 @@ sap.ui.define([
 			}
 		},
 
+		onAfterRendering: function () {},
+
 		onObjectMatched: function () {
+
 			this.openBusyDialog();
 			this.setupView();
 			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
@@ -49,7 +53,11 @@ sap.ui.define([
 			this.setCDEValue();
 		},
 
-		onAfterRendering: function () {},
+		initialiseViewLogic: function () {
+
+			// Get default values
+			this.getDefaultValues(this.getViewName("fixedItem"));
+		},
 
 		setNoProjects: function () {
 

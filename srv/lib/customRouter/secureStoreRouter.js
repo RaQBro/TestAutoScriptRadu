@@ -39,6 +39,7 @@ class SecureStoreRouter {
 		 * Common function before all routes are processed
 		 */
 		router.use(function (request, response, next) {
+			
 			next();
 		});
 

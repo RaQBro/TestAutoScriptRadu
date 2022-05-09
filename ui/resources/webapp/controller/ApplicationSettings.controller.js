@@ -29,13 +29,18 @@ sap.ui.define([
 			}
 		},
 
+		onAfterRendering: function () {},
+
 		onObjectMatched: function () {
+
 			this.openBusyDialog();
 			this.setupView();
+			this.initialiseViewLogic();
 			this.closeBusyDialog();
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
@@ -47,10 +52,13 @@ sap.ui.define([
 			this.setSideContentSelectedKey(this.sViewName);
 
 			this.handleMaintainApplicationSettings();
-
 		},
 
-		onAfterRendering: function () {},
+		initialiseViewLogic: function () {
+
+			// Get application settings
+			this.getApplicationSettings(this.getViewName("fixedItem"));
+		},
 
 		handleMaintainApplicationSettings: function () {
 
@@ -78,10 +86,10 @@ sap.ui.define([
 
 			this.maintainApplicationSettings();
 			this.getApplicationSettings();
-
 		},
 
 		onEditPress: function () {
+
 			if (this.oAuth.maintain === true) {
 
 				this.pageModel.setProperty("/editEnabled", false);
@@ -98,7 +106,6 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
-
 		},
 		onCancelPress: function () {
 
@@ -224,6 +231,7 @@ sap.ui.define([
 		},
 
 		logoutPress: function () {
+			
 			let oView = this.getView();
 			let oController = oView.getController();
 			let sMessage;
@@ -237,6 +245,7 @@ sap.ui.define([
 					result.message,
 					null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
+			
 			let onError = function (oXHR, sTextStatus, sErrorThrown) {
 				sMessage = {
 					type: "Error"

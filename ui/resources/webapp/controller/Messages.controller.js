@@ -12,6 +12,7 @@ sap.ui.define([
 		ToolBarMessages: ToolBarMessages,
 
 		onInit: function () {
+
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			this.oAuth = this.checkAuthorization("M");
 
@@ -24,6 +25,7 @@ sap.ui.define([
 		},
 
 		onObjectMatched: function (oEvent) {
+
 			this.iJobId = oEvent.getParameter("arguments").jobID;
 			this.openBusyDialog();
 			this.setupView();
@@ -32,10 +34,12 @@ sap.ui.define([
 		},
 
 		onUnauthorizedMatched: function () {
+
 			this.navTo("error");
 		},
 
 		setupView: function () {
+
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
 			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
 
@@ -43,14 +47,17 @@ sap.ui.define([
 		},
 
 		initialiseViewLogic: function () {
+
 			this.applyFiltersFromParameters();
 		},
 
 		onAfterRendering: function () {
+
 			this.applyFiltersFromParameters();
 		},
 
 		applyFiltersFromParameters: function () {
+
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stMessages");
 
@@ -75,6 +82,7 @@ sap.ui.define([
 					}
 				});
 			} else {
+
 				let oExistingVariant = oSmartTable.fetchVariant();
 
 				if (oExistingVariant !== undefined) {
@@ -97,6 +105,7 @@ sap.ui.define([
 		},
 
 		onBeforeRebindTable: function (oEvent) {
+
 			let bindingParams = oEvent.getParameter("bindingParams");
 
 			if (this.bSeeAllEntries !== undefined && this.bSeeAllEntries === true) {
@@ -109,6 +118,7 @@ sap.ui.define([
 		},
 
 		onSeeAllEntries: function () {
+
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stMessages");
 
@@ -129,6 +139,7 @@ sap.ui.define([
 		},
 
 		onRefreshEntries: function () {
+
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stMessages");
 
@@ -136,6 +147,7 @@ sap.ui.define([
 		},
 
 		renameColumns: function (oEvent) {
+
 			if (!oEvent.getSource().getAggregation("items")[1]) {
 				return;
 			}
@@ -161,6 +173,7 @@ sap.ui.define([
 		},
 
 		formatRowHighlight: function (oValue) {
+			
 			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {

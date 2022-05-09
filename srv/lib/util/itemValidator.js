@@ -84,6 +84,7 @@ class ItemValidator {
 	 *  as value. This is used to faster validate item structures for create item.
 	 */
 	createItemsTree(sMode, aBodyItems) {
+
 		let iTopNodeId;
 		let bTopNodeFound = false;
 		let mItems = new Map();
@@ -130,6 +131,7 @@ class ItemValidator {
 	 * @return Array containing the ids.
 	 */
 	async getParentItemIds(iCalculationVersionId, sSessionId) {
+
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
@@ -155,6 +157,7 @@ class ItemValidator {
 	 * @param {string} sPropertyKey - the item property key
 	 */
 	getMetadataAttributeKey(oInput, sPropertyKey) {
+		
 		return [sPropertyKey, oInput.metadata[0].PATH, oInput.categoryId, oInput.subitemState].toString();
 	}
 
