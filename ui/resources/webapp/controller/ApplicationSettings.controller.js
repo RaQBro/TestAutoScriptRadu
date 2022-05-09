@@ -108,6 +108,7 @@ sap.ui.define([
 				this.pageModel.setProperty("/editVisible", true);
 				this.pageModel.setProperty("/cancelEnabled", false);
 				this.pageModel.setProperty("/cancelVisible", false);
+
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);
@@ -139,6 +140,7 @@ sap.ui.define([
 
 				this.pageModel.setProperty("/saveEnabled", false);
 				this.pageModel.setProperty("/editEnabled", true);
+
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);

@@ -39,6 +39,7 @@ sap.ui.define([
 		setupView: function () {
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.pageModel = this.getModel("pageModel");
 			this.setSideContentSelectedKey(this.sViewName);
 
 			this.setNoProjects();
@@ -213,15 +214,17 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
+				this.pageModel.setProperty("/editEnabled", false);
+				this.pageModel.setProperty("/editVisible", false);
+				this.pageModel.setProperty("/cancelEnabled", true);
+				this.pageModel.setProperty("/cancelVisible", true);
+
 				this.handleControlEditableState("txtRTE", true);
 				this.handleControlEditableState("txtCDE", true);
 				this.handleControlEditableState("inProjPerjob", true);
 				this.handleControlEditableState("inCalcPerjob", true);
 				this.handleControlEditableState("inVersPerjob", true);
-				this.handleControlVisibleState("editBtn", false);
-				this.handleControlEnabledState("editBtn", false);
-				this.handleControlVisibleState("cancelBtn", true);
-				this.handleControlEnabledState("cancelBtn", true);
+
 			} else {
 
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
@@ -233,15 +236,16 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
+				this.pageModel.setProperty("/editEnabled", true);
+				this.pageModel.setProperty("/editVisible", true);
+				this.pageModel.setProperty("/cancelEnabled", false);
+				this.pageModel.setProperty("/cancelVisible", false);
+
 				this.handleControlEditableState("txtRTE", false);
 				this.handleControlEditableState("txtCDE", false);
 				this.handleControlEditableState("inProjPerjob", false);
 				this.handleControlEditableState("inCalcPerjob", false);
 				this.handleControlEditableState("inVersPerjob", false);
-				this.handleControlVisibleState("editBtn", true);
-				this.handleControlEnabledState("editBtn", true);
-				this.handleControlEnabledState("cancelBtn", false);
-				this.handleControlVisibleState("cancelBtn", false);
 
 				this.setupView();
 			} else {
@@ -253,27 +257,27 @@ sap.ui.define([
 
 		onChangeNoProjects: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeNoCalculations: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeNoCalculationVersions: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeRichTextEditor: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeCodeEditor: function () {
 
-			this.handleControlEnabledState("saveBtn", true);
+			this.pageModel.setProperty("/saveEnabled", true);
 		}
 	});
 }, /* bExport= */ true);
