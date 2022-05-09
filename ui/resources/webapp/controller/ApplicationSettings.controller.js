@@ -91,7 +91,8 @@ sap.ui.define([
 		onEditPress: function () {
 
 			if (this.oAuth.maintain === true) {
-
+				
+				this.pageModel.setProperty("/saveEnabled", false);
 				this.pageModel.setProperty("/editEnabled", false);
 				this.pageModel.setProperty("/editVisible", false);
 				this.pageModel.setProperty("/cancelEnabled", true);
@@ -101,7 +102,6 @@ sap.ui.define([
 				this.handleControlEditableState("clientSecret", true);
 				this.handleControlEditableState("technicalUsername", true);
 				this.handleControlEditableState("technicalPassword", true);
-
 			} else {
 
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
@@ -126,7 +126,6 @@ sap.ui.define([
 				this.setupView();
 				this.getView().byId("technicalPassword").setValue("");
 				this.getView().byId("clientSecret").setValue("");
-
 			} else {
 
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
@@ -154,7 +153,6 @@ sap.ui.define([
 				this.handleControlEditableState("clientSecret", false);
 				this.handleControlEditableState("technicalUsername", false);
 				this.handleControlEditableState("technicalPassword", false);
-
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsApplicationSettings"), null, null,
 					"Error",

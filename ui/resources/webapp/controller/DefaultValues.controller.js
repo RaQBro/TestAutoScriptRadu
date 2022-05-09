@@ -233,7 +233,6 @@ sap.ui.define([
 				this.handleControlEditableState("inProjPerjob", true);
 				this.handleControlEditableState("inCalcPerjob", true);
 				this.handleControlEditableState("inVersPerjob", true);
-
 			} else {
 
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
