@@ -1,5 +1,5 @@
 <mvc:View id="view" controllerName="webapp.ui.controller.View" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core"
-	xmlns:l="sap.ui.layout" xmlns:form="sap.ui.layout.form" displayBlock="true">
+	xmlns:form="sap.ui.layout.form" displayBlock="true">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<form:SimpleForm id="View" editable="true" layout="ColumnLayout" title="{i18n>jobStartView}">
