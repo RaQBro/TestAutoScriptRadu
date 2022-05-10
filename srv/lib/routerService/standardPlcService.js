@@ -1493,7 +1493,7 @@ class Dispatcher {
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aLifecycleConfigurations);
 		let oResponseBody = oResponse.data;
 	
-		if (oResponse.statusCode !== 201) {
+		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to add lifecycle configurations of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1524,7 +1524,7 @@ class Dispatcher {
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleConfigurations);
 		let oResponseBody = oResponse.data;
 	
-		if (oResponse.statusCode !== 200) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update lifecycle configurations of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 			return undefined;
@@ -1622,7 +1622,7 @@ class Dispatcher {
 			let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "POST", aParams, aLifecycleQuantities);
 			let oResponseBody = oResponse.data;
 	
-			if (oResponse.statusCode !== 201) {
+			if (oResponse.status !== 201) {
 				let sDeveloperInfo = `Failed to create lifecycle quantities of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
@@ -1654,7 +1654,7 @@ class Dispatcher {
 			let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
 			let oResponseBody = oResponse.data;
 	
-			if (oResponse.statusCode !== 201) {
+			if (oResponse.status !== 201) {
 				let sDeveloperInfo = `Failed to update lifecycle quantities of project with ID '${sProjectId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
 				return undefined;
@@ -2049,7 +2049,7 @@ class Dispatcher {
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
 		let oResponseBody = oResponse.data;
 
-		if (oResponse.statusCode !== 200 && oResponse.statusCode !== 201) {
+		if (oResponse.status !== 200 && oResponse.status !== 201) {
 
 			if (oResponseBody.head.messages !== undefined) {
 				await Message.addLog(this.JOB_ID, `Items for calculation version with ID '${iVersId}' not created.`, "error", oResponseBody.head.messages,
