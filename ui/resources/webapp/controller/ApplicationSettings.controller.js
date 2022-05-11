@@ -72,7 +72,7 @@ sap.ui.define([
 			if (oTechnicalUser !== undefined) {
 				if (oTechnicalUser.FIELD_VALUE !== null) {
 					this.getView().byId("technicalUsername").setValue(oTechnicalUser.FIELD_VALUE);
-					this.handleControlEnabledState("logoutBtn", true);
+					this.pageModel.setProperty("/logoutEnabled", true);
 				}
 			}
 			if (oClientId !== undefined) {
