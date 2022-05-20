@@ -108,7 +108,7 @@ sap.ui.define([
 		 * @param {string} controlId - used to select the control id
 		 * @param {boolean} state - used to set the state of the control true/false
 		 */
-		 handleControlEnabledState: function (controlId, state) {
+		handleControlEnabledState: function (controlId, state) {
 
 			this.byId(controlId).setEnabled(state);
 		},
@@ -334,9 +334,9 @@ sap.ui.define([
 			return oAuth;
 
 		},
-		
+
 		getPageModel: function (view) {
-			
+
 			let fullModel = this.getToolBarMessagesModel();
 			let data = fullModel.oData[view] || fullModel.oData.default || {};
 
