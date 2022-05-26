@@ -1,5 +1,5 @@
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
-	<edmx:Reference Uri="/service/odataService.xsodata$metadata"/>
+	<edmx:Reference Uri="/service/odataService.xsodata$metadatasdasa"/>
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
 	</edmx:DataServices>
