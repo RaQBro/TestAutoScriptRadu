@@ -22,7 +22,18 @@
 				"uri": "/service/odataService.xsodata",
 				"type": "OData",
 				"settings": {
-					"odataVersion": "2.0"
+					"odataVersion": "2.0",
+					"annotations": [
+						"annotation"
+					],
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"annotation": {
+				"type": "ODataAnnotation",
+				"uri": "annotation.xml",
+				"settings": {
+					"localUri": "annotation.xml"
 				}
 			}
 		}
