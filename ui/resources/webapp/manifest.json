@@ -22,12 +22,22 @@
 				"uri": "/service/odataService.xsodata",
 				"type": "OData",
 				"settings": {
-					"odataVersion": "2.0"
+					"odataVersion": "2.0",
+					"annotations": [
+						"annotation"
+					],
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"annotation": {
+				"type": "ODataAnnotation",
+				"uri": "annotation.xml",
+				"settings": {
+					"localUri": "annotation.xml"
 				}
 			}
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -48,7 +58,6 @@
 			"sap_horizon"
 		]
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "webapp.ui.view.Main",
@@ -94,6 +103,10 @@
 			"toolBarMessagesModel": {
 				"type": "sap.ui.model.json.JSONModel",
 				"dataSource": "toolBarMessages"
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
 			}
 		},
 		"resources": {
@@ -113,27 +126,39 @@
 			"routes": [{
 				"name": "view",
 				"pattern": "",
-				"target": ["view"]
+				"target": [
+					"view"
+				]
 			}, {
 				"name": "defaultValues",
 				"pattern": "defaultValues",
-				"target": ["defaultValues"]
+				"target": [
+					"defaultValues"
+				]
 			}, {
 				"name": "applicationSettings",
 				"pattern": "applicationSettings",
-				"target": ["applicationSettings"]
+				"target": [
+					"applicationSettings"
+				]
 			}, {
 				"name": "jobs",
 				"pattern": "jobs",
-				"target": ["jobs"]
+				"target": [
+					"jobs"
+				]
 			}, {
 				"name": "messages",
 				"pattern": "messages/:jobID:",
-				"target": ["messages"]
+				"target": [
+					"messages"
+				]
 			}, {
 				"name": "error",
 				"pattern": "error",
-				"target": ["error"]
+				"target": [
+					"error"
+				]
 			}],
 			"targets": {
 				"view": {

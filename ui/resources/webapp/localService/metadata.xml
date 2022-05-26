@@ -1,0 +1,70 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
+		<Schema xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+			Namespace="default">
+			<EntityType Name="configurationType">
+				<Key>
+					<PropertyRef Name="FIELD_NAME"/>
+				</Key>
+				<Property Name="FIELD_NAME" Type="Edm.String" Nullable="false" MaxLength="500"/>
+				<Property Name="FIELD_VALUE" Type="Edm.String" MaxLength="500"/>
+			</EntityType>
+			<EntityType Name="default-valuesType">
+				<Key>
+					<PropertyRef Name="FIELD_NAME"/>
+					<PropertyRef Name="FIELD_VALUE"/>
+				</Key>
+				<Property Name="FIELD_NAME" Type="Edm.String" Nullable="false" MaxLength="500"/>
+				<Property Name="FIELD_VALUE" Type="Edm.String" Nullable="false" MaxLength="500"/>
+				<Property Name="FIELD_DESCRIPTION" Type="Edm.String" MaxLength="2147483647"/>
+			</EntityType>
+			<EntityType Name="application-settingsType">
+				<Key>
+					<PropertyRef Name="FIELD_NAME"/>
+				</Key>
+				<Property Name="FIELD_NAME" Type="Edm.String" Nullable="false" MaxLength="500"/>
+				<Property Name="FIELD_VALUE" Type="Edm.String" MaxLength="500"/>
+			</EntityType>
+			<EntityType Name="job-logsType">
+				<Key>
+					<PropertyRef Name="START_TIMESTAMP"/>
+				</Key>
+				<Property Name="JOB_ID" Type="Edm.Int64"/>
+				<Property Name="JOB_NAME" Type="Edm.String" MaxLength="500"/>
+				<Property Name="REQUEST_USER_ID" Type="Edm.String" MaxLength="256"/>
+				<Property Name="RUN_USER_ID" Type="Edm.String" MaxLength="256"/>
+				<Property Name="IS_ONLINE_MODE" Type="Edm.Byte"/>
+				<Property Name="REQUEST_BODY" Type="Edm.String" MaxLength="2147483647"/>
+				<Property Name="RESPONSE_BODY" Type="Edm.String" MaxLength="2147483647"/>
+				<Property Name="SAP_JOB_ID" Type="Edm.Int32"/>
+				<Property Name="SAP_JOB_SCHEDULE_ID" Type="Edm.String" MaxLength="500"/>
+				<Property Name="SAP_JOB_RUN_ID" Type="Edm.String" MaxLength="500"/>
+				<Property Name="START_TIMESTAMP" Type="Edm.DateTime" Nullable="false"/>
+				<Property Name="END_TIMESTAMP" Type="Edm.DateTime"/>
+				<Property Name="JOB_STATUS" Type="Edm.String" MaxLength="100"/>
+			</EntityType>
+			<EntityType Name="job-messagesType">
+				<Key>
+					<PropertyRef Name="MESSAGE_ID"/>
+					<PropertyRef Name="TIMESTAMP"/>
+				</Key>
+				<Property Name="TIMESTAMP" Type="Edm.DateTime" Nullable="false"/>
+				<Property Name="JOB_ID" Type="Edm.Int64"/>
+				<Property Name="SEVERITY" Type="Edm.String" MaxLength="50"/>
+				<Property Name="TEXT" Type="Edm.String" MaxLength="5000"/>
+				<Property Name="DETAILS" Type="Edm.String" MaxLength="5000"/>
+				<Property Name="OPERATION" Type="Edm.String" MaxLength="500"/>
+				<Property Name="MESSAGE_ID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+			</EntityType>
+			<EntityContainer Name="v2" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="configuration" EntityType="default.configurationType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+				<EntitySet Name="default-values" EntityType="default.default-valuesType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+				<EntitySet Name="application-settings" EntityType="default.application-settingsType" sap:creatable="false" sap:updatable="false"
+					sap:deletable="false"/>
+				<EntitySet Name="job-logs" EntityType="default.job-logsType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+				<EntitySet Name="job-messages" EntityType="default.job-messagesType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
