@@ -59,3 +59,4 @@ context template_application {
         unique index MESSAGE on (MESSAGE_ID, TIMESTAMP, JOB_ID) asc;
     };
 };
+
