@@ -1,23 +1,31 @@
 sap.ui.define([
-		"sap/ui/core/format/NumberFormat"
-	], function (NumberFormat) {
-		"use strict";
-		let oFloatFormat = NumberFormat.getFloatInstance({
-				minIntegerDigits: 1,
-				maxIntegerDigits: 10,
-				minFractionDigits: 0,
-				maxFractionDigits: 2,
-				groupingEnabled: true
-			},
-			sap.ui.getCore().getConfiguration().getLocale());
+	"sap/ui/core/format/NumberFormat"
+], function (NumberFormat) {
+	"use strict";
 
-		return {
-			floatFormat: function (value) {
+	const oFormatOptions = {
+		minIntegerDigits: 1,
+		maxIntegerDigits: 10,
+		minFractionDigits: 0,
+		maxFractionDigits: 2,
+		groupingEnabled: true
+	};
+	let oLocale = sap.ui.getCore().getConfiguration().getLocale();
 
-				return oFloatFormat.format(value);
+	return {
 
-			}
-		};
-	}
+		formatStringFloatValue: function (value) {
 
-);
+			let oFloatFormat = NumberFormat.getFloatInstance(oFormatOptions, oLocale);
+
+			return oFloatFormat.format(oFloatFormat.parse(value));
+		},
+
+		formatFloatValue: function (value) {
+
+			let oFloatFormat = NumberFormat.getFloatInstance(oFormatOptions, oLocale);
+
+			return oFloatFormat.format(value);
+		}
+	};
+});
