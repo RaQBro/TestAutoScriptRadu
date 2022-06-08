@@ -113,8 +113,6 @@ sap.ui.define([
 
 				this.bSeeAllEntries = false;
 			}
-
-			this.renameColumns(oEvent);
 		},
 
 		onSeeAllEntries: function () {
@@ -146,34 +144,8 @@ sap.ui.define([
 			oSmartTable.rebindTable();
 		},
 
-		renameColumns: function (oEvent) {
-
-			if (!oEvent.getSource().getAggregation("items")[1]) {
-				return;
-			}
-
-			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
-
-			columnNames.forEach(function (column) {
-				let header = column.getHeader();
-				if (header.getText() === "TIMESTAMP") {
-					header.setText(this.getResourceBundleText("colTimestamp"));
-				} else if (header.getText() === "JOB_ID") {
-					header.setText(this.getResourceBundleText("colJobID"));
-				} else if (header.getText() === "SEVERITY") {
-					header.setText(this.getResourceBundleText("colSeverity"));
-				} else if (header.getText() === "TEXT") {
-					header.setText(this.getResourceBundleText("colText"));
-				} else if (header.getText() === "DETAILS") {
-					header.setText(this.getResourceBundleText("colDetails"));
-				} else if (header.getText() === "OPERATION") {
-					header.setText(this.getResourceBundleText("colOperation"));
-				}
-			}.bind(this));
-		},
-
 		formatRowHighlight: function (oValue) {
-			
+
 			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {

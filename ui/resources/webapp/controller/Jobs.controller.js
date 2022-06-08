@@ -73,18 +73,13 @@ sap.ui.define([
 			}
 		},
 
-		onBeforeRebindTable: function (oEvent) {
-
-			this.renameColumns(oEvent);
-		},
-
 		onRefreshEntries: function () {
 
 			this.oView.byId("stJobs").getTable().getBinding("items").refresh();
 		},
 
 		onViewJobLogs: function (oEvent) {
-			
+
 			let iJobId = oEvent.getSource().getBindingContext().getObject().JOB_ID;
 
 			this.navTo("messages", {
@@ -92,48 +87,8 @@ sap.ui.define([
 			});
 		},
 
-		renameColumns: function (oEvent) {
-
-			if (!oEvent.getSource().getAggregation("items")[1]) {
-				return;
-			}
-
-			let columnNames = oEvent.getSource().getAggregation("items")[1].getColumns();
-
-			columnNames.forEach(function (column) {
-				let header = column.getHeader();
-				if (header.getText() === "START_TIMESTAMP") {
-					header.setText(this.getResourceBundleText("jobStartTimestamp"));
-				} else if (header.getText() === "END_TIMESTAMP") {
-					header.setText(this.getResourceBundleText("jobEndTimestamp"));
-				} else if (header.getText() === "JOB_ID") {
-					header.setText(this.getResourceBundleText("colJobID"));
-				} else if (header.getText() === "JOB_NAME") {
-					header.setText(this.getResourceBundleText("colJobName"));
-				} else if (header.getText() === "JOB_STATUS") {
-					header.setText(this.getResourceBundleText("jobStatus"));
-				} else if (header.getText() === "REQUEST_USER_ID") {
-					header.setText(this.getResourceBundleText("colRUser"));
-				} else if (header.getText() === "RUN_USER_ID") {
-					header.setText(this.getResourceBundleText("colUser"));
-				} else if (header.getText() === "IS_ONLINE_MODE") {
-					header.setText(this.getResourceBundleText("colIsOnline"));
-				} else if (header.getText() === "REQUEST_BODY") {
-					header.setText(this.getResourceBundleText("colRequestBody"));
-				} else if (header.getText() === "RESPONSE_BODY") {
-					header.setText(this.getResourceBundleText("colResponseBody"));
-				} else if (header.getText() === "SAP_JOB_ID") {
-					header.setText(this.getResourceBundleText("colSapJobId"));
-				} else if (header.getText() === "SAP_JOB_RUN_ID") {
-					header.setText(this.getResourceBundleText("colSapJobRunId"));
-				} else if (header.getText() === "SAP_JOB_SCHEDULE_ID") {
-					header.setText(this.getResourceBundleText("colSapJobScheduleId"));
-				}
-			}.bind(this));
-		},
-
 		formatRowHighlight: function (oValue) {
-			
+
 			let value = "None";
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {
