@@ -50,14 +50,14 @@ sap.ui.define([
 			this.pageModel = this.getModel("pageModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.setSideContentSelectedKey(this.sViewName);
-
-			this.handleMaintainApplicationSettings();
 		},
 
 		initialiseViewLogic: function () {
 
 			// Get application settings
 			this.getApplicationSettings(this.getViewName("fixedItem"));
+
+			this.handleMaintainApplicationSettings();
 		},
 
 		handleMaintainApplicationSettings: function () {
@@ -91,7 +91,7 @@ sap.ui.define([
 		onEditPress: function () {
 
 			if (this.oAuth.maintain === true) {
-				
+
 				this.pageModel.setProperty("/saveEnabled", false);
 				this.pageModel.setProperty("/editEnabled", false);
 				this.pageModel.setProperty("/editVisible", false);

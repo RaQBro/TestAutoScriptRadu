@@ -32,6 +32,7 @@ sap.ui.define([
 
 			this.openBusyDialog();
 			this.setupView();
+			this.initialiseViewLogic();
 			this.closeBusyDialog();
 		},
 
@@ -45,18 +46,18 @@ sap.ui.define([
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
 			this.pageModel = this.getModel("pageModel");
 			this.setSideContentSelectedKey(this.sViewName);
-
-			this.setNoProjects();
-			this.setNoCalculations();
-			this.setNoVersions();
-			this.setRTEValue();
-			this.setCDEValue();
 		},
 
 		initialiseViewLogic: function () {
 
 			// Get default values
 			this.getDefaultValues(this.getViewName("fixedItem"));
+
+			this.setNoProjects();
+			this.setNoCalculations();
+			this.setNoVersions();
+			this.setRTEValue();
+			this.setCDEValue();
 		},
 
 		setNoProjects: function () {
