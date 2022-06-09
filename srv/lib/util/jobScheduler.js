@@ -223,7 +223,11 @@ class JobSchedulerUtil {
 		let sClientId = null;
 		let iWebRequest = null;
 
-		sRequestUserId = request.user.id.toUpperCase();
+		if (helpers.isRequestFromJob(request)) {
+			sRequestUserId = global.TECHNICAL_USER; // technical user
+		} else {
+			sRequestUserId = request.user.id.toUpperCase(); // request user
+		}
 
 		if (request.IS_ONLINE_MODE === true) {
 			sRunUserId = request.user.id.toUpperCase();
@@ -428,7 +432,11 @@ class JobSchedulerUtil {
 			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 			// set RUN_USER_ID, REQUEST_USER_ID to request
-			request.REQUEST_USER_ID = request.user.id.toUpperCase();
+			if (helpers.isRequestFromJob(request)) {
+				request.REQUEST_USER_ID = global.TECHNICAL_USER; // technical user
+			} else {
+				request.REQUEST_USER_ID = request.user.id.toUpperCase(); // request user
+			}
 			if (request.IS_ONLINE_MODE === true) {
 				request.RUN_USER_ID = request.user.id.toUpperCase(); // request user
 			} else {
