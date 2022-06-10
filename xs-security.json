@@ -24,6 +24,10 @@
 	}, {
 		"name": "$XSAPPNAME.M_Display",
 		"description": "Display messages data"
+	}, {
+		"name": "$XSAPPNAME.JobScheduler",
+		"description": "Scope for Job Scheduler",
+		"grant-as-authority-to-apps": ["jobscheduler"]
 	}],
 	"role-templates": [{
 		"name": "DefaultValues_Display_RT",
@@ -77,5 +81,9 @@
 		"scope-references": [
 			"uaa.user"
 		]
+	}, {
+		"name": "xsaJobsJSJobScheduler",
+		"description": "Role Template for Job Scheduler",
+		"scope-references": ["$XSAPPNAME.JobScheduler"]
 	}]
 }
