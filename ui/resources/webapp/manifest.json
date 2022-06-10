@@ -84,6 +84,7 @@
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties",
 				"settings": {
 					"bundleName": "webapp.ui.i18n.i18n"
 				}
@@ -110,9 +111,11 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "css/style.css"
-			}]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -123,43 +126,50 @@
 				"controlAggregation": "pages",
 				"controlId": "app"
 			},
-			"routes": [{
-				"name": "view",
-				"pattern": "",
-				"target": [
-					"view"
-				]
-			}, {
-				"name": "defaultValues",
-				"pattern": "defaultValues",
-				"target": [
-					"defaultValues"
-				]
-			}, {
-				"name": "applicationSettings",
-				"pattern": "applicationSettings",
-				"target": [
-					"applicationSettings"
-				]
-			}, {
-				"name": "jobs",
-				"pattern": "jobs",
-				"target": [
-					"jobs"
-				]
-			}, {
-				"name": "messages",
-				"pattern": "messages/:jobID:",
-				"target": [
-					"messages"
-				]
-			}, {
-				"name": "error",
-				"pattern": "error",
-				"target": [
-					"error"
-				]
-			}],
+			"routes": [
+				{
+					"name": "view",
+					"pattern": "",
+					"target": [
+						"view"
+					]
+				},
+				{
+					"name": "defaultValues",
+					"pattern": "defaultValues",
+					"target": [
+						"defaultValues"
+					]
+				},
+				{
+					"name": "applicationSettings",
+					"pattern": "applicationSettings",
+					"target": [
+						"applicationSettings"
+					]
+				},
+				{
+					"name": "jobs",
+					"pattern": "jobs",
+					"target": [
+						"jobs"
+					]
+				},
+				{
+					"name": "messages",
+					"pattern": "messages/:jobID:",
+					"target": [
+						"messages"
+					]
+				},
+				{
+					"name": "error",
+					"pattern": "error",
+					"target": [
+						"error"
+					]
+				}
+			],
 			"targets": {
 				"view": {
 					"viewId": "view",

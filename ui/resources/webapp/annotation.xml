@@ -8,64 +8,64 @@
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="template-application.ui.resources.annotation.default">
 			<Annotations Target="Metadata.job-logsType/IS_ONLINE_MODE">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colIsOnline}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colIsOnline}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/JOB_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesJobID}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobMessagesJobID}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/JOB_NAME">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesJobName}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobMessagesJobName}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/REQUEST_USER_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colRUser}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colRUser}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/RUN_USER_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colUser}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colUser}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/REQUEST_BODY">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colRequestBody}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colRequestBody}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/RESPONSE_BODY">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colResponseBody}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colResponseBody}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/SAP_JOB_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colSapJobId}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colSapJobId}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/SAP_JOB_SCHEDULE_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colSapJobScheduleId}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colSapJobScheduleId}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/SAP_JOB_RUN_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colSapJobRunId}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colSapJobRunId}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/START_TIMESTAMP">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobStartTimestamp}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobStartTimestamp}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/END_TIMESTAMP">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobEndTimestamp}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobEndTimestamp}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-logsType/JOB_STATUS">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobStatus}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobStatus}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/TIMESTAMP">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesTimestamp}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobMessagesTimestamp}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/JOB_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesJobID}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobMessagesJobID}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/SEVERITY">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesSeverity}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;jobMessagesSeverity}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/TEXT">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colText}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colText}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/DETAILS">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colDetails}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colDetails}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/OPERATION">
-				<Annotation Term="Common.Label" String="{@i18n&gt;colOperation}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;colOperation}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/MESSAGE_ID">
-				<Annotation Term="Common.Label" String="{@i18n&gt;Messages}"/>
+				<Annotation Term="Common.Label" String="{i18n&gt;Messages}"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>
