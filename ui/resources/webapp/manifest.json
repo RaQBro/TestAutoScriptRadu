@@ -84,10 +84,13 @@
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"uri": "i18n/i18n.properties",
 				"settings": {
 					"bundleName": "webapp.ui.i18n.i18n"
 				}
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
 			},
 			"serviceModel": {
 				"type": "sap.ui.model.odata.v2.ODataModel",
