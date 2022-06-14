@@ -2,6 +2,7 @@
 	"sap.plc.db::basis.t_project": {},
 	"sap.plc.db::basis.t_calculation": {},
 	"sap.plc.db::basis.t_calculation_version": {},
+	"sap.plc.db::basis.t_calculation_version_temporary": {},
 	"sap.plc.db::basis.t_open_calculation_versions": {},
 	"sap.plc.db::basis.t_item": {},
 	"sap.plc.db::basis.t_item_ext": {},

@@ -17,6 +17,12 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_calculation_version_temporary": {
+		"target": {
+			"object": "sap.plc.db::basis.t_calculation_version_temporary",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_open_calculation_versions": {
 		"target": {
 			"object": "sap.plc.db::basis.t_open_calculation_versions",
