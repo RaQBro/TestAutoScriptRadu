@@ -42,25 +42,6 @@ class Service {
 	 * 
 	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
 	 */
-	async getTechnicalUserPlcToken(request) {
-
-		let oBodyRequest = request.body;
-		let sTechnicalUser = oBodyRequest.TECHNICAL_USER_NAME;
-		let sTechnicalPassword = oBodyRequest.TECHNICAL_USER_PASSWORD;
-		let sPlcClientId = oBodyRequest.CLIENT_ID;
-		let sPlcClientSecret = oBodyRequest.CLIENT_SECRET;
-
-		let UAAToken = new UaaToken.UAAToken();
-		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser,
-			sTechnicalPassword, sPlcClientId, sPlcClientSecret);
-		return sTechnicalUserAccessToken;
-	}
-
-	/** @function
-	 * Get token from UAA of PLC for current user
-	 * 
-	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
-	 */
 	async getUserPlcToken(request) {
 
 		let UAAToken = new UaaToken.UAAToken();

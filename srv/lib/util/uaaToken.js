@@ -247,42 +247,6 @@ class UAAToken {
 			});
 	}
 
-	/** @function
-	 * Used to call the auth token service in order to check if access token for the technical user can be retrieved using:
-	 *		- the plc client id and client secret from XSUAA service
-	 *		- the technical user retrieved from t_application_settings table
-	 *		- the password of technical user retrieved from secure store
-	 * If some of the values are incorrect the error message will raised. If with success the token is returned.
-	 */
-	async checkTechnicalUserToken(sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
-
-		let sTechnicalUserAccessToken;
-
-		await this.plcAuthClient
-			.request({
-				url: "/oauth/token",
-				data: qs.stringify({
-					"grant_type": "password",
-					"client_id": sPlcClientId,
-					"client_secret": sPlcClientSecret,
-					"username": sTechnicalUser,
-					"password": sTechnicalPassword,
-					"response_type": "token"
-				}),
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
-				}
-			})
-			.then(userTokenResponse => {
-				sTechnicalUserAccessToken = userTokenResponse.data.access_token;
-			})
-			.catch(error => {
-				throw new Error("Exception during refresh token retrieval: " + JSON.stringify(error));
-			});
-
-		return sTechnicalUserAccessToken;
-	}
-
 }
 
 exports.UAAToken = module.exports.UAAToken = UAAToken;
