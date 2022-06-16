@@ -84,8 +84,15 @@ sap.ui.define([
 
 		onSavePress: function () {
 
-			this.maintainApplicationSettings();
-			this.getApplicationSettings();
+			let that = this;
+			this.openBusyDialog();
+			setTimeout(function () {
+
+				that.maintainApplicationSettings();
+				that.getApplicationSettings();
+
+			}, 200);
+			this.closeBusyDialog();
 		},
 
 		onEditPress: function () {
@@ -135,24 +142,33 @@ sap.ui.define([
 
 		maintainApplicationSettings: function () {
 
-			let sTechnicalUsername = this.getView().byId("technicalUsername").getValue();
+			let sTechnicalUser = this.getView().byId("technicalUsername").getValue();
 			let sTechnicalPassword = this.getView().byId("technicalPassword").getValue();
-			let sClientId = this.getView().byId("clientId").getValue();
-			let sClientSecret = this.getView().byId("clientSecret").getValue();
+			let sPlcClientId = this.getView().byId("clientId").getValue();
+			let sPlcClientSecret = this.getView().byId("clientSecret").getValue();
 
-			if (sTechnicalUsername && sTechnicalPassword && sClientId && sClientSecret) {
-				this.deleteFromSecureStore(sTechnicalUsername, technicalNameUser);
-				this.deleteFromSecureStore(sClientId, technicalNameClient);
-				this.insertIntoSecureStore(sTechnicalUsername, sTechnicalPassword, technicalNameUser);
-				this.insertIntoSecureStore(sClientId, sClientSecret, technicalNameClient);
+			if (sTechnicalUser && sTechnicalPassword && sPlcClientId && sPlcClientSecret) {
 
-				this.pageModel.setProperty("/saveEnabled", false);
-				this.pageModel.setProperty("/editEnabled", true);
+				// check if PLC token can be generated based on the input
+				if (this.checkPlcToken(sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret)) {
 
-				this.handleControlEditableState("clientId", false);
-				this.handleControlEditableState("clientSecret", false);
-				this.handleControlEditableState("technicalUsername", false);
-				this.handleControlEditableState("technicalPassword", false);
+					this.deleteFromSecureStore(sTechnicalUser, technicalNameUser);
+					this.deleteFromSecureStore(sPlcClientId, technicalNameClient);
+					this.insertIntoSecureStore(sTechnicalUser, sTechnicalPassword, technicalNameUser);
+					this.insertIntoSecureStore(sPlcClientId, sPlcClientSecret, technicalNameClient);
+
+					this.pageModel.setProperty("/saveEnabled", false);
+					this.pageModel.setProperty("/editEnabled", true);
+					this.pageModel.setProperty("/editVisible", true);
+					this.pageModel.setProperty("/cancelEnabled", false);
+					this.pageModel.setProperty("/cancelVisible", false);
+
+					this.handleControlEditableState("clientId", false);
+					this.handleControlEditableState("clientSecret", false);
+					this.handleControlEditableState("technicalUsername", false);
+					this.handleControlEditableState("technicalPassword", false);
+
+				}
 			} else {
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsApplicationSettings"), null, null,
 					"Error",
@@ -208,6 +224,39 @@ sap.ui.define([
 			};
 
 			BackendConnector.doPost(url, data, onSuccess, onError, true);
+		},
+
+		checkPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
+
+			let bWithSuccess;
+
+			let oController = this,
+				data = {
+					"TECHNICAL_USER_NAME": sTechnicalUser,
+					"TECHNICAL_USER_PASSWORD": sTechnicalPassword,
+					"CLIENT_ID": sPlcClientId,
+					"CLIENT_SECRET": sPlcClientSecret
+				};
+
+			let onSuccess = function () {
+				bWithSuccess = true;
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesCheckPlcToken"),
+					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+
+			let onError = function () {
+				bWithSuccess = false;
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorCheckToken"), null,
+					null, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+
+			let url = {
+				constant: "CHECK_PLC_TOKEN"
+			};
+
+			BackendConnector.doPost(url, data, onSuccess, onError, true);
+
+			return bWithSuccess;
 		},
 
 		onChangeUsername: function () {
