@@ -267,6 +267,193 @@ async function statementExecPromisified(sSQLstmt, aQueryParameters) {
 	}
 }
 
+// ------------------------- Start functions to determine name for new calculation version ---------------------------
+
+/**
+ * Find first available name the follows the pattern: "<sCalculationVersionPrefix> <sUserId> .
+ *
+ * @param {string}
+ *            sCalculationVersionName - the name of the calculation version to be checked for existence
+ * @param {integer}
+ *            iCalculationId - the id of the calculation (integer literal)
+ * @throws {@link PlcException}
+ *             if database content is corrupt due to duplicated calculation version names
+ * @returns {boolean} - true if the calculation version name is unique, otherwise false
+ */
+async function isNameUniqueInBothTables(sCalculationVersionName, iCalculationId) {
+
+	let sQuery =
+		`
+			SELECT calculation_version_name FROM "sap.plc.db::basis.t_calculation_version_temporary"
+				WHERE calculation_version_name = ?
+					AND calculation_id = ?
+			UNION
+			SELECT calculation_version_name FROM "sap.plc.db::basis.t_calculation_version"
+				WHERE calculation_version_name = ?
+					AND calculation_id = ?
+		`;
+
+	let aResult = await statementExecPromisified(sQuery, [sCalculationVersionName, iCalculationId, sCalculationVersionName,
+		iCalculationId
+	]);
+
+	if (aResult.length > 0) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/**
+ * Find first available name the follows the pattern: "<sCalculationVersionPrefix> (number)" .
+ *
+ * @param {string}
+ *            sCalculationVersionPrefix - the name of the calculation version to be checked for uniqueness (string literal)
+ * @param {integer}
+ *            iCalculationId - the id of the calculation
+ * @throws {@link PlcException}
+ *             if database content is corrupt due to duplicated calculation version names
+ * @returns {array} - array of calculation version names
+ */
+async function findNameWithPrefix(sCalculationVersionPrefix, iCalculationId) {
+
+	let sQuery =
+		`
+			SELECT calculation_version_name FROM "sap.plc.db::basis.t_calculation_version_temporary"
+				WHERE calculation_version_name LIKE concat(?, ' (%)')
+					AND calculation_id = ?
+			UNION
+			SELECT calculation_version_name FROM "sap.plc.db::basis.t_calculation_version"
+				WHERE calculation_version_name LIKE concat(?, ' (%)')
+					AND calculation_id = ?
+		`;
+
+	let aResult = await statementExecPromisified(sQuery, [sCalculationVersionPrefix, iCalculationId,
+		sCalculationVersionPrefix, iCalculationId
+	]);
+
+	if (aResult.length > 0) {
+		return _.map(aResult, "CALCULATION_VERSION_NAME");
+	} else {
+		return [];
+	}
+}
+
+/**
+ * Splits incremental string like: TestVersionName (1) / TestVersionName (2)
+ * @param sTextWithIncrement
+ */
+function splitIncrementalString(sTextWithIncrement) {
+	var sRegexIncremental = "^(.*) \\(([1-9][0-9]*)\\)$";
+	var rPattern = new RegExp(sRegexIncremental);
+	var aMatches = rPattern.exec(sTextWithIncrement);
+	var sPrefix = sTextWithIncrement;
+	var iStartSuffix = 1;
+
+	// Check if a text ends in "<space><open_bracket><number><close_bracket>", that is, " (1)", " (2)"
+	if (aMatches) {
+		sPrefix = aMatches[1];
+		iStartSuffix = parseInt(aMatches[2]);
+	}
+	return {
+		Prefix: sPrefix,
+		StartSuffix: iStartSuffix
+	};
+}
+
+/**
+ * Function used to find first unused numeric suffix (numbers) from a collection of numeric suffixes (numbers)
+ */
+function findFirstUnusedSuffix(aAllSuffixes, iStartSuffix) {
+	/* Filter values smaller than iStartSuffix, then sort the array. */
+	var aSuffixes = aAllSuffixes.filter(function (value) { // , index, array) { todo add if needed else delete
+		return value > iStartSuffix;
+	});
+	if (aSuffixes.length === 0) {
+		// special case if no suffixes are greater than iStartSuffix
+		return iStartSuffix + 1;
+	}
+	aSuffixes.sort((a, b) => a - b); // without the lambda function Array.sort() always sorts alphabetically and not by numbers
+
+	for (let i = 1; i < aSuffixes.length; i++) {
+		if (aSuffixes[i] - aSuffixes[i - 1] !== 1) {
+			return aSuffixes[i - 1] + 1;
+		}
+	}
+	return aSuffixes[aSuffixes.length - 1] + 1;
+}
+
+/**
+ * Function used to escape string for RegExp
+ */
+function escapeStringForRegExp(sString) {
+
+	return sString.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+/**
+ * Function used to find first unused numeric suffix (numbers) in an array Of Strings: ["TestVersionName (1)" , "TestVersionName (5)]
+ */
+function findFirstUnusedSuffixInStringArray(sPrefix, iStartSuffix, aNamesWithPrefix) {
+	var sRegexSufixWithoutText = " \\(([1-9][0-9]*)\\)";
+	var rSuffixPattern = new RegExp(escapeStringForRegExp(sPrefix) + sRegexSufixWithoutText);
+
+	//Filter an array having "<prefix> (<something>)" names and extract those which actually follow the "<prefix> (<number>)" pattern
+	//Then and collect all the <number>s in an array.
+	var aSuffixes = [];
+	_.each(aNamesWithPrefix, function (sNameWithPrefix) {
+		var aMatches = rSuffixPattern.exec(sNameWithPrefix);
+		if (aMatches) {
+			aSuffixes.push(parseInt(aMatches[1]));
+		}
+	});
+
+	/* Find first unused numeric suffix. */
+	var iSuffix = findFirstUnusedSuffix(aSuffixes, iStartSuffix);
+
+	return iSuffix;
+}
+
+/**
+ * Determine name for new calculation version
+ *
+ * @param {object}
+ *            oCalculationVersion - new calculation version object
+ * @returns {string} - calculation version name
+ */
+async function getOrDetermineNewCalculationVersionName(oCalculationVersion) {
+
+	var sCalculationVersionName;
+
+	// check if the name exist in t_calculation_version and t_calculation_version_temporary
+	if (await isNameUniqueInBothTables(oCalculationVersion.CALCULATION_VERSION_NAME, oCalculationVersion.CALCULATION_ID)) {
+		sCalculationVersionName = oCalculationVersion.CALCULATION_VERSION_NAME;
+	} else {
+		/*
+		 * Check if the input calculation name ends in "<space><open_bracket><number><close_bracket>", that is, " (1)", " (2)" and
+		 * so on. If it doesn't, we'll attempt to add this suffix to the input name. If it does, we'll attempt to increase the number
+		 * until an available combination is found.
+		 */
+		var oSplitedCalculationVersionName = splitIncrementalString(oCalculationVersion.CALCULATION_VERSION_NAME);
+
+		/*
+		 * Extract all calculation version names which follow the "<prefix> (<something>)" pattern inside the same parent calculation.
+		 * Note: SQL can't easily check for "<prefix> (<number>)", so we relaxed this to "<name> (<something>)".
+		 */
+		var aNamesWithPrefix = await findNameWithPrefix(oSplitedCalculationVersionName.Prefix, oCalculationVersion.CALCULATION_ID);
+		/* Find first unused numeric suffix. */
+		var iSuffix = findFirstUnusedSuffixInStringArray(oSplitedCalculationVersionName.Prefix,
+			oSplitedCalculationVersionName.StartSuffix, aNamesWithPrefix);
+
+		sCalculationVersionName = oSplitedCalculationVersionName.Prefix + " (" + iSuffix.toString() + ")";
+	}
+
+	return sCalculationVersionName;
+
+}
+
+// ------------------------- End functions to determine name for new calculation version ---------------------------
+
 module.exports = {
 	nowPlusSecondstoISOString,
 	isUndefinedOrNull,
@@ -280,5 +467,6 @@ module.exports = {
 	getDateByPattern,
 	decompressedResultArray,
 	sleep,
-	statementExecPromisified
+	statementExecPromisified,
+	getOrDetermineNewCalculationVersionName
 };
