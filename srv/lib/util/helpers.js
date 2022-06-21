@@ -119,11 +119,11 @@ function recursivePropertyFinder(obj) {
  * @return {array} array - array with arrays
  */
 function chunkIntoSmallArrays(a, n) {
-	
+
 	return [...Array(Math.ceil(a.length / n))].map((x, i) => a.slice(n * i, n + n * i));
 }
 
-function getDateByPattern(sPattern) {
+function getDateByPattern(sPattern, dDatePicker) {
 
 	function addZero(i) {
 		if (i < 10) {
@@ -133,9 +133,22 @@ function getDateByPattern(sPattern) {
 	}
 
 	let dDate = new Date();
-	let iYear = dDate.getFullYear();
-	let sMonth = addZero(dDate.getMonth() + 1);
-	let sDate = addZero(dDate.getDate());
+
+	let iYear;
+	let sMonth;
+	let sDate;
+	let dDatePickerDate;
+
+	if (dDatePicker === undefined || dDatePicker === "") {
+		iYear = dDate.getFullYear();
+		sMonth = addZero(dDate.getMonth() + 1);
+		sDate = addZero(dDate.getDate());
+	} else {
+		dDatePickerDate = new Date(dDatePicker);
+		iYear = dDatePickerDate.getFullYear();
+		sMonth = addZero(dDatePickerDate.getMonth() + 1);
+		sDate = addZero(dDatePickerDate.getDate());
+	}
 	let sHours = addZero(dDate.getHours());
 	let sMinutes = addZero(dDate.getMinutes());
 	let sSeconds = addZero(dDate.getSeconds());
@@ -166,8 +179,19 @@ function getDateByPattern(sPattern) {
 	case "YYYY-MM-DD":
 		sCurrentDate = iYear + "-" + sMonth + "-" + sDate;
 		break;
+	case "YYYY-MM":
+		sCurrentDate = iYear + "-" + sMonth;
+		break;
 	case "YYYY-MM[-1]":
-		sCurrentDate = iYear + "-" + addZero(dDate.getMonth());
+		if (sMonth === "01") {
+			sCurrentDate = iYear - 1 + "-12";
+		} else {
+			if (dDatePicker === undefined) {
+				sCurrentDate = iYear + "-" + addZero(dDate.getMonth());
+			} else {
+				sCurrentDate = iYear + "-" + addZero(dDatePickerDate.getMonth());
+			}
+		}
 		break;
 	default:
 		sCurrentDate = iYear + "" + sMonth + "" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
