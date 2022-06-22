@@ -1,4 +1,4 @@
-<mvc:View controllerName="webapp.ui.controller.Jobs" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" 
+<mvc:View controllerName="webapp.ui.controller.Jobs" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:smartTable="sap.ui.comp.smarttable">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
@@ -16,7 +16,7 @@
 							<Button id="btnRefresh" icon="sap-icon://refresh" text="{i18n>btnRefresh}" visible="true" press="onRefreshEntries"/>
 						</OverflowToolbar>
 					</smartTable:customToolbar>
-					<Table id="tJobs" growing="true">
+					<Table id="tJobs" growing="true" sticky="ColumnHeaders">
 						<columns>
 							<Column>
 								<customData>

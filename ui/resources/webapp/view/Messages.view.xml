@@ -17,7 +17,7 @@
 							<Button id="btnRefresh" icon="sap-icon://refresh" text="{i18n>btnRefresh}" visible="true" press="onRefreshEntries"/>
 						</OverflowToolbar>
 					</smartTable:customToolbar>
-					<Table id="tMessages" growing="true" growingThreshold="1000">
+					<Table id="tMessages" growing="true" growingThreshold="1000" sticky="ColumnHeaders">
 						<ColumnListItem highlight="{path:'SEVERITY',formatter:'.formatRowHighlight'}"/>
 					</Table>
 				</smartTable:SmartTable>
