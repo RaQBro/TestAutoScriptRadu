@@ -16,8 +16,8 @@ const express = require("express");
  * @name secureStoreRouter.js
  */
 
-const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
-const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
+const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js");
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js");
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
 
 const sContentType = "application/json";
@@ -39,7 +39,7 @@ class SecureStoreRouter {
 		 * Common function before all routes are processed
 		 */
 		router.use(function (request, response, next) {
-			
+
 			next();
 		});
 
@@ -70,7 +70,7 @@ class SecureStoreRouter {
 					// generate new technical user token (if new user or new password)
 					if (sFieldName === "TECHNICAL_USER" || sFieldName === "CLIENT_ID") {
 						let UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
-						let UAAToken = new UaaToken.UAAToken();
+						let UAAToken = new UaaToken();
 						UAAToken.retrieveTechnicalUserToken();
 					}
 					response.type(sContentType).status(200).send(result);

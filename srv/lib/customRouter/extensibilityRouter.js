@@ -26,8 +26,8 @@ const express = require("express");
  * @name extensibilityRouter.js
  */
 
-const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
-const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
+const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js");
+const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js");
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -36,6 +36,9 @@ const PlcException = MessageLibrary.PlcException;
 
 const sContentType = "application/json";
 const sOperation = "Dummy Operation"; // operation of the service / job
+
+const ExampleService = require(global.appRoot + "/lib/service/exampleService").doService;
+const LogoutService = require(global.appRoot + "/lib/service/logoutService.js").doService;
 
 /** @class
  * @classdesc Extensibility PLC router
@@ -50,14 +53,10 @@ class ExtensibilityRouter {
 		let JobSchedulerUtil = new JobScheduler();
 
 		/**
-		 * Common function before all routes are processed:
-		 *		- generate an autoincrement JOB_ID based on the existing ids
+		 * Common function before all routes are processed
 		 */
 		router.use(async function (request, response, next) {
-
-			await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
 			next();
-
 		});
 
 		/**
@@ -186,6 +185,9 @@ class ExtensibilityRouter {
 		router.get("/example-service", async function (request, response) {
 
 			try {
+				// generate an autoincrement JOB_ID based on the existing ids
+				await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
+
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
@@ -217,10 +219,10 @@ class ExtensibilityRouter {
 			}
 
 			// import service
-			require(global.appRoot + "/lib/service/exampleService.js")
+			let Service = new ExampleService(request);
 
 			// execute service
-			.doService(request)
+			await Service.execute()
 
 			// handle success execution of the service
 			.then(async function (oServiceResponse) {
@@ -293,6 +295,9 @@ class ExtensibilityRouter {
 		router.get("/logout-service", async function (request, response) {
 
 			try {
+				// generate an autoincrement JOB_ID based on the existing ids
+				await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
+
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
@@ -324,10 +329,10 @@ class ExtensibilityRouter {
 			}
 
 			// import service
-			require(global.appRoot + "/lib/service/logoutService.js")
+			let Service = new LogoutService(request);
 
 			// execute service
-			.doService(request)
+			await Service.execute()
 
 			// handle success execution of the service
 			.then(async function (oServiceResponse) {

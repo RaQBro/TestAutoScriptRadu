@@ -157,12 +157,12 @@ expressApp.listen(port, function () {
 
 // token lifecycle at 1 minute (get & refresh)
 let UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
-let UAAToken = new UaaToken.UAAToken();
+let UAAToken = new UaaToken();
 UAAToken.retrieveTechnicalUserToken();
 setInterval(function () {
 	UAAToken.retrieveTechnicalUserToken();
 }, 60 * 1000); // every minute
 
 // create job(s) at first run
-let JobSchedulerUtil = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
+let JobSchedulerUtil = require(global.appRoot + "/lib/util/jobScheduler.js");
 new JobSchedulerUtil().createJobs();

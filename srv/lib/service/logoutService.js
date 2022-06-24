@@ -13,7 +13,7 @@ const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
-const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
+const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js");
 
 const sOperation = "Logout Service"; // operation of the service / job
 
@@ -35,34 +35,41 @@ async function doService(request) {
 
 	let sLanguage = "EN";
 
-	try {
-		// ------------------------- Start Business Logic ---------------------------
+	this.execute = async function () {
 
-		let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
-		if (oInitPlcSession !== undefined) {
+		try {
+			// ------------------------- Start Business Logic ---------------------------
 
-			let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
-			oServiceResponseBody.CURRENT_USER = sCurrentUser;
+			let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
+			if (oInitPlcSession !== undefined) {
 
-			let oLogoutFromPlc = await StandardPlcService.logoutPlcSession();
-			if (oLogoutFromPlc !== undefined) {
+				let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
+				oServiceResponseBody.CURRENT_USER = sCurrentUser;
 
-				await Message.addLog(request.JOB_ID,
-					`Technical user: ${sCurrentUser}!`,
-					"message", undefined, sOperation);
+				let oLogoutFromPlc = await StandardPlcService.logoutPlcSession();
+				if (oLogoutFromPlc !== undefined) {
 
+					await Message.addLog(request.JOB_ID,
+						`Technical user: ${sCurrentUser}!`,
+						"message", undefined, sOperation);
+
+				}
 			}
-		}
 
-		// -------------------------- End Business Logic ----------------------------
-	} catch (err) {
-		let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
-		iStatusCode = oPlcException.code.responseCode;
-		oServiceResponseBody = oPlcException;
-	}
-	return {
-		"STATUS_CODE": iStatusCode,
-		"SERVICE_RESPONSE": oServiceResponseBody
+			// -------------------------- End Business Logic ----------------------------
+		} catch (err) {
+			let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+			iStatusCode = oPlcException.code.responseCode;
+			oServiceResponseBody = oPlcException;
+		}
+		return {
+			"STATUS_CODE": iStatusCode,
+			"SERVICE_RESPONSE": oServiceResponseBody
+		};
 	};
 }
-exports.doService = module.exports.doService = doService;
+
+doService.prototype = Object.create(doService.prototype);
+doService.prototype.constructor = doService;
+
+module.exports.doService = doService;

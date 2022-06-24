@@ -57,7 +57,7 @@ class PlcDispatcher {
 			sToken = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 			bIsOnline = false;
 		} else {
-			let UAAToken = new UaaToken.UAAToken();
+			let UAAToken = new UaaToken();
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
 			sToken = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 			bIsOnline = true;
@@ -154,7 +154,7 @@ class PlcDispatcher {
 			sToken = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 			bIsOnline = false;
 		} else {
-			let UAAToken = new UaaToken.UAAToken();
+			let UAAToken = new UaaToken();
 			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
 			sToken = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 			bIsOnline = true;
@@ -228,4 +228,5 @@ class PlcDispatcher {
 		return oResponse;
 	}
 }
-exports.PlcDispatcher = module.exports.PlcDispatcher = PlcDispatcher;
+
+module.exports = PlcDispatcher;

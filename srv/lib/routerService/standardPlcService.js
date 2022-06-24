@@ -12,7 +12,7 @@ const _ = require("underscore");
  */
 
 const Helpers = require(global.appRoot + "/lib/util/helpers.js");
-const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js").PlcDispatcher;
+const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js");
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
 
 /** @class
@@ -2350,4 +2350,5 @@ class Dispatcher {
 		return oResponse.data;
 	}
 }
-exports.Dispatcher = module.exports.Dispatcher = Dispatcher;
+
+module.exports = Dispatcher;

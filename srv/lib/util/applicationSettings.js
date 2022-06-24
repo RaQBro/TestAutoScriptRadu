@@ -107,4 +107,5 @@ class ApplicationSettingsUtil {
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 	}
 }
-exports.ApplicationSettingsUtil = module.exports.ApplicationSettingsUtil = ApplicationSettingsUtil;
+
+module.exports = ApplicationSettingsUtil;

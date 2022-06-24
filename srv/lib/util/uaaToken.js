@@ -16,8 +16,8 @@ const qs = require("qs");
  */
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
-const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
-const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js").SecureStoreService;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js");
+const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Code = MessageLibrary.Code;
@@ -285,4 +285,4 @@ class UAAToken {
 
 }
 
-exports.UAAToken = module.exports.UAAToken = UAAToken;
+module.exports = UAAToken;

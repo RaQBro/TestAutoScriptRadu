@@ -12,8 +12,8 @@ const jobsc = require("@sap/jobs-client");
  * @name jobSchedulerService.js
  */
 
-const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js").JobSchedulerUtil;
-const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
+const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js");
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js");
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -219,4 +219,5 @@ class JobSchedulerService {
 		return new Message(`The number of added new schedules is: ${iNumberOfSchedules}.`, aSchedules);
 	}
 }
-exports.JobSchedulerService = module.exports.JobSchedulerService = JobSchedulerService;
+
+module.exports = JobSchedulerService;

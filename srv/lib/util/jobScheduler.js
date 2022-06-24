@@ -23,7 +23,7 @@ const aConfigJobs = require(global.appRoot + "/config.js").aJobs;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js").ApplicationSettingsUtil;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const PlcException = MessageLibrary.PlcException;
@@ -501,4 +501,5 @@ class JobSchedulerUtil {
 		return oReturnIds;
 	}
 }
-exports.JobSchedulerUtil = module.exports.JobSchedulerUtil = JobSchedulerUtil;
+
+module.exports = JobSchedulerUtil;

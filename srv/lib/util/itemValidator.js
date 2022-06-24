@@ -16,7 +16,7 @@ const _ = require("underscore");
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
+const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js");
 
 /** @class
  * @classdesc Item Validator
@@ -157,7 +157,7 @@ class ItemValidator {
 	 * @param {string} sPropertyKey - the item property key
 	 */
 	getMetadataAttributeKey(oInput, sPropertyKey) {
-		
+
 		return [sPropertyKey, oInput.metadata[0].PATH, oInput.categoryId, oInput.subitemState].toString();
 	}
 
@@ -318,4 +318,5 @@ class ItemValidator {
 		return aValidatedItems;
 	}
 }
-exports.ItemValidator = module.exports.ItemValidator = ItemValidator;
+
+module.exports = ItemValidator;

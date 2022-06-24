@@ -20,8 +20,8 @@ const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
-const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js").Service;
-const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js").Dispatcher;
+const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js");
+const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js");
 
 const sOperation = "Dummy Operation"; // operation of the service / job
 
@@ -33,7 +33,7 @@ const sOperation = "Dummy Operation"; // operation of the service / job
  * @param {object} request - web request / job request
  * @return {object} oServiceResponseBody - the example service response body
  */
-async function doService(request) {
+function doService(request) {
 
 	// --------------------- Global Constants and Variables ---------------------
 	let iStatusCode = 200; // service response code
@@ -47,7 +47,7 @@ async function doService(request) {
 	// ------------------------- Start Functions List ---------------------------
 
 	this.getFirstProject = async function () {
-		
+
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
@@ -118,63 +118,70 @@ async function doService(request) {
 	}
 	// -------------------------- End Functions List ----------------------------
 
-	try {
+	this.execute = async function () {
 
-		// ------------------------- Start Business Logic ---------------------------
+		try {
 
-		/**
-		 * Example how to get the data added into the new schedule (e.g. from config.js "data": {"TEST_KEY":"TEST_VALUE"} )
-		 */
+			// ------------------------- Start Business Logic ---------------------------
 
-		// if (helpers.isRequestFromJob(request)) {
-		// 	if (request.method === "GET" || request.method === "DELETE") {
-		// 		let oTestValue = request.query.TEST_KEY;
-		// 		console.log("oTestValue: " + oTestValue);  // "TEST_VALUE"
-		// 	} else if (request.method === "PUT" || request.method === "POST") {
-		// 		let oBodyRequest = request.body;
-		// 		console.log("oBodyRequest: " + JSON.stringify(oBodyRequest)); // {"TEST_KEY":"TEST_VALUE"} 
-		// 	}
-		// }
+			/**
+			 * Example how to get the data added into the new schedule (e.g. from config.js "data": {"TEST_KEY":"TEST_VALUE"} )
+			 */
 
-		let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
+			// if (helpers.isRequestFromJob(request)) {
+			// 	if (request.method === "GET" || request.method === "DELETE") {
+			// 		let oTestValue = request.query.TEST_KEY;
+			// 		console.log("oTestValue: " + oTestValue);  // "TEST_VALUE"
+			// 	} else if (request.method === "PUT" || request.method === "POST") {
+			// 		let oBodyRequest = request.body;
+			// 		console.log("oBodyRequest: " + JSON.stringify(oBodyRequest)); // {"TEST_KEY":"TEST_VALUE"} 
+			// 	}
+			// }
 
-		if (oInitPlcSession !== undefined) {
-			let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
-			oServiceResponseBody.CURRENT_USER = sCurrentUser;
-			await Message.addLog(request.JOB_ID, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
+			let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
+
+			if (oInitPlcSession !== undefined) {
+				let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
+				oServiceResponseBody.CURRENT_USER = sCurrentUser;
+				await Message.addLog(request.JOB_ID, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
+
+				let oVersion = await StandardPlcService.openCalculationVersion(1);
+
+				if (oVersion !== undefined) {
+					await StandardPlcService.closeCalculationVersion(1);
+				}
+
+				let aStatus = await StandardPlcService.getStatuses();
+				oServiceResponseBody.STATUS = aStatus;
+			}
+
+			let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
+			oServiceResponseBody.CURRENT_DATE = sCurrentDate;
+
+			let sProjectId = await this.getFirstProject();
+			oServiceResponseBody.PROJECT_ID = sProjectId;
+
+			let aAllProject = await ExtensibilityPlcService.getAllProjects();
+			oServiceResponseBody.PROJECT = aAllProject[0];
+
+			await Message.addLog(request.JOB_ID,
+				"Example how to add operation at the messages.",
+				"message", undefined, sOperation);
+
+			// -------------------------- End Business Logic ----------------------------
+		} catch (err) {
+			let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+			iStatusCode = oPlcException.code.responseCode;
+			oServiceResponseBody = oPlcException;
 		}
-
-		let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
-		oServiceResponseBody.CURRENT_DATE = sCurrentDate;
-
-		let sProjectId = await this.getFirstProject();
-		oServiceResponseBody.PROJECT_ID = sProjectId;
-
-		let aAllProject = await ExtensibilityPlcService.getAllProjects();
-		oServiceResponseBody.PROJECT = aAllProject[0];
-
-		let oVersion = await StandardPlcService.openCalculationVersion(1);
-
-		if (oVersion !== undefined) {
-			await StandardPlcService.closeCalculationVersion(1);
-		}
-
-		let aStatus = await StandardPlcService.getStatuses();
-		oServiceResponseBody.STATUS = aStatus;
-
-		await Message.addLog(request.JOB_ID,
-			"Example how to add operation at the messages.",
-			"message", undefined, sOperation);
-
-		// -------------------------- End Business Logic ----------------------------
-	} catch (err) {
-		let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
-		iStatusCode = oPlcException.code.responseCode;
-		oServiceResponseBody = oPlcException;
-	}
-	return {
-		"STATUS_CODE": iStatusCode,
-		"SERVICE_RESPONSE": oServiceResponseBody
+		return {
+			"STATUS_CODE": iStatusCode,
+			"SERVICE_RESPONSE": oServiceResponseBody
+		};
 	};
 }
-exports.doService = module.exports.doService = doService;
+
+doService.prototype = Object.create(doService.prototype);
+doService.prototype.constructor = doService;
+
+module.exports.doService = doService;

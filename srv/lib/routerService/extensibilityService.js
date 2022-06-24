@@ -50,7 +50,7 @@ class Service {
 		let sPlcClientId = oBodyRequest.CLIENT_ID;
 		let sPlcClientSecret = oBodyRequest.CLIENT_SECRET;
 
-		let UAAToken = new UaaToken.UAAToken();
+		let UAAToken = new UaaToken();
 		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser,
 			sTechnicalPassword, sPlcClientId, sPlcClientSecret);
 		return sTechnicalUserAccessToken;
@@ -63,7 +63,7 @@ class Service {
 	 */
 	async getUserPlcToken(request) {
 
-		let UAAToken = new UaaToken.UAAToken();
+		let UAAToken = new UaaToken();
 		await UAAToken.retrieveApplicationUserToken(request.headers.authorization);
 		return UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 	}
@@ -358,4 +358,5 @@ class Service {
 		return aResults !== undefined && aResults !== null && aResults.length > 0 ? aResults[0] : 1;
 	}
 }
-exports.Service = module.exports.Service = Service;
+
+module.exports = Service;

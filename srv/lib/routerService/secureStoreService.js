@@ -183,7 +183,7 @@ class SecureStoreService {
 	 * @return {object} result / error - the secure store client / the error
 	 */
 	getSecureStore() {
-		
+
 		return new Promise((resolve, reject) => {
 			let hanaOptions = xsenv.getServices({
 				secureStore: {
@@ -201,6 +201,6 @@ class SecureStoreService {
 			});
 		});
 	}
-
 }
-exports.SecureStoreService = module.exports.SecureStoreService = SecureStoreService;
+
+module.exports = SecureStoreService;
