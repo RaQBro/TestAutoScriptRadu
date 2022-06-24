@@ -77,7 +77,7 @@ sap.ui.define([
 					sort: {
 						sortItems: [{
 							columnKey: "TIMESTAMP",
-							operation: "Ascending"
+							operation: "Descending"
 						}]
 					}
 				});
