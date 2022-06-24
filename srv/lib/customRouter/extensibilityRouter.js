@@ -37,7 +37,7 @@ const PlcException = MessageLibrary.PlcException;
 const sContentType = "application/json";
 const sOperation = "Dummy Operation"; // operation of the service / job
 
-const ExampleService = require(global.appRoot + "/lib/service/exampleService").doService;
+const ExampleService = require(global.appRoot + "/lib/service/exampleService.js").doService;
 const LogoutService = require(global.appRoot + "/lib/service/logoutService.js").doService;
 
 /** @class

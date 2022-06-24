@@ -25,7 +25,7 @@ const sOperation = "Logout Service"; // operation of the service / job
  * @param {object} request - web request / job request
  * @return {object} oServiceResponseBody - the service response body
  */
-async function doService(request) {
+function doService(request) {
 
 	// --------------------- Global Constants and Variables ---------------------
 	let iStatusCode = 200; // service response code
