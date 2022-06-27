@@ -187,6 +187,18 @@ sap.ui.define([
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
 		},
 
+		/** @function called when homeicon is pressed*/
+		onLogoPress: function () {
+
+			sap.m.URLHelper.redirect(this.getBaseUrl());
+		},
+
+		/** @function used to get the url without the hash*/
+		getBaseUrl: function () {
+
+			return window.location.href.replace(window.location.hash, "");
+		},
+
 		/** @function called when button the expand the toolPage from the left side*/
 		colapseSideNavigation: function () {
 
@@ -197,7 +209,7 @@ sap.ui.define([
 
 		/** @function called when a view from the left list is selected and it's navigating to that specific view*/
 		onViewChange: function (oEvent) {
-			
+
 			let item = oEvent.getParameter("item");
 
 			this.navTo(item.getKey());
