@@ -30,7 +30,7 @@ context template_application {
         key START_TIMESTAMP     : UTCTimestamp not null;
             END_TIMESTAMP       : UTCTimestamp;
             JOB_ID              : Integer64; // Negative if online mode / Positive if job
-            JOB_NAME            : String(500);
+            JOB_NAME            : String(5000);
             JOB_STATUS          : String(100);
             REQUEST_USER_ID     : String(256);
             RUN_USER_ID         : String(256);
@@ -59,4 +59,3 @@ context template_application {
         unique index MESSAGE on (MESSAGE_ID, TIMESTAMP, JOB_ID) asc;
     };
 };
-
