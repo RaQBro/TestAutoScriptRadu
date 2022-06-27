@@ -137,10 +137,10 @@ class Service {
 			) {
 				bIsTouchable = true;
 			}
-			let bIsWritable = oTouchableVersion.IS_WRITEABLE === null || oTouchableVersion.IS_WRITEABLE === 1 ||
-				oTouchableVersion.IS_WRITEABLE === "1" ? true : false;
 			let bIsFrozen = oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
 				oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined ? false : true;
+			let bIsWritable = bIsFrozen === true ? false : (oTouchableVersion.IS_WRITEABLE === null || oTouchableVersion.IS_WRITEABLE === 1 ||
+				oTouchableVersion.IS_WRITEABLE === "1" ? true : false);
 			await Message.addLog(this.JOB_ID,
 				"Calculation Version with ID '" + iVersionId + "': Is Touchable = " + bIsTouchable +
 				". Is Writable = " + bIsWritable + ". Is Frozen = " + bIsFrozen + ".",
