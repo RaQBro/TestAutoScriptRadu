@@ -186,13 +186,16 @@ sap.ui.define([
 
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
 		},
+
 		/** @function called when homeicon is pressed*/
 		onLogoPress: function () {
 
 			sap.m.URLHelper.redirect(this.getBaseUrl());
 		},
+
 		/** @function used to get the url without the hash*/
 		getBaseUrl: function () {
+
 			return window.location.href.replace(window.location.hash, "");
 		},
 
