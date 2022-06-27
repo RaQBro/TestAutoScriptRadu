@@ -9,7 +9,7 @@ const express = require("express");
  * 
  * Extensibility PLC Router
  * Requests used to call the custom backend services:
- *		- GET /extensibility/plc/token
+ *		- GET /extensibility/plc/application-token
  *		- GET /extensibility/plc/user-plc-token
  *		- GET /extensibility/plc/user-details
  *		- GET /extensibility/plc/application-routes
@@ -60,9 +60,9 @@ class ExtensibilityRouter {
 		});
 
 		/**
-		 * Endpoint for X-CSRF-Token fetch
+		 * Endpoint for getting X-CSRF-Token of the application
 		 */
-		router.get("/token", function (request, response) {
+		router.get("/application-token", function (request, response) {
 
 			response.status(200).send(true);
 		});

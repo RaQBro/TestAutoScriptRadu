@@ -49,7 +49,7 @@ sap.ui.define([
 			this._startInactivityTimer();
 
 			BackendConnector.doGet({
-					constant: "AUTH_URL"
+					constant: "APP_TOKEN"
 				},
 				function (res, status, xhr) {
 					let sHeaderCsrfToken = "X-Csrf-Token";
@@ -117,7 +117,7 @@ sap.ui.define([
 		_ping: function () {
 
 			BackendConnector.doGet({
-					constant: "AUTH_URL"
+					constant: "APP_TOKEN"
 				},
 				function () {
 					this.stopInactivityTimer();
@@ -131,7 +131,7 @@ sap.ui.define([
 		},
 
 		destroy: function () {
-			
+
 			FakeLrepConnectorLocalStorage.disableFakeConnector();
 			UIComponent.prototype.destroy.apply(this, arguments);
 		}
