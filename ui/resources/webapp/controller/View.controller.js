@@ -20,8 +20,11 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("V");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
+
 				if (!this.checkPlcToken) {
+
+					oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
+				} else {
 
 					this.navTo("applicationSettings");
 					this.onErrorPlcToken();
@@ -31,7 +34,6 @@ sap.ui.define([
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
-
 		},
 
 		onAfterRendering: function () {},

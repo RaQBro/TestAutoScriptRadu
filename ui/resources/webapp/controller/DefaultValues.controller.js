@@ -4,6 +4,7 @@ sap.ui.define([
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
+
 ], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
@@ -19,13 +20,17 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("DV");
 
 			if (this.oAuth.display) {
-				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
-				if (!this.checkPlcToken) {
+
+				if (this.checkPlcToken) {
+
+					oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
+				} else {
 
 					this.navTo("applicationSettings");
 					this.onErrorPlcToken();
 				}
 			} else {
+
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}

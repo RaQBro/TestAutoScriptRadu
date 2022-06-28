@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Text"
+
 ], function (Controller, UIComponent, Fragment, BackendConnector, ToolBarMessages, MessageHelpers, Constants, CoreLibrary, Dialog, Button,
 	MobileLibrary, Text) {
 	"use strict";
@@ -348,6 +349,7 @@ sap.ui.define([
 
 			return new sap.ui.model.json.JSONModel(data);
 		},
+
 		checkPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
 
 			let bWithSuccess;
@@ -382,6 +384,7 @@ sap.ui.define([
 		},
 
 		onErrorPlcToken: function () {
+
 			if (!this.oErrorPlcToken) {
 				this.oErrorPlcToken = new Dialog({
 					type: MobileLibrary.DialogType.Message,
@@ -403,6 +406,5 @@ sap.ui.define([
 
 			this.oErrorPlcToken.open();
 		}
-
 	});
 });
