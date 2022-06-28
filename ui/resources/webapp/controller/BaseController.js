@@ -6,8 +6,14 @@ sap.ui.define([
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/toolBarMessages/ToolBarMessages",
 	"webapp/ui/core/utils/MessageHelpers",
-	"webapp/ui/core/utils/Constants"
-], function (Controller, UIComponent, Fragment, BackendConnector, ToolBarMessages, MessageHelpers, Constants) {
+	"webapp/ui/core/utils/Constants",
+	"sap/ui/core/library",
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/library",
+	"sap/m/Text"
+], function (Controller, UIComponent, Fragment, BackendConnector, ToolBarMessages, MessageHelpers, Constants, CoreLibrary, Dialog, Button,
+	MobileLibrary, Text) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.BaseController", {
@@ -341,6 +347,62 @@ sap.ui.define([
 			let data = fullModel.oData[view] || fullModel.oData.default || {};
 
 			return new sap.ui.model.json.JSONModel(data);
+		},
+		checkPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
+
+			let bWithSuccess;
+
+			let oController = this,
+				data = {
+					"TECHNICAL_USER_NAME": sTechnicalUser,
+					"TECHNICAL_USER_PASSWORD": sTechnicalPassword,
+					"CLIENT_ID": sPlcClientId,
+					"CLIENT_SECRET": sPlcClientSecret
+				};
+
+			let onSuccess = function () {
+				bWithSuccess = true;
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesCheckPlcToken"),
+					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+
+			let onError = function () {
+				bWithSuccess = false;
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorCheckToken"), null,
+					null, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+
+			let url = {
+				constant: "CHECK_PLC_TOKEN"
+			};
+
+			BackendConnector.doPost(url, data, onSuccess, onError, true);
+
+			return bWithSuccess;
+		},
+
+		onErrorPlcToken: function () {
+			if (!this.oErrorPlcToken) {
+				this.oErrorPlcToken = new Dialog({
+					type: MobileLibrary.DialogType.Message,
+					title: "Error",
+					state: CoreLibrary.ValueState.Error,
+					closeOnNavigation: false,
+					content: new Text({
+						text: this.getResourceBundleText("TokenError")
+					}),
+					beginButton: new Button({
+						type: MobileLibrary.ButtonType.Emphasized,
+						text: "OK",
+						press: function () {
+							this.oErrorPlcToken.close();
+						}.bind(this)
+					})
+				});
+			}
+
+			this.oErrorPlcToken.open();
 		}
+
 	});
 });

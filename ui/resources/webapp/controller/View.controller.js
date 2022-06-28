@@ -21,10 +21,17 @@ sap.ui.define([
 
 			if (this.oAuth.display) {
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
+				if (!this.checkPlcToken) {
+
+					this.navTo("applicationSettings");
+					this.onErrorPlcToken();
+				}
 			} else {
+
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
+
 		},
 
 		onAfterRendering: function () {},
@@ -71,12 +78,15 @@ sap.ui.define([
 			let oDialogKey,
 				oDialogValue;
 
+			this.mViewSettingsDialogs(this.onErrorPlcToken);
+
 			for (oDialogKey in this.mViewSettingsDialogs) {
 				oDialogValue = this.mViewSettingsDialogs[oDialogKey];
 				if (oDialogValue) {
 					oDialogValue.destroy();
 				}
 			}
+
 		},
 
 		onOnlinePress: function () {
@@ -85,7 +95,7 @@ sap.ui.define([
 		},
 
 		onOfflinePress: function () {
-			
+
 			let oView = this.getView();
 			let oController = oView.getController();
 
