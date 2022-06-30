@@ -1,1 +1,14 @@
-{"type":"mta","builders":{"default":"mtabuilder","configs":{}},"runners":{"configs":{}},"attributes":{"sap.watt.common.setting":["{\"hdbInactiveFiles\":{\"inactiveFileList\":[\"/template-application/db/src/view/v_job_log.hdbview\"]}}"]},"mixinTypes":[]}
+{
+	"type": "mta",
+	"builders": {
+		"default": "mtabuilder",
+		"configs": {}
+	},
+	"runners": {
+		"configs": {}
+	},
+	"attributes": {
+		"sap.watt.common.setting": ["{\"hdbInactiveFiles\":{\"inactiveFileList\":[]}}"]
+	},
+	"mixinTypes": []
+}
