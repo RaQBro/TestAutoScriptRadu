@@ -67,6 +67,9 @@
 			<Annotations Target="Metadata.job-messagesType/MESSAGE_ID">
 				<Annotation Term="Common.Label" String="{@i18n&gt;Messages}"/>
 			</Annotations>
+			<Annotations Target="Metadata.job-logsType/TIME_TAKEN">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobTimeTaken}"/>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

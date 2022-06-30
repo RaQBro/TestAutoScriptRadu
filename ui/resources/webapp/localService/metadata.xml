@@ -42,6 +42,7 @@
 				<Property Name="SAP_JOB_RUN_ID" Type="Edm.String" MaxLength="500"/>
 				<Property Name="START_TIMESTAMP" Type="Edm.DateTime" Nullable="false"/>
 				<Property Name="END_TIMESTAMP" Type="Edm.DateTime"/>
+				<Property Name="TIME_TAKEN" Type="Edm.Int64"/>
 				<Property Name="JOB_STATUS" Type="Edm.String" MaxLength="100"/>
 			</EntityType>
 			<EntityType Name="job-messagesType">
