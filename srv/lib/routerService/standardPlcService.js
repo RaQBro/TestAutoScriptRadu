@@ -432,6 +432,9 @@ class Dispatcher {
 		}, {
 			"name": "calculate",
 			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "false"
 		}];
 
 		if (oDetails.VALUATION_DATE === undefined || oDetails.VALUATION_DATE === null || oDetails.VALUATION_DATE === "") {
@@ -543,6 +546,46 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * Save as new the calculation version
+	 * 
+	 * @param {object} oVersion - the calculation version details
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async saveAsCalculationVersion(oVersion) {
+
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
+			"name": "calculate",
+			"value": "false"
+		}, {
+			"name": "action",
+			"value": "save-as"
+		}];
+
+		let aBodyData = [{
+			"CALCULATION_ID": oVersion.CALCULATION_ID,
+			"CALCULATION_VERSION_ID": oVersion.CALCULATION_VERSION_ID,
+			"CALCULATION_VERSION_NAME": oVersion.CALCULATION_VERSION_NAME
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = oResponse.data;
+
+		if (oResponse.status !== 200) {
+			let sDeveloperInfo =
+				`Failed to save as new the calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' and NAME '${oVersion.CALCULATION_VERSION_NAME}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			let iNewVersionId = oResponseBody.body.transactionaldata[0].CALCULATION_VERSION_ID;
+			let sMessageInfo =
+				`Calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' was saved as a new version with ID '${iNewVersionId}' and NAME '${oVersion.CALCULATION_VERSION_NAME}'.`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			return iNewVersionId;
+		}
+	}
+
+	/** @function
 	 * Create calculation version as copy of another version
 	 * 
 	 * @param {integer} iVersionId - version id to copy
@@ -619,14 +662,76 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * Get version to be referenced into a calculation version
+	 * 
+	 * @param {string} iVersionId - the calculation version id
+	 * @param {string} iVersionToBeReferenced - the version id to be referenced
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getCalculationVersionToBeReferenced(iVersionId, iVersionToBeReferenced) {
+
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
+			"name": "search",
+			"value": "true"
+		}, {
+			"name": "sortingDirection",
+			"value": "asc"
+		}, {
+			"name": "sortingColumn",
+			"value": "LAST_MODIFIED_ON"
+		}, {
+			"name": "filter",
+			"value": "CALCULATION_VERSION=" + iVersionToBeReferenced
+		}, {
+			"name": "top",
+			"value": "100"
+		}, {
+			"name": "id",
+			"value": iVersionId
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = oResponse.data;
+
+		if (oResponse.status !== 200) {
+			let sDeveloperInfo =
+				`Failed to get version with ID '${iVersionToBeReferenced}' to be referenced into calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+
+			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+				oResponseBody.body.transactionaldata.length > 0) {
+
+				let oVersionToBeReferenced = _.find(oResponseBody.body.transactionaldata, function (oVtbR) {
+					return oVtbR.CALCULATION_VERSION_ID === iVersionToBeReferenced;
+				});
+				if (oVersionToBeReferenced !== undefined) {
+					let sMessageInfo =
+						`Version with ID '${iVersionId}' to be referenced into calculation version with ID '${iVersionId}' was retrieved with success!`;
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+					return oVersionToBeReferenced;
+				}
+			}
+
+			let sMessageInfo =
+				`Not found version with ID '${iVersionToBeReferenced}' to be referenced into calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation);
+			return undefined;
+		}
+	}
+
+	/** @function
 	 * Open calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {boolean} bCompressedResult - flag if the response should be compressed
 	 * @param {boolean} bGetOnly - flag if the response should contain the version details no matter if it's read-only
+	 * @param {boolean} bNotCloseVersion - flag used in combination with bGetOnly === true. version should not be closed if will be saved as new 
 	 * @return {object} result / error - the opened calculation version or throw error
 	 */
-	async openCalculationVersion(iVersionId, bCompressedResult, bGetOnly) {
+	async openCalculationVersion(iVersionId, bCompressedResult, bGetOnly, bNotCloseVersion) {
 
 		let response;
 
@@ -666,53 +771,142 @@ class Dispatcher {
 					return oMsg.code === "ENTITY_NOT_WRITEABLE_INFO";
 				});
 				if (oMessage !== undefined) {
+					// get user(s) who locked the version
 					let aUsers;
 					if (oMessage.details !== undefined && oMessage.details.calculationVersionObjs !== undefined &&
 						oMessage.details.calculationVersionObjs.length > 0) {
-
 						let oCalculationVersionDetails = _.find(oMessage.details.calculationVersionObjs, function (oDetailsCalculationVersion) {
 							return oDetailsCalculationVersion.id === iVersionId;
 						});
-
 						if (oCalculationVersionDetails !== undefined && oMessage.details.userObjs !== undefined && oMessage.details.userObjs.length > 0) {
 							aUsers = _.pluck(oMessage.details.userObjs, "id");
 						}
 					}
-					if (aUsers !== undefined && aUsers.length > 0) {
-						sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
-						sMessageInfo =
-							`Calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): '${aUsers.join(", ")}'`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+					// if version not editable but will be saved as new => version should not be closed
+					if (bGetOnly === true && bNotCloseVersion === true) {
+						if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+							oResponseBody.body.transactionaldata[0] !== undefined) {
+							// add warning message since version opened in read-only mode
+							if (aUsers !== undefined && aUsers.length > 0) {
+								sMessageInfo =
+									`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
+								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							} else {
+								sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
+								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							}
+							// return read-only version
+							response = oResponseBody.body.transactionaldata[0];
+						}
 					} else {
-						sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
-						sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
-					}
-					if (bGetOnly) {
-						// close calculation version
-						await this.closeCalculationVersion(iVersionId);
-
-						response = oResponseBody.body.transactionaldata[0];
-					} else {
-						// close calculation version
-						await this.closeCalculationVersion(iVersionId);
-
-						response = false;
+						// add warning message since version will be ignored
+						if (aUsers !== undefined && aUsers.length > 0) {
+							sMessageInfo =
+								`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							sMessageInfo =
+								`Calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): '${aUsers.join(", ")}'`;
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						} else {
+							sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						}
+						// 
+						if (bGetOnly) {
+							// check if version should be closed
+							if (bNotCloseVersion !== true) {
+								// close calculation version
+								await this.closeCalculationVersion(iVersionId);
+							}
+							// return read-only version
+							if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+								oResponseBody.body.transactionaldata[0] !== undefined) {
+								response = oResponseBody.body.transactionaldata[0];
+							}
+						} else {
+							// close calculation version
+							await this.closeCalculationVersion(iVersionId);
+							// return false since version is not editable
+							response = false;
+						}
 					}
 				}
 			}
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages === undefined && oResponseBody.body !== undefined &&
 				oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !== undefined) {
-
+				// add success message
 				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
-
+				// return opened version
 				response = oResponseBody.body.transactionaldata[0];
 			}
 		}
 
 		return response;
+	}
+
+	/** @function
+	 * Update calculation version
+	 * 
+	 * @param {object} oCalculatonVersion - the calculation version
+	 * @param {boolean} bReturnResponseIfError - flag if the response should be return in case of error and no error message will be raised
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async updateCalculationVersion(oCalculatonVersion, bReturnResponseIfError) {
+
+		let sQueryPath = "calculation-versions";
+		let aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "loadMasterdata",
+			"value": "false"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		let aBodyData = [{
+			"CALCULATION_ID": oCalculatonVersion.CALCULATION_ID,
+			"CALCULATION_VERSION_ID": oCalculatonVersion.CALCULATION_VERSION_ID,
+			"CALCULATION_VERSION_NAME": oCalculatonVersion.CALCULATION_VERSION_NAME,
+			"CUSTOMER_ID": oCalculatonVersion.CUSTOMER_ID,
+			"REPORT_CURRENCY_ID": oCalculatonVersion.REPORT_CURRENCY_ID,
+			"EXCHANGE_RATE_TYPE_ID": oCalculatonVersion.EXCHANGE_RATE_TYPE_ID,
+			"ROOT_ITEM_ID": oCalculatonVersion.ROOT_ITEM_ID,
+			"SALES_PRICE_CURRENCY_ID": oCalculatonVersion.SALES_PRICE_CURRENCY_ID,
+			"SALES_DOCUMENT": oCalculatonVersion.SALES_DOCUMENT,
+			"SALES_PRICE": oCalculatonVersion.SALES_PRICE,
+			"VALUATION_DATE": oCalculatonVersion.VALUATION_DATE,
+			"MATERIAL_PRICE_STRATEGY_ID": oCalculatonVersion.MATERIAL_PRICE_STRATEGY_ID,
+			"ACTIVITY_PRICE_STRATEGY_ID": oCalculatonVersion.ACTIVITY_PRICE_STRATEGY_ID,
+			"STATUS_ID": oCalculatonVersion.STATUS_ID,
+			"SELECTED_TOTAL_COSTING_SHEET": oCalculatonVersion.SELECTED_TOTAL_COSTING_SHEET,
+			"SELECTED_TOTAL_COMPONENT_SPLIT": oCalculatonVersion.SELECTED_TOTAL_COMPONENT_SPLIT,
+			"COMPONENT_SPLIT_ID": oCalculatonVersion.COMPONENT_SPLIT_ID,
+			"COSTING_SHEET_ID": oCalculatonVersion.COSTING_SHEET_ID,
+			"START_OF_PRODUCTION": oCalculatonVersion.START_OF_PRODUCTION,
+			"END_OF_PRODUCTION": oCalculatonVersion.END_OF_PRODUCTION
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = oResponse.data;
+
+		if (oResponse.status !== 200) {
+			if (bReturnResponseIfError === true) {
+				return oResponseBody;
+			} else {
+				let sDeveloperInfo = `Failed to update calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				return undefined;
+			}
+		} else {
+			let sMessageInfo =
+				`Update of calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			return oResponseBody.body.transactionaldata[0];
+		}
 	}
 
 	/** @function
@@ -877,6 +1071,54 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * Add a text item into a calculation version
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {object} oParentItem - the parent item
+	 * @param {integer} iPredecessorItemId - the predecessor item ID
+	 * @param {string} sDescription - the text item description
+	 * @return {object} result / error - PLC response / PLC error
+	 */
+	async addTextItem(iVersionId, oParentItem, iPredecessorItemId, sDescription) {
+
+		let sQueryPath = "items";
+		let aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "mode",
+			"value": "normal"
+		}, {
+			"name": "compressedResult",
+			"value": "false"
+		}];
+
+		let aBodyData = [{
+			"CALCULATION_VERSION_ID": iVersionId,
+			"CHILD_ITEM_CATEGORY_ID": 9,
+			"ITEM_CATEGORY_ID": 9,
+			"ITEM_DESCRIPTION": sDescription !== undefined ? sDescription : null,
+			"ITEM_ID": -1,
+			"PARENT_ITEM_ID": oParentItem.ITEM_ID,
+			"PREDECESSOR_ITEM_ID": iPredecessorItemId !== undefined ? iPredecessorItemId : null,
+			"IS_ACTIVE": 1
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aBodyData);
+		let oResponseBody = oResponse.data;
+
+		if (!(oResponse.status === 201 || oResponse.status === 200)) {
+			let sDeveloperInfo = `Failed to add text item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			let sMessageInfo = `Text item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			return oResponseBody.body.transactionaldata;
+		}
+	}
+
+	/** @function
 	 * Delete the items from calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
@@ -972,6 +1214,9 @@ class Dispatcher {
 		let aParams = [{
 			"name": "calculate",
 			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
 		}];
 
 		let aBodyData = [];
@@ -980,7 +1225,7 @@ class Dispatcher {
 				"ITEM_ID": oItem.ITEM_ID,
 				"ITEM_CATEGORY_ID": oItem.ITEM_CATEGORY_ID,
 				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID,
-				"REFERENCED_CALCULATION_VERSION_ID": oItem.CURRENT_CALCULATION_VERSION_ID
+				"REFERENCED_CALCULATION_VERSION_ID": oItem.REFERENCED_CALCULATION_VERSION_ID
 			};
 			aBodyData.push(oItemToUpdate);
 		}
@@ -995,7 +1240,7 @@ class Dispatcher {
 		} else {
 			let sMessageInfo = `Update referenced items of version with ID '${iVersionId}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
-			return oResponseBody;
+			return true;
 		}
 	}
 
@@ -2099,6 +2344,49 @@ class Dispatcher {
 	}
 
 	/** @function
+	 * Update a custom field value from root item
+	 * 
+	 * @param {object} oVersion - the calculation version details
+	 * @param {string} sCustomFieldName - the custom field name
+	 * @param {string} sCustomFieldValue - the custom field value
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async updateCustomFieldOnRootItem(oVersion, sCustomFieldName, sCustomFieldValue) {
+
+		let sQueryPath = "items";
+		let aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		let oBodyData = {
+			"ITEM_ID": oVersion.ROOT_ITEM_ID,
+			"CALCULATION_VERSION_ID": oVersion.CALCULATION_VERSION_ID
+		};
+
+		oBodyData[sCustomFieldName + "_MANUAL"] = sCustomFieldValue;
+		oBodyData[sCustomFieldName + "_IS_MANUAL"] = 1;
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, [oBodyData]);
+		let oResponseBody = oResponse.data;
+
+		if (oResponse.status !== 200) {
+			let sDeveloperInfo =
+				`Failed to update value of custom field '${sCustomFieldName}' from header level of calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			let sMessageInfo =
+				`New value of the '${sCustomFieldName}' custom field from header level of calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' is: '${sCustomFieldValue}'.`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			return true;
+		}
+	}
+
+	/** @function
 	 * Update version items to PLC
 	 * 
 	 * @param {array} Items Array
@@ -2123,7 +2411,39 @@ class Dispatcher {
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		} else {
-			let sMessageInfo = `'${aBodyData.length}' item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
+			let sMessageInfo = `${aBodyData.length} item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			return true;
+		}
+	}
+
+	/** @function
+	 * Disable price determination on items
+	 * 
+	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {array} Items Array
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async disablePriceDeterminationOnItems(iVersionId, aBodyData) {
+
+		let sQueryPath = "items";
+		let aParams = [{
+			"name": "calculate",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
+		let oResponseBody = oResponse.data;
+
+		if (oResponse.status !== 200) {
+			let sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			return undefined;
+		} else {
+			let sMessageInfo = `${aBodyData.length} item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
 			return true;
 		}
@@ -2274,12 +2594,17 @@ class Dispatcher {
 			"ROOT_ITEM_ID": oCalculatonVersion.ROOT_ITEM_ID,
 			"SALES_PRICE_CURRENCY_ID": oCalculatonVersion.SALES_PRICE_CURRENCY_ID,
 			"SALES_DOCUMENT": oCalculatonVersion.SALES_DOCUMENT,
+			"SALES_PRICE": oCalculatonVersion.SALES_PRICE,
 			"VALUATION_DATE": oCalculatonVersion.VALUATION_DATE,
 			"MATERIAL_PRICE_STRATEGY_ID": oCalculatonVersion.MATERIAL_PRICE_STRATEGY_ID,
 			"ACTIVITY_PRICE_STRATEGY_ID": oCalculatonVersion.ACTIVITY_PRICE_STRATEGY_ID,
 			"STATUS_ID": oCalculatonVersion.STATUS_ID,
 			"SELECTED_TOTAL_COSTING_SHEET": oCalculatonVersion.SELECTED_TOTAL_COSTING_SHEET,
-			"SELECTED_TOTAL_COMPONENT_SPLIT": oCalculatonVersion.SELECTED_TOTAL_COMPONENT_SPLIT
+			"SELECTED_TOTAL_COMPONENT_SPLIT": oCalculatonVersion.SELECTED_TOTAL_COMPONENT_SPLIT,
+			"COMPONENT_SPLIT_ID": oCalculatonVersion.COMPONENT_SPLIT_ID,
+			"COSTING_SHEET_ID": oCalculatonVersion.COSTING_SHEET_ID,
+			"START_OF_PRODUCTION": oCalculatonVersion.START_OF_PRODUCTION,
+			"END_OF_PRODUCTION": oCalculatonVersion.END_OF_PRODUCTION
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
@@ -2293,7 +2618,7 @@ class Dispatcher {
 			let sMessageInfo =
 				`Update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
-			return oResponseBody.body.transactionaldata[0];
+			return oResponseBody;
 		}
 	}
 
