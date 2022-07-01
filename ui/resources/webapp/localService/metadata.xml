@@ -31,7 +31,7 @@
 					<PropertyRef Name="START_TIMESTAMP"/>
 				</Key>
 				<Property Name="JOB_ID" Type="Edm.Int64"/>
-				<Property Name="JOB_NAME" Type="Edm.String" MaxLength="500"/>
+				<Property Name="JOB_NAME" Type="Edm.String" MaxLength="5000"/>
 				<Property Name="REQUEST_USER_ID" Type="Edm.String" MaxLength="256"/>
 				<Property Name="RUN_USER_ID" Type="Edm.String" MaxLength="256"/>
 				<Property Name="IS_ONLINE_MODE" Type="Edm.Byte"/>
@@ -44,6 +44,7 @@
 				<Property Name="END_TIMESTAMP" Type="Edm.DateTime"/>
 				<Property Name="TIME_TAKEN" Type="Edm.Int64"/>
 				<Property Name="JOB_STATUS" Type="Edm.String" MaxLength="100"/>
+				<Property Name="IS_ARCHIVED" Type="Edm.Byte" Nullable="false"/>
 			</EntityType>
 			<EntityType Name="job-messagesType">
 				<Key>

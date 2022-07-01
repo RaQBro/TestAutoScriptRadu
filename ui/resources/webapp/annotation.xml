@@ -70,6 +70,9 @@
 			<Annotations Target="Metadata.job-logsType/TIME_TAKEN">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobTimeTaken}"/>
 			</Annotations>
+			<Annotations Target="Metadata.job-logsType/IS_ARCHIVED">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobArchivedJob}"/>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
