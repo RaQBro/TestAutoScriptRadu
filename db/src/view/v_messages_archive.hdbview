@@ -1,0 +1,11 @@
+VIEW "sap.plc.extensibility::template_application.v_messages_archive"
+AS
+SELECT 
+	TIMESTAMP,
+	JOB_ID,
+	SEVERITY,
+	TEXT,
+	DETAILS,
+	OPERATION,
+	MESSAGE_ID
+FROM "sap.plc.extensibility::template_application.t_messages_archive"
