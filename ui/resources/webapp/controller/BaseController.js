@@ -350,35 +350,24 @@ sap.ui.define([
 			return new sap.ui.model.json.JSONModel(data);
 		},
 
-		checkPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
+		checkPlcToken: function () {
 
 			let bWithSuccess;
 
-			let oController = this,
-				data = {
-					"TECHNICAL_USER_NAME": sTechnicalUser,
-					"TECHNICAL_USER_PASSWORD": sTechnicalPassword,
-					"CLIENT_ID": sPlcClientId,
-					"CLIENT_SECRET": sPlcClientSecret
-				};
-
 			let onSuccess = function () {
+
 				bWithSuccess = true;
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesCheckPlcToken"),
-					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
-
 			let onError = function () {
-				bWithSuccess = false;
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorCheckToken"), null,
-					null, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
-			};
 
+				bWithSuccess = false;
+			};
 			let url = {
+
 				constant: "CHECK_PLC_TOKEN"
 			};
 
-			BackendConnector.doPost(url, data, onSuccess, onError, true);
+			BackendConnector.doGet(url, onSuccess, onError, true);
 
 			return bWithSuccess;
 		},
@@ -392,12 +381,14 @@ sap.ui.define([
 					state: CoreLibrary.ValueState.Error,
 					closeOnNavigation: false,
 					content: new Text({
-						text: this.getResourceBundleText("TokenError")
+						text: this.getResourceBundleText("errorCheckToken")
 					}),
 					beginButton: new Button({
 						type: MobileLibrary.ButtonType.Emphasized,
 						text: "OK",
 						press: function () {
+							this.navTo("messages");
+							this.navTo("applicationSettings");
 							this.oErrorPlcToken.close();
 						}.bind(this)
 					})

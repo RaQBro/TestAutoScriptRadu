@@ -212,7 +212,14 @@ sap.ui.define([
 
 			let item = oEvent.getParameter("item");
 
-			this.navTo(item.getKey());
+			if (item.getKey() === "jobs" || item.getKey() === "messages" || this.checkPlcToken()) {
+
+				this.navTo(item.getKey());
+			} else {
+
+				this.onErrorPlcToken();
+			}
+
 		}
 	});
 });

@@ -21,12 +21,11 @@ sap.ui.define([
 
 			if (this.oAuth.display) {
 
-				if (!this.checkPlcToken) {
+				if (this.checkPlcToken()) {
 
 					oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 				} else {
 
-					this.navTo("applicationSettings");
 					this.onErrorPlcToken();
 				}
 			} else {

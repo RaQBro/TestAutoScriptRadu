@@ -15,6 +15,8 @@ const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 const Message = require(global.appRoot + "/lib/util/message.js").Message;
+const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js");
+const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js");
 
 /** @class
  * @classdesc Extensibility PLC services
@@ -35,6 +37,28 @@ class Service {
 		} else {
 			this.userId = request.user.id.toUpperCase(); // request user
 		}
+	}
+
+	/** @function
+	 * Get token from UAA of PLC for current user
+	 * 
+	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
+	 */
+	async checkTechnicalUserPlcToken() {
+
+		let ApplicationSettingsUtil = new ApplicationSettings();
+		let SecureStoreService = new SecureStore();
+
+		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
+		let sTechnicalPassword = await SecureStoreService.retrieveKey(sTechnicalUser, true);
+		let sPlcClientId = await ApplicationSettingsUtil.getClientIdFromTable();
+		let sPlcClientSecret = await SecureStoreService.retrieveKey(sPlcClientId, true);
+
+		let UAAToken = new UaaToken();
+		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser,
+			sTechnicalPassword, sPlcClientId, sPlcClientSecret);
+			
+		return sTechnicalUserAccessToken;
 	}
 
 	/** @function

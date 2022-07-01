@@ -12,6 +12,7 @@ sap.ui.define([], function () {
 	let getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
 	let getApplicationSettings = "/service/odataService.xsodata/application-settings?$format=json";
 	let addNewSchedule = "/scheduler/job/add-new-schedule";
+	let checkTechnicalPlcToken = "/extensibility/plc/check-technical-plc-token";
 	let getTechnicalPlcToken = "/extensibility/plc/technical-plc-token";
 	let setSecStore = "/secure/store/insert?KEY={KEY}";
 	let setDefaultValues = "/extensibility/plc/maintain-default-values";
@@ -22,6 +23,8 @@ sap.ui.define([], function () {
 	let jobOnlineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=true";
 
 	let mURLConstants = {
+	
+
 		APP_TOKEN: appToken,
 		METADATA: serviceOdata + "/$metadata",
 		PROJECTS: projectsGetUrl,
@@ -33,7 +36,8 @@ sap.ui.define([], function () {
 		GET_APPLICATION_SETTINGS: getApplicationSettings,
 		ADD_NEW_SCHEDULE: addNewSchedule,
 		LOGOUT_PLC: plcLogout,
-		CHECK_PLC_TOKEN: getTechnicalPlcToken,
+		CHECK_PLC_TOKEN: checkTechnicalPlcToken,
+		GET_PLC_TOKEN: getTechnicalPlcToken,
 		DELETE_SEC_STORE: deleteSecStore,
 		SET_DEFAULT_VALUES: setDefaultValues,
 		SET_SEC_STORE: setSecStore,
