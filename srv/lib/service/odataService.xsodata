@@ -38,7 +38,7 @@ service{
 	update forbidden
 	delete forbidden;
 		
-	// ------------------------------------ Get Archieved Messages Data ------------------------------------
+	// ------------------------------------ Get Archived Messages Data ------------------------------------
 	"sap.plc.extensibility::template_application.v_messages_archive" as "job-messages" keys ("MESSAGE_ID", "TIMESTAMP")
 	create forbidden
 	update forbidden
