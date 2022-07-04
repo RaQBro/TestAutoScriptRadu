@@ -387,7 +387,7 @@ sap.ui.define([
 						type: MobileLibrary.ButtonType.Emphasized,
 						text: "OK",
 						press: function () {
-							this.navTo("messages");
+
 							this.navTo("applicationSettings");
 							this.oErrorPlcToken.close();
 						}.bind(this)
