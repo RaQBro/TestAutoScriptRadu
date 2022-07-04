@@ -39,6 +39,7 @@ const sOperation = "Dummy Operation"; // operation of the service / job
 
 const ExampleService = require(global.appRoot + "/lib/service/exampleService.js").doService;
 const LogoutService = require(global.appRoot + "/lib/service/logoutService.js").doService;
+const ArchiveService = require(global.appRoot + "/lib/service/archiveService.js").doService;
 
 /** @class
  * @classdesc Extensibility PLC router
@@ -330,6 +331,116 @@ class ExtensibilityRouter {
 
 			// import service
 			let Service = new LogoutService(request);
+
+			// execute service
+			await Service.execute()
+
+			// handle success execution of the service
+			.then(async function (oServiceResponse) {
+
+				let iStatusCode = oServiceResponse.STATUS_CODE;
+				let oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
+
+				// add service response body to job log entry
+				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
+
+				// write end of the job into t_messages only for jobs (fake or real)
+				await Message.addLog(request.JOB_ID,
+					`Job with ID '${request.JOB_ID}' ended!`,
+					"message", undefined, sOperation);
+
+				// check if web or job request
+				if (helpers.isRequestFromJob(request)) {
+
+					// update run log of schedule
+					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
+				} else {
+
+					// get all messages from the job
+					let aMessages = await JobSchedulerUtil.getMessagesOfJobWithId(request.JOB_ID);
+
+					// return service response body for web request
+					if (request.IS_ONLINE_MODE === true) {
+
+						// decide what to send as response
+						let oResponseBody = request.JOB_ID === undefined ? oServiceResponseBody : aMessages;
+
+						// send response
+						response.type(sContentType).status(iStatusCode).send(oResponseBody);
+					}
+				}
+			})
+
+			// handle errors from then function
+			.catch(async function (err) {
+
+				// write end of the job into t_messages only for jobs (fake or real)
+				await Message.addLog(request.JOB_ID,
+					`Job with ID '${request.JOB_ID}' ended!`,
+					"message", undefined, sOperation);
+
+				// check if web or job request
+				if (helpers.isRequestFromJob(request)) {
+
+					// add service response body to job log entry
+					await JobSchedulerUtil.updateJobLogEntryFromTable(request, 500, err);
+
+					// update run log of schedule
+					JobSchedulerUtil.updateRunLogOfSchedule(request, 500, err);
+				} else {
+
+					// create error as service response body
+					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+
+					// add service response body to job log entry
+					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);
+
+					// return service response body for web request
+					if (request.IS_ONLINE_MODE === true) {
+						response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
+					}
+				}
+			});
+		});
+
+		router.get("/archive-logs-messages", async function (request, response) {
+
+			try {
+				// generate an autoincrement JOB_ID based on the existing ids
+				await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
+
+				// create job log entry
+				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
+
+				// write entry into t_messages only for jobs (fake or real)
+				let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+				await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
+
+				// check if web or job request
+				if (helpers.isRequestFromJob(request)) {
+					// return special header to jobscheduler to know that it's async job run
+					response.status(202).send("ACCEPTED");
+				} else {
+					// check if should wait for service response or return a JOB_ID
+					if (request.IS_ONLINE_MODE === false) {
+						// fake/simulate background job
+						let oMessage = new Message(sMessageInfo, {
+							"JOB_ID": request.JOB_ID
+						});
+						// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
+						response.status(200).send(oMessage);
+					}
+				}
+			} catch (err) {
+
+				// return error and stop execution of the service
+				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+				response.status(oPlcException.code.responseCode).send(oPlcException);
+				return;
+			}
+
+			// import service
+			let Service = new ArchiveService(request);
 
 			// execute service
 			await Service.execute()

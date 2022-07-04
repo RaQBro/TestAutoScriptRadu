@@ -3,6 +3,8 @@
 		<Button id="buttonMessagePopover" text="{= ${message>/}.length }" visible="{= ${message>/}.length > 0 }" type="Emphasized"
 			press=".ToolBarMessages.onMessagePopoverPress"/>
 		<ToolbarSpacer/>
+		<Button id="archiveBtn" icon="sap-icon://email" type="Transparent" text="{i18n>Archive}" press="archivePress"
+			visible="{pageModel>/archiveVisible}" enabled="{pageModel>/archiveEnabled}"/>
 		<Button id="logoutBtn" icon="sap-icon://log" type="Critical" text="{i18n>Logout}" press="logoutPress" visible="{pageModel>/logoutVisible}"
 			enabled="{pageModel>/logoutEnabled}"/>
 		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress" visible="{pageModel>/saveVisible}"

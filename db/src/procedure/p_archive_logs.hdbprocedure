@@ -1,0 +1,36 @@
+PROCEDURE "p_archive_logs" (
+    IN ARCHIVING_DATA TIMESTAMP
+)
+
+LANGUAGE SQLSCRIPT
+SQL SECURITY INVOKER
+AS
+
+BEGIN
+	
+	UPSERT "sap.plc.extensibility::template_application.t_messages_archive"("TIMESTAMP", "JOB_ID", "SEVERITY", "TEXT", "DETAILS", "OPERATION", "MESSAGE_ID")
+		SELECT 
+		messages."TIMESTAMP",
+		messages."JOB_ID",
+		messages."SEVERITY",
+		messages."TEXT",
+		messages."DETAILS",
+		messages."OPERATION",
+		messages."MESSAGE_ID"
+	FROM 
+		"sap.plc.extensibility::template_application.t_messages" AS messages
+		INNER JOIN
+		"sap.plc.extensibility::template_application.t_job_log" AS job_log
+		ON job_log.JOB_ID = messages.JOB_ID
+	WHERE job_log.START_TIMESTAMP < :ARCHIVING_DATA;
+	
+	DELETE FROM "sap.plc.extensibility::template_application.t_messages" WHERE JOB_ID IN (
+		SELECT 
+			"JOB_ID"
+		FROM "sap.plc.extensibility::template_application.t_job_log" AS job_log
+		WHERE job_log.START_TIMESTAMP < :ARCHIVING_DATA
+	);
+	
+	UPDATE "sap.plc.extensibility::template_application.t_job_log" SET IS_ARCHIVED = 1 WHERE START_TIMESTAMP < :ARCHIVING_DATA;
+	    
+END

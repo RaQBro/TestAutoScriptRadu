@@ -299,10 +299,38 @@ sap.ui.define([
 				sMessage = {
 					type: "Error"
 				};
+
 				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
+		},
+
+		archivePress: function () {
+
+			let oView = this.getView();
+			let oController = oView.getController();
+			let sMessage;
+
+			let onSuccess = function (result) {
+				sMessage = {
+					type: "Success"
+				};
+				//TODO
+				// MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to logout technical user.`,
+				// 	result.message,
+				// 	null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
+			};
+
+			let onError = function (oXHR, sTextStatus, sErrorThrown) {
+				sMessage = {
+					type: "Error"
+				};
+				//TODO
+				// MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+				// 	oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+			BackendConnector.doGet("ARCHIVE_JOB_LOGS_MESSAGES", onSuccess, onError, true);
 		}
 	});
 }, /* bExport= */ true);
