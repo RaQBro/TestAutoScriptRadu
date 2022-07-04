@@ -51,7 +51,7 @@ sap.ui.define([
 			this.applyFiltersFromParameters();
 		},
 
-		onAfterRendering: function () {
+		onInitialise: function () {
 
 			this.applyFiltersFromParameters();
 		},
