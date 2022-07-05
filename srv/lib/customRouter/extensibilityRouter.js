@@ -75,7 +75,7 @@ class ExtensibilityRouter {
 
 			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
-			ExtensibilityPlcService.getTechnicalUserPlcToken(request).then(function (result) {
+			ExtensibilityPlcService.generateTechnicalUserPlcToken(request).then(function (result) {
 				response.status(200).type(sContentType).send({
 					"technicalUserPlcToken": result
 				});

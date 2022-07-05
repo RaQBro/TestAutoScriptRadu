@@ -62,11 +62,11 @@ class Service {
 	}
 
 	/** @function
-	 * Get token from UAA of PLC for technical user using the provided values. If not correct error message will be raised
+	 * Generate token from UAA of PLC for technical user using the provided values. If not correct error message will be raised
 	 * 
 	 * @return {string} sTechnicalUserAccessToken - technical user access token
 	 */
-	async getTechnicalUserPlcToken(request) {
+	async generateTechnicalUserPlcToken(request) {
 
 		let oBodyRequest = request.body;
 		let sTechnicalUser = oBodyRequest.TECHNICAL_USER_NAME;

@@ -162,12 +162,12 @@ sap.ui.define([
 
 			let oController = this;
 
-			let sInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
+			let oInitSesstionAtOpenApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "INIT_SESSION_AT_OPEN_APP";
 			});
 
-			if (sInitSesstionAtOpenApp) {
-				if (sInitSesstionAtOpenApp.FIELD_VALUE === "true") {
+			if (oInitSesstionAtOpenApp) {
+				if (oInitSesstionAtOpenApp.FIELD_VALUE === "true") {
 
 					let onSuccess = function () {};
 					let onError = function () {
@@ -184,6 +184,11 @@ sap.ui.define([
 		/** @function used to get configuration which are used in the configuration logic
 		 */
 		getConfiguration: function (sViewName) {
+
+			if (sap.ui.getCore().aConfiguration !== undefined) {
+				// do not get again the configurations if exists
+				return;
+			}
 
 			let oController = this;
 			let onSuccess = function (oData) {
@@ -260,11 +265,11 @@ sap.ui.define([
 		handleWindowClose: function () {
 
 			let oController = this;
-			let sLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
+			let oLogoutAtCloseApp = _.find(sap.ui.getCore().aConfiguration, (item) => {
 				return item.FIELD_NAME === "LOGOUT_AT_CLOSE_APP";
 			});
-			if (sLogoutAtCloseApp) {
-				if (sLogoutAtCloseApp.FIELD_VALUE === "true") {
+			if (oLogoutAtCloseApp) {
+				if (oLogoutAtCloseApp.FIELD_VALUE === "true") {
 					window.addEventListener("beforeunload", function () {
 						oController.plcLogout();
 					});
@@ -347,23 +352,43 @@ sap.ui.define([
 
 		checkTechnicalUserPlcToken: function () {
 
-			let bWithSuccess;
+			if (sap.ui.getCore().aConfiguration === undefined) {
+				// get default values
+				this.getConfiguration("applicationSettings");
+			}
 
-			let onSuccess = function () {
-				bWithSuccess = true;
-			};
+			let oCheckTechnicalUserPlcToken = _.find(sap.ui.getCore().aConfiguration, (item) => {
+				return item.FIELD_NAME === "CHECK_TECHNICAL_USER_PLC_TOKEN";
+			});
+			if (oCheckTechnicalUserPlcToken !== undefined && oCheckTechnicalUserPlcToken.FIELD_VALUE === "true") {
 
-			let onError = function () {
-				bWithSuccess = false;
-			};
+				let bWithSuccess;
 
-			let url = {
-				constant: "CHECK_PLC_TOKEN"
-			};
+				let onSuccess = function () {
+					bWithSuccess = true;
+					// set configuration CHECK_TECHNICAL_USER_PLC_TOKEN to false since is not required to be checked again
+					// the configurations are not loaded again to avoid overwrite CHECK_TECHNICAL_USER_PLC_TOKEN configuration
+					oCheckTechnicalUserPlcToken.FIELD_VALUE = "false";
+				};
 
-			BackendConnector.doGet(url, onSuccess, onError, true);
+				let onError = function () {
+					bWithSuccess = false;
+				};
 
-			return bWithSuccess;
+				let url = {
+					constant: "CHECK_PLC_TOKEN"
+				};
+
+				BackendConnector.doGet(url, onSuccess, onError, true);
+
+				return bWithSuccess;
+
+			} else {
+
+				// no check is required therefore return true
+				return true;
+
+			}
 		},
 
 		generateTechnicalUserPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
