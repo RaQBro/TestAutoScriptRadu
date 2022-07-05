@@ -35,7 +35,7 @@ sap.ui.define([], function () {
 		GET_APPLICATION_SETTINGS: getApplicationSettings,
 		ADD_NEW_SCHEDULE: addNewSchedule,
 		LOGOUT_PLC: plcLogout,
-    ARCHIVE_JOB_LOGS_MESSAGES: archiveJobLogsMessages,
+		ARCHIVE_JOB_LOGS_MESSAGES: archiveJobLogsMessages,
 		CHECK_PLC_TOKEN: checkTechnicalPlcToken,
 		GET_PLC_TOKEN: getTechnicalPlcToken,
 		DELETE_SEC_STORE: deleteSecStore,
