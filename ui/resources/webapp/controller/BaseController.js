@@ -337,6 +337,14 @@ sap.ui.define([
 
 		},
 
+		getPageModel: function (view) {
+
+			let fullModel = this.getToolBarMessagesModel();
+			let data = fullModel.oData[view] || fullModel.oData.default || {};
+
+			return new sap.ui.model.json.JSONModel(data);
+		},
+
 		checkTechnicalUserPlcToken: function () {
 
 			let bWithSuccess;
@@ -389,14 +397,6 @@ sap.ui.define([
 			BackendConnector.doPost(url, data, onSuccess, onError, true);
 
 			return bWithSuccess;
-		},
-
-		getPageModel: function (view) {
-
-			let fullModel = this.getToolBarMessagesModel();
-			let data = fullModel.oData[view] || fullModel.oData.default || {};
-
-			return new sap.ui.model.json.JSONModel(data);
 		},
 
 		createErrorDialogWithResourceBundleText: function (sResourceBundleKey) {
