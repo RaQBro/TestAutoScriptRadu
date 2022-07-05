@@ -162,6 +162,7 @@ sap.ui.define([
 					this.pageModel.setProperty("/editVisible", true);
 					this.pageModel.setProperty("/cancelEnabled", false);
 					this.pageModel.setProperty("/cancelVisible", false);
+					this.pageModel.setProperty("/logoutEnabled", true);
 
 					this.handleControlEditableState("clientId", false);
 					this.handleControlEditableState("clientSecret", false);
@@ -267,7 +268,7 @@ sap.ui.define([
 					type: "Error"
 				};
 
-				MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+				MessageHelpers.addMessageToPopover.call(this, oXHR.responseJSON.message, oXHR.responseText, sErrorThrown, sMessage.type,
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 			BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);

@@ -4,7 +4,7 @@
 		"saveVisible": true,
 		"archiveEnabled": true,
 		"archiveVisible": true,
-		"logoutEnabled": true,
+		"logoutEnabled": false,
 		"logoutVisible": true,
 		"editEnabled": true,
 		"editVisible": true,
