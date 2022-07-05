@@ -8,35 +8,41 @@
  */
 
 service{
-		// ------------------------------------ Get Configuration Data ------------------------------------
-		"sap.plc.extensibility::template_application.v_configuration" as "configuration" keys ("FIELD_NAME")
-		create forbidden
-		update forbidden
-		delete forbidden;
+	// ------------------------------------ Get Configuration Data ------------------------------------
+	"sap.plc.extensibility::template_application.v_configuration" as "configuration" keys ("FIELD_NAME")
+	create forbidden
+	update forbidden
+	delete forbidden;
 		
-		// ------------------------------------ Get Default Values Data ------------------------------------
-		"sap.plc.extensibility::template_application.v_default_values" as "default-values" keys ("FIELD_NAME", "FIELD_VALUE")
-		create forbidden
-		update forbidden
-		delete forbidden;
+	// ------------------------------------ Get Default Values Data ------------------------------------
+	"sap.plc.extensibility::template_application.v_default_values" as "default-values" keys ("FIELD_NAME", "FIELD_VALUE")
+	create forbidden
+	update forbidden
+	delete forbidden;
 		
-		// ------------------------------------ Get Technical User ------------------------------------
-		"sap.plc.extensibility::template_application.v_application_settings" as "application-settings" keys ("FIELD_NAME")
-		create forbidden
-		update forbidden
-		delete forbidden;
+	// ------------------------------------ Get Technical User ------------------------------------
+	"sap.plc.extensibility::template_application.v_application_settings" as "application-settings" keys ("FIELD_NAME")
+	create forbidden
+	update forbidden
+	delete forbidden;
 		
-		// ------------------------------------ Get Job Logs Data ------------------------------------
-		"sap.plc.extensibility::template_application.v_job_log" as "job-logs" keys ("START_TIMESTAMP")
-		create forbidden
-		update forbidden
-		delete forbidden;
+	// ------------------------------------ Get Job Logs Data ------------------------------------
+	"sap.plc.extensibility::template_application.v_job_log" as "job-logs" keys ("START_TIMESTAMP")
+	create forbidden
+	update forbidden
+	delete forbidden;
 		
-		// ------------------------------------ Get Messages Data ------------------------------------
-		"sap.plc.extensibility::template_application.v_messages" as "job-messages" keys ("MESSAGE_ID", "TIMESTAMP")
-		create forbidden
-		update forbidden
-		delete forbidden;
+	// ------------------------------------ Get Messages Data ------------------------------------
+	"sap.plc.extensibility::template_application.v_messages" as "job-messages" keys ("MESSAGE_ID", "TIMESTAMP")
+	create forbidden
+	update forbidden
+	delete forbidden;
+		
+	// ------------------------------------ Get Archived Messages Data ------------------------------------
+	"sap.plc.extensibility::template_application.v_messages_archive" as "job-messages-archive" keys ("MESSAGE_ID", "TIMESTAMP")
+	create forbidden
+	update forbidden
+	delete forbidden;
 }
 
 annotations { 

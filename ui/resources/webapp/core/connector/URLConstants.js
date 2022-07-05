@@ -8,6 +8,7 @@ sap.ui.define([], function () {
 	let jobDetails = "/scheduler/job/get-all-jobs";
 	let initPlcSession = "/standard/plc/init-session";
 	let plcLogout = "/standard/plc/logout-session";
+	let archiveJobLogsMessages = "/standard/plc/archive-logs-messages";
 	let getConfig = "/service/odataService.xsodata/configuration?$format=json";
 	let getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
 	let getApplicationSettings = "/service/odataService.xsodata/application-settings?$format=json";
@@ -23,8 +24,6 @@ sap.ui.define([], function () {
 	let jobOnlineStart = "/extensibility/plc/example-service?IS_ONLINE_MODE=true";
 
 	let mURLConstants = {
-	
-
 		APP_TOKEN: appToken,
 		METADATA: serviceOdata + "/$metadata",
 		PROJECTS: projectsGetUrl,
@@ -36,6 +35,7 @@ sap.ui.define([], function () {
 		GET_APPLICATION_SETTINGS: getApplicationSettings,
 		ADD_NEW_SCHEDULE: addNewSchedule,
 		LOGOUT_PLC: plcLogout,
+    ARCHIVE_JOB_LOGS_MESSAGES: archiveJobLogsMessages,
 		CHECK_PLC_TOKEN: checkTechnicalPlcToken,
 		GET_PLC_TOKEN: getTechnicalPlcToken,
 		DELETE_SEC_STORE: deleteSecStore,

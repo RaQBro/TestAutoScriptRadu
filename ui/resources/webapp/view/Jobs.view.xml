@@ -5,8 +5,9 @@
 			<VBox id="vboxMessages" fitContainer="true">
 				<smartTable:SmartTable id="stJobs" entitySet="job-logs" tableType="ResponsiveTable" useTablePersonalisation="true"
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
-					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP" enableAutoBinding="true"
-					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP" beforeRebindTable="onBeforeRebindTable">
+					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP,TIME_TAKEN" enableAutoBinding="true"
+					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP,TIME_TAKEN"
+					beforeRebindTable="onBeforeRebindTable">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>
@@ -20,7 +21,7 @@
 						<columns>
 							<Column>
 								<customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "NAV_TO_LOGS", "leadingProperty": "", "columnIndex": "6"}'/>
+									<core:CustomData key="p13nData" value='\{"columnKey": "NAV_TO_LOGS", "leadingProperty": "", "columnIndex": "7"}'/>
 								</customData>
 								<Text text="{i18n>jobLogs}"></Text>
 							</Column>

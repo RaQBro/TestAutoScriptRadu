@@ -51,7 +51,7 @@ sap.ui.define([
 			this.applyFiltersFromParameters();
 		},
 
-		onAfterRendering: function () {
+		onInitialiseSmartTable: function () {
 
 			this.applyFiltersFromParameters();
 		},

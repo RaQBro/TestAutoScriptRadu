@@ -2,6 +2,8 @@
 	"applicationSettings": {
 		"saveEnabled": false,
 		"saveVisible": true,
+		"archiveEnabled": true,
+		"archiveVisible": true,
 		"logoutEnabled": true,
 		"logoutVisible": true,
 		"editEnabled": true,
@@ -12,6 +14,8 @@
 	"defaultValues": {
 		"saveEnabled": false,
 		"saveVisible": true,
+		"archiveEnabled": false,
+		"archiveVisible": false,
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": true,
@@ -22,6 +26,8 @@
 	"messages": {
 		"saveEnabled": false,
 		"saveVisible": false,
+		"archiveEnabled": false,
+		"archiveVisible": false,
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
@@ -32,6 +38,8 @@
 	"jobs": {
 		"saveEnabled": false,
 		"saveVisible": false,
+		"archiveEnabled": false,
+		"archiveVisible": false,
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
@@ -42,6 +50,8 @@
 	"default": {
 		"saveEnabled": false,
 		"saveVisible": false,
+		"archiveEnabled": false,
+		"archiveVisible": false,
 		"logoutEnabled": false,
 		"logoutVisible": false,
 		"editEnabled": false,
