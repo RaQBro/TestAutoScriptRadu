@@ -35,16 +35,19 @@ function doService(request) {
 		try {
 			// ------------------------- Start Business Logic ---------------------------
 
+			let archiveDate = request.query.ARCHIVE_DATE;
 			let hdbClient = await DatabaseClass.createConnection();
 			let connection = new DatabaseClass(hdbClient);
 			let hdbext = require("@sap/hdbext");
 
-			let sp = await connection.loadProcedurePromisified(hdbext, null, "p_calculate_prices");
-			let output = await connection.callProcedurePromisified(sp, request.query.filter);
+			let sp = await connection.loadProcedurePromisified(hdbext, null, "p_archive_logs");
+			let output = await connection.callProcedurePromisified(sp, archiveDate);
 
 			hdbClient.close();
 
-			await Message.addLog(request.JOB_ID, `Archiving procedure response: ${JSON.stringify(output)}`, "message", undefined, sOperation);
+			let iNumberOfArchivedEntries = output.outputScalar.EV_ARCHIVED_JOBS;
+
+			await Message.addLog(request.JOB_ID, `The number of archived jobs is: ${iNumberOfArchivedEntries}`, "message", undefined, sOperation);
 
 			// -------------------------- End Business Logic ----------------------------
 		} catch (err) {

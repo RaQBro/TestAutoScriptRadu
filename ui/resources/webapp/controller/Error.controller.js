@@ -25,10 +25,13 @@ sap.ui.define([
 			}
 			let oApplicationError = sap.ui.getCore().oApplicationError;
 
-			MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
-				false, null, this.oButtonPopover);
+			if (this.oButtonPopover !== undefined) {
 
-			this.oButtonPopover.firePress();
+				MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
+					false, null, this.oButtonPopover);
+
+				this.oButtonPopover.firePress();
+			}
 		}
 	});
 });

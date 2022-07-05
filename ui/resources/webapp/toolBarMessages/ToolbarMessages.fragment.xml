@@ -5,7 +5,7 @@
 		<ToolbarSpacer/>
 		<Button id="archiveBtn" icon="sap-icon://email" type="Transparent" text="{i18n>Archive}" press="onArchivePress"
 			visible="{pageModel>/archiveVisible}" enabled="{pageModel>/archiveEnabled}"/>
-		<Button id="logoutBtn" icon="sap-icon://log" type="Critical" text="{i18n>Logout}" press="logoutPress" visible="{pageModel>/logoutVisible}"
+		<Button id="logoutBtn" icon="sap-icon://log" type="Critical" text="{i18n>Logout}" press="onLogoutPress" visible="{pageModel>/logoutVisible}"
 			enabled="{pageModel>/logoutEnabled}"/>
 		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress" visible="{pageModel>/saveVisible}"
 			enabled="{pageModel>/saveEnabled}"/>

@@ -174,7 +174,7 @@ sap.ui.define([
 		},
 
 		/** @function called when logout is pressed*/
-		onLogoutPress: function () {
+		onLogoutBtnPress: function () {
 
 			sap.m.URLHelper.redirect("/logout");
 		},

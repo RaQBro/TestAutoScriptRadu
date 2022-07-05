@@ -414,7 +414,7 @@ class ExtensibilityRouter {
 
 				// write entry into t_messages only for jobs (fake or real)
 				let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-				await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
+				await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, "Archive Logs");
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -434,7 +434,7 @@ class ExtensibilityRouter {
 			} catch (err) {
 
 				// return error and stop execution of the service
-				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, "Archive Logs");
 				response.status(oPlcException.code.responseCode).send(oPlcException);
 				return;
 			}
@@ -457,7 +457,7 @@ class ExtensibilityRouter {
 				// write end of the job into t_messages only for jobs (fake or real)
 				await Message.addLog(request.JOB_ID,
 					`Job with ID '${request.JOB_ID}' ended!`,
-					"message", undefined, sOperation);
+					"message", undefined, "Archive Logs");
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -487,7 +487,7 @@ class ExtensibilityRouter {
 				// write end of the job into t_messages only for jobs (fake or real)
 				await Message.addLog(request.JOB_ID,
 					`Job with ID '${request.JOB_ID}' ended!`,
-					"message", undefined, sOperation);
+					"message", undefined, "Archive Logs");
 
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
@@ -500,7 +500,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// create error as service response body
-					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, "Archive Logs");
 
 					// add service response body to job log entry
 					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);

@@ -8,7 +8,7 @@ sap.ui.define([], function () {
 	let jobDetails = "/scheduler/job/get-all-jobs";
 	let initPlcSession = "/standard/plc/init-session";
 	let plcLogout = "/standard/plc/logout-session";
-	let archiveJobLogsMessages = "/standard/plc/archive-logs-messages?ARCHIVE_DATE={DATE}";
+	let archiveJobLogsMessages = "/extensibility/plc/archive-logs-messages?IS_ONLINE_MODE=false&ARCHIVE_DATE={DATE}";
 	let getConfig = "/service/odataService.xsodata/configuration?$format=json";
 	let getDefaultValues = "/service/odataService.xsodata/default-values?$format=json";
 	let getApplicationSettings = "/service/odataService.xsodata/application-settings?$format=json";
