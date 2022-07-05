@@ -353,7 +353,7 @@ sap.ui.define([
 		checkTechnicalUserPlcToken: function () {
 
 			if (sap.ui.getCore().aConfiguration === undefined) {
-				// get default values
+				// get configurations
 				this.getConfiguration("applicationSettings");
 			}
 
