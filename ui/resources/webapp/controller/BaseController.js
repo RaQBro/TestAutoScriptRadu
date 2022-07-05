@@ -8,13 +8,8 @@ sap.ui.define([
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/core/utils/Constants",
 	"sap/ui/core/library",
-	"sap/m/Dialog",
-	"sap/m/Button",
-	"sap/m/library",
-	"sap/m/Text"
-
-], function (Controller, UIComponent, Fragment, BackendConnector, ToolBarMessages, MessageHelpers, Constants, CoreLibrary, Dialog, Button,
-	MobileLibrary, Text) {
+	"sap/m/library"
+], function (Controller, UIComponent, Fragment, BackendConnector, ToolBarMessages, MessageHelpers, Constants, CoreLibrary, MobileLibrary) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.BaseController", {
@@ -342,28 +337,19 @@ sap.ui.define([
 
 		},
 
-		getPageModel: function (view) {
-
-			let fullModel = this.getToolBarMessagesModel();
-			let data = fullModel.oData[view] || fullModel.oData.default || {};
-
-			return new sap.ui.model.json.JSONModel(data);
-		},
-
-		checkPlcToken: function () {
+		checkTechnicalUserPlcToken: function () {
 
 			let bWithSuccess;
 
 			let onSuccess = function () {
-
 				bWithSuccess = true;
 			};
-			let onError = function () {
 
+			let onError = function () {
 				bWithSuccess = false;
 			};
-			let url = {
 
+			let url = {
 				constant: "CHECK_PLC_TOKEN"
 			};
 
@@ -372,30 +358,72 @@ sap.ui.define([
 			return bWithSuccess;
 		},
 
-		onErrorPlcToken: function () {
+		generateTechnicalUserPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
 
-			if (!this.oErrorPlcToken) {
-				this.oErrorPlcToken = new Dialog({
+			let bWithSuccess;
+
+			let oController = this,
+				data = {
+					"TECHNICAL_USER_NAME": sTechnicalUser,
+					"TECHNICAL_USER_PASSWORD": sTechnicalPassword,
+					"CLIENT_ID": sPlcClientId,
+					"CLIENT_SECRET": sPlcClientSecret
+				};
+
+			let onSuccess = function () {
+				bWithSuccess = true;
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successGeneratePlcToken"),
+					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+
+			let onError = function () {
+				bWithSuccess = false;
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGeneratePlcToken"), null,
+					null, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			};
+
+			let url = {
+				constant: "GENERATE_PLC_TOKEN"
+			};
+
+			BackendConnector.doPost(url, data, onSuccess, onError, true);
+
+			return bWithSuccess;
+		},
+
+		getPageModel: function (view) {
+
+			let fullModel = this.getToolBarMessagesModel();
+			let data = fullModel.oData[view] || fullModel.oData.default || {};
+
+			return new sap.ui.model.json.JSONModel(data);
+		},
+
+		createErrorDialogWithResourceBundleText: function (sResourceBundleKey) {
+
+			if (!this.oErrorDialog) {
+				// create dialog
+				this.oErrorDialog = new sap.m.Dialog({
 					type: MobileLibrary.DialogType.Message,
 					title: "Error",
 					state: CoreLibrary.ValueState.Error,
 					closeOnNavigation: false,
-					content: new Text({
-						text: this.getResourceBundleText("errorCheckToken")
+					content: new sap.m.Text({
+						text: this.getResourceBundleText(sResourceBundleKey)
 					}),
-					beginButton: new Button({
+					beginButton: new sap.m.Button({
 						type: MobileLibrary.ButtonType.Emphasized,
 						text: "OK",
 						press: function () {
-
-							this.navTo("applicationSettings");
-							this.oErrorPlcToken.close();
+							this.oErrorDialog.close();
 						}.bind(this)
 					})
 				});
 			}
 
-			this.oErrorPlcToken.open();
+			// open dialog
+			this.oErrorDialog.open();
 		}
+
 	});
 });

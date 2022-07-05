@@ -150,7 +150,7 @@ sap.ui.define([
 			if (sTechnicalUser && sTechnicalPassword && sPlcClientId && sPlcClientSecret) {
 
 				// check if PLC token can be generated based on the input
-				if (this.checkPlcToken(sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret)) {
+				if (this.generateTechnicalUserPlcToken(sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret)) {
 
 					this.deleteFromSecureStore(sTechnicalUser, technicalNameUser);
 					this.deleteFromSecureStore(sPlcClientId, technicalNameClient);
@@ -225,8 +225,6 @@ sap.ui.define([
 
 			BackendConnector.doPost(url, data, onSuccess, onError, true);
 		},
-
-		
 
 		onChangeUsername: function () {
 

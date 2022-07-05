@@ -40,9 +40,9 @@ class Service {
 	}
 
 	/** @function
-	 * Get token from UAA of PLC for current user
+	 * Check if existing token from UAA of PLC for technical user is valid. If not error message will be raised.
 	 * 
-	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
+	 * @return {string} sTechnicalUserAccessToken - technical user access token
 	 */
 	async checkTechnicalUserPlcToken() {
 
@@ -57,14 +57,14 @@ class Service {
 		let UAAToken = new UaaToken();
 		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser,
 			sTechnicalPassword, sPlcClientId, sPlcClientSecret);
-			
+
 		return sTechnicalUserAccessToken;
 	}
 
 	/** @function
-	 * Get token from UAA of PLC for current user
+	 * Get token from UAA of PLC for technical user using the provided values. If not correct error message will be raised
 	 * 
-	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
+	 * @return {string} sTechnicalUserAccessToken - technical user access token
 	 */
 	async getTechnicalUserPlcToken(request) {
 

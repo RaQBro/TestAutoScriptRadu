@@ -69,32 +69,32 @@ class ExtensibilityRouter {
 		});
 
 		/**
-		 * Endpoint for getting X-CSRF-Token from UAA of PLC for technical user
+		 * Endpoint for generating the X-CSRF-Token from UAA of PLC for technical user
 		 */
-		router.post("/technical-plc-token", function (request, response) {
+		router.post("/generate-technical-user-plc-token", function (request, response) {
 
 			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
 			ExtensibilityPlcService.getTechnicalUserPlcToken(request).then(function (result) {
 				response.status(200).type(sContentType).send({
-					"technicalPlcToken": result
+					"technicalUserPlcToken": result
 				});
 			}).catch(async function (err) {
 				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
 			});
 		});
-		
+
 		/**
 		 * Endpoint for checking X-CSRF-Token of PLC for technical user
 		 */
-		router.get("/check-technical-plc-token", function (request, response) {
+		router.get("/check-technical-user-plc-token", function (request, response) {
 
 			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
 			ExtensibilityPlcService.checkTechnicalUserPlcToken().then(function (result) {
 				response.status(200).type(sContentType).send({
-					"technicalPlcToken": result
+					"technicalUserPlcToken": result
 				});
 			}).catch(async function (err) {
 				let oPlcException = await PlcException.createPlcException(err);

@@ -212,14 +212,15 @@ sap.ui.define([
 
 			let item = oEvent.getParameter("item");
 
-			if (item.getKey() === "jobs" || item.getKey() === "messages" || this.checkPlcToken()) {
+			if (item.getKey() === "jobs" || item.getKey() === "messages" || this.checkTechnicalUserPlcToken()) {
 
 				this.navTo(item.getKey());
 			} else {
 
-				this.onErrorPlcToken();
+				this.navTo("error");
+				this.navTo("applicationSettings");
+				this.createErrorDialogWithResourceBundleText("errorCheckToken");
 			}
-
 		}
 	});
 });

@@ -21,12 +21,14 @@ sap.ui.define([
 
 			if (this.oAuth.display) {
 
-				if (this.checkPlcToken()) {
+				if (this.checkTechnicalUserPlcToken()) {
 
 					oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 				} else {
 
-					this.onErrorPlcToken();
+					this.navTo("error");
+					this.navTo("applicationSettings");
+					this.createErrorDialogWithResourceBundleText("errorCheckToken");
 				}
 			} else {
 
@@ -79,7 +81,7 @@ sap.ui.define([
 			let oDialogKey,
 				oDialogValue;
 
-			this.mViewSettingsDialogs(this.onErrorPlcToken);
+			this.mViewSettingsDialogs(this.oErrorDialog);
 
 			for (oDialogKey in this.mViewSettingsDialogs) {
 				oDialogValue = this.mViewSettingsDialogs[oDialogKey];

@@ -4,7 +4,6 @@ sap.ui.define([
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
-
 ], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
@@ -21,13 +20,14 @@ sap.ui.define([
 
 			if (this.oAuth.display) {
 
-				if (this.checkPlcToken) {
+				if (this.checkTechnicalUserPlcToken()) {
 
 					oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 				} else {
 
+					this.navTo("error");
 					this.navTo("applicationSettings");
-					this.onErrorPlcToken();
+					this.createErrorDialogWithResourceBundleText("errorCheckToken");
 				}
 			} else {
 
@@ -305,7 +305,7 @@ sap.ui.define([
 			let oDialogKey,
 				oDialogValue;
 
-			this.mViewSettingsDialogs(this.onErrorPlcToken);
+			this.mViewSettingsDialogs(this.oErrorDialog);
 
 			for (oDialogKey in this.mViewSettingsDialogs) {
 				oDialogValue = this.mViewSettingsDialogs[oDialogKey];
