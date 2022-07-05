@@ -326,7 +326,7 @@ class ExtensibilityRouter {
 			} catch (err) {
 
 				// return error and stop execution of the service
-				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+				let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, currentOperation);
 				response.status(oPlcException.code.responseCode).send(oPlcException);
 				return;
 			}
@@ -392,7 +392,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// create error as service response body
-					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, currentOperation);
 
 					// add service response body to job log entry
 					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);
@@ -504,7 +504,7 @@ class ExtensibilityRouter {
 				} else {
 
 					// create error as service response body
-					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, "Archive Logs");
+					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, currentOperation);
 
 					// add service response body to job log entry
 					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);
