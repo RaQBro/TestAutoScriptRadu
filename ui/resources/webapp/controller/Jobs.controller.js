@@ -107,6 +107,16 @@ sap.ui.define([
 			}
 
 			return value;
+		},
+
+		archivedIcon: function (oValue) {
+
+			let value = "";
+
+			if (oValue === 1) {
+				value = "sap-icon://email";
+			}
+			return value;
 		}
 	});
 }, /* bExport= */ true);

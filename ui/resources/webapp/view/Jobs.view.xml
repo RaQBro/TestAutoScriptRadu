@@ -28,7 +28,7 @@
 						</columns>
 						<items>
 							<ColumnListItem highlight="{path:'JOB_STATUS',formatter:'.formatRowHighlight'}">
-								<Button text="{i18n>btnViewLogs}" press="onViewJobLogs"/>
+								<Button text="{i18n>btnViewLogs}" icon="{path: 'IS_ARCHIVED', formatter:'.archivedIcon'}" press="onViewJobLogs"/>
 							</ColumnListItem>
 						</items>
 					</Table>
