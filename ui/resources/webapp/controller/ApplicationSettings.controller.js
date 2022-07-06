@@ -22,14 +22,14 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("AS");
 
 			if (this.oAuth.display) {
+
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
+
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
 		},
-
-		onAfterRendering: function () {},
 
 		onObjectMatched: function () {
 

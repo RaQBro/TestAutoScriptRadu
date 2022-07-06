@@ -358,13 +358,16 @@ sap.ui.define([
 			}
 
 			let oCheckTechnicalUserPlcToken = _.find(sap.ui.getCore().aConfiguration, (item) => {
+
 				return item.FIELD_NAME === "CHECK_TECHNICAL_USER_PLC_TOKEN";
 			});
+
 			if (oCheckTechnicalUserPlcToken !== undefined && oCheckTechnicalUserPlcToken.FIELD_VALUE === "true") {
 
 				let bWithSuccess;
 
 				let onSuccess = function () {
+
 					bWithSuccess = true;
 					// set configuration CHECK_TECHNICAL_USER_PLC_TOKEN to false since is not required to be checked again
 					// the configurations are not loaded again to avoid overwrite CHECK_TECHNICAL_USER_PLC_TOKEN configuration
@@ -372,6 +375,7 @@ sap.ui.define([
 				};
 
 				let onError = function () {
+
 					bWithSuccess = false;
 				};
 
@@ -404,12 +408,14 @@ sap.ui.define([
 				};
 
 			let onSuccess = function () {
+
 				bWithSuccess = true;
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successGeneratePlcToken"),
 					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
 			let onError = function () {
+
 				bWithSuccess = false;
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGeneratePlcToken"), null,
 					null, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
@@ -441,6 +447,7 @@ sap.ui.define([
 						text: "OK",
 						press: function () {
 							this.oErrorDialog.close();
+							this.navTo("applicationSettings");
 						}.bind(this)
 					})
 				});
@@ -449,6 +456,5 @@ sap.ui.define([
 			// open dialog
 			this.oErrorDialog.open();
 		}
-
 	});
 });

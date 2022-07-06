@@ -21,15 +21,7 @@ sap.ui.define([
 
 			if (this.oAuth.display) {
 
-				if (this.checkTechnicalUserPlcToken()) {
-
-					oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
-				} else {
-
-					this.navTo("error");
-					this.navTo("applicationSettings");
-					this.createErrorDialogWithResourceBundleText("errorCheckToken");
-				}
+				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
 
 				this.getView().setVisible(false);
@@ -37,9 +29,14 @@ sap.ui.define([
 			}
 		},
 
-		onAfterRendering: function () {},
-
 		onObjectMatched: function () {
+
+			if (!this.checkTechnicalUserPlcToken()) {
+
+				this.createErrorDialogWithResourceBundleText("errorCheckToken");
+
+				return;
+			}
 
 			this.openBusyDialog();
 			this.setupView();
