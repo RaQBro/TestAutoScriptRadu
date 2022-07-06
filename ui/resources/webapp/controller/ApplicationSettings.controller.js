@@ -3,8 +3,10 @@ sap.ui.define([
 	"./BaseController",
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/core/utils/MessageHelpers",
-	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
+	"webapp/ui/toolBarMessages/ToolBarMessages",
+	"sap/ui/core/Fragment",
+	"webapp/ui/core/utils/Formatters"
+], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages, Fragment, Formatters) {
 	"use strict";
 
 	const technicalNameUser = "TECHNICAL_USER";
@@ -247,59 +249,115 @@ sap.ui.define([
 			this.pageModel.setProperty("/saveEnabled", true);
 		},
 
-		logoutPress: function () {
+		onLogoutPress: function () {
 
-			let oView = this.getView();
-			let oController = oView.getController();
-			let sMessage;
+			if (this.oAuth.maintain === true) {
 
-			let onSuccess = function (result) {
-				sMessage = {
-					type: "Success"
+				let oView = this.getView();
+				let oController = oView.getController();
+				let sMessage;
+
+				let onSuccess = function (result) {
+          
+					sMessage = {
+						type: "Success"
+					};
+
+					MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to logout technical user.`,
+						result.message,
+						null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
 				};
 
-				MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to logout technical user.`,
-					result.message,
-					null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
-			};
+				let onError = function (oXHR, sTextStatus, sErrorThrown) {
+          
+					sMessage = {
+						type: "Error"
+					};
 
-			let onError = function (oXHR, sTextStatus, sErrorThrown) {
-				sMessage = {
-					type: "Error"
+					MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+						oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 				};
+        
+				BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
+			} else {
 
-				MessageHelpers.addMessageToPopover.call(this, oXHR.responseJSON.message, oXHR.responseText, sErrorThrown, sMessage.type,
-					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
-			};
-
-			BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
 		},
 
-		archivePress: function () {
+		onArchivePress: function () {
 
-			let oView = this.getView();
-			let oController = oView.getController();
-			let sMessage;
+			if (this.oAuth.maintain === true) {
 
-			let onSuccess = function (result) {
-				sMessage = {
-					type: "Success"
+				let oView = this.getView();
+
+				if (!this._oArchiveDialog) {
+
+					this._oArchiveDialog = Fragment.load({
+						name: "webapp.ui.view.fragment.ArchiveDialog",
+						controller: this
+					}).then(function (oArchiveDialog) {
+						oView.addDependent(oArchiveDialog);
+						oArchiveDialog.getContent().filter(_ => _.sId === "DP1")[0].setDateValue(new Date());
+						return oArchiveDialog;
+					}.bind());
+				}
+
+				this._oArchiveDialog.then(function (oArchiveDialog) {
+					oArchiveDialog.open();
+				}.bind());
+			} else {
+
+				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
+					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
+			}
+		},
+
+		onArchiveDialogOk: function () {
+
+			this._oArchiveDialog.then((oArchiveDialog) => {
+
+				let oView = this.getView();
+				let oController = oView.getController();
+				let sMessage;
+				let date = sap.ui.getCore().byId("DP1").getDateValue();
+
+				let onSuccess = function (result) {
+					sMessage = {
+						type: "Success"
+					};
+
+					MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to archive job's messages.`,
+						result.message,
+						null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
 				};
-				//TODO
-				// MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to logout technical user.`,
-				// 	result.message,
-				// 	null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
-			};
 
-			let onError = function (oXHR, sTextStatus, sErrorThrown) {
-				sMessage = {
-					type: "Error"
+				let onError = function (oXHR, sTextStatus, sErrorThrown) {
+					sMessage = {
+						type: "Error"
+					};
+
+					MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
+						oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 				};
-				//TODO
-				// MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
-				// 	oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
-			};
-			BackendConnector.doGet("ARCHIVE_JOB_LOGS_MESSAGES", onSuccess, onError, true);
+
+				BackendConnector.doGet({
+					constant: "ARCHIVE_JOB_LOGS_MESSAGES",
+					parameters: {
+						DATE: Formatters.getDateByPattern("YYYY-MM-DD", date)
+					}
+				}, onSuccess, onError, true);
+
+				oArchiveDialog.close();
+			});
+		},
+
+		onArchiveDialogCancel: function () {
+
+			this._oArchiveDialog.then((oArchiveDialog) => {
+				oArchiveDialog.close();
+			});
 		}
 	});
 }, /* bExport= */ true);
