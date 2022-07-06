@@ -5,7 +5,9 @@ sap.ui.define([
 	"use strict";
 
 	let MessageHelpers = {
+
 		buttonIconFormatter: function (sMessageType) {
+
 			switch (sMessageType) {
 			case Constants.INFOMESSAGES.ERROR:
 				return Constants.SAP_ICONS.ERROR;
@@ -19,6 +21,7 @@ sap.ui.define([
 		},
 
 		buttonTypeFormatter: function (sMessageType) {
+
 			switch (sMessageType) {
 			case Constants.INFOMESSAGES.ERROR:
 				return Constants.SAP_BUTTON_TYPE.ERROR;
@@ -32,11 +35,13 @@ sap.ui.define([
 		},
 
 		handleMessagePopoverButtonStyle: function (oButton, sType) {
+
 			oButton.setIcon(MessageHelpers.buttonIconFormatter.call(this, sType));
 			oButton.setType(MessageHelpers.buttonTypeFormatter.call(this, sType));
 		},
 
 		addMessageToPopover: function (sMessage, sDescription, sAdditionalText, sType, sViewName, bActiveTitle, sJobId, oButton) {
+
 			let oMessage = new Message({
 				message: sMessage,
 				description: sDescription,
@@ -48,8 +53,11 @@ sap.ui.define([
 					"JOB_ID": sJobId
 				}
 			});
+
 			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+
 			if (oButton) {
+
 				MessageHelpers.handleMessagePopoverButtonStyle.call(this, oButton, sType);
 			}
 		}

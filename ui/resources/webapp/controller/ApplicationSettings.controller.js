@@ -168,9 +168,9 @@ sap.ui.define([
 					this.handleControlEditableState("clientSecret", false);
 					this.handleControlEditableState("technicalUsername", false);
 					this.handleControlEditableState("technicalPassword", false);
-
 				}
 			} else {
+
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorMandatoryFieldsApplicationSettings"), null, null,
 					"Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
@@ -271,6 +271,7 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, oXHR.responseJSON.message, oXHR.responseText, sErrorThrown, sMessage.type,
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
+
 			BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
 		},
 

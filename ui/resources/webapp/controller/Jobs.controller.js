@@ -16,8 +16,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("J");
 
 			if (this.oAuth.display) {
+
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
+
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
@@ -56,8 +58,10 @@ sap.ui.define([
 			let oExistingVariant = oSmartTable.fetchVariant();
 
 			if (oExistingVariant !== undefined) {
+
 				oSmartTable.applyVariant(oExistingVariant);
 			} else {
+
 				oSmartTable.applyVariant({
 					sort: {
 						sortItems: [{
@@ -69,6 +73,7 @@ sap.ui.define([
 			}
 
 			if (oSmartTable.isInitialised()) {
+
 				oSmartTable.rebindTable();
 			}
 		},

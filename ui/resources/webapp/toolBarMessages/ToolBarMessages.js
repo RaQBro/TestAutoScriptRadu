@@ -9,7 +9,9 @@ sap.ui.define([
 	let toolBarMessages = {
 
 		initialiseMessagePopover: function () {
+
 			if (initialised === false) {
+
 				initialised = true;
 				let oView = this.getView();
 				oView.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
@@ -26,6 +28,7 @@ sap.ui.define([
 		},
 
 		onMessagePopoverPress: function (oEvent) {
+
 			oMessagePopover.openBy(oEvent.getSource());
 		}
 	};

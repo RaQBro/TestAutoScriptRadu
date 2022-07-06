@@ -86,7 +86,6 @@ sap.ui.define([
 					oDialogValue.destroy();
 				}
 			}
-
 		},
 
 		onOnlinePress: function () {
@@ -104,14 +103,15 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMessage", [result.details.JOB_ID]), null,
 					null, "Success", oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
+
 			let onError = function (oXHR, sTextStatus, sErrorThrown) {
 
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMessage"), oXHR.responseText,
 					sErrorThrown, "Error",
 					oController.getViewName("item"), false, null, oController.oButtonPopover);
 			};
+
 			BackendConnector.doGet("JOB_START_OFFLINE", onSuccess, onError, true);
 		}
 	});
-
 }, /* bExport= */ true);

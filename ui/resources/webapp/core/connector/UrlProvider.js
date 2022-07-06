@@ -8,13 +8,16 @@ sap.ui.define([
 	}
 
 	UrlProvider.prototype.getUrl = function (sConstant, mParameters) {
+
 		let sURL = this._mConstants[sConstant];
 
 		if (!sURL) {
+
 			throw new Error("URL defined by constant '" + sConstant + "' not found in UrlProvider.js");
 		}
 
 		if (mParameters) {
+
 			Object.keys(mParameters).forEach(function (sKey) {
 				sURL = sURL.replace("{" + sKey + "}", encodeURIComponent(mParameters[sKey]));
 			});

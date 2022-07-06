@@ -58,8 +58,10 @@ sap.ui.define([
 			}
 
 			if (sap.ui.Device.support.touch) {
+
 				supportTouch = "Yes";
 			} else {
+
 				supportTouch = "No";
 			}
 
@@ -78,9 +80,6 @@ sap.ui.define([
 			this.getView().setModel(oModel, "aboutModel");
 		},
 
-		/** @function called after onInit*/
-		onAfterRendering: function () {},
-
 		/** @function used when the user details avatar is pressed*/
 		onIndividualPress: function () {
 
@@ -88,6 +87,7 @@ sap.ui.define([
 			let oAvatarBtn = this.getView().byId("avatarBtn");
 
 			if (!this._oIndividuaLPopover) {
+
 				Fragment.load({
 					name: "webapp.ui.view.fragment.IndividualPopover",
 					controller: this
@@ -98,6 +98,7 @@ sap.ui.define([
 					this._oIndividuaLPopover.openBy(oAvatarBtn);
 				}.bind(this));
 			} else {
+
 				this._oIndividuaLPopover.close();
 				this._oIndividuaLPopover.openBy(oAvatarBtn);
 			}
@@ -110,6 +111,7 @@ sap.ui.define([
 			let oAboutModel = oView.getModel("aboutModel");
 
 			if (!this._oAboutDialog) {
+
 				this._oAboutDialog = Fragment.load({
 					name: "webapp.ui.view.fragment.AboutDialog",
 					controller: this
@@ -139,6 +141,7 @@ sap.ui.define([
 			let oView = this.getView();
 
 			if (!this._oHowToDialog) {
+
 				this._oHowToDialog = Fragment.load({
 					name: "webapp.ui.view.fragment.HowToDialog",
 					controller: this

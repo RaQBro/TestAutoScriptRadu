@@ -17,8 +17,10 @@ sap.ui.define([
 			this.oAuth = this.checkAuthorization("M");
 
 			if (this.oAuth.display) {
+
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onObjectMatched, this);
 			} else {
+
 				this.getView().setVisible(false);
 				oRouter.getRoute(this.sViewName).attachPatternMatched(this.onUnauthorizedMatched, this);
 			}
@@ -62,6 +64,7 @@ sap.ui.define([
 			let oSmartTable = oView.byId("stMessages");
 
 			if (this.iJobId !== undefined) {
+
 				this.handleControlVisibleState("btnSeeAllEntries", true);
 
 				oSmartTable.applyVariant({
@@ -86,8 +89,10 @@ sap.ui.define([
 				let oExistingVariant = oSmartTable.fetchVariant();
 
 				if (oExistingVariant !== undefined) {
+
 					oSmartTable.applyVariant(oExistingVariant);
 				} else {
+
 					oSmartTable.applyVariant({
 						sort: {
 							sortItems: [{
@@ -100,6 +105,7 @@ sap.ui.define([
 			}
 
 			if (oSmartTable.isInitialised()) {
+
 				oSmartTable.rebindTable();
 			}
 		},
@@ -109,6 +115,7 @@ sap.ui.define([
 			let bindingParams = oEvent.getParameter("bindingParams");
 
 			if (this.bSeeAllEntries !== undefined && this.bSeeAllEntries === true) {
+
 				bindingParams.filters = [];
 
 				this.bSeeAllEntries = false;

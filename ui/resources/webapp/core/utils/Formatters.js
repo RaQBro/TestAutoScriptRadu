@@ -10,6 +10,7 @@ sap.ui.define([
 		maxFractionDigits: 2,
 		groupingEnabled: true
 	};
+
 	let oLocale = sap.ui.getCore().getConfiguration().getLocale();
 
 	return {

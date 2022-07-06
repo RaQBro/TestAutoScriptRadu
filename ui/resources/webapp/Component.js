@@ -51,6 +51,7 @@ sap.ui.define([
 			BackendConnector.doGet({
 					constant: "APP_TOKEN"
 				},
+
 				function (res, status, xhr) {
 					let sHeaderCsrfToken = "X-Csrf-Token";
 					let sCsrfToken = xhr.getResponseHeader(sHeaderCsrfToken);
