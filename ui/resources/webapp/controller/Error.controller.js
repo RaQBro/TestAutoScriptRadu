@@ -7,30 +7,46 @@ sap.ui.define([
 
 	return Controller.extend("webapp.ui.controller.Error", {
 
+		sViewName: "default",
 		ToolBarMessages: ToolBarMessages,
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {
 
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("error").attachMatched(this._popUpMessage, this);
+			oRouter.getRoute("error").attachMatched(this.onObjectMatched, this);
+		},
 
+		onObjectMatched: function () {
+
+			this.setupView();
+		},
+
+		setupView: function () {
+
+			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.pageModel = this.getModel("pageModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
+
+			this._popUpMessage();
 		},
 
 		/** @function called when an error from get user details appears */
 		_popUpMessage: function () {
-			if (!sap.ui.getCore().oApplicationError) {
+
+			let oApplicationError = sap.ui.getCore().oApplicationError;
+
+			if (!oApplicationError) {
+
 				return;
 			}
-			let oApplicationError = sap.ui.getCore().oApplicationError;
 
 			if (this.oButtonPopover !== undefined) {
 
 				MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
 					false, null, this.oButtonPopover);
 
-				this.oButtonPopover.firePress();
+				this.oMessagePopover.firePress();
 			}
 		}
 	});
