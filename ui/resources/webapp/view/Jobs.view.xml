@@ -7,7 +7,7 @@
 					showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}" showRowCount="true" useExportToExcel="true"
 					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP,TIME_TAKEN" enableAutoBinding="true"
 					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP,TIME_TAKEN,IS_ARCHIVED"
-					beforeRebindTable="onBeforeRebindTable">
+					beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>
@@ -17,7 +17,7 @@
 							<Button id="btnRefresh" icon="sap-icon://refresh" text="{i18n>btnRefresh}" visible="true" press="onRefreshEntries"/>
 						</OverflowToolbar>
 					</smartTable:customToolbar>
-					<Table id="tJobs" growing="true" sticky="ColumnHeaders">
+					<Table id="tJobs" growing="true" sticky="ColumnHeaders,HeaderToolbar">
 						<columns>
 							<Column>
 								<customData>

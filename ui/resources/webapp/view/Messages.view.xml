@@ -6,7 +6,8 @@
 				<smartTable:SmartTable id="stMessages" entitySet="job-messages" tableType="ResponsiveTable" useTablePersonalisation="true"
 					initialise="onInitialiseSmartTable" showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}"
 					showRowCount="true" useExportToExcel="true" initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" enableAutoBinding="true"
-					requestAtLeastFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable" ignoredFields="MESSAGE_ID">
+					requestAtLeastFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable" ignoredFields="MESSAGE_ID"
+					placeToolbarInTable="true">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>
@@ -17,7 +18,7 @@
 							<Button id="btnRefresh" icon="sap-icon://refresh" text="{i18n>btnRefresh}" visible="true" press="onRefreshEntries"/>
 						</OverflowToolbar>
 					</smartTable:customToolbar>
-					<Table id="tMessages" growing="true" growingThreshold="1000" sticky="ColumnHeaders">
+					<Table id="tMessages" growing="true" growingThreshold="1000" sticky="ColumnHeaders,HeaderToolbar">
 						<ColumnListItem highlight="{path:'SEVERITY',formatter:'.formatRowHighlight'}"/>
 					</Table>
 				</smartTable:SmartTable>
