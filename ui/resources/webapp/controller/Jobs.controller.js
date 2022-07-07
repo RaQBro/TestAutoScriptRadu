@@ -86,9 +86,11 @@ sap.ui.define([
 		onViewJobLogs: function (oEvent) {
 
 			let iJobId = oEvent.getSource().getBindingContext().getObject().JOB_ID;
+			let bIsArchived = oEvent.getSource().getBindingContext().getObject().IS_ARCHIVED.toString();
 
 			this.navTo("messages", {
-				jobID: iJobId
+				JOB_ID: iJobId,
+				IS_ARCHIVED: bIsArchived
 			});
 		},
 

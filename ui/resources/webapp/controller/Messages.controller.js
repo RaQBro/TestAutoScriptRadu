@@ -26,7 +26,9 @@ sap.ui.define([
 
 		onObjectMatched: function (oEvent) {
 
-			this.iJobId = oEvent.getParameter("arguments").jobID;
+			this.iJobId = oEvent.getParameter("arguments").JOB_ID;
+			this.bIsArchived = oEvent.getParameter("arguments").IS_ARCHIVED;
+
 			this.openBusyDialog();
 			this.setupView();
 			this.initialiseViewLogic();
@@ -62,6 +64,14 @@ sap.ui.define([
 
 			let oView = this.getView();
 			let oSmartTable = oView.byId("stMessages");
+
+			if (this.bIsArchived === "1") {
+
+				oSmartTable.setEntitySet("job-messages-archive");
+			} else {
+
+				oSmartTable.setEntitySet("job-messages");
+			}
 
 			if (this.iJobId !== undefined) {
 
