@@ -1,5 +1,4 @@
-<mvc:View id="errorView" controllerName="webapp.ui.controller.Error" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core">
+<mvc:View id="errorView" controllerName="webapp.ui.controller.Error" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<MessageStrip text="{i18n>errorNoAuth}" type="Error" showIcon="true" showCloseButton="false"></MessageStrip>
