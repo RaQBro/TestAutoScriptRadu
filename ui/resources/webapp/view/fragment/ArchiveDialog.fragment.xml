@@ -1,8 +1,14 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
 	<Dialog id="archiveDialog" title="{i18n>archiveDialog}" contentWidth="20%" draggable="false" horizontalScrolling="false"
 		verticalScrolling="false">
-		<Label text="{i18n>archiveLabel}" labelFor="archiveDatePicker" class="sapUiSmallMargins"/>
-		<DatePicker id="archiveDatePicker" placeholder="Enter Date" class="sapUiLargeMargins"/>
+		<content>
+			<f:SimpleForm editable="false" layout="ResponsiveGridLayout" adjustLabelSpan="false" singleContainerFullSize="false">
+				<f:content>
+					<Label text="{i18n>archiveLabel}" labelFor="archiveDatePicker" class="sapUiLargeMargins" design="Bold" wrapping="true"/>
+					<DatePicker id="archiveDatePicker" placeholder="Enter Date" class="sapUiLargeMargins"/>
+				</f:content>
+			</f:SimpleForm>
+		</content>
 		<beginButton>
 			<Button text="{i18n>okBtn}" press=".onArchiveDialogOk" class="sapUiSmallMargins"/>
 		</beginButton>

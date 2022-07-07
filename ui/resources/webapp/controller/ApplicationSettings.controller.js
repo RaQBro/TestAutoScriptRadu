@@ -117,6 +117,7 @@ sap.ui.define([
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
 		},
+
 		onCancelPress: function () {
 
 			if (this.oAuth.maintain === true) {
@@ -288,7 +289,7 @@ sap.ui.define([
 						controller: this
 					}).then(function (oArchiveDialog) {
 						oView.addDependent(oArchiveDialog);
-						oArchiveDialog.getContent().filter(_ => _.sId === "archiveDatePicker")[0].setDateValue(new Date());
+						oArchiveDialog.getContent()[0]._aElements.filter(_ => _.sId === "archiveDatePicker")[0].setDateValue(new Date());
 						return oArchiveDialog;
 					}.bind());
 				}

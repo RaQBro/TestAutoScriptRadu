@@ -3,7 +3,8 @@
 		verticalScrolling="false">
 		<content>
 			<VBox class="sapUiSmallMargin">
-				<f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Application" adjustLabelSpan="false" singleContainerFullSize="false">
+				<f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="{i18n>application}" adjustLabelSpan="false"
+					singleContainerFullSize="false">
 					<f:content>
 						<l:HorizontalLayout class="sapUiContentPadding">
 							<l:VerticalLayout width="15rem">
@@ -17,7 +18,8 @@
 						</l:HorizontalLayout>
 					</f:content>
 				</f:SimpleForm>
-				<f:SimpleForm editable="false" title="Environment" layout="ResponsiveGridLayout" singleContainerFullSize="false" adjustLabelSpan="false">
+				<f:SimpleForm editable="false" title="{i18n>environment}" layout="ResponsiveGridLayout" singleContainerFullSize="false"
+					adjustLabelSpan="false">
 					<f:content>
 						<l:HorizontalLayout id="envHL" class="sapUiContentPadding">
 							<l:VerticalLayout id="envVL1" width="15rem">
