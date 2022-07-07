@@ -52,6 +52,7 @@ sap.ui.define([
 
 			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
 			this.pageModel = this.getModel("pageModel");
+			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.setSideContentSelectedKey(this.sViewName);
 		},
 
