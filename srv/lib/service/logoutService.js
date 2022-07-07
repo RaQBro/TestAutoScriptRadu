@@ -15,7 +15,7 @@ const PlcException = MessageLibrary.PlcException;
 
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js");
 
-const sOperation = "Logout Service"; // operation of the service / job
+const sOperation = "Logout Technical User"; // operation of the service / job
 
 /** @function
  * Used to execute the custom business logic
