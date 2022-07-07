@@ -46,7 +46,7 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
 					false, null, this.oButtonPopover);
 
-				this.oMessagePopover.firePress();
+				this.oButtonPopover.firePress();
 			}
 		}
 	});
