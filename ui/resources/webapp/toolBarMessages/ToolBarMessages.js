@@ -29,7 +29,10 @@ sap.ui.define([
 
 		onMessagePopoverPress: function (oEvent) {
 
-			oMessagePopover.openBy(oEvent.getSource());
+			if (oMessagePopover !== undefined && oMessagePopover !== null) {
+
+				oMessagePopover.openBy(oEvent.getSource());
+			}
 		}
 	};
 

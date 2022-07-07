@@ -35,18 +35,25 @@ sap.ui.define([
 		_popUpMessage: function () {
 
 			let oApplicationError = sap.ui.getCore().oApplicationError;
-
-			if (!oApplicationError) {
-
-				return;
-			}
+			let oAuthError = sap.ui.getCore().oAuthError;
 
 			if (this.oButtonPopover !== undefined) {
 
-				MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
-					false, null, this.oButtonPopover);
+				if (oApplicationError) {
 
-				this.oButtonPopover.firePress();
+					MessageHelpers.addMessageToPopover.call(this, oApplicationError.Message, oApplicationError.Description, null, "Error", "Error",
+						false, null, this.oButtonPopover);
+
+					this.oButtonPopover.firePress();
+				}
+
+				if (oAuthError) {
+
+					MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error", "Error", false,
+						null, this.byId("buttonMessagePopover"));
+
+					this.oButtonPopover.firePress();
+				}
 			}
 		}
 	});

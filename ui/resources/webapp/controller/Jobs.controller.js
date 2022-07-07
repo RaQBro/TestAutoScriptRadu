@@ -32,6 +32,8 @@ sap.ui.define([
 
 		onUnauthorizedMatched: function () {
 
+			sap.ui.getCore().oAuthError = true;
+
 			this.navTo("error");
 		},
 
