@@ -147,8 +147,7 @@ sap.ui.define([
 			};
 			let onError = function (error) {
 				oUserDetails.Error = true;
-				oUserDetails.Message =
-					`User details could not bet loaded. If the error persists, please contact your administrator.  Error: ${error.status} - ${error.statusText}`;
+				oUserDetails.Message = oController.getResourceBundleText("errorGetUserDetails", [error.status, error.statusText]);
 				oUserDetails.Description = `${JSON.stringify(error)}`;
 			};
 			BackendConnector.doGet("GET_USER_DETAILS", onSuccess, onError, true);

@@ -209,14 +209,12 @@ sap.ui.define([
 
 			let onSuccess = function () {
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainApplicationSettings", [sKey]),
-					null, null,
-					"Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
 			let onError = function () {
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorMaintainApplicationSettings", [sKey]), null,
-					null,
-					"Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+					null, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
 			let url = {
@@ -255,29 +253,20 @@ sap.ui.define([
 
 				let oView = this.getView();
 				let oController = oView.getController();
-				let sMessage;
 
 				let onSuccess = function (result) {
-          
-					sMessage = {
-						type: "Success"
-					};
 
-					MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to logout technical user.`,
-						result.message,
-						null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
+					MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successLogoutTechnicalUser", [result.details.JOB_ID]),
+						result.message, null, "Success", oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover
+					);
 				};
 
 				let onError = function (oXHR, sTextStatus, sErrorThrown) {
-          
-					sMessage = {
-						type: "Error"
-					};
 
-					MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
-						oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+					MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorLogoutTechnicalUser"), oXHR.responseText,
+						sErrorThrown, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 				};
-        
+
 				BackendConnector.doGet("LOGOUT_SERVICE", onSuccess, onError, true);
 			} else {
 
@@ -299,7 +288,7 @@ sap.ui.define([
 						controller: this
 					}).then(function (oArchiveDialog) {
 						oView.addDependent(oArchiveDialog);
-						oArchiveDialog.getContent().filter(_ => _.sId === "DP1")[0].setDateValue(new Date());
+						oArchiveDialog.getContent().filter(_ => _.sId === "archiveDatePicker")[0].setDateValue(new Date());
 						return oArchiveDialog;
 					}.bind());
 				}
@@ -320,32 +309,25 @@ sap.ui.define([
 
 				let oView = this.getView();
 				let oController = oView.getController();
-				let sMessage;
-				let date = sap.ui.getCore().byId("DP1").getDateValue();
+				let dDate = sap.ui.getCore().byId("archiveDatePicker").getDateValue();
 
 				let onSuccess = function (result) {
-					sMessage = {
-						type: "Success"
-					};
 
-					MessageHelpers.addMessageToPopover.call(this, `Job with ID (${result.details.JOB_ID}) started to archive job's messages.`,
-						result.message,
-						null, sMessage.type, oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover);
+					MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successArchiveMessages", [result.details.JOB_ID]),
+						result.message, null, "Success", oController.getViewName("fixedItem"), true, result.details.JOB_ID, oController.oButtonPopover
+					);
 				};
 
 				let onError = function (oXHR, sTextStatus, sErrorThrown) {
-					sMessage = {
-						type: "Error"
-					};
 
-					MessageHelpers.addMessageToPopover.call(this, sMessage.title, oXHR.responseText, sErrorThrown, sMessage.type,
-						oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+					MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorArchiveMessages"), oXHR.responseText,
+						sErrorThrown, "Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 				};
 
 				BackendConnector.doGet({
 					constant: "ARCHIVE_JOB_LOGS_MESSAGES",
 					parameters: {
-						DATE: Formatters.getDateByPattern("YYYY-MM-DD", date)
+						DATE: Formatters.getDateByPattern("YYYY-MM-DD", dDate)
 					}
 				}, onSuccess, onError, true);
 

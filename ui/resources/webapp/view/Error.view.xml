@@ -4,5 +4,8 @@
 		<content>
 			<MessageStrip text="{i18n>errorNoAuth}" type="Error" showIcon="true" showCloseButton="false"></MessageStrip>
 		</content>
+		<footer>
+			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
+		</footer>
 	</Page>
 </mvc:View>
