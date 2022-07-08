@@ -334,7 +334,7 @@ class Service {
 		});
 	}
 
-	async getProjectsJob() {
+	async getNoParallelProjectsJob() {
 
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
@@ -350,7 +350,7 @@ class Service {
 		return aResults !== undefined && aResults !== null && aResults.length > 0 ? aResults[0] : 1;
 	}
 
-	async getCalculationsJob() {
+	async getNoParallelCalculationsJob() {
 
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
@@ -366,7 +366,7 @@ class Service {
 		return aResults !== undefined && aResults !== null && aResults.length > 0 ? aResults[0] : 1;
 	}
 
-	async getVersionsJob() {
+	async getNoParallelVersionsJob() {
 
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
