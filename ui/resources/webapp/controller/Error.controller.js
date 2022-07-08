@@ -7,14 +7,14 @@ sap.ui.define([
 
 	return Controller.extend("webapp.ui.controller.Error", {
 
-		sViewName: "default",
+		sViewName: "error",
 		ToolBarMessages: ToolBarMessages,
 
 		/** @function called when controller is initialized	*/
 		onInit: function () {
 
 			let oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.getRoute("error").attachMatched(this.onObjectMatched, this);
+			oRouter.getRoute(this.sViewName).attachMatched(this.onObjectMatched, this);
 		},
 
 		onObjectMatched: function () {

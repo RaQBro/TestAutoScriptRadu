@@ -47,7 +47,7 @@
 		"cancelEnabled": false,
 		"cancelVisible": false
 	},
-	"default": {
+	"error": {
 		"saveEnabled": false,
 		"saveVisible": false,
 		"archiveEnabled": false,
