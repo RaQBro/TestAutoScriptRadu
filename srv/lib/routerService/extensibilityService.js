@@ -336,50 +336,57 @@ class Service {
 
 	async getNoParallelProjectsJob() {
 
-		let hdbClient = await DatabaseClass.createConnection();
-		let connection = new DatabaseClass(hdbClient);
-		let statement = await connection.preparePromisified(
+		let sSQLstmt =
 			`
 				select FIELD_VALUE
 				from "sap.plc.extensibility::template_application.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_PROJECTS';
-			`
-		);
-		let aResults = await connection.statementExecPromisified(statement, []);
-		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-		return aResults !== undefined && aResults !== null && aResults.length > 0 ? aResults[0] : 1;
+			`;
+		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+
+		let iNumberOfParallelRequests = 1;
+		if (aResults.length > 0 && !helpers.isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+			iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
+		}
+
+		return iNumberOfParallelRequests;
 	}
 
 	async getNoParallelCalculationsJob() {
 
-		let hdbClient = await DatabaseClass.createConnection();
-		let connection = new DatabaseClass(hdbClient);
-		let statement = await connection.preparePromisified(
+		let sSQLstmt =
 			`
 				select FIELD_VALUE
 				from "sap.plc.extensibility::template_application.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_CALCULATIONS';
-			`
-		);
-		let aResults = await connection.statementExecPromisified(statement, []);
-		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-		return aResults !== undefined && aResults !== null && aResults.length > 0 ? aResults[0] : 1;
+			`;
+		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+
+		let iNumberOfParallelRequests = 1;
+		if (aResults.length > 0 && !helpers.isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+			iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
+		}
+
+		return iNumberOfParallelRequests;
+
 	}
 
 	async getNoParallelVersionsJob() {
 
-		let hdbClient = await DatabaseClass.createConnection();
-		let connection = new DatabaseClass(hdbClient);
-		let statement = await connection.preparePromisified(
+		let sSQLstmt =
 			`
 				select FIELD_VALUE
 				from "sap.plc.extensibility::template_application.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_VERSIONS';
-			`
-		);
-		let aResults = await connection.statementExecPromisified(statement, []);
-		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-		return aResults !== undefined && aResults !== null && aResults.length > 0 ? aResults[0] : 1;
+			`;
+		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+
+		let iNumberOfParallelRequests = 1;
+		if (aResults.length > 0 && !helpers.isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+			iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
+		}
+
+		return iNumberOfParallelRequests;
 	}
 }
 
