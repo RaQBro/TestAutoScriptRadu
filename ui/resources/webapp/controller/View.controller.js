@@ -102,7 +102,7 @@ sap.ui.define([
 
 			let onSuccess = function (result) {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMessage", [result.details.JOB_ID]), null,
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successMessage", [result.details.JOB_ID]), null,
 					null, "Success", oController.getViewName("item"), true, result.details.JOB_ID, oController.oButtonPopover);
 			};
 

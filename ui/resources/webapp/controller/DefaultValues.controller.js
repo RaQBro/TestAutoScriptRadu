@@ -208,7 +208,7 @@ sap.ui.define([
 
 			let onSuccess = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesSaveDefaultValues"), null, null, "Success",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successSaveDefaultValues"), null, null, "Success",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 
 				// get new default values

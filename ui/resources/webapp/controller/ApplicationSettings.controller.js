@@ -211,7 +211,7 @@ sap.ui.define([
 				};
 
 			let onSuccess = function () {
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("succesMaintainApplicationSettings", [sKey]),
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successMaintainApplicationSettings", [sKey]),
 					null, null, "Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 			};
 
