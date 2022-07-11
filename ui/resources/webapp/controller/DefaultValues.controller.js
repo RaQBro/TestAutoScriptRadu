@@ -1,10 +1,11 @@
 /* global _:true */
 sap.ui.define([
 	"./BaseController",
+	"sap/ui/core/Core",
 	"webapp/ui/core/connector/BackendConnector",
 	"webapp/ui/core/utils/MessageHelpers",
 	"webapp/ui/toolBarMessages/ToolBarMessages"
-], function (Controller, BackendConnector, MessageHelpers, ToolBarMessages) {
+], function (Controller, Core, BackendConnector, MessageHelpers, ToolBarMessages) {
 	"use strict";
 
 	return Controller.extend("webapp.ui.controller.DefaultValues", {
@@ -62,6 +63,14 @@ sap.ui.define([
 		},
 
 		initialiseViewLogic: function () {
+
+			let oView = this.getView();
+			let oMessageManager = Core.getMessageManager();
+
+			// attach handlers for validation errors
+			oMessageManager.registerObject(oView.byId("inProjPerjob"), true);
+			oMessageManager.registerObject(oView.byId("inCalcPerjob"), true);
+			oMessageManager.registerObject(oView.byId("inVersPerjob"), true);
 
 			// Get default values
 			this.getDefaultValues(this.getViewName("fixedItem"));
@@ -169,71 +178,109 @@ sap.ui.define([
 			}
 		},
 
+		validateInput: function (oInput) {
+
+			let regex = /[0-9]/;
+			let sValueState = "None";
+			let bValidationError = false;
+
+			if (oInput.getValue() === null || oInput.getValue() === undefined || oInput.getValue() === "") {
+
+				sValueState = "Error";
+				bValidationError = true;
+			} else {
+
+				if (oInput.getValue().length > 2 || oInput.getValue().match(regex) === null) {
+
+					sValueState = "Error";
+					bValidationError = true;
+				}
+			}
+
+			oInput.setValueState(sValueState);
+
+			return bValidationError;
+		},
+
 		/** @function Used to saved the updated default values*/
 		onSavePress: function () {
-			let oView = this.getView(),
-				aInputs = [
-					oView.byId("inProjPerjob"),
-					oView.byId("inCalcPerjob"),
-					oView.byId("inVersPerjob")
-				];
 
-			let oDefaultValues = [];
-			aInputs.forEach(function (oInput) {
-				if (oInput.getValue() !== "") {
-					let kvPair = {
-						FIELD_NAME: oInput.getName(),
-						FIELD_VALUE: oInput.getVisible() === true ? oInput.getValue() : 1
-					};
-					kvPair[oInput.getName()] = oInput.getValue();
-
-					oDefaultValues.push(kvPair);
-				}
-			});
-
-			// add the RTE KV pair separately since the control is different from a normal input
-			let oInputRTE = oView.byId("txtRTE");
-			if (oInputRTE.getVisible() === true && oInputRTE.getValue()) {
-				oDefaultValues.push({
-					FIELD_NAME: "RTE",
-					FIELD_VALUE: "",
-					FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
-				});
-			}
-
-			let oInputCDE = oView.byId("txtCDE");
-			if (oInputCDE.getVisible() === true && oInputCDE.getValue()) {
-				oDefaultValues.push({
-					FIELD_NAME: "CDE",
-					FIELD_VALUE: "",
-					FIELD_DESCRIPTION: oView.byId("txtCDE").getValue()
-				});
-			}
+			let bValidationError = false;
+			let oView = this.getView();
+			let aInputs = [
+				oView.byId("inProjPerjob"),
+				oView.byId("inCalcPerjob"),
+				oView.byId("inVersPerjob")
+			];
 
 			let oController = this;
 
-			let onSuccess = function () {
+			// Check that mandatory fields are not empty.
+			// Validation does not happen during data binding as this is only triggered by user actions.
+			aInputs.forEach(function (oInput) {
+				bValidationError = oController.validateInput(oInput) || bValidationError;
+			}, oController);
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successSaveDefaultValues"), null, null,
-					"Success",
-					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			if (bValidationError) {
 
-				// get new default values
-				oController.getDefaultValues();
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("validationInput"), null, null,
+					"Error", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+			} else {
 
-				// make input fields readonly
-				oController.handleControlEditableState("txtRTE", false);
-				oController.handleControlEditableState("txtCDE", false);
-				oController.handleControlEditableState("inProjPerjob", false);
-				oController.handleControlEditableState("inCalcPerjob", false);
-				oController.handleControlEditableState("inVersPerjob", false);
-			};
-			let onError = function () {
+				let oDefaultValues = [];
+				aInputs.forEach(function (oInput) {
+					if (oInput.getValue() !== "") {
+						let kvPair = {
+							FIELD_NAME: oInput.getName(),
+							FIELD_VALUE: oInput.getVisible() === true ? oInput.getValue() : 1
+						};
+						kvPair[oInput.getName()] = oInput.getValue();
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, null, "Error",
-					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
-			};
-			BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);
+						oDefaultValues.push(kvPair);
+					}
+				});
+
+				// add the RTE KV pair separately since the control is different from a normal input
+				let oInputRTE = oView.byId("txtRTE");
+				if (oInputRTE.getVisible() === true && oInputRTE.getValue()) {
+					oDefaultValues.push({
+						FIELD_NAME: "RTE",
+						FIELD_VALUE: "",
+						FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
+					});
+				}
+
+				let oInputCDE = oView.byId("txtCDE");
+				if (oInputCDE.getVisible() === true && oInputCDE.getValue()) {
+					oDefaultValues.push({
+						FIELD_NAME: "CDE",
+						FIELD_VALUE: "",
+						FIELD_DESCRIPTION: oView.byId("txtCDE").getValue()
+					});
+				}
+
+				let onSuccess = function () {
+
+					MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successSaveDefaultValues"), null, null,
+						"Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+
+					// get new default values
+					oController.getDefaultValues();
+
+					// make input fields readonly
+					oController.handleControlEditableState("txtRTE", false);
+					oController.handleControlEditableState("txtCDE", false);
+					oController.handleControlEditableState("inProjPerjob", false);
+					oController.handleControlEditableState("inCalcPerjob", false);
+					oController.handleControlEditableState("inVersPerjob", false);
+				};
+				let onError = function () {
+
+					MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorSaveDefaultValues"), null, null, "Error",
+						oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+				};
+				BackendConnector.doPost("SET_DEFAULT_VALUES", oDefaultValues, onSuccess, onError, false);
+			}
 		},
 
 		onEditPress: function () {
