@@ -73,6 +73,27 @@
 			<Annotations Target="Metadata.job-logsType/IS_ARCHIVED">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobArchivedJob}"/>
 			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/TIMESTAMP">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesTimestamp}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/JOB_ID">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesJobID}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/SEVERITY">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesSeverity}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/TEXT">
+				<Annotation Term="Common.Label" String="{@i18n&gt;colText}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/DETAILS">
+				<Annotation Term="Common.Label" String="{@i18n&gt;colDetails}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/OPERATION">
+				<Annotation Term="Common.Label" String="{@i18n&gt;colOperation}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-messages-archiveType/MESSAGE_ID">
+				<Annotation Term="Common.Label" String="{@i18n&gt;Messages}"/>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

@@ -59,6 +59,19 @@
 				<Property Name="OPERATION" Type="Edm.String" MaxLength="500"/>
 				<Property Name="MESSAGE_ID" Type="Edm.String" Nullable="false" MaxLength="32"/>
 			</EntityType>
+			<EntityType Name="job-messages-archiveType">
+				<Key>
+					<PropertyRef Name="MESSAGE_ID"/>
+					<PropertyRef Name="TIMESTAMP"/>
+				</Key>
+				<Property Name="TIMESTAMP" Type="Edm.DateTime" Nullable="false"/>
+				<Property Name="JOB_ID" Type="Edm.Int64"/>
+				<Property Name="SEVERITY" Type="Edm.String" MaxLength="50"/>
+				<Property Name="TEXT" Type="Edm.String" MaxLength="5000"/>
+				<Property Name="DETAILS" Type="Edm.String" MaxLength="5000"/>
+				<Property Name="OPERATION" Type="Edm.String" MaxLength="500"/>
+				<Property Name="MESSAGE_ID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+			</EntityType>
 			<EntityContainer Name="v2" m:IsDefaultEntityContainer="true">
 				<EntitySet Name="configuration" EntityType="default.configurationType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
 				<EntitySet Name="default-values" EntityType="default.default-valuesType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
@@ -66,6 +79,8 @@
 					sap:deletable="false"/>
 				<EntitySet Name="job-logs" EntityType="default.job-logsType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
 				<EntitySet Name="job-messages" EntityType="default.job-messagesType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+				<EntitySet Name="job-messages-archive" EntityType="default.job-messages-archiveType" sap:creatable="false" sap:updatable="false"
+					sap:deletable="false"/>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>
