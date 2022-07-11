@@ -70,12 +70,6 @@ sap.ui.define([
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
 
-		/** @function Used to get toolBarMessages model*/
-		getToolBarMessagesModel: function () {
-
-			return this.getOwnerComponent().getModel("toolBarMessagesModel");
-		},
-
 		/** @function used to open BusyDialog
 		 */
 		openBusyDialog: function () {
@@ -299,6 +293,22 @@ sap.ui.define([
 			return this._sContentDensityClass;
 		},
 
+		getToolBarMessagesModel: function (view) {
+
+			let fullModel = this.getOwnerComponent().getModel("toolBarMessagesModel");
+			let data = fullModel.oData[view] || fullModel.oData.default || {};
+
+			return new sap.ui.model.json.JSONModel(data);
+		},
+
+		getVisibilitySettingsModel: function (view) {
+
+			let fullModel = this.getOwnerComponent().getModel("visibilitySettingsModel");
+			let data = fullModel.oData[view] || fullModel.oData.default || {};
+
+			return new sap.ui.model.json.JSONModel(data);
+		},
+
 		onMessageTitlePress: function (oEvent) {
 
 			this.navTo("messages", {
@@ -339,14 +349,6 @@ sap.ui.define([
 
 			return oAuth;
 
-		},
-
-		getPageModel: function (view) {
-
-			let fullModel = this.getToolBarMessagesModel();
-			let data = fullModel.oData[view] || fullModel.oData.default || {};
-
-			return new sap.ui.model.json.JSONModel(data);
 		},
 
 		checkTechnicalUserPlcToken: function () {

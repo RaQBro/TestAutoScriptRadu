@@ -52,8 +52,8 @@ sap.ui.define([
 
 		setupView: function () {
 
-			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
-			this.pageModel = this.getModel("pageModel");
+			this.getView().setModel(this.getToolBarMessagesModel(this.sViewName), "toolBarMessagesModel");
+			this.toolBarMessagesModel = this.getModel("toolBarMessagesModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.setSideContentSelectedKey(this.sViewName);
 		},
@@ -208,7 +208,8 @@ sap.ui.define([
 
 			let onSuccess = function () {
 
-				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successSaveDefaultValues"), null, null, "Success",
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("successSaveDefaultValues"), null, null,
+					"Success",
 					oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 
 				// get new default values
@@ -233,11 +234,11 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
-				this.pageModel.setProperty("/saveEnabled", false);
-				this.pageModel.setProperty("/editEnabled", false);
-				this.pageModel.setProperty("/editVisible", false);
-				this.pageModel.setProperty("/cancelEnabled", true);
-				this.pageModel.setProperty("/cancelVisible", true);
+				this.toolBarMessagesModel.setProperty("/saveEnabled", false);
+				this.toolBarMessagesModel.setProperty("/editEnabled", false);
+				this.toolBarMessagesModel.setProperty("/editVisible", false);
+				this.toolBarMessagesModel.setProperty("/cancelEnabled", true);
+				this.toolBarMessagesModel.setProperty("/cancelVisible", true);
 
 				this.handleControlEditableState("txtRTE", true);
 				this.handleControlEditableState("txtCDE", true);
@@ -255,11 +256,11 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
-				this.pageModel.setProperty("/editEnabled", true);
-				this.pageModel.setProperty("/editVisible", true);
-				this.pageModel.setProperty("/cancelEnabled", false);
-				this.pageModel.setProperty("/cancelVisible", false);
-				this.pageModel.setProperty("/saveEnabled", false);
+				this.toolBarMessagesModel.setProperty("/editEnabled", true);
+				this.toolBarMessagesModel.setProperty("/editVisible", true);
+				this.toolBarMessagesModel.setProperty("/cancelEnabled", false);
+				this.toolBarMessagesModel.setProperty("/cancelVisible", false);
+				this.toolBarMessagesModel.setProperty("/saveEnabled", false);
 
 				this.handleControlEditableState("txtRTE", false);
 				this.handleControlEditableState("txtCDE", false);
@@ -277,27 +278,27 @@ sap.ui.define([
 
 		onChangeNoProjects: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeNoCalculations: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeNoCalculationVersions: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeRichTextEditor: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeCodeEditor: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onExit: function () {

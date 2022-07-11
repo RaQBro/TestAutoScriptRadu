@@ -4,14 +4,14 @@
 			press=".ToolBarMessages.onMessagePopoverPress"/>
 		<ToolbarSpacer/>
 		<Button id="archiveBtn" icon="sap-icon://email" type="Transparent" text="{i18n>Archive}" press="onArchivePress"
-			visible="{pageModel>/archiveVisible}" enabled="{pageModel>/archiveEnabled}"/>
-		<Button id="logoutBtn" icon="sap-icon://log" type="Critical" text="{i18n>Logout}" press="onLogoutPress" visible="{pageModel>/logoutVisible}"
-			enabled="{pageModel>/logoutEnabled}"/>
-		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress" visible="{pageModel>/saveVisible}"
-			enabled="{pageModel>/saveEnabled}"/>
-		<Button id="editBtn" icon="sap-icon://edit" type="Emphasized" text="{i18n>Edit}" press="onEditPress" visible="{pageModel>/editVisible}"
-			enabled="{pageModel>/editEnabled}"/>
+			visible="{toolBarMessagesModel>/archiveVisible}" enabled="{toolBarMessagesModel>/archiveEnabled}"/>
+		<Button id="logoutBtn" icon="sap-icon://log" type="Critical" text="{i18n>Logout}" press="onLogoutPress"
+			visible="{toolBarMessagesModel>/logoutVisible}" enabled="{toolBarMessagesModel>/logoutEnabled}"/>
+		<Button id="saveBtn" icon="sap-icon://save" type="Emphasized" text="{i18n>Save}" press="onSavePress"
+			visible="{toolBarMessagesModel>/saveVisible}" enabled="{toolBarMessagesModel>/saveEnabled}"/>
+		<Button id="editBtn" icon="sap-icon://edit" type="Emphasized" text="{i18n>Edit}" press="onEditPress"
+			visible="{toolBarMessagesModel>/editVisible}" enabled="{toolBarMessagesModel>/editEnabled}"/>
 		<Button id="cancelBtn" icon="sap-icon://cancel" type="Reject" text="{i18n>Cancel}" press="onCancelPress"
-			visible="{pageModel>/cancelVisible}" enabled="{pageModel>/cancelEnabled}"/>
+			visible="{toolBarMessagesModel>/cancelVisible}" enabled="{toolBarMessagesModel>/cancelEnabled}"/>
 	</Toolbar>
 </core:FragmentDefinition>

@@ -44,7 +44,8 @@ sap.ui.define([
 
 		setupView: function () {
 
-			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
+			this.getView().setModel(this.getToolBarMessagesModel(this.sViewName), "toolBarMessagesModel");
+			this.toolBarMessagesModel = this.getModel("toolBarMessagesModel");
 			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
 
 			this.setSideContentSelectedKey(this.sViewName);

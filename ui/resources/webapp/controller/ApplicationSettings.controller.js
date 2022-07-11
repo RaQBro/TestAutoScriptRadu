@@ -50,8 +50,8 @@ sap.ui.define([
 
 		setupView: function () {
 
-			this.getView().setModel(this.getPageModel(this.sViewName), "pageModel");
-			this.pageModel = this.getModel("pageModel");
+			this.getView().setModel(this.getToolBarMessagesModel(this.sViewName), "toolBarMessagesModel");
+			this.toolBarMessagesModel = this.getModel("toolBarMessagesModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
 			this.setSideContentSelectedKey(this.sViewName);
 		},
@@ -76,7 +76,7 @@ sap.ui.define([
 			if (oTechnicalUser !== undefined) {
 				if (oTechnicalUser.FIELD_VALUE !== null) {
 					this.getView().byId("technicalUsername").setValue(oTechnicalUser.FIELD_VALUE);
-					this.pageModel.setProperty("/logoutEnabled", true);
+					this.toolBarMessagesModel.setProperty("/logoutEnabled", true);
 				}
 			}
 			if (oClientId !== undefined) {
@@ -103,11 +103,11 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
-				this.pageModel.setProperty("/saveEnabled", false);
-				this.pageModel.setProperty("/editEnabled", false);
-				this.pageModel.setProperty("/editVisible", false);
-				this.pageModel.setProperty("/cancelEnabled", true);
-				this.pageModel.setProperty("/cancelVisible", true);
+				this.toolBarMessagesModel.setProperty("/saveEnabled", false);
+				this.toolBarMessagesModel.setProperty("/editEnabled", false);
+				this.toolBarMessagesModel.setProperty("/editVisible", false);
+				this.toolBarMessagesModel.setProperty("/cancelEnabled", true);
+				this.toolBarMessagesModel.setProperty("/cancelVisible", true);
 
 				this.handleControlEditableState("clientId", true);
 				this.handleControlEditableState("clientSecret", true);
@@ -124,11 +124,11 @@ sap.ui.define([
 
 			if (this.oAuth.maintain === true) {
 
-				this.pageModel.setProperty("/saveEnabled", false);
-				this.pageModel.setProperty("/editEnabled", true);
-				this.pageModel.setProperty("/editVisible", true);
-				this.pageModel.setProperty("/cancelEnabled", false);
-				this.pageModel.setProperty("/cancelVisible", false);
+				this.toolBarMessagesModel.setProperty("/saveEnabled", false);
+				this.toolBarMessagesModel.setProperty("/editEnabled", true);
+				this.toolBarMessagesModel.setProperty("/editVisible", true);
+				this.toolBarMessagesModel.setProperty("/cancelEnabled", false);
+				this.toolBarMessagesModel.setProperty("/cancelVisible", false);
 
 				this.handleControlEditableState("clientId", false);
 				this.handleControlEditableState("clientSecret", false);
@@ -162,12 +162,12 @@ sap.ui.define([
 					this.insertIntoSecureStore(sTechnicalUser, sTechnicalPassword, technicalNameUser);
 					this.insertIntoSecureStore(sPlcClientId, sPlcClientSecret, technicalNameClient);
 
-					this.pageModel.setProperty("/saveEnabled", false);
-					this.pageModel.setProperty("/editEnabled", true);
-					this.pageModel.setProperty("/editVisible", true);
-					this.pageModel.setProperty("/cancelEnabled", false);
-					this.pageModel.setProperty("/cancelVisible", false);
-					this.pageModel.setProperty("/logoutEnabled", true);
+					this.toolBarMessagesModel.setProperty("/saveEnabled", false);
+					this.toolBarMessagesModel.setProperty("/editEnabled", true);
+					this.toolBarMessagesModel.setProperty("/editVisible", true);
+					this.toolBarMessagesModel.setProperty("/cancelEnabled", false);
+					this.toolBarMessagesModel.setProperty("/cancelVisible", false);
+					this.toolBarMessagesModel.setProperty("/logoutEnabled", true);
 
 					this.handleControlEditableState("clientId", false);
 					this.handleControlEditableState("clientSecret", false);
@@ -232,22 +232,22 @@ sap.ui.define([
 
 		onChangeUsername: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangePassword: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeClientId: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeClientSecret: function () {
 
-			this.pageModel.setProperty("/saveEnabled", true);
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onLogoutPress: function () {
