@@ -58,5 +58,17 @@
 		"editVisible": false,
 		"cancelEnabled": false,
 		"cancelVisible": false
+	},
+	"default": {
+		"saveEnabled": false,
+		"saveVisible": false,
+		"archiveEnabled": false,
+		"archiveVisible": false,
+		"logoutEnabled": false,
+		"logoutVisible": false,
+		"editEnabled": false,
+		"editVisible": false,
+		"cancelEnabled": false,
+		"cancelVisible": false
 	}
 }

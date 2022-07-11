@@ -1,0 +1,15 @@
+{
+	"applicationSettings": {
+		"clientId": true,
+		"clientSecret": true,
+		"technicalUsername": true,
+		"technicalPassword": true
+	},
+	"defaultValues": {
+		"txtRTE": true,
+		"txtCDE": false,
+		"inProjPerjob": true,
+		"inCalcPerjob": true,
+		"inVersPerjob": true
+	}
+}

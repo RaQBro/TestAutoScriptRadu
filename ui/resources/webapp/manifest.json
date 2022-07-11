@@ -14,10 +14,6 @@
 			"version": "0.0.0"
 		},
 		"dataSources": {
-			"toolBarMessages": {
-				"uri": "toolBarMessages/ToolbarMessagesModel.json",
-				"type": "JSON"
-			},
 			"serviceDS": {
 				"uri": "/service/odataService.xsodata",
 				"type": "OData",
@@ -35,6 +31,14 @@
 				"settings": {
 					"localUri": "annotation.xml"
 				}
+			},
+			"toolBarMessages": {
+				"uri": "model/ToolbarMessagesModel.json",
+				"type": "JSON"
+			},
+			"visibilitySettings": {
+				"uri": "model/VisibilitySettingsModel.json",
+				"type": "JSON"
 			}
 		}
 	},
@@ -107,6 +111,10 @@
 			"toolBarMessagesModel": {
 				"type": "sap.ui.model.json.JSONModel",
 				"dataSource": "toolBarMessages"
+			},
+			"visibilitySettingsModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "visibilitySettings"
 			}
 		},
 		"resources": {

@@ -4,20 +4,26 @@
 		<content>
 			<form:SimpleForm id="frmDefaultValues" editable="true" layout="ColumnLayout" title="{i18n>defaultValueTitle}">
 				<form:content>
-					<Label text="{i18n>noProjectsPerJob}"/>
-					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects" editable="false"/>
-					<Label text="{i18n>noCalculationsPerJob}"/>
-					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS" change="onChangeNoCalculations" editable="false"/>
-					<Label text="{i18n>noVersionsPerJob}"/>
-					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions" editable="false"/>
+					<Label text="{i18n>noProjectsPerJob}" visible="{visibilitySettingsModel>/inProjPerjob}"/>
+					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects" editable="false"
+						visible="{visibilitySettingsModel>/inProjPerjob}"/>
+					<Label text="{i18n>noCalculationsPerJob}" visible="{visibilitySettingsModel>/inCalcPerjob}"/>
+					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS" change="onChangeNoCalculations" editable="false"
+						visible="{visibilitySettingsModel>/inCalcPerjob}"/>
+					<Label text="{i18n>noVersionsPerJob}" visible="{visibilitySettingsModel>/inVersPerjob}"/>
+					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions" editable="false"
+						visible="{visibilitySettingsModel>/inVersPerjob}"/>
 				</form:content>
 			</form:SimpleForm>
-			<form:SimpleForm id="frmRTE" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}"/>
+			<form:SimpleForm id="frmRTE" editable="true" layout="ColumnLayout" title="{i18n>RichTextEditorTitle}"
+				visible="{visibilitySettingsModel>/txtRTE}"/>
 			<rte:RichTextEditor id="txtRTE" editable="false" customToolbar="true" showGroupFont="true" showGroupLink="true" showGroupInsert="true"
-				width="99%" change="onChangeRichTextEditor" class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
-			<form:SimpleForm id="frmCDE" editable="true" visible="false" layout="ColumnLayout" title="{i18n>CodeEditorTitle}"/>
-			<cde:CodeEditor id="txtCDE" editable="false" visible="false" type="json" height="500px" change="onChangeCodeEditor"
-				class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
+				width="99%" change="onChangeRichTextEditor" class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin"
+				visible="{visibilitySettingsModel>/txtRTE}"/>
+			<form:SimpleForm id="frmCDE" editable="true" layout="ColumnLayout" title="{i18n>CodeEditorTitle}"
+				visible="{visibilitySettingsModel>/txtCDE}"/>
+			<cde:CodeEditor id="txtCDE" editable="false" type="json" height="500px" change="onChangeCodeEditor"
+				class="sapUiSmallMarginTop sapUiSmallMarginEnd sapUiSmallMarginBegin" visible="{visibilitySettingsModel>/txtCDE}"/>
 		</content>
 		<footer>
 			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>

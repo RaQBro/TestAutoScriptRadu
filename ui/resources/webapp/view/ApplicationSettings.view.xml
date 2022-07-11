@@ -3,18 +3,22 @@
 	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<l:VerticalLayout class="sapUiContentPadding" width="50%">
-				<Text text="{i18n>infoTextClientId}"/>
-				<Label text="{i18n>clientId}" labelFor="clientId"/>
-				<Input id="clientId" placeholder="{i18n>clientIdPlaceholder}" change="onChangeClientId" editable="false"></Input>
-				<Label text="{i18n>clientSecret}" labelFor="clientSecret"/>
-				<Input id="clientSecret" placeholder="{i18n>clientSecretPlaceholder}" type="Password" change="onChangeClientSecret" editable="false"></Input>
+				<Text text="{i18n>infoTextClientId}" visible="{visibilitySettingsModel>/clientId}"/>
+				<Label text="{i18n>clientId}" labelFor="clientId" visible="{visibilitySettingsModel>/clientId}"/>
+				<Input id="clientId" placeholder="{i18n>clientIdPlaceholder}" change="onChangeClientId" editable="false"
+					visible="{visibilitySettingsModel>/clientId}"></Input>
+				<Label text="{i18n>clientSecret}" labelFor="clientSecret" visible="{visibilitySettingsModel>/clientSecret}"/>
+				<Input id="clientSecret" placeholder="{i18n>clientSecretPlaceholder}" type="Password" change="onChangeClientSecret" editable="false"
+					visible="{visibilitySettingsModel>/clientSecret}"></Input>
 			</l:VerticalLayout>
 			<l:VerticalLayout class="sapUiContentPadding" width="50%">
-				<Text text="{i18n>infoTextTechnicalUser}"/>
-				<Label text="{i18n>technicalUsername}" labelFor="technicalUsername"/>
-				<Input id="technicalUsername" placeholder="{i18n>technicalUsernamePlaceholder}" change="onChangeUsername" editable="false"></Input>
-				<Label text="{i18n>technicalPassword}" labelFor="technicalPassword"/>
-				<Input id="technicalPassword" placeholder="{i18n>technicalPasswordPlaceholder}" type="Password" change="onChangePassword" editable="false"></Input>
+				<Text text="{i18n>infoTextTechnicalUser}" visible="{visibilitySettingsModel>/technicalUsername}"/>
+				<Label text="{i18n>technicalUsername}" labelFor="technicalUsername" visible="{visibilitySettingsModel>/technicalUsername}"/>
+				<Input id="technicalUsername" placeholder="{i18n>technicalUsernamePlaceholder}" change="onChangeUsername" editable="false"
+					visible="{visibilitySettingsModel>/technicalUsername}"></Input>
+				<Label text="{i18n>technicalPassword}" labelFor="technicalPassword" visible="{visibilitySettingsModel>/technicalPassword}"/>
+				<Input id="technicalPassword" placeholder="{i18n>technicalPasswordPlaceholder}" type="Password" change="onChangePassword" editable="false"
+					visible="{visibilitySettingsModel>/technicalPassword}"></Input>
 			</l:VerticalLayout>
 		</content>
 		<footer>

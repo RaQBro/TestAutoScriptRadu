@@ -52,7 +52,10 @@ sap.ui.define([
 
 			this.getView().setModel(this.getToolBarMessagesModel(this.sViewName), "toolBarMessagesModel");
 			this.toolBarMessagesModel = this.getModel("toolBarMessagesModel");
+			this.getView().setModel(this.getVisibilitySettingsModel(this.sViewName), "visibilitySettingsModel");
+			this.visibilitySettingsModel = this.getModel("visibilitySettingsModel");
 			this.oButtonPopover = this.byId("buttonMessagePopover");
+
 			this.setSideContentSelectedKey(this.sViewName);
 		},
 
