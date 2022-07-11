@@ -183,7 +183,7 @@ sap.ui.define([
 				if (oInput.getValue() !== "") {
 					let kvPair = {
 						FIELD_NAME: oInput.getName(),
-						FIELD_VALUE: oInput.getValue()
+						FIELD_VALUE: oInput.getVisible() === true ? oInput.getValue() : 1
 					};
 					kvPair[oInput.getName()] = oInput.getValue();
 
@@ -192,14 +192,17 @@ sap.ui.define([
 			});
 
 			// add the RTE KV pair separately since the control is different from a normal input
-			if (oView.byId("txtRTE").getValue()) {
+			let oInputRTE = oView.byId("txtRTE");
+			if (oInputRTE.getVisible() === true && oInputRTE.getValue()) {
 				oDefaultValues.push({
 					FIELD_NAME: "RTE",
 					FIELD_VALUE: "",
 					FIELD_DESCRIPTION: oView.byId("txtRTE").getValue()
 				});
 			}
-			if (oView.byId("txtCDE").getValue()) {
+
+			let oInputCDE = oView.byId("txtCDE");
+			if (oInputCDE.getVisible() === true && oInputCDE.getValue()) {
 				oDefaultValues.push({
 					FIELD_NAME: "CDE",
 					FIELD_VALUE: "",
