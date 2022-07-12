@@ -14,9 +14,12 @@ const async = require("async");
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
-const Message = require(global.appRoot + "/lib/util/message.js").Message;
 const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSettings.js");
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js");
+
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Message = MessageLibrary.Message;
+const sVersionType = MessageLibrary.PlcObjects.Version;
 
 /** @class
  * @classdesc Extensibility PLC services
@@ -168,7 +171,7 @@ class Service {
 			await Message.addLog(this.JOB_ID,
 				"Calculation Version with ID '" + iVersionId + "': Is Touchable = " + bIsTouchable +
 				". Is Writable = " + bIsWritable + ". Is Frozen = " + bIsFrozen + ".",
-				"message", undefined, this.Operation);
+				"message", undefined, this.Operation, sVersionType, iVersionId);
 		}
 
 		return bIsTouchable;

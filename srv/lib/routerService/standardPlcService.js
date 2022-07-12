@@ -13,7 +13,12 @@ const _ = require("underscore");
 
 const Helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js");
-const Message = require(global.appRoot + "/lib/util/message.js").Message;
+
+const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Message = MessageLibrary.Message;
+const sProjectType = MessageLibrary.PlcObjects.Project;
+const sCalculationType = MessageLibrary.PlcObjects.Calculation;
+const sVersionType = MessageLibrary.PlcObjects.Version;
 
 /** @class
  * @classdesc Standard PLC services
@@ -66,15 +71,15 @@ class Dispatcher {
 					if (aUsers !== undefined && aUsers.length > 0) {
 						sMessageInfo =
 							`Variant Matrix of calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): ${aUsers.join(", ")}`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 						sMessageInfo =
 							`Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): ${aUsers.join(", ")}`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 					} else {
 						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' is locked and was opened in read-only mode!`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 						sMessageInfo = `Variant Matrix of calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 					}
 					// close variant matrix
 					this.closeVariantMatrix(iVersionId);
@@ -82,20 +87,20 @@ class Dispatcher {
 					return false;
 				} else {
 					let sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
-					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 					return undefined;
 				}
 			} else {
 
 				let sDeveloperInfo = `Failed to open variant matrix of calculation version with ID '${iVersionId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 				return undefined;
 			}
 		} else {
 			sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was opened with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 
 			return oResponseBody;
 		}
@@ -139,11 +144,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to create variant for calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variant with name '${oVariant.VARIANT_NAME}' for version with ID '${iVersionId}' was created with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -165,11 +170,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save all variants of calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variants of calculation version with ID '${iVersionId}' were saved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -191,11 +196,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was deleted with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 
 			return true;
 		}
@@ -247,11 +252,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to calculate the variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variant with ID '${oVariant.VARIANT_ID}' of version with ID '${iVersionId}' was calculated with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -273,11 +278,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save the variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variant with ID '${iVariantId}' of version with ID '${iVersionId}' was saved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -307,14 +312,14 @@ class Dispatcher {
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo =
 				`Failed to generate a version in calculation with ID '${iTargetCalculationId}' from variant with ID '${iVariantId}' of version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let oResult = oResponseBody.body.transactionaldata[0];
 			let iNewVersionId = oResult.LAST_GENERATED_VERSION_ID;
 			let sMessageInfo =
 				`Version with ID '${iNewVersionId}' and name '${sCalculationVersionName}' was generated with success into calculation with ID '${iTargetCalculationId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResult;
 		}
 	}
@@ -342,11 +347,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to close variant matrix of calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variant matrix of version with ID '${iVersionId}' was closed with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -377,12 +382,12 @@ class Dispatcher {
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo =
 				`Failed to set version with ID '${iVersionId}' as current in calculation with ID '${oCalculationDetails.CALCULATION_ID}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo =
 				`Version with ID '${iVersionId}' from calculation with ID '${oCalculationDetails.CALCULATION_ID}' was set as current with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -406,11 +411,12 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get calculation with ID '${iCalculationId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sCalculationType,
+				iCalculationId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Calculation with ID '${iCalculationId}' was retrieved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sCalculationType, iCalculationId);
 			return oResponseBody;
 		}
 	}
@@ -488,7 +494,7 @@ class Dispatcher {
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo =
 				`Failed to create a calculation with name '${sCalculationName}' in project with ID '${oDetails.PROJECT_ID}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sCalculationType, undefined);
 			return undefined;
 		} else {
 			let sProjectId = oDetails.PROJECT_ID;
@@ -500,10 +506,10 @@ class Dispatcher {
 			let sNewVersionName = oNewVersion.CALCULATION_VERSION_NAME;
 			let sCalcMessageInfo =
 				`The calculation with ID '${sCalculationId}' and name '${sNewCalculationName}' was created with success in project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sCalcMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sCalcMessageInfo, "message", undefined, this.Operation, sCalculationType, sCalculationId);
 			let sVersMessageInfo =
 				`The version with ID '${sVersionId}' and name '${sNewVersionName}' was created with success in calculation with ID '${sCalculationId}'.`;
-			await Message.addLog(this.JOB_ID, sVersMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sVersMessageInfo, "message", undefined, this.Operation, sCalculationType, sCalculationId);
 			return oResponseBody;
 		}
 	}
@@ -536,11 +542,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, oVersion.CALCULATION_VERSION_ID);
 			return undefined;
 		} else {
 			let sMessageInfo = `Calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' was saved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, oVersion.CALCULATION_VERSION_ID);
 			return true;
 		}
 	}
@@ -574,13 +580,13 @@ class Dispatcher {
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo =
 				`Failed to save as new the calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' and NAME '${oVersion.CALCULATION_VERSION_NAME}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, oVersion.CALCULATION_VERSION_ID);
 			return undefined;
 		} else {
 			let iNewVersionId = oResponseBody.body.transactionaldata[0].CALCULATION_VERSION_ID;
 			let sMessageInfo =
 				`Calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' was saved as a new version with ID '${iNewVersionId}' and NAME '${oVersion.CALCULATION_VERSION_NAME}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, oVersion.CALCULATION_VERSION_ID);
 			return iNewVersionId;
 		}
 	}
@@ -613,13 +619,13 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to create a version as copy of calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let oCopyVersion = oResponseBody.body.transactionaldata[0];
 			let sMessageInfo =
 				`The version with ID '${oCopyVersion.CALCULATION_VERSION_ID}' was created with success as copy of version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oCopyVersion;
 		}
 	}
@@ -643,11 +649,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was retrieved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
 				oResponseBody.body.transactionaldata[0] !== undefined && oResponseBody.body.transactionaldata[0].CALCULATION_VERSIONS !== undefined &&
@@ -697,7 +703,7 @@ class Dispatcher {
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo =
 				`Failed to get version with ID '${iVersionToBeReferenced}' to be referenced into calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 
@@ -710,14 +716,14 @@ class Dispatcher {
 				if (oVersionToBeReferenced !== undefined) {
 					let sMessageInfo =
 						`Version with ID '${iVersionId}' to be referenced into calculation version with ID '${iVersionId}' was retrieved with success!`;
-					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 					return oVersionToBeReferenced;
 				}
 			}
 
 			let sMessageInfo =
 				`Not found version with ID '${iVersionToBeReferenced}' to be referenced into calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		}
 	}
@@ -762,7 +768,7 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to open calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 		} else {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was opened with success!`;
 
@@ -790,10 +796,10 @@ class Dispatcher {
 							if (aUsers !== undefined && aUsers.length > 0) {
 								sMessageInfo =
 									`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
-								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 							} else {
 								sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
-								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 							}
 							// return read-only version
 							response = oResponseBody.body.transactionaldata[0];
@@ -803,15 +809,15 @@ class Dispatcher {
 						if (aUsers !== undefined && aUsers.length > 0) {
 							sMessageInfo =
 								`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
-							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 							sMessageInfo =
 								`Calculation version with ID '${iVersionId}' will be ignored since is not editable! Locked by User(s): '${aUsers.join(", ")}'`;
-							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 						} else {
 							sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
-							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 							sMessageInfo = `Calculation version with ID '${iVersionId}' will be ignored since is not editable!`;
-							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+							await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 						}
 						// 
 						if (bGetOnly) {
@@ -837,7 +843,7 @@ class Dispatcher {
 			if (oResponseBody.head !== undefined && oResponseBody.head.messages === undefined && oResponseBody.body !== undefined &&
 				oResponseBody.body.transactionaldata !== undefined && oResponseBody.body.transactionaldata[0] !== undefined) {
 				// add success message
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 				// return opened version
 				response = oResponseBody.body.transactionaldata[0];
 			}
@@ -898,13 +904,14 @@ class Dispatcher {
 				return oResponseBody;
 			} else {
 				let sDeveloperInfo = `Failed to update calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType,
+					oCalculatonVersion.CALCULATION_VERSION_ID);
 				return undefined;
 			}
 		} else {
 			let sMessageInfo =
 				`Update of calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, oCalculatonVersion.CALCULATION_VERSION_ID);
 			return oResponseBody.body.transactionaldata[0];
 		}
 	}
@@ -941,12 +948,12 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to reference version with ID '${iReferenceVersionId}' into calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo =
 				`Version with ID '${iReferenceVersionId}' was referenced with success into calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody.body.transactionaldata;
 		}
 	}
@@ -1003,11 +1010,11 @@ class Dispatcher {
 
 		if (!(oResponse.status === 201 || oResponse.status === 200)) {
 			let sDeveloperInfo = `Failed to add material item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Material item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody.body.transactionaldata;
 		}
 	}
@@ -1061,11 +1068,11 @@ class Dispatcher {
 
 		if (!(oResponse.status === 201 || oResponse.status === 200)) {
 			let sDeveloperInfo = `Failed to add variable item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Variable item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody.body.transactionaldata;
 		}
 	}
@@ -1109,11 +1116,11 @@ class Dispatcher {
 
 		if (!(oResponse.status === 201 || oResponse.status === 200)) {
 			let sDeveloperInfo = `Failed to add text item with description '${sDescription}' in calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Text item with description '${sDescription}' was added with success in version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody.body.transactionaldata;
 		}
 	}
@@ -1150,11 +1157,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Delete of ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -1192,11 +1199,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to deactivate ${aBodyData.length} item(s) from calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Deactivate ${aBodyData.length} item(s) from version with ID '${iVersionId}' was done with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -1235,11 +1242,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update referenced items of calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Update referenced items of version with ID '${iVersionId}' was done with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -1267,11 +1274,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to freeze calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was frozen with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -1302,11 +1309,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to close calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `Calculation version with ID '${iVersionId}' was closed with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -1339,26 +1346,26 @@ class Dispatcher {
 				if (aErrorMessages.length > 0 && iCalculationId !== undefined) {
 					sMessageInfo =
 						`The calculation version with ID '${iVersionId}' is the single version of the calculation with ID '${iCalculationId}'!`;
-					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 					// delete calculation
 					await this.deleteCalculation(iCalculationId);
 
 					return true;
 				} else {
 					let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
-					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 					return undefined;
 				}
 			} else {
 				let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 				return undefined;
 			}
 		} else {
 			sMessageInfo = `Calculation version with ID '${iVersionId}' was deleted with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 
 			return true;
 		}
@@ -1385,11 +1392,12 @@ class Dispatcher {
 		let sMessageInfo;
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete calculation with ID '${iCalculationId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sCalculationType,
+				iCalculationId);
 			return undefined;
 		} else {
 			sMessageInfo = `Calculation with ID '${iCalculationId}' was deleted with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sCalculationType, iCalculationId);
 
 			return true;
 		}
@@ -1416,16 +1424,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get calculation version statuses from the system.";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			if (oResponseBody.entities !== undefined) {
 				let sMessageInfo = "The statuses of calculation version were retrieved with success!";
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = "Failed to get calculation version statuses from the system.";
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, undefined, undefined);
 				return undefined;
 			}
 		}
@@ -1453,11 +1461,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to add status witn ID '${sStatusId}' at the calculation with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The status with ID '${sStatusId}' was added with success at calculation with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -1482,11 +1490,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to delete the status of calculation with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The status of calculation version ID '${iVersionId}' was deleted with success.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -1513,11 +1521,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation, sCalculationType, iEntityId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The tag with name '${sTagName}' was added with success at calculation with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sCalculationType, iEntityId);
 			return oResponseBody;
 		}
 	}
@@ -1543,11 +1551,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 204) {
 			let sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from calculation with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.data, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.data, this.Operation, sCalculationType, iEntityId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The tag with name '${sTagName}' was deleted with success from calculation with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sCalculationType, iEntityId);
 			return true;
 		}
 	}
@@ -1574,11 +1582,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to add tag witn name '${sTagName}' at the calculation version with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody, this.Operation, sVersionType, iEntityId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The tag with name '${sTagName}' was added with success at version with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iEntityId);
 			return oResponseBody;
 		}
 	}
@@ -1604,11 +1612,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 204) {
 			let sDeveloperInfo = `Failed to delete tag witn name '${sTagName}' from version with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.data, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponse.data, this.Operation, sVersionType, iEntityId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The tag with name '${sTagName}' was deleted with success from version with ID '${iEntityId}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iEntityId);
 			return true;
 		}
 	}
@@ -1636,7 +1644,7 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			let sMessageInfo;
@@ -1656,14 +1664,14 @@ class Dispatcher {
 					}
 					if (aUsers !== undefined && aUsers.length > 0) {
 						sMessageInfo = `Project with ID '${sProjectId}' was opened in read-only mode! Locked by User(s): ${aUsers.join(", ")}`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sProjectType, sProjectId);
 						sMessageInfo = `Project with ID '${sProjectId}' will be ignored since is not editable! Locked by User(s): ${aUsers.join(", ")}`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sProjectType, sProjectId);
 					} else {
 						sMessageInfo = `Project with ID '${sProjectId}' is locked and was opened in read-only mode!`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sProjectType, sProjectId);
 						sMessageInfo = `Project with ID '${sProjectId}' will be ignored since is not editable!`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sProjectType, sProjectId);
 					}
 					// close project
 					this.closeProject(sProjectId);
@@ -1671,7 +1679,7 @@ class Dispatcher {
 					return false;
 				} else {
 					let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
-					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 
 					return undefined;
 				}
@@ -1679,12 +1687,12 @@ class Dispatcher {
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
 				oResponseBody.body.transactionaldata[0] !== undefined) {
 				sMessageInfo = `Project with ID '${sProjectId}' was opened with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 
 				return oResponseBody.body.transactionaldata[0];
 			} else {
 				let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 
 				return undefined;
 			}
@@ -1710,16 +1718,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.entities !== undefined) {
 				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were retrieved with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to get lifecycle configurations of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1741,16 +1749,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to add lifecycle configurations of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
 				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were added with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to add lifecycle configurations of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1772,16 +1780,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update lifecycle configurations of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
 				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were updated with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to update lifecycle configurations of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1803,16 +1811,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
 				let sMessageInfo = `The lifecycle configurations of project with ID '${sProjectId}' were saved with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to save lifecycle configurations of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1837,17 +1845,17 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 
 			if (oResponseBody.entities !== undefined) {
 				let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were retrieved with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to get lifecycle quantities of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1870,16 +1878,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to create lifecycle quantities of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
 				let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were created with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to create lifecycle quantities of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1902,16 +1910,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to update lifecycle quantities of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
 				let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were updated with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to update lifecycle quantities of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -1934,17 +1942,17 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 
 			if (oResponseBody.success !== undefined && oResponseBody.success.entities !== undefined) {
 				let sMessageInfo = `The lifecycle quantities of project with ID '${sProjectId}' were saved with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.entities;
 			} else {
 				let sDeveloperInfo = `Failed to save lifecycle quantities of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 
@@ -1970,16 +1978,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
 				let sMessageInfo = `The project activity price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.body.transactionaldata;
 			} else {
 				let sDeveloperInfo = `Failed to get project activity price surcharges of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -2006,11 +2014,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save project activity price surcharges of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The activity price surcharges for project with ID '${sProjectId}' were saved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 			return true;
 		}
 	}
@@ -2034,16 +2042,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined) {
 				let sMessageInfo = `The project material price surcharges of project with ID '${sProjectId}' were retrieved with success!`;
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				return oResponseBody.body.transactionaldata;
 			} else {
 				let sDeveloperInfo = `Failed to get project material price surcharges of project with ID '${sProjectId}'.`;
-				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 				return undefined;
 			}
 		}
@@ -2069,11 +2077,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to save project material price surcharges of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 			let sMessageInfo = `The material price surcharges for project with ID '${sProjectId}' were saved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 			return true;
 		}
 	}
@@ -2106,18 +2114,18 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to calculate project lifecycle costs of project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 		} else {
 			for (let oData of oResponseBody.body.transactionaldata) {
 				let status;
 
 				do {
 					await Helpers.sleep(1500);
-					status = await this.checkTaskStatus(oData.TASK_ID);
+					status = await this.checkTaskStatus(oData.TASK_ID, sProjectId);
 
 					if (status === "CANCELED" || status === "FAILED") {
 						let sMessageInfo = `Task was Canceled/Failed and Project lifecycle costs for project with ID '${sProjectId}' failed to calculate.`;
-						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation);
+						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
 
 						break;
 					}
@@ -2126,7 +2134,7 @@ class Dispatcher {
 
 				if (status === "COMPLETED") {
 					let sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
-					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				}
 			}
 		}
@@ -2136,9 +2144,10 @@ class Dispatcher {
 	 * Check task status
 	 * 
 	 * @param {string} sTaskId - task id
+	 * @param {string} sProjectId - project id
 	 * @returns {string} - task status or throw error
 	 */
-	async checkTaskStatus(sTaskId) {
+	async checkTaskStatus(sTaskId, sProjectId) {
 
 		let sQueryPath = "tasks";
 		let aParams = [{
@@ -2151,7 +2160,7 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get the status of task with ID '${sTaskId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		}
 
@@ -2181,12 +2190,12 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to close project with ID '${sProjectId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 			return undefined;
 		} else {
 
 			let sMessageInfo = `Project with ID '${sProjectId}' was closed with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 			return true;
 		}
 	}
@@ -2210,11 +2219,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			let sMessageInfo = "Init PLC session with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 			return oResponseBody;
 		}
 	}
@@ -2234,11 +2243,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to logout from PLC. If this error persists, please contact your system administrator!";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			let sMessageInfo = "Logout from PLC with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 			return oResponseBody;
 		}
 	}
@@ -2269,16 +2278,16 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get addin configuration with ID '${addinGuid}' and version '${addinVersion}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			let sMessageInfo = `Addin configuration with ID '${addinGuid}' and version '${addinVersion}' was retrieved with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 			return oResponseBody;
 		}
 	}
 
-	async createItems(iVersId, aItems, sMode) {
+	async createItems(iVersionId, aItems, sMode) {
 
 		let sQueryPath = "items";
 		let aParams = [{
@@ -2298,13 +2307,14 @@ class Dispatcher {
 		if (oResponse.status !== 200 && oResponse.status !== 201) {
 
 			if (oResponseBody.head.messages !== undefined) {
-				await Message.addLog(this.JOB_ID, `Items for calculation version with ID '${iVersId}' not created.`, "error", oResponseBody.head.messages,
-					this.Operation);
+				await Message.addLog(this.JOB_ID, `Items for calculation version with ID '${iVersionId}' not created.`, "error", oResponseBody.head.messages,
+					this.Operation, sVersionType, iVersionId);
 			}
 			return false;
 		} else {
 			await Message.addLog(this.JOB_ID,
-				`Items for calculation version with ID '${iVersId}' created successfully.`, "message", undefined, this.Operation);
+				`Items for calculation version with ID '${iVersionId}' created successfully.`, "message", undefined, this.Operation, sVersionType,
+				iVersionId);
 			return true;
 		}
 	}
@@ -2312,10 +2322,11 @@ class Dispatcher {
 	/** @function
 	 * Copy version items to PLC
 	 * 
-	 * @param {array} Items Array
+	 * @param {integer} iVersionId - version id
+	 * @param {array} aItems - Items Array
 	 * @return {object} result / error - PLC response / the error
 	 */
-	async copyItems(aItems) {
+	async copyItems(iVersionId, aItems) {
 
 		let sQueryPath = "items";
 		let aParams = [{
@@ -2333,12 +2344,12 @@ class Dispatcher {
 		let oResponseBody = oResponse.data;
 
 		if (oResponse.status !== 201) {
-			let sDeveloperInfo = "Failed to copy version items to PLC.";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			let sDeveloperInfo = `Failed to copy items into calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
-			let sMessageInfo = "Copy version items to PLC with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			let sMessageInfo = `Copy items into calculation version with ID '${iVersionId}' with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody;
 		}
 	}
@@ -2376,12 +2387,12 @@ class Dispatcher {
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo =
 				`Failed to update value of custom field '${sCustomFieldName}' from header level of calculation version with ID '${oVersion.CALCULATION_VERSION_ID}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, oVersion.CALCULATION_VERSION_ID);
 			return undefined;
 		} else {
 			let sMessageInfo =
 				`New value of the '${sCustomFieldName}' custom field from header level of calculation version with ID '${oVersion.CALCULATION_VERSION_ID}' is: '${sCustomFieldValue}'.`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, oVersion.CALCULATION_VERSION_ID);
 			return true;
 		}
 	}
@@ -2408,11 +2419,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `${aBodyData.length} item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -2440,11 +2451,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
 			let sMessageInfo = `${aBodyData.length} item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
 	}
@@ -2467,11 +2478,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get metadata from PLC.";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			let sMessageInfo = "Metadata from PLC was retrieved with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 			return oResponseBody;
 		}
 	}
@@ -2514,11 +2525,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get metadata from PLC.";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			let sMessageInfo = "Metadata from PLC was retrieved with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 			return oResponseBody.body.METADATA;
 		}
 	}
@@ -2547,11 +2558,11 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = "Failed to get masterdata custom fields from PLC.";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
 			return undefined;
 		} else {
 			let sMessageInfo = "Masterdata custom fields from PLC were retrieved with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
 			return oResponseBody.body.METADATA;
 		}
 	}
@@ -2612,12 +2623,13 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType,
+				oCalculatonVersion.CALCULATION_VERSION_ID);
 			return undefined;
 		} else {
 			let sMessageInfo =
 				`Update master data for calculation version with ID '${oCalculatonVersion.CALCULATION_VERSION_ID}' was done with success!`;
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation);
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, oCalculatonVersion.CALCULATION_VERSION_ID);
 			return oResponseBody;
 		}
 	}

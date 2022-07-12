@@ -20,6 +20,10 @@ const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
 const PlcException = MessageLibrary.PlcException;
 
+const sProjectType = MessageLibrary.PlcObjects.Project;
+const sCalculationType = MessageLibrary.PlcObjects.Calculation;
+const sVersionType = MessageLibrary.PlcObjects.Version;
+
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js");
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js");
 
@@ -160,6 +164,20 @@ function doService(request) {
 
 			let sProjectId = await this.getFirstProject();
 			oServiceResponseBody.PROJECT_ID = sProjectId;
+
+			await Message.addLog(request.JOB_ID,
+				"Example how to add a message having project as PLC object type and PLC object id.",
+				"message", undefined, sOperation, sProjectType, sProjectId);
+
+			let iCalculationId = "100";
+			await Message.addLog(request.JOB_ID,
+				"Example how to add a message having calculation as PLC object type and PLC object id.",
+				"message", undefined, sOperation, sCalculationType, iCalculationId);
+
+			let iVersionId = "1000";
+			await Message.addLog(request.JOB_ID,
+				"Example how to add a message having version as PLC object type and PLC object id.",
+				"message", undefined, sOperation, sVersionType, iVersionId);
 
 			let aAllProject = await ExtensibilityPlcService.getAllProjects();
 			oServiceResponseBody.PROJECT = aAllProject[0];

@@ -480,6 +480,15 @@ let Code = Object.freeze({
 	}
 });
 
+/**
+ * Object containing PLC object types
+ */
+let PlcObjects = Object.freeze({
+	Project: "PROJECT_ID",
+	Calculation: "CALCULATION_ID",
+	Version: "CALCULATION_VERSION_ID"
+});
+
 /** @class
  * @classdesc General success message class. Used from any layer of the application
  * @name Message
@@ -503,8 +512,10 @@ Message.prototype.constructor = Message;
  * @param {string} sType - the type of the message: Error, Warning or Info/Message
  * @param {object} oDetails - object that will contain details if necessary
  * @param {string} sOperation - the operation/category of the message if necessary
+ * @param {object} sPlcObjectType - PLC object type
+ * @param {string} sPlcObjectId - PLC object id
  */
-Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) {
+Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation, sPlcObjectType, sPlcObjectId) {
 
 	if (iJobId === undefined || typeof iJobId !== "number") {
 		return;
@@ -532,6 +543,10 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 	let sTrimmedMessage = sMessage.length > 5000 ? sMessage.substring(0, 5000 - 3) + "..." : sMessage;
 	// job id
 	let iJobIdToSave = iJobId !== undefined ? iJobId : null;
+	// PLC object type
+	let sPlcObjectTypeToSave = sPlcObjectType !== undefined && sPlcObjectType !== null ? sPlcObjectType : null;
+	// PLC object id
+	let sPlcObjectIdToSave = sPlcObjectId !== undefined && sPlcObjectId !== null ? sPlcObjectId.toString() : null;
 
 	let hdbClient = await DatabaseClass.createConnection();
 	let connection = new DatabaseClass(hdbClient);
@@ -539,10 +554,12 @@ Message.addLog = async function (iJobId, sMessage, sType, oDetails, sOperation) 
 	let statement = await connection.preparePromisified(
 		`
 			insert into "sap.plc.extensibility::template_application.t_messages"
-			( MESSAGE_ID, TIMESTAMP, JOB_ID, SEVERITY, TEXT, DETAILS, OPERATION ) values ( (SELECT NEWUID() FROM DUMMY), CURRENT_UTCTIMESTAMP, ?, ?, ?, ?, ? );
+			( MESSAGE_ID, TIMESTAMP, JOB_ID, SEVERITY, TEXT, DETAILS, OPERATION, PLC_OBJECT_TYPE, PLC_OBJECT_ID ) values ( (SELECT NEWUID() FROM DUMMY), CURRENT_UTCTIMESTAMP, ?, ?, ?, ?, ? );
 		`
 	);
-	await connection.statementExecPromisified(statement, [iJobIdToSave, sSeverity, sTrimmedMessage, sTrimmedDetails, sOperationToSave]);
+	await connection.statementExecPromisified(statement, [iJobIdToSave, sSeverity, sTrimmedMessage, sTrimmedDetails, sOperationToSave,
+		sPlcObjectTypeToSave, sPlcObjectIdToSave
+	]);
 	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 };
 
@@ -602,3 +619,4 @@ PlcException.createPlcException = async function (oException, iJobId, sOperation
 module.exports.Code = Code;
 module.exports.Message = Message;
 module.exports.PlcException = PlcException;
+module.exports.PlcObjects = PlcObjects;
