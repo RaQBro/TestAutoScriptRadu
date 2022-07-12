@@ -7,5 +7,7 @@ SELECT
 	TEXT,
 	DETAILS,
 	OPERATION,
-	MESSAGE_ID
+	MESSAGE_ID,
+	PLC_OBJECT_TYPE,
+	PLC_OBJECT_ID
 FROM "sap.plc.extensibility::template_application.t_messages_archive"

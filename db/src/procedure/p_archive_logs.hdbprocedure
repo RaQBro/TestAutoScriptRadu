@@ -9,7 +9,7 @@ AS
 
 BEGIN
 
-	UPSERT "sap.plc.extensibility::template_application.t_messages_archive"("TIMESTAMP", "JOB_ID", "SEVERITY", "TEXT", "DETAILS", "OPERATION", "MESSAGE_ID")
+	UPSERT "sap.plc.extensibility::template_application.t_messages_archive"("TIMESTAMP", "JOB_ID", "SEVERITY", "TEXT", "DETAILS", "OPERATION", "MESSAGE_ID", "PLC_OBJECT_TYPE", "PLC_OBJECT_ID")
 		SELECT 
 		messages."TIMESTAMP",
 		messages."JOB_ID",
@@ -17,7 +17,9 @@ BEGIN
 		messages."TEXT",
 		messages."DETAILS",
 		messages."OPERATION",
-		messages."MESSAGE_ID"
+		messages."MESSAGE_ID",
+		messages."PLC_OBJECT_TYPE",
+		messages."PLC_OBJECT_ID"
 	FROM "sap.plc.extensibility::template_application.t_messages" AS messages
 		INNER JOIN "sap.plc.extensibility::template_application.t_job_log" AS job_log
 			ON job_log.JOB_ID = messages.JOB_ID
