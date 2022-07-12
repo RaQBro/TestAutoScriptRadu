@@ -5,9 +5,9 @@
 			<VBox id="vboxMessages" fitContainer="true">
 				<smartTable:SmartTable id="stMessages" entitySet="job-messages" tableType="ResponsiveTable" useTablePersonalisation="true"
 					initialise="onInitialiseSmartTable" showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}"
-					showRowCount="true" useExportToExcel="true" initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" enableAutoBinding="true"
-					requestAtLeastFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION" beforeRebindTable="onBeforeRebindTable" ignoredFields="MESSAGE_ID"
-					placeToolbarInTable="true">
+					showRowCount="true" useExportToExcel="true" enableAutoBinding="true" beforeRebindTable="onBeforeRebindTable" ignoredFields="MESSAGE_ID"
+					placeToolbarInTable="true" initiallyVisibleFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION,PLC_OBJECT_TYPE,PLC_OBJECT_ID"
+					requestAtLeastFields="JOB_ID,TIMESTAMP,SEVERITY,TEXT,OPERATION,PLC_OBJECT_TYPE,PLC_OBJECT_ID">
 					<smartTable:layoutData>
 						<FlexItemData growFactor="1" baseSize="0%"/>
 					</smartTable:layoutData>

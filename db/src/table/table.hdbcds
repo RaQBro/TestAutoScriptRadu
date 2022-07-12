@@ -47,13 +47,15 @@ context template_application {
     };
 
     entity t_messages {
-        key MESSAGE_ID : String(32)   not null;
-        key TIMESTAMP  : UTCTimestamp not null;
-            JOB_ID     : Integer64; // Negative if online mode / Positive if job
-            SEVERITY   : String(50);
-            TEXT       : String(5000);
-            DETAILS    : String(5000);
-            OPERATION  : String(500);
+        key MESSAGE_ID       : String(32)   not null;
+        key TIMESTAMP        : UTCTimestamp not null;
+            JOB_ID           : Integer64; // Negative if online mode / Positive if job
+            SEVERITY         : String(50);
+            TEXT             : String(5000);
+            OPERATION        : String(500);
+            PLC_OBJECT_TYPE  : String(500); // Project, Calculation, Version
+            PLC_OBJECT_ID    : String(500);
+            DETAILS          : String(5000);
     }
     technical configuration {
         column store;
@@ -61,13 +63,15 @@ context template_application {
     };
 
     entity t_messages_archive {
-        key MESSAGE_ID : String(32)   not null;
-        key TIMESTAMP  : UTCTimestamp not null;
-            JOB_ID     : Integer64; // Negative if online mode / Positive if job
-            SEVERITY   : String(50);
-            TEXT       : String(5000);
-            DETAILS    : String(5000);
-            OPERATION  : String(500);
+        key MESSAGE_ID       : String(32)   not null;
+        key TIMESTAMP        : UTCTimestamp not null;
+            JOB_ID           : Integer64; // Negative if online mode / Positive if job
+            SEVERITY         : String(50);
+            TEXT             : String(5000);
+            OPERATION        : String(500);
+            PLC_OBJECT_TYPE  : String(500); // Project, Calculation, Version
+            PLC_OBJECT_ID    : String(500);
+            DETAILS          : String(5000);
     }
     technical configuration {
         column store;
