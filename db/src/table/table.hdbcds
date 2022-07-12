@@ -52,10 +52,10 @@ context template_application {
             JOB_ID           : Integer64; // Negative if online mode / Positive if job
             SEVERITY         : String(50);
             TEXT             : String(5000);
-            DETAILS          : String(5000);
             OPERATION        : String(500);
             PLC_OBJECT_TYPE  : String(500); // Project, Calculation, Version
             PLC_OBJECT_ID    : String(500);
+            DETAILS          : String(5000);
     }
     technical configuration {
         column store;
@@ -68,10 +68,10 @@ context template_application {
             JOB_ID           : Integer64; // Negative if online mode / Positive if job
             SEVERITY         : String(50);
             TEXT             : String(5000);
-            DETAILS          : String(5000);
             OPERATION        : String(500);
             PLC_OBJECT_TYPE  : String(500); // Project, Calculation, Version
             PLC_OBJECT_ID    : String(500);
+            DETAILS          : String(5000);
     }
     technical configuration {
         column store;
