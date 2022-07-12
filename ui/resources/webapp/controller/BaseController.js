@@ -312,7 +312,8 @@ sap.ui.define([
 		onMessageTitlePress: function (oEvent) {
 
 			this.navTo("messages", {
-				jobID: oEvent.getParameters().item.getBindingContext("message").getObject().technicalDetails.JOB_ID
+				JOB_ID: oEvent.getParameters().item.getBindingContext("message").getObject().technicalDetails.JOB_ID,
+				IS_ARCHIVED: oEvent.getParameters().item.getBindingContext("message").getObject().technicalDetails.IS_ARCHIVED
 			});
 		},
 

@@ -50,7 +50,8 @@ sap.ui.define([
 				code: sViewName,
 				technical: bActiveTitle,
 				technicalDetails: {
-					"JOB_ID": sJobId
+					"JOB_ID": sJobId,
+					"IS_ARCHIVED": "0"
 				}
 			});
 

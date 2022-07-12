@@ -1,6 +1,6 @@
 <mvc:View controllerName="webapp.ui.controller.Jobs" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:smartTable="sap.ui.comp.smarttable">
-	<Page showHeader="false" showFooter="true" showNavButton="false" floatingFooter="false" showSubHeader="false">
+	<Page showHeader="false" showFooter="false" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
 				<smartTable:SmartTable id="stJobs" entitySet="job-logs" tableType="ResponsiveTable" useTablePersonalisation="true"
@@ -35,8 +35,5 @@
 				</smartTable:SmartTable>
 			</VBox>
 		</content>
-		<footer>
-			<core:Fragment fragmentName="webapp.ui.toolBarMessages.ToolbarMessages" type="XML"/>
-		</footer>
 	</Page>
 </mvc:View>
