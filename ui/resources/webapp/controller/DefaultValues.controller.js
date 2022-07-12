@@ -53,6 +53,14 @@ sap.ui.define([
 
 		setupView: function () {
 
+			let oView = this.getView();
+			let oMessageManager = Core.getMessageManager();
+
+			// attach handlers for validation errors
+			oMessageManager.registerObject(oView.byId("inProjPerjob"), true);
+			oMessageManager.registerObject(oView.byId("inCalcPerjob"), true);
+			oMessageManager.registerObject(oView.byId("inVersPerjob"), true);
+
 			this.getView().setModel(this.getToolBarMessagesModel(this.sViewName), "toolBarMessagesModel");
 			this.toolBarMessagesModel = this.getModel("toolBarMessagesModel");
 			this.getView().setModel(this.getVisibilitySettingsModel(this.sViewName), "visibilitySettingsModel");
@@ -63,14 +71,6 @@ sap.ui.define([
 		},
 
 		initialiseViewLogic: function () {
-
-			let oView = this.getView();
-			let oMessageManager = Core.getMessageManager();
-
-			// attach handlers for validation errors
-			oMessageManager.registerObject(oView.byId("inProjPerjob"), true);
-			oMessageManager.registerObject(oView.byId("inCalcPerjob"), true);
-			oMessageManager.registerObject(oView.byId("inVersPerjob"), true);
 
 			// Get default values
 			this.getDefaultValues(this.getViewName("fixedItem"));
@@ -215,10 +215,13 @@ sap.ui.define([
 
 			let oController = this;
 
-			// Check that mandatory fields are not empty.
+			// Check that mandatory (visible) fields are not empty.
 			// Validation does not happen during data binding as this is only triggered by user actions.
 			aInputs.forEach(function (oInput) {
-				bValidationError = oController.validateInput(oInput) || bValidationError;
+				// validate only for visible input fields
+				if (oInput.getVisible() === true) {
+					bValidationError = oController.validateInput(oInput) || bValidationError;
+				}
 			}, oController);
 
 			if (bValidationError) {
@@ -232,6 +235,7 @@ sap.ui.define([
 					if (oInput.getValue() !== "") {
 						let kvPair = {
 							FIELD_NAME: oInput.getName(),
+							// set default value 1 if input field is not visible
 							FIELD_VALUE: oInput.getVisible() === true ? oInput.getValue() : 1
 						};
 						kvPair[oInput.getName()] = oInput.getValue();
@@ -242,7 +246,7 @@ sap.ui.define([
 
 				// add the RTE KV pair separately since the control is different from a normal input
 				let oInputRTE = oView.byId("txtRTE");
-				if (oInputRTE.getVisible() === true && oInputRTE.getValue()) {
+				if (oInputRTE.getVisible() === true) {
 					oDefaultValues.push({
 						FIELD_NAME: "RTE",
 						FIELD_VALUE: "",
@@ -251,7 +255,7 @@ sap.ui.define([
 				}
 
 				let oInputCDE = oView.byId("txtCDE");
-				if (oInputCDE.getVisible() === true && oInputCDE.getValue()) {
+				if (oInputCDE.getVisible() === true) {
 					oDefaultValues.push({
 						FIELD_NAME: "CDE",
 						FIELD_VALUE: "",
@@ -265,7 +269,13 @@ sap.ui.define([
 						"Success", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
 
 					// get new default values
-					oController.getDefaultValues();
+					oController.initialiseViewLogic();
+
+					oController.toolBarMessagesModel.setProperty("/saveEnabled", false);
+					oController.toolBarMessagesModel.setProperty("/editEnabled", true);
+					oController.toolBarMessagesModel.setProperty("/editVisible", true);
+					oController.toolBarMessagesModel.setProperty("/cancelEnabled", false);
+					oController.toolBarMessagesModel.setProperty("/cancelVisible", false);
 
 					// make input fields readonly
 					oController.handleControlEditableState("txtRTE", false);
@@ -273,6 +283,7 @@ sap.ui.define([
 					oController.handleControlEditableState("inProjPerjob", false);
 					oController.handleControlEditableState("inCalcPerjob", false);
 					oController.handleControlEditableState("inVersPerjob", false);
+
 				};
 				let onError = function () {
 

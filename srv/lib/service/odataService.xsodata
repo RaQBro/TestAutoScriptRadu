@@ -20,7 +20,7 @@ service{
 	update forbidden
 	delete forbidden;
 		
-	// ------------------------------------ Get Technical User ------------------------------------
+	// ------------------------------------ Get Application Settings Data ------------------------------------
 	"sap.plc.extensibility::template_application.v_application_settings" as "application-settings" keys ("FIELD_NAME")
 	create forbidden
 	update forbidden

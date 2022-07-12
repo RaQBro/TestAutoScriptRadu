@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
 	<Dialog id="archiveDialog" title="{i18n>archiveDialog}" contentWidth="20%" draggable="false" horizontalScrolling="false"
 		verticalScrolling="false">
 		<content>

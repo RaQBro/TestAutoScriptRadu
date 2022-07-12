@@ -46,6 +46,12 @@
 			<Annotations Target="Metadata.job-logsType/JOB_STATUS">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobStatus}"/>
 			</Annotations>
+			<Annotations Target="Metadata.job-logsType/TIME_TAKEN">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobTimeTaken}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-logsType/IS_ARCHIVED">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobArchivedJob}"/>
+			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/TIMESTAMP">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesTimestamp}"/>
 			</Annotations>
@@ -66,12 +72,6 @@
 			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/MESSAGE_ID">
 				<Annotation Term="Common.Label" String="{@i18n&gt;Messages}"/>
-			</Annotations>
-			<Annotations Target="Metadata.job-logsType/TIME_TAKEN">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobTimeTaken}"/>
-			</Annotations>
-			<Annotations Target="Metadata.job-logsType/IS_ARCHIVED">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobArchivedJob}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messages-archiveType/TIMESTAMP">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesTimestamp}"/>
