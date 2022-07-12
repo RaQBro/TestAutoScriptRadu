@@ -1,7 +1,8 @@
-<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:sap="http://www.sap.com/Protocols/SAPData">
-	<edmx:DataServices m:DataServiceVersion="2.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-		<Schema Namespace="default" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
-			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
+		<Schema xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+			Namespace="default">
 			<EntityType Name="configurationType">
 				<Key>
 					<PropertyRef Name="FIELD_NAME"/>
@@ -54,9 +55,11 @@
 				<Property Name="JOB_ID" Type="Edm.Int64"/>
 				<Property Name="SEVERITY" Type="Edm.String" MaxLength="50"/>
 				<Property Name="TEXT" Type="Edm.String" MaxLength="5000"/>
-				<Property Name="DETAILS" Type="Edm.String" MaxLength="5000"/>
 				<Property Name="OPERATION" Type="Edm.String" MaxLength="500"/>
 				<Property Name="MESSAGE_ID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+				<Property Name="PLC_OBJECT_TYPE" Type="Edm.String" MaxLength="500"/>
+				<Property Name="PLC_OBJECT_ID" Type="Edm.String" MaxLength="500"/>
+				<Property Name="DETAILS" Type="Edm.String" MaxLength="5000"/>
 			</EntityType>
 			<EntityType Name="job-messages-archiveType">
 				<Key>
@@ -67,9 +70,11 @@
 				<Property Name="JOB_ID" Type="Edm.Int64"/>
 				<Property Name="SEVERITY" Type="Edm.String" MaxLength="50"/>
 				<Property Name="TEXT" Type="Edm.String" MaxLength="5000"/>
-				<Property Name="DETAILS" Type="Edm.String" MaxLength="5000"/>
 				<Property Name="OPERATION" Type="Edm.String" MaxLength="500"/>
 				<Property Name="MESSAGE_ID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+				<Property Name="PLC_OBJECT_TYPE" Type="Edm.String" MaxLength="500"/>
+				<Property Name="PLC_OBJECT_ID" Type="Edm.String" MaxLength="500"/>
+				<Property Name="DETAILS" Type="Edm.String" MaxLength="5000"/>
 			</EntityType>
 			<EntityContainer Name="v2" m:IsDefaultEntityContainer="true">
 				<EntitySet Name="configuration" EntityType="default.configurationType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
