@@ -449,7 +449,10 @@ sap.ui.define([
 						text: "OK",
 						press: function () {
 							this.oErrorDialog.close();
-							this.navTo("applicationSettings");
+							if (sResourceBundleKey === "errorCheckToken") {
+								// redirect only if error while checking technical token
+								this.navTo("applicationSettings");
+							}
 						}.bind(this)
 					})
 				});
