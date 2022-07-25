@@ -31,15 +31,15 @@ sap.ui.define([
 
 		onObjectMatched: function () {
 
+			this.setupView();
+
 			if (!this.checkTechnicalUserPlcToken()) {
 
 				this.createErrorDialogWithResourceBundleText("errorCheckToken");
-
 				return;
 			}
 
 			this.openBusyDialog();
-			this.setupView();
 			this.initialiseViewLogic();
 			this.closeBusyDialog();
 		},
