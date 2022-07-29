@@ -217,6 +217,7 @@ class JobSchedulerUtil {
 
 		let sJobName = request.originalUrl === undefined ? null : request.originalUrl;
 		let sRequestBody = request.body === undefined ? null : JSON.stringify(request.body);
+		let sRequestParameters = request.query === undefined ? null : JSON.stringify(request.query);
 
 		let sRunUserId = null;
 		let sRequestUserId = null;
@@ -254,13 +255,16 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
-				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
+				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS,
+				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_BODY, RESPONSE_BODY,
+				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
-			request.JOB_TIMESTAMP, sJobStartTimestamp, null, request.JOB_ID, sJobName, sJobStatus, sRequestUserId, sRunUserId, iWebRequest,
-			sRequestBody, null, iSapJobId, iSapScheduleId, iSapRunId
+			request.JOB_TIMESTAMP, sJobStartTimestamp, null, request.JOB_ID, sJobName, sJobStatus,
+			sRequestUserId, sRunUserId, iWebRequest, request.method, sRequestParameters, sRequestBody, null,
+			iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
