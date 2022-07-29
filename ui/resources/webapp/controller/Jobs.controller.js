@@ -95,7 +95,7 @@ sap.ui.define([
 
 		formatRowHighlight: function (oValue) {
 
-			let value = "None";
+			let value = "None"; // used for "Pending" jobs
 
 			if (oValue && oValue.toUpperCase() === "ERROR") {
 				value = "Error";

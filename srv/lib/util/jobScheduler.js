@@ -222,6 +222,8 @@ class JobSchedulerUtil {
 		let sRequestUserId = null;
 		let sClientId = null;
 		let iWebRequest = null;
+		let sJobStatus = null;
+		let sJobStartTimestamp = null;
 
 		if (helpers.isRequestFromJob(request)) {
 			sRequestUserId = global.TECHNICAL_USER; // technical user
@@ -232,6 +234,8 @@ class JobSchedulerUtil {
 		if (request.IS_ONLINE_MODE === true) {
 			sRunUserId = request.user.id.toUpperCase();
 			iWebRequest = 1;
+			sJobStatus = "Running";
+			sJobStartTimestamp = request.JOB_TIMESTAMP;
 		} else {
 			let ApplicationSettingsUtil = new ApplicationSettings();
 			sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
@@ -241,6 +245,8 @@ class JobSchedulerUtil {
 				throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 			}
 			iWebRequest = 0;
+			sJobStatus = "Pending";
+			sJobStartTimestamp = null;
 		}
 
 		let hdbClient = await DatabaseClass.createConnection();
@@ -248,12 +254,12 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
-				( START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
+				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS, REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, REQUEST_BODY, RESPONSE_BODY, SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
-			request.JOB_TIMESTAMP, null, request.JOB_ID, sJobName, "Running", sRequestUserId, sRunUserId, iWebRequest,
+			request.JOB_TIMESTAMP, sJobStartTimestamp, null, request.JOB_ID, sJobName, sJobStatus, sRequestUserId, sRunUserId, iWebRequest,
 			sRequestBody, null, iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
@@ -287,7 +293,7 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				update "sap.plc.extensibility::template_application.t_job_log"
-				set RESPONSE_BODY = ?, JOB_STATUS = ?, END_TIMESTAMP = CURRENT_UTCTIMESTAMP where START_TIMESTAMP = ?;
+				set RESPONSE_BODY = ?, JOB_STATUS = ?, END_TIMESTAMP = CURRENT_UTCTIMESTAMP where JOB_TIMESTAMP = ?;
 			`
 		);
 
