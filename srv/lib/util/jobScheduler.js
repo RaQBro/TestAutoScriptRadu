@@ -202,6 +202,8 @@ class JobSchedulerUtil {
 
 	/** @function
 	 * Used to write an entry into t_job_log table
+	 * The entry is not written into the table if the JOB_ID is not defined
+	 * JOB_ORDER_NO columns is required if previous jobs stopped during execution but the status is still "Running"
 	 * 
 	 * @param {object} request - web request / job request
 	 */
@@ -246,8 +248,15 @@ class JobSchedulerUtil {
 				throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 			}
 			iWebRequest = 0;
-			sJobStatus = "Pending";
-			sJobStartTimestamp = null;
+			if (helpers.isRequestFromJob(request)) {
+				// set status for real jobs
+				sJobStatus = "Running";
+				sJobStartTimestamp = request.JOB_TIMESTAMP;
+			} else {
+				// set status for fake jobs
+				sJobStatus = "Pending";
+				sJobStartTimestamp = null;
+			}
 		}
 
 		let hdbClient = await DatabaseClass.createConnection();
@@ -257,8 +266,9 @@ class JobSchedulerUtil {
 				insert into "sap.plc.extensibility::template_application.t_job_log"
 				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS,
 				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_BODY, RESPONSE_BODY,
-				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
+				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID, JOB_ORDER_NO )
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+						 (select MAX(JOB_ORDER_NO) + 1 from "sap.plc.extensibility::template_application.t_job_log") );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
@@ -272,9 +282,180 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
+	 * Used to check if a fake job (OB_ID > 0) with status "Running" exists in the table t_job_log
+	 * JOB_ORDER_NO must be a positive number (previously existining jobs before job queue have JOB_ORDER_NO === 0 )
+	 * 
+	 * @return {boolean} true / false
+	 */
+	async checkRunningJobs() {
+
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+		let statement = await connection.preparePromisified(
+			`
+				select JOB_ID
+				from "sap.plc.extensibility::template_application.t_job_log"
+				where
+					JOB_STATUS = 'Running' and
+					JOB_ID > 0 and
+					JOB_ORDER_NO > 0
+				order by
+					JOB_TIMESTAMP asc;
+			`
+		);
+		let aResults = await connection.statementExecPromisified(statement);
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+
+		let aJobIds = aResults.slice();
+
+		return aJobIds.length > 0 ? true : false;
+	}
+
+	/** @function
+	 * Used to get the oldest job from the table with status "Pending"
+	 * The first pending job must not be the current job
+	 * 
+	 * @param {object} request - the job request
+	 * @return {integer} iJobId - the first pending job or undefined (if no pending jobs exists)
+	 */
+	async getFirstPendingJobId(request) {
+
+		if (request.JOB_ID === undefined) {
+			return undefined;
+		}
+
+		let sSQLstmt =
+			`
+				select JOB_ID
+				from "sap.plc.extensibility::template_application.t_job_log"
+				where
+					JOB_STATUS = 'Pending'
+				order by
+					JOB_TIMESTAMP asc;
+			`;
+		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+
+		let iJobId;
+		// first pending job must not be the current job
+		if (aResults.length > 0 && request.JOB_ID !== aResults[0].JOB_ID) {
+			// return the first pending job
+			iJobId = aResults[0].JOB_ID;
+		}
+
+		return iJobId;
+	}
+
+	/** @function
+	 * Used to select an entry from t_job_log table based on the input job id
+	 * Creates a fake request object containing all properties as were initially added into the real request object
+	 * Also the URL, method, parameters and request body are added to the fake object similar as were defined into the real request object
+	 * 
+	 * The job log exists since the job id was retrieved previously from the table (no need to check if log exists)
+	 * 
+	 * @param {integer} iJobId - the job id
+	 */
+	async selectJobLogEntry(iJobId) {
+
+		let sSQLstmt =
+			`
+				select *
+				from "sap.plc.extensibility::template_application.t_job_log"
+				where
+					JOB_ID = '${iJobId}'
+				order by
+					JOB_TIMESTAMP desc;
+			`;
+		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+
+		let oJobDetails = aResults[0];
+
+		// create oRequest similar as request object
+		let oRequest = {};
+		// add properties as were initially added into request object
+		oRequest.IS_ONLINE_MODE = oJobDetails.IS_ONLINE_MODE === 0 ? false : true;
+		oRequest.REQUEST_USER_ID = oJobDetails.REQUEST_USER_ID;
+		oRequest.RUN_USER_ID = oJobDetails.RUN_USER_ID;
+		oRequest.JOB_TIMESTAMP = oJobDetails.JOB_TIMESTAMP;
+		oRequest.JOB_ID = oJobDetails.JOB_ID;
+		// add user id
+		oRequest.user = {
+			id: oJobDetails.REQUEST_USER_ID
+		};
+		// add request URL
+		oRequest.originalUrl = oJobDetails.JOB_NAME;
+		// add method
+		oRequest.method = oJobDetails.HTTP_METHOD;
+		// add request parameter
+		oRequest.query = JSON.parse(oJobDetails.REQUEST_PARAMETERS);
+		// add request body
+		oRequest.body = JSON.parse(oJobDetails.REQUEST_BODY);
+
+		// return request details
+		return oRequest;
+	}
+
+	/** @function
+	 * Used to return for fake jobs the first pending job and to create a fake request object
+	 * For all other job type the real request object is returned
+	 * 
+	 * @param {object} request - web request / job request
+	 */
+	async getJobFromQueue(request) {
+
+		// check the request type
+		if (helpers.isRequestFromJob(request)) { // real jobs are executed immediately
+			// return the real request object for real jobs
+			return request;
+		} else if (request.JOB_ID === undefined) { // service execution without logging messages
+			// return the real request object for requests without IS_ONLINE_MODE parameter
+			return request;
+		} else {
+			if (request.IS_ONLINE_MODE === false) {
+				// get first pending jobs if exists
+				let iJobId = await this.getFirstPendingJobId(request);
+				// check if pending job
+				if (iJobId !== undefined) {
+					// owerwrite the request with the fake request object of the first pending job
+					request = await this.selectJobLogEntry(iJobId);
+					// return the fake request
+					return request;
+				} else {
+					// return the real request object if no pending jobs exists
+					return request;
+				}
+			} else {
+				// return the real request object for requests with parameter IS_ONLINE_MODE=true
+				return request;
+			}
+		}
+	}
+
+	/** @function
+	 * Used to set the job status to "Running" and the job timestamp to current timestamp for provided job id 
+	 * 
+	 * @param {object} request - web request / job request
+	 */
+	async setJobStatusToRunning(request) {
+
+		if (request.JOB_ID === undefined || request.JOB_TIMESTAMP === undefined) {
+			return;
+		}
+
+		let statement =
+			`
+				update "sap.plc.extensibility::template_application.t_job_log"
+				set JOB_STATUS = ?, START_TIMESTAMP = CURRENT_UTCTIMESTAMP
+				where JOB_ID = ? and JOB_TIMESTAMP = ?;
+			`;
+
+		await helpers.statementExecPromisified(statement, ["Running", request.JOB_ID, request.JOB_TIMESTAMP]);
+	}
+
+	/** @function
 	 * Used to update the job log entry from t_job_log table with the service respone body of executed job
 	 * 
 	 * @param {object} request - web request / job request
+	 * @param {integer} iResponseStatusCode - response status code
 	 * @param {object} oServiceResponseBody - service response body
 	 */
 	async updateJobLogEntryFromTable(request, iResponseStatusCode, oServiceResponseBody) {
@@ -509,6 +690,58 @@ class JobSchedulerUtil {
 		}
 
 		return oReturnIds;
+	}
+
+	/** @function
+	 * Used to update the job log entry from t_job_log or to update the run log of the schedule
+	 * In case of online request the response body can be decided: the job messages logs or the service response
+	 * 
+	 * @param {object} request - web request / job request
+	 * @param {integer} iStatusCode - service response status code
+	 * @param {object} oServiceResponseBody - service response body
+	 * @param {string} sOperation - operation of the service / job
+	 */
+	async handleFinishedJobExecution(request, iStatusCode, oServiceResponseBody, sOperation) {
+
+		try {
+
+			// add service response body to job log entry
+			await this.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
+
+			// write end of the job into t_messages only for jobs (fake or real)
+			await Message.addLog(request.JOB_ID,
+				`Job with ID '${request.JOB_ID}' ended!`,
+				"message", undefined, sOperation);
+
+			// check if web or job request
+			if (helpers.isRequestFromJob(request)) {
+
+				// update run log of schedule
+				this.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
+			} else {
+
+				// get all messages from the job
+				let aMessages = await this.getMessagesOfJobWithId(request.JOB_ID);
+
+				// return service response body for web request
+				if (request.IS_ONLINE_MODE === true) {
+
+					// decide what to send as response
+					oServiceResponseBody = request.JOB_ID === undefined ? oServiceResponseBody : aMessages;
+				}
+			}
+		} catch (err) {
+			let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+			iStatusCode = oPlcException.code.responseCode;
+			oServiceResponseBody = oPlcException;
+		}
+
+		return {
+			"STATUS_CODE": iStatusCode,
+			"IS_ONLINE_MODE": request.IS_ONLINE_MODE,
+			"SERVICE_RESPONSE": oServiceResponseBody
+		};
+
 	}
 }
 

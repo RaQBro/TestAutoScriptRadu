@@ -214,23 +214,29 @@ class ExtensibilityRouter {
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
-				// write entry into t_messages only for jobs (fake or real)
-				let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-				await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
-
 				// check if web or job request
 				if (helpers.isRequestFromJob(request)) {
+					// write entry into t_messages only for jobs (real)
+					let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+					await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
 					// return special header to jobscheduler to know that it's async job run
 					response.status(202).send("ACCEPTED");
 				} else {
 					// check if should wait for service response or return a JOB_ID
 					if (request.IS_ONLINE_MODE === false) {
+						// write entry into t_messages only for jobs (fake)
+						let sMessageInfo = `Job with ID '${request.JOB_ID}' added to the Job Queue!`;
+						await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
 						// fake/simulate background job
 						let oMessage = new Message(sMessageInfo, {
 							"JOB_ID": request.JOB_ID
 						});
 						// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
 						response.status(200).send(oMessage);
+					} else {
+						// write entry into t_messages only for online mode
+						let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
+						await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
 					}
 				}
 			} catch (err) {
@@ -242,74 +248,26 @@ class ExtensibilityRouter {
 			}
 
 			// import service
-			let Service = new ExampleService(request);
+			let Service = new ExampleService();
 
 			// execute service
-			await Service.execute()
+			await Service.execute(request)
 
 			// handle success execution of the service
 			.then(async function (oServiceResponse) {
 
-				let iStatusCode = oServiceResponse.STATUS_CODE;
-				let oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
+				// if the service response is undefined than job was added to queue
+				if (oServiceResponse !== undefined) {
 
-				// add service response body to job log entry
-				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
-
-				// write end of the job into t_messages only for jobs (fake or real)
-				await Message.addLog(request.JOB_ID,
-					`Job with ID '${request.JOB_ID}' ended!`,
-					"message", undefined, sOperation);
-
-				// check if web or job request
-				if (helpers.isRequestFromJob(request)) {
-
-					// update run log of schedule
-					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
-				} else {
-
-					// get all messages from the job
-					let aMessages = await JobSchedulerUtil.getMessagesOfJobWithId(request.JOB_ID);
+					let iStatusCode = oServiceResponse.STATUS_CODE;
+					let bOnlineMode = oServiceResponse.IS_ONLINE_MODE;
+					let oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
 					// return service response body for web request
-					if (request.IS_ONLINE_MODE === true) {
-
-						// decide what to send as response
-						let oResponseBody = request.JOB_ID === undefined ? oServiceResponseBody : aMessages;
+					if (bOnlineMode === true) {
 
 						// send response
-						response.type(sContentType).status(iStatusCode).send(oResponseBody);
-					}
-				}
-			})
-
-			// handle errors from then function
-			.catch(async function (err) {
-
-				// write end of the job into t_messages only for jobs (fake or real)
-				await Message.addLog(request.JOB_ID,
-					`Job with ID '${request.JOB_ID}' ended!`,
-					"message", undefined, sOperation);
-
-				// check if web or job request
-				if (helpers.isRequestFromJob(request)) {
-
-					// add service response body to job log entry
-					await JobSchedulerUtil.updateJobLogEntryFromTable(request, 500, err);
-
-					// update run log of schedule
-					JobSchedulerUtil.updateRunLogOfSchedule(request, 500, err);
-				} else {
-
-					// create error as service response body
-					let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
-
-					// add service response body to job log entry
-					await JobSchedulerUtil.updateJobLogEntryFromTable(request, oPlcException.code.responseCode, oPlcException);
-
-					// return service response body for web request
-					if (request.IS_ONLINE_MODE === true) {
-						response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
+						response.type(sContentType).status(iStatusCode).send(oServiceResponseBody);
 					}
 				}
 			});

@@ -48,11 +48,17 @@ function isUndefinedNullOrEmptyObject(param) {
 }
 
 /** @function
- * Checks if request is executed from a job
+ * Checks if request is executed from a real job
  */
 function isRequestFromJob(request) {
 
-	return request.headers["x-sap-job-id"] !== undefined ? true : false;
+	if (request.headers !== undefined && request.headers["x-sap-job-id"] !== undefined) {
+		return true;
+	} else if (request.SAP_JOB_ID !== undefined && request.SAP_JOB_ID !== null) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /** @function

@@ -15,6 +15,7 @@ const _ = require("underscore");
  */
 
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
+const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
@@ -31,20 +32,17 @@ const sOperation = "Dummy Operation"; // operation of the service / job
 
 /** @function
  * Used to execute the custom business logic
- * In case of thrown error / unexpected error the corresponding status code is added to response
- * The error is returned as service response body
- * 
- * @param {object} request - web request / job request
- * @return {object} oServiceResponseBody - the example service response body
  */
-function doService(request) {
+function doService() {
 
 	// --------------------- Global Constants and Variables ---------------------
+	let iJobId;
 	let iStatusCode = 200; // service response code
 	let oServiceResponseBody = {}; // service response body
 
-	let StandardPlcService = new StandardPlcDispatcher(request, sOperation);
-	let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
+	let StandardPlcService;
+	let ExtensibilityPlcService;
+	let JobSchedulerUtil = new JobScheduler();
 
 	let sLanguage = "EN";
 
@@ -122,9 +120,51 @@ function doService(request) {
 	}
 	// -------------------------- End Functions List ----------------------------
 
-	this.execute = async function () {
+	/** @function
+	 * Used to execute the service as a background job (real or fake) or as web request (online mode)
+	 * Only fake jobs (IS_ONLINE_MODE === false) can be added to the job queue:
+	 *		- the job is not executed if another job is currently running (status "Running")
+	 *		- at the beginnig of execution the first pending job is retrieved from the queue (status "Pending")
+	 *		- could be the case that an older job to be executed instead of the current one
+	 *		- the job status is updated at the end of the execution (the job log entry from t_job_log or the run log of the schedule)
+	 *		- at the end of the execution the next pending job is retrieved from the queue (status "Pending")
+	 *		- no service response is returned for background mode
+	 * A real job is executed immediately and no service response is returned
+	 * For onlime mode the service response is returned
+	 * 
+	 * In case of thrown error / unexpected error the corresponding status code is added to response
+	 * The error is returned as service response body for online mode (IS_ONLINE_MODE === false or undefined)
+	 * 
+	 * @return {object} oServiceResponseBody - the example service response body
+	 *		"STATUS_CODE" - response status code
+	 *		"IS_ONLINE_MODE" - service mode execution
+	 *		"SERVICE_RESPONSE" - service response body
+	 */
+	this.execute = async function (request) {
 
 		try {
+
+			// check if running jobs exists
+			let bRunningJobs = await JobSchedulerUtil.checkRunningJobs();
+			if (bRunningJobs && request.IS_ONLINE_MODE === false) { // only for fake jobs
+				// stop this execution
+				return undefined;
+			}
+
+			// get job details and overwrite the request object
+			request = await JobSchedulerUtil.getJobFromQueue(request);
+
+			// update job status to running
+			await JobSchedulerUtil.setJobStatusToRunning(request);
+
+			// add job id to global variable
+			iJobId = request.JOB_ID;
+
+			StandardPlcService = new StandardPlcDispatcher(request, sOperation);
+			ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
+
+			let sMessageInfo = `Job with ID '${iJobId}' started!`;
+			await Message.addLog(iJobId, sMessageInfo, "message", undefined, sOperation);
 
 			// ------------------------- Start Business Logic ---------------------------
 
@@ -147,7 +187,7 @@ function doService(request) {
 			if (oInitPlcSession !== undefined) {
 				let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
 				oServiceResponseBody.CURRENT_USER = sCurrentUser;
-				await Message.addLog(request.JOB_ID, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
+				await Message.addLog(iJobId, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
 
 				let oVersion = await StandardPlcService.openCalculationVersion(1);
 
@@ -165,37 +205,53 @@ function doService(request) {
 			let sProjectId = await this.getFirstProject();
 			oServiceResponseBody.PROJECT_ID = sProjectId;
 
-			await Message.addLog(request.JOB_ID,
+			await Message.addLog(iJobId,
 				"Example how to add a message having project as PLC object type and PLC object id.",
 				"message", undefined, sOperation, sProjectType, sProjectId);
 
 			let iCalculationId = "100";
-			await Message.addLog(request.JOB_ID,
+			await Message.addLog(iJobId,
 				"Example how to add a message having calculation as PLC object type and PLC object id.",
 				"message", undefined, sOperation, sCalculationType, iCalculationId);
 
 			let iVersionId = "1000";
-			await Message.addLog(request.JOB_ID,
+			await Message.addLog(iJobId,
 				"Example how to add a message having version as PLC object type and PLC object id.",
 				"message", undefined, sOperation, sVersionType, iVersionId);
 
 			let aAllProject = await ExtensibilityPlcService.getAllProjects();
 			oServiceResponseBody.PROJECT = aAllProject[0];
 
-			await Message.addLog(request.JOB_ID,
+			await Message.addLog(iJobId,
 				"Example how to add operation at the messages.",
 				"message", undefined, sOperation);
 
 			// -------------------------- End Business Logic ----------------------------
 		} catch (err) {
-			let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
+
+			let oPlcException = await PlcException.createPlcException(err, iJobId, sOperation);
 			iStatusCode = oPlcException.code.responseCode;
 			oServiceResponseBody = oPlcException;
+
+		} finally {
+
+			// update the status of job
+			let oResponseDetails = await JobSchedulerUtil.handleFinishedJobExecution(request, iStatusCode, oServiceResponseBody, sOperation);
+
+			// get next pending job if exists
+			let oRequestDetails = await JobSchedulerUtil.getJobFromQueue(request);
+
+			// check if pending job exists
+			if (oRequestDetails.JOB_ID !== iJobId) {
+
+				// execute the pending job
+				await this.execute(oRequestDetails);
+			}
+
+			// return response details
+			return oResponseDetails;
+
 		}
-		return {
-			"STATUS_CODE": iStatusCode,
-			"SERVICE_RESPONSE": oServiceResponseBody
-		};
 	};
 }
 
