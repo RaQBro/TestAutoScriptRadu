@@ -115,7 +115,7 @@ class UAAToken {
 	 *		- the plc client id and client secret from XSUAA service
 	 * The retrieved token is saved into the global variable
 	 */
-	async retrieveApplicationUserToken(token) {
+	async retrieveApplicationUserToken(request) {
 
 		if (this.hasApplicationUserValidToken()) {
 			return;
@@ -143,7 +143,7 @@ class UAAToken {
 					"grant_type": "user_token"
 				}),
 				headers: {
-					"Authorization": token,
+					"Authorization": request.headers.authorization,
 					"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
 				}
 			})
@@ -167,6 +167,11 @@ class UAAToken {
 
 						this.APPLICATION_USER_ACCESS_TOKEN = refreshTokenResponse.data.access_token;
 						this.APPLICATION_USER_TOKEN_EXPIRE = expire;
+
+						// add bearer token to global variable for this user
+						let sCurrentUser = request.user.id.toUpperCase();
+						global.appUserToken[sCurrentUser] = refreshTokenResponse.data.access_token;
+
 					})
 					.catch(error => {
 						throw new Error("Exception during access token retrieval: " + JSON.stringify(error));

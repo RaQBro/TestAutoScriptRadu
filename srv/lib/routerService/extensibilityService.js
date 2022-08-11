@@ -91,7 +91,7 @@ class Service {
 	async getUserPlcToken(request) {
 
 		let UAAToken = new UaaToken();
-		await UAAToken.retrieveApplicationUserToken(request.headers.authorization);
+		await UAAToken.retrieveApplicationUserToken(request);
 		return UAAToken.APPLICATION_USER_ACCESS_TOKEN;
 	}
 

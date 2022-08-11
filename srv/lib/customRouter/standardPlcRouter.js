@@ -19,6 +19,7 @@ const express = require("express");
 
 const StandardPlcDispatcher = require(global.appRoot + "/lib/routerService/standardPlcService.js");
 const PlcException = require(global.appRoot + "/lib/util/message.js").PlcException;
+const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 
 const sContentType = "application/json";
 const sOperation = "Dummy Operation"; // operation of the service / job
@@ -33,14 +34,15 @@ class StandardPlcRouter {
 
 		let router = express.Router();
 
-		let StandardPlcService;
+		let UAAToken = new UaaToken();
 
 		/**
 		 * Common function before all routes are processed
 		 */
 		router.use(async function (request, response, next) {
 
-			StandardPlcService = new StandardPlcDispatcher(request, sOperation);
+			await UAAToken.retrieveApplicationUserToken(request);
+
 			next();
 
 		});
@@ -48,6 +50,8 @@ class StandardPlcRouter {
 		router.get("/init-session", function (request, response) {
 
 			let sLanguage = request.query.language !== undefined ? request.query.language : "EN";
+
+			let StandardPlcService = new StandardPlcDispatcher(request, sOperation);
 
 			StandardPlcService.initPlcSession(sLanguage).then(function (result) {
 				response.type(sContentType).status(200).send(result);
@@ -58,6 +62,8 @@ class StandardPlcRouter {
 		});
 
 		router.get("/logout-session", function (request, response) {
+
+			let StandardPlcService = new StandardPlcDispatcher(request, sOperation);
 
 			StandardPlcService.logoutPlcSession().then(function (result) {
 				response.type(sContentType).status(200).send(result);
@@ -71,6 +77,8 @@ class StandardPlcRouter {
 
 			let iVersionId = request.query.versionId;
 
+			let StandardPlcService = new StandardPlcDispatcher(request, sOperation);
+
 			StandardPlcService.openCalculationVersion(iVersionId).then(function (result) {
 				response.type(sContentType).status(200).send(result);
 			}).catch(async function (err) {
@@ -80,6 +88,8 @@ class StandardPlcRouter {
 		});
 
 		router.get("/status", function (request, response) {
+
+			let StandardPlcService = new StandardPlcDispatcher(request, sOperation);
 
 			StandardPlcService.getStatuses().then(function (result) {
 				response.type(sContentType).status(200).send(result);

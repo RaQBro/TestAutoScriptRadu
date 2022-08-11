@@ -28,6 +28,7 @@ const express = require("express");
 
 const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js");
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js");
+const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -51,12 +52,16 @@ class ExtensibilityRouter {
 
 		let router = express.Router();
 
+		let UAAToken = new UaaToken();
 		let JobSchedulerUtil = new JobScheduler();
 
 		/**
 		 * Common function before all routes are processed
 		 */
 		router.use(async function (request, response, next) {
+
+			await UAAToken.retrieveApplicationUserToken(request);
+
 			next();
 		});
 

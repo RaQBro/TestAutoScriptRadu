@@ -14,7 +14,6 @@ const axios = require("axios");
 const Code = require(global.appRoot + "/lib/util/message").Code;
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const PlcException = require(global.appRoot + "/lib/util/message").PlcException;
-const UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 
 /** @class
  * @classdesc PLC dispatcher utility helpers for call of public and private backend services
@@ -57,9 +56,8 @@ class PlcDispatcher {
 			sToken = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 			bIsOnline = false;
 		} else {
-			let UAAToken = new UaaToken();
-			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			sToken = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			let sUserId = this.request.user.id.toUpperCase();
+			sToken = global.appUserToken[sUserId]; // bearer token generated for request user
 			bIsOnline = true;
 		}
 
@@ -154,9 +152,8 @@ class PlcDispatcher {
 			sToken = global.TECHNICAL_USER_BEARER_TOKEN; // bearer token generated for technical user
 			bIsOnline = false;
 		} else {
-			let UAAToken = new UaaToken();
-			await UAAToken.retrieveApplicationUserToken(this.request.headers.authorization);
-			sToken = UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+			let sUserId = this.request.user.id.toUpperCase();
+			sToken = global.appUserToken[sUserId]; // bearer token generated for request user
 			bIsOnline = true;
 		}
 
