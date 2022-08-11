@@ -44,6 +44,7 @@ context template_application {
             SAP_JOB_SCHEDULE_ID : String(500); // null for online mode
             SAP_JOB_RUN_ID      : String(500); // null for online mode
             IS_ARCHIVED         : hana.TINYINT not null default 0;
+            JOB_ORDER_NO        : Integer64    not null default 0;
     }
     technical configuration {
         column store;
