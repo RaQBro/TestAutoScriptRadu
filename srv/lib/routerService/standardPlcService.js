@@ -2322,7 +2322,7 @@ class Dispatcher {
 		} else {
 			let sMessageInfo = `Items for calculation version with ID '${iVersionId}' were retrieved with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
-			return oResponseBody.body.METADATA;
+			return oResponseBody.body.transactionaldata;
 		}
 	}
 
