@@ -2120,7 +2120,7 @@ class Dispatcher {
 				let status;
 
 				do {
-					await Helpers.sleep(1500);
+					await Helpers.sleep(1000);
 					status = await this.checkTaskStatus(oData.TASK_ID, sProjectId);
 
 					if (status === "CANCELED" || status === "FAILED") {
@@ -2287,7 +2287,55 @@ class Dispatcher {
 		}
 	}
 
-	async createItems(iVersionId, aItems, sMode) {
+	/** @function
+	 * GET all items for a specific caclulation version
+	 * 
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async getItems(iVersionId) {
+
+		let sQueryPath = "items";
+		let aParams = [{
+			"name": "getPrices",
+			"value": "false"
+		}, {
+			"name": "calculation_version_id",
+			"value": iVersionId
+		}, {
+			"name": "id",
+			"value": 1
+		}, {
+			"name": "getChildren",
+			"value": "true"
+		}, {
+			"name": "compressedResult",
+			"value": "true"
+		}];
+	
+		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
+		let oResponseBody = oResponse.data;
+	
+		if (oResponse.status !== 200) {
+			let sDeveloperInfo = "Failed to get masterdata custom fields from PLC.";
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
+			return undefined;
+		} else {
+			let sMessageInfo = "Masterdata custom fields from PLC were retrieved with success!";
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
+			return oResponseBody.body.METADATA;
+		}
+	}
+
+	/** @function
+	 * Trigger the create of items
+	 * 
+	 * @param {string} iVersionId - addin unique guid
+	 * @param {array} aItems Array of Items to be imported
+	 * @param {string} sMode Import type
+	 * @param {boolean} bLongRunning Synchronous/Asynchronous mode
+	 * @return {object} result / error - PLC response / the error
+	 */
+	async createItems(iVersionId, aItems, sMode, bLongRunning) {
 
 		let sQueryPath = "items";
 		let aParams = [{
@@ -2299,23 +2347,47 @@ class Dispatcher {
 		}, {
 			"name": "compressedResult",
 			"value": "true"
+		}, {
+			"name": "longRunning",
+			"value": bLongRunning // for a small no of items (~100), the call can be done Synchronous: bLongRunning=false
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
 		let oResponseBody = oResponse.data;
 
-		if (oResponse.status !== 200 && oResponse.status !== 201) {
-
-			if (oResponseBody.head.messages !== undefined) {
-				await Message.addLog(this.JOB_ID, `Items for calculation version with ID '${iVersionId}' not created.`, "error", oResponseBody.head.messages,
-					this.Operation, sVersionType, iVersionId);
-			}
-			return false;
+		if (oResponse.status !== 200) {
+			let sDeveloperInfo = `Failed to import items for calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjesVersionTypectType, iVersionId);
 		} else {
-			await Message.addLog(this.JOB_ID,
-				`Items for calculation version with ID '${iVersionId}' created successfully.`, "message", undefined, this.Operation, sVersionType,
-				iVersionId);
-			return true;
+			if(bLongRunning){
+				for (let oData of oResponseBody.body.transactionaldata) {
+					let status;
+
+					do {
+						await Helpers.sleep(1000);
+						status = await this.checkTaskStatus(oData.TASK_ID, iVersionId);
+
+						if (status === "CANCELED" || status === "FAILED") {
+							let sMessageInfo = `Task was Canceled/Failed and the items for calculation version with ID '${iVersionId}' failed to import.`;
+							await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sVersionType, iVersionId);
+
+							break;
+						}
+					}
+					while (status !== "COMPLETED" && status !== "CANCELED" && status !== "FAILED");
+
+					if (status === "COMPLETED") {
+						let sMessageInfo = `Import of item for calculation version with ID '${iVersionId}' have been imported successfully!`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
+						return true;
+					}
+				}
+			}else{
+				await Message.addLog(this.JOB_ID,
+					`Items for calculation version with ID '${iVersionId}' created successfully.`, "message", undefined, this.Operation, sVersionType,
+					iVersionId);
+				return true;
+			}
 		}
 	}
 
