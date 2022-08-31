@@ -2316,12 +2316,12 @@ class Dispatcher {
 		let oResponseBody = oResponse.data;
 	
 		if (oResponse.status !== 200) {
-			let sDeveloperInfo = "Failed to get masterdata custom fields from PLC.";
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
+			let sDeveloperInfo = `Failed to get items for calculation version with ID '${iVersionId}'.`;
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
-			let sMessageInfo = "Masterdata custom fields from PLC were retrieved with success!";
-			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
+			let sMessageInfo = `Items for calculation version with ID '${iVersionId}' were retrieved with success!`;
+			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return oResponseBody.body.METADATA;
 		}
 	}
@@ -2357,7 +2357,7 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to import items for calculation version with ID '${iVersionId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjesVersionTypectType, iVersionId);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 		} else {
 			if(bLongRunning){
 				for (let oData of oResponseBody.body.transactionaldata) {
