@@ -199,7 +199,11 @@ sap.ui.define([
 		/** @function used to get the url without the hash*/
 		getBaseUrl: function () {
 
-			return window.location.href.replace(window.location.hash, "");
+			if (window.location.href.slice(-1) === "#") {
+                return window.location.href.slice(0, -1);
+            } else {
+                return window.location.href.replace(window.location.hash, "");
+            }
 		},
 
 		/** @function called when button the expand the toolPage from the left side*/
