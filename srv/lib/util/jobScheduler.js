@@ -201,17 +201,21 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
+	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, REQUEST_USER_ID, RUN_USER_ID  and set as properties in request object
+	 * JOB_TIMESTAMP used to update the log entry with service response body
+	 * REQUEST_USER_ID contains the user that triggered the job (request user id)
+	 * RUN_USER_ID contains the user executing the job (request user id or the technical user)
+	 * JOB_ID is used in t_messages and t_job_log tables. Value: Positive number for all jobs
+	 * IS_ONLINE_MODE value: true if web request / false if job (real or fake)
+	 * A fake job is actually a web request that is returning the JOB_ID on the response (in order to avoid session timeout)
+	 * and continue execution of the service afterwards
+	 * 
 	 * Used to write an entry into t_job_log table
-	 * The entry is not written into the table if the JOB_ID is not defined
 	 * JOB_ORDER_NO columns is required if previous jobs stopped during execution but the status is still "Running"
 	 * 
 	 * @param {object} request - web request / job request
 	 */
 	async insertJobLogEntryIntoTable(request) {
-
-		if (request.JOB_ID === undefined) {
-			return undefined;
-		}
 
 		let iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
 		let iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
@@ -226,7 +230,30 @@ class JobSchedulerUtil {
 		let sClientId = null;
 		let iWebRequest = null;
 		let sJobStatus = null;
+		let sJobTimestamp = null;
 		let sJobStartTimestamp = null;
+
+		if (helpers.isRequestFromJob(request)) {
+			// background job
+			iWebRequest = 0;
+		} else {
+			// online mode
+			if (request.query.IS_ONLINE_MODE === undefined || request.query.IS_ONLINE_MODE === "") {
+				iWebRequest = 1;
+			} else {
+				if (request.query.IS_ONLINE_MODE === false || request.query.IS_ONLINE_MODE === "false") {
+					// fake background job
+					iWebRequest = 0;
+				} else {
+					// online mode
+					iWebRequest = 1;
+				}
+			}
+		}
+
+		// get job timestamp
+		let aCurrentTimestamp = await helpers.statementExecPromisified("select CURRENT_UTCTIMESTAMP from dummy;");
+		sJobTimestamp = aCurrentTimestamp[0].CURRENT_UTCTIMESTAMP;
 
 		if (helpers.isRequestFromJob(request)) {
 			sRequestUserId = global.TECHNICAL_USER; // technical user
@@ -234,11 +261,10 @@ class JobSchedulerUtil {
 			sRequestUserId = request.user.id.toUpperCase(); // request user
 		}
 
-		if (request.IS_ONLINE_MODE === true) {
+		if (iWebRequest === 1) {
 			sRunUserId = request.user.id.toUpperCase();
-			iWebRequest = 1;
 			sJobStatus = "Running";
-			sJobStartTimestamp = request.JOB_TIMESTAMP;
+			sJobStartTimestamp = sJobTimestamp;
 		} else {
 			let ApplicationSettingsUtil = new ApplicationSettings();
 			sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
@@ -247,11 +273,10 @@ class JobSchedulerUtil {
 				let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
 				throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 			}
-			iWebRequest = 0;
 			if (helpers.isRequestFromJob(request)) {
 				// set status for real jobs
 				sJobStatus = "Running";
-				sJobStartTimestamp = request.JOB_TIMESTAMP;
+				sJobStartTimestamp = sJobTimestamp;
 			} else {
 				// set status for fake jobs
 				sJobStatus = "Pending";
@@ -264,43 +289,57 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
-				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_ID, JOB_NAME, JOB_STATUS,
+				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_NAME, JOB_STATUS,
 				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_BODY, RESPONSE_BODY,
 				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID, JOB_ORDER_NO )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 						 (select MAX(JOB_ORDER_NO) + 1 from "sap.plc.extensibility::template_application.t_job_log") );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
-			request.JOB_TIMESTAMP, sJobStartTimestamp, null, request.JOB_ID, sJobName, sJobStatus,
+			sJobTimestamp, sJobStartTimestamp, null, sJobName, sJobStatus,
 			sRequestUserId, sRunUserId, iWebRequest, request.method, sRequestParameters, sRequestBody, null,
 			iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
-		return undefined;
+		// get job id
+		let aJobResult = await helpers.statementExecPromisified(
+			`
+				select JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
+				where JOB_TIMESTAMP = '${sJobTimestamp}';
+			`
+		);
+
+		// set all properties on request object
+		request.JOB_ID = aJobResult[0].JOB_ID; // set JOB_ID
+		request.IS_ONLINE_MODE = iWebRequest === 1 ? true : false; // set IS_ONLINE_MODE 
+		request.JOB_TIMESTAMP = sJobTimestamp; // set JOB_TIMESTAMP
+		request.REQUEST_USER_ID = sRequestUserId; // set REQUEST_USER_ID
+		request.RUN_USER_ID = sRunUserId; // set RUN_USER_ID
+
 	}
 
 	/** @function
-	 * Used to check if a fake job (OB_ID > 0) with status "Running" exists in the table t_job_log
+	 * Used to check if a fake job (JOB_ID > 0) with status "Running" exists in the table t_job_log
 	 * JOB_ORDER_NO must be a positive number (previously existining jobs before job queue have JOB_ORDER_NO === 0 )
 	 * 
 	 * @return {boolean} true / false
 	 */
 	async checkRunningJobs() {
 
+		let iNumberOfParallelJobs = await helpers.getNoParallelJobs();
+
 		let hdbClient = await DatabaseClass.createConnection();
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
 			`
-				select JOB_ID
+				select top ${iNumberOfParallelJobs} JOB_ID
 				from "sap.plc.extensibility::template_application.t_job_log"
 				where
 					JOB_STATUS = 'Running' and
 					JOB_ID > 0 and
-					JOB_ORDER_NO > 0
-				order by
-					JOB_TIMESTAMP asc;
+					JOB_ORDER_NO > 0;
 			`
 		);
 		let aResults = await connection.statementExecPromisified(statement);
@@ -308,12 +347,11 @@ class JobSchedulerUtil {
 
 		let aJobIds = aResults.slice();
 
-		return aJobIds.length > 0 ? true : false;
+		return aJobIds.length >= iNumberOfParallelJobs ? true : false;
 	}
 
 	/** @function
 	 * Used to get the oldest job from the table with status "Pending"
-	 * The first pending job must not be the current job
 	 * 
 	 * @param {object} request - the job request
 	 * @return {integer} iJobId - the first pending job or undefined (if no pending jobs exists)
@@ -335,14 +373,7 @@ class JobSchedulerUtil {
 			`;
 		let aResults = await helpers.statementExecPromisified(sSQLstmt);
 
-		let iJobId;
-		// first pending job must not be the current job
-		if (aResults.length > 0 && request.JOB_ID !== aResults[0].JOB_ID) {
-			// return the first pending job
-			iJobId = aResults[0].JOB_ID;
-		}
-
-		return iJobId;
+		return aResults.length > 0 ? aResults[0].JOB_ID : undefined;
 	}
 
 	/** @function
@@ -361,9 +392,8 @@ class JobSchedulerUtil {
 				select *
 				from "sap.plc.extensibility::template_application.t_job_log"
 				where
-					JOB_ID = '${iJobId}'
-				order by
-					JOB_TIMESTAMP desc;
+					JOB_ID = '${iJobId}' and
+					JOB_STATUS = 'Pending';
 			`;
 		let aResults = await helpers.statementExecPromisified(sSQLstmt);
 
@@ -415,7 +445,7 @@ class JobSchedulerUtil {
 				let iJobId = await this.getFirstPendingJobId(request);
 				// check if pending job
 				if (iJobId !== undefined) {
-					// owerwrite the request with the fake request object of the first pending job
+					// overwrite the request with the fake request object of the first pending job
 					request = await this.selectJobLogEntry(iJobId);
 					// return the fake request
 					return request;
@@ -539,112 +569,6 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
-	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, REQUEST_USER_ID, RUN_USER_ID  and set as properties in request object
-	 * JOB_TIMESTAMP used to update the log entry with service response body
-	 * REQUEST_USER_ID contains the user that triggered the job (request user id)
-	 * RUN_USER_ID contains the user executing the job (request user id or the technical user)
-	 * JOB_ID is used in t_messages and t_job_log tables
-	 * JOB_ID value: Negative if online mode / Positive if job (real or fake)
-	 * IS_ONLINE_MODE value: undefined or true if web request / false if job (real or fake)
-	 * A fake job is actually a web request that is returning the JOB_ID on the response (in order to avoid session timeout)
-	 * and continue execution of the service afterwards
-	 * 
-	 * @param {object} request - web request / job request
-	 * @return {integer} iJobId - the generated job id / undefined if IS_ONLINE_MODE undefined
-	 */
-	async generateJobIdAndJobTimestampAndJobTypeAndJobUser(request) {
-
-		let iJobId;
-		let iWebRequest;
-
-		if (helpers.isRequestFromJob(request)) {
-			// background job
-			iWebRequest = 0;
-		} else {
-			// online mode
-			if (request.query.IS_ONLINE_MODE === undefined || request.query.IS_ONLINE_MODE === "") {
-				iWebRequest = 1;
-			} else {
-				if (request.query.IS_ONLINE_MODE === false || request.query.IS_ONLINE_MODE === "false") {
-					// fake background job
-					iWebRequest = 0;
-				} else {
-					// online mode
-					iWebRequest = 1;
-				}
-			}
-		}
-
-		// set IS_ONLINE_MODE to request
-		request.IS_ONLINE_MODE = iWebRequest === 1 ? true : false;
-
-		// do not generate a JOB_ID if parameter IS_ONLINE_MODE is not defined
-		if (iWebRequest === 0 || (request.query.IS_ONLINE_MODE !== undefined && request.query.IS_ONLINE_MODE !== "")) {
-			let hdbClient = await DatabaseClass.createConnection();
-			let connection = new DatabaseClass(hdbClient);
-
-			if (iWebRequest === 1) {
-				let statement = await connection.preparePromisified(
-					`
-					select MIN("JOB_ID") as LAST_NEGATIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
-				`
-				);
-				let aResults = await connection.statementExecPromisified(statement, []);
-				let aJobIds = aResults.slice();
-				if (aJobIds[0].LAST_NEGATIVE_JOB_ID === null || aJobIds[0].LAST_NEGATIVE_JOB_ID > 0) {
-					iJobId = -1;
-				} else {
-					iJobId = parseInt(aJobIds[0].LAST_NEGATIVE_JOB_ID) - 1;
-				}
-			} else {
-				let statement = await connection.preparePromisified(
-					`
-					select MAX("JOB_ID") as LAST_POSITIVE_JOB_ID from "sap.plc.extensibility::template_application.t_job_log"
-				`
-				);
-				let aResults = await connection.statementExecPromisified(statement, []);
-				let aJobIds = aResults.slice();
-				if (aJobIds[0].LAST_POSITIVE_JOB_ID === null || aJobIds[0].LAST_POSITIVE_JOB_ID < 0) {
-					iJobId = 1;
-				} else {
-					iJobId = parseInt(aJobIds[0].LAST_POSITIVE_JOB_ID) + 1;
-				}
-			}
-
-			// get current timestamp
-			let statement = await connection.preparePromisified(
-				`
-				select CURRENT_UTCTIMESTAMP from dummy;
-			`
-			);
-			let aResults = await connection.statementExecPromisified(statement, []);
-			let aCurrentTimestamp = aResults.slice();
-
-			hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-
-			// set RUN_USER_ID, REQUEST_USER_ID to request
-			if (helpers.isRequestFromJob(request)) {
-				request.REQUEST_USER_ID = global.TECHNICAL_USER; // technical user
-			} else {
-				request.REQUEST_USER_ID = request.user.id.toUpperCase(); // request user
-			}
-			if (request.IS_ONLINE_MODE === true) {
-				request.RUN_USER_ID = request.user.id.toUpperCase(); // request user
-			} else {
-				request.RUN_USER_ID = global.TECHNICAL_USER; // technical user
-			}
-
-			// set JOB_TIMESTAMP to request
-			request.JOB_TIMESTAMP = aCurrentTimestamp[0].CURRENT_UTCTIMESTAMP;
-
-			// set JOB_ID to request
-			request.JOB_ID = iJobId;
-		}
-
-		return iJobId;
-	}
-
-	/** @function
 	 * 
 	 * Used to split an array of Project/Calculation/Version IDs into multiple small arrays
 	 * The number of elements of arrays are retrieved from default values
@@ -690,58 +614,6 @@ class JobSchedulerUtil {
 		}
 
 		return oReturnIds;
-	}
-
-	/** @function
-	 * Used to update the job log entry from t_job_log or to update the run log of the schedule
-	 * In case of online request the response body can be decided: the job messages logs or the service response
-	 * 
-	 * @param {object} request - web request / job request
-	 * @param {integer} iStatusCode - service response status code
-	 * @param {object} oServiceResponseBody - service response body
-	 * @param {string} sOperation - operation of the service / job
-	 */
-	async handleFinishedJobExecution(request, iStatusCode, oServiceResponseBody, sOperation) {
-
-		try {
-
-			// add service response body to job log entry
-			await this.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
-
-			// write end of the job into t_messages only for jobs (fake or real)
-			await Message.addLog(request.JOB_ID,
-				`Job with ID '${request.JOB_ID}' ended!`,
-				"message", undefined, sOperation);
-
-			// check if web or job request
-			if (helpers.isRequestFromJob(request)) {
-
-				// update run log of schedule
-				this.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
-			} else {
-
-				// get all messages from the job
-				let aMessages = await this.getMessagesOfJobWithId(request.JOB_ID);
-
-				// return service response body for web request
-				if (request.IS_ONLINE_MODE === true) {
-
-					// decide what to send as response
-					oServiceResponseBody = request.JOB_ID === undefined ? oServiceResponseBody : aMessages;
-				}
-			}
-		} catch (err) {
-			let oPlcException = await PlcException.createPlcException(err, request.JOB_ID, sOperation);
-			iStatusCode = oPlcException.code.responseCode;
-			oServiceResponseBody = oPlcException;
-		}
-
-		return {
-			"STATUS_CODE": iStatusCode,
-			"IS_ONLINE_MODE": request.IS_ONLINE_MODE,
-			"SERVICE_RESPONSE": oServiceResponseBody
-		};
-
 	}
 }
 

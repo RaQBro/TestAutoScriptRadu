@@ -208,9 +208,6 @@ class ExtensibilityRouter {
 		router.get("/example-service", async function (request, response) {
 
 			try {
-				// generate an autoincrement JOB_ID based on the existing ids
-				await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
-
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
@@ -256,18 +253,28 @@ class ExtensibilityRouter {
 			// handle success execution of the service
 			.then(async function (oServiceResponse) {
 
-				// if the service response is undefined than job was added to queue
-				if (oServiceResponse !== undefined) {
+				let iStatusCode = oServiceResponse.STATUS_CODE;
+				let bOnlineMode = oServiceResponse.IS_ONLINE_MODE;
+				let oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
 
-					let iStatusCode = oServiceResponse.STATUS_CODE;
-					let bOnlineMode = oServiceResponse.IS_ONLINE_MODE;
-					let oServiceResponseBody = oServiceResponse.SERVICE_RESPONSE;
+				// check if web or job request
+				if (helpers.isRequestFromJob(request)) {
+
+					// update run log of schedule
+					JobSchedulerUtil.updateRunLogOfSchedule(request, iStatusCode, oServiceResponseBody);
+				} else {
 
 					// return service response body for web request
 					if (bOnlineMode === true) {
 
+						// get all messages from the job
+						let aMessages = await JobSchedulerUtil.getMessagesOfJobWithId(request.JOB_ID);
+
+						// decide what to send as response
+						let oResponseBody = request.JOB_ID === undefined ? oServiceResponseBody : aMessages;
+
 						// send response
-						response.type(sContentType).status(iStatusCode).send(oServiceResponseBody);
+						response.type(sContentType).status(iStatusCode).send(oResponseBody);
 					}
 				}
 			});
@@ -278,9 +285,6 @@ class ExtensibilityRouter {
 			let sCurrentOperation = "Logout Technical User";
 
 			try {
-				// generate an autoincrement JOB_ID based on the existing ids
-				await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
-
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 
@@ -390,9 +394,6 @@ class ExtensibilityRouter {
 			let sCurrentOperation = "Archive Logs";
 
 			try {
-				// generate an autoincrement JOB_ID based on the existing ids
-				await JobSchedulerUtil.generateJobIdAndJobTimestampAndJobTypeAndJobUser(request);
-
 				// create job log entry
 				await JobSchedulerUtil.insertJobLogEntryIntoTable(request);
 

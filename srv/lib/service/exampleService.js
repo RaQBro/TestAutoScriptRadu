@@ -142,26 +142,25 @@ function doService() {
 	 */
 	this.execute = async function (request) {
 
+		let bRunningJobs = false;
+
+		iJobId = request.JOB_ID; // add job id to global variable
+		StandardPlcService = new StandardPlcDispatcher(request, sOperation);
+		ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
+
 		try {
 
-			// check if running jobs exists
-			let bRunningJobs = await JobSchedulerUtil.checkRunningJobs();
-			if (bRunningJobs && request.IS_ONLINE_MODE === false) { // only for fake jobs
-				// stop this execution
-				return undefined;
+			if (request.IS_ONLINE_MODE === false) { // only for fake jobs
+				// check if running jobs exists
+				bRunningJobs = await JobSchedulerUtil.checkRunningJobs();
+				if (bRunningJobs === true) {
+					// stop this execution
+					return undefined;
+				}
 			}
-
-			// get job details and overwrite the request object
-			request = await JobSchedulerUtil.getJobFromQueue(request);
 
 			// update job status to running
 			await JobSchedulerUtil.setJobStatusToRunning(request);
-
-			// add job id to global variable
-			iJobId = request.JOB_ID;
-
-			StandardPlcService = new StandardPlcDispatcher(request, sOperation);
-			ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 
 			let sMessageInfo = `Job with ID '${iJobId}' started!`;
 			await Message.addLog(iJobId, sMessageInfo, "message", undefined, sOperation);
@@ -235,22 +234,33 @@ function doService() {
 
 		} finally {
 
-			// update the status of job
-			let oResponseDetails = await JobSchedulerUtil.handleFinishedJobExecution(request, iStatusCode, oServiceResponseBody, sOperation);
+			if (bRunningJobs === false) {
 
-			// get next pending job if exists
-			let oRequestDetails = await JobSchedulerUtil.getJobFromQueue(request);
+				// add service response body to job log entry
+				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
 
-			// check if pending job exists
-			if (oRequestDetails.JOB_ID !== iJobId) {
+				// write end of the job into t_messages only for jobs (fake or real)
+				await Message.addLog(request.JOB_ID,
+					`Job with ID '${request.JOB_ID}' ended!`,
+					"message", undefined, sOperation);
 
-				// execute the pending job
-				await this.execute(oRequestDetails);
+				// get next pending job if exists
+				let oNextPendingJob = await JobSchedulerUtil.getJobFromQueue(request);
+
+				// check if pending job exists
+				if (oNextPendingJob.JOB_ID !== iJobId) {
+
+					// execute the pending job
+					await this.execute(oNextPendingJob);
+				}
+
 			}
 
-			// return response details
-			return oResponseDetails;
-
+			return {
+				"STATUS_CODE": iStatusCode,
+				"IS_ONLINE_MODE": request.IS_ONLINE_MODE,
+				"SERVICE_RESPONSE": oServiceResponseBody
+			};
 		}
 	};
 }
