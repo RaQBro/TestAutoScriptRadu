@@ -28,19 +28,22 @@
 			</EntityType>
 			<EntityType Name="job-logsType">
 				<Key>
-					<PropertyRef Name="START_TIMESTAMP"/>
+					<PropertyRef Name="JOB_TIMESTAMP"/>
 				</Key>
-				<Property Name="JOB_ID" Type="Edm.Int64"/>
+				<Property Name="JOB_ID" Type="Edm.Int64" Nullable="false"/>
 				<Property Name="JOB_NAME" Type="Edm.String" MaxLength="5000"/>
 				<Property Name="REQUEST_USER_ID" Type="Edm.String" MaxLength="256"/>
 				<Property Name="RUN_USER_ID" Type="Edm.String" MaxLength="256"/>
 				<Property Name="IS_ONLINE_MODE" Type="Edm.Byte"/>
+				<Property Name="HTTP_METHOD" Type="Edm.String" MaxLength="10"/>
+				<Property Name="REQUEST_PARAMETERS" Type="Edm.String" MaxLength="2000"/>
 				<Property Name="REQUEST_BODY" Type="Edm.String" MaxLength="2147483647"/>
 				<Property Name="RESPONSE_BODY" Type="Edm.String" MaxLength="2147483647"/>
 				<Property Name="SAP_JOB_ID" Type="Edm.Int32"/>
 				<Property Name="SAP_JOB_SCHEDULE_ID" Type="Edm.String" MaxLength="500"/>
 				<Property Name="SAP_JOB_RUN_ID" Type="Edm.String" MaxLength="500"/>
-				<Property Name="START_TIMESTAMP" Type="Edm.DateTime" Nullable="false"/>
+				<Property Name="JOB_TIMESTAMP" Type="Edm.DateTime" Nullable="false"/>
+				<Property Name="START_TIMESTAMP" Type="Edm.DateTime"/>
 				<Property Name="END_TIMESTAMP" Type="Edm.DateTime"/>
 				<Property Name="TIME_TAKEN" Type="Edm.Int64"/>
 				<Property Name="JOB_STATUS" Type="Edm.String" MaxLength="100"/>
