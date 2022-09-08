@@ -8,6 +8,7 @@
 	"defaultValues": {
 		"txtRTE": true,
 		"txtCDE": false,
+		"inParalleljobs": true,
 		"inProjPerjob": true,
 		"inCalcPerjob": true,
 		"inVersPerjob": true
