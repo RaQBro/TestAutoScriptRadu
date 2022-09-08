@@ -4,6 +4,9 @@
 		<content>
 			<form:SimpleForm id="frmDefaultValues" editable="true" layout="ColumnLayout" title="{i18n>defaultValueTitle}">
 				<form:content>
+					<Label text="{i18n>noParallelJobs}" visible="{visibilitySettingsModel>/inParalleljobs}"/>
+					<Input id="inParalleljobs" type="Number" name="NUMBER_OF_PARALLEL_JOBS" change="onChangeNoParallelJobs" editable="false"
+						visible="{visibilitySettingsModel>/inParalleljobs}"/>
 					<Label text="{i18n>noProjectsPerJob}" visible="{visibilitySettingsModel>/inProjPerjob}"/>
 					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects" editable="false"
 						visible="{visibilitySettingsModel>/inProjPerjob}"/>

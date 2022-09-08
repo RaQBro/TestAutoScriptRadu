@@ -57,6 +57,7 @@ sap.ui.define([
 			let oMessageManager = Core.getMessageManager();
 
 			// attach handlers for validation errors
+			oMessageManager.registerObject(oView.byId("inParalleljobs"), true);
 			oMessageManager.registerObject(oView.byId("inProjPerjob"), true);
 			oMessageManager.registerObject(oView.byId("inCalcPerjob"), true);
 			oMessageManager.registerObject(oView.byId("inVersPerjob"), true);
@@ -75,11 +76,32 @@ sap.ui.define([
 			// Get default values
 			this.getDefaultValues(this.getViewName("fixedItem"));
 
+			this.setNoParallelJobs();
 			this.setNoProjects();
 			this.setNoCalculations();
 			this.setNoVersions();
 			this.setRTEValue();
 			this.setCDEValue();
+		},
+
+		setNoParallelJobs: function () {
+
+			let sNoParallelJobsId = "NUMBER_OF_PARALLEL_JOBS";
+
+			let oView = this.getView();
+			let oNoProjectsControl = oView.byId("inParalleljobs");
+
+			let oDefaultNoParallelJobs = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+				return oDefaultValue.FIELD_NAME === sNoParallelJobsId;
+			});
+
+			if (oDefaultNoParallelJobs !== null && oDefaultNoParallelJobs !== undefined) {
+
+				oNoProjectsControl.setValue(oDefaultNoParallelJobs.FIELD_VALUE);
+			} else {
+
+				oNoProjectsControl.setValue("");
+			}
 		},
 
 		setNoProjects: function () {
@@ -208,6 +230,7 @@ sap.ui.define([
 			let bValidationError = false;
 			let oView = this.getView();
 			let aInputs = [
+				oView.byId("inParalleljobs"),
 				oView.byId("inProjPerjob"),
 				oView.byId("inCalcPerjob"),
 				oView.byId("inVersPerjob")
@@ -280,6 +303,7 @@ sap.ui.define([
 					// make input fields readonly
 					oController.handleControlEditableState("txtRTE", false);
 					oController.handleControlEditableState("txtCDE", false);
+					oController.handleControlEditableState("inParalleljobs", false);
 					oController.handleControlEditableState("inProjPerjob", false);
 					oController.handleControlEditableState("inCalcPerjob", false);
 					oController.handleControlEditableState("inVersPerjob", false);
@@ -306,6 +330,7 @@ sap.ui.define([
 
 				this.handleControlEditableState("txtRTE", true);
 				this.handleControlEditableState("txtCDE", true);
+				this.handleControlEditableState("inParalleljobs", true);
 				this.handleControlEditableState("inProjPerjob", true);
 				this.handleControlEditableState("inCalcPerjob", true);
 				this.handleControlEditableState("inVersPerjob", true);
@@ -328,6 +353,7 @@ sap.ui.define([
 
 				this.handleControlEditableState("txtRTE", false);
 				this.handleControlEditableState("txtCDE", false);
+				this.handleControlEditableState("inParalleljobs", false);
 				this.handleControlEditableState("inProjPerjob", false);
 				this.handleControlEditableState("inCalcPerjob", false);
 				this.handleControlEditableState("inVersPerjob", false);
@@ -338,6 +364,11 @@ sap.ui.define([
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
 					this.getViewName("fixedItem"), false, null, this.oButtonPopover);
 			}
+		},
+
+		onChangeNoParallelJobs: function () {
+
+			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
 		onChangeNoProjects: function () {
@@ -378,7 +409,6 @@ sap.ui.define([
 					oDialogValue.destroy();
 				}
 			}
-
 		}
 	});
 }, /* bExport= */ true);
