@@ -336,61 +336,6 @@ class Service {
 			});
 		});
 	}
-
-	async getNoParallelProjectsJob() {
-
-		let sSQLstmt =
-			`
-				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
-				where FIELD_NAME = 'NUMBER_OF_PROJECTS';
-			`;
-		let aResults = await helpers.statementExecPromisified(sSQLstmt);
-
-		let iNumberOfParallelRequests = 1;
-		if (aResults.length > 0 && !helpers.isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
-			iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
-		}
-
-		return iNumberOfParallelRequests;
-	}
-
-	async getNoParallelCalculationsJob() {
-
-		let sSQLstmt =
-			`
-				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
-				where FIELD_NAME = 'NUMBER_OF_CALCULATIONS';
-			`;
-		let aResults = await helpers.statementExecPromisified(sSQLstmt);
-
-		let iNumberOfParallelRequests = 1;
-		if (aResults.length > 0 && !helpers.isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
-			iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
-		}
-
-		return iNumberOfParallelRequests;
-
-	}
-
-	async getNoParallelVersionsJob() {
-
-		let sSQLstmt =
-			`
-				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
-				where FIELD_NAME = 'NUMBER_OF_VERSIONS';
-			`;
-		let aResults = await helpers.statementExecPromisified(sSQLstmt);
-
-		let iNumberOfParallelRequests = 1;
-		if (aResults.length > 0 && !helpers.isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
-			iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
-		}
-
-		return iNumberOfParallelRequests;
-	}
 }
 
 module.exports = Service;

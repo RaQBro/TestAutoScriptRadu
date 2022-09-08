@@ -62,40 +62,6 @@ function isRequestFromJob(request) {
 }
 
 /** @function
- * Get all configurations from table
- */
-async function getAllConfigurations() {
-
-	let hdbClient = await DatabaseClass.createConnection();
-	let connection = new DatabaseClass(hdbClient);
-	let statement = await connection.preparePromisified(
-		`
-			select * from "sap.plc.extensibility::template_application.t_configuration";
-		`
-	);
-	let aResults = await connection.statementExecPromisified(statement, []);
-	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-	return aResults.slice();
-}
-
-/** @function
- * Get all default values from table
- */
-async function getAllDefaultValues() {
-
-	let hdbClient = await DatabaseClass.createConnection();
-	let connection = new DatabaseClass(hdbClient);
-	let statement = await connection.preparePromisified(
-		`
-			select * from "sap.plc.extensibility::template_application.t_default_values";
-		`
-	);
-	let aResults = await connection.statementExecPromisified(statement, []);
-	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-	return aResults.slice();
-}
-
-/** @function
  * Used to get all properties of an Error object.
  * Should be used before JSON.stringify() in order to get all error details. 
  */
@@ -271,6 +237,113 @@ async function statementExecPromisified(sSQLstmt, aQueryParameters) {
 	} else {
 		return aResults.slice();
 	}
+}
+
+/** @function
+ * Get all configurations from table
+ */
+async function getAllConfigurations() {
+
+	let hdbClient = await DatabaseClass.createConnection();
+	let connection = new DatabaseClass(hdbClient);
+	let statement = await connection.preparePromisified(
+		`
+			select * from "sap.plc.extensibility::template_application.t_configuration";
+		`
+	);
+	let aResults = await connection.statementExecPromisified(statement, []);
+	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+	return aResults.slice();
+}
+
+/** @function
+ * Get all default values from table
+ */
+async function getAllDefaultValues() {
+
+	let hdbClient = await DatabaseClass.createConnection();
+	let connection = new DatabaseClass(hdbClient);
+	let statement = await connection.preparePromisified(
+		`
+			select * from "sap.plc.extensibility::template_application.t_default_values";
+		`
+	);
+	let aResults = await connection.statementExecPromisified(statement, []);
+	hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
+	return aResults.slice();
+}
+
+async function getNoParallelJobs() {
+
+	let sSQLstmt =
+		`
+				select FIELD_VALUE
+				from "sap.plc.extensibility::template_application.t_default_values"
+				where FIELD_NAME = 'NUMBER_OF_PARALLEL_JOBS';
+			`;
+	let aResults = await statementExecPromisified(sSQLstmt);
+
+	let iNumberOfParallelJobs = 1;
+	if (aResults.length > 0 && !isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+		iNumberOfParallelJobs = parseInt(aResults[0].FIELD_VALUE);
+	}
+
+	return iNumberOfParallelJobs;
+}
+
+async function getNoParallelProjectsJob() {
+
+	let sSQLstmt =
+		`
+				select FIELD_VALUE
+				from "sap.plc.extensibility::template_application.t_default_values"
+				where FIELD_NAME = 'NUMBER_OF_PROJECTS';
+			`;
+	let aResults = await statementExecPromisified(sSQLstmt);
+
+	let iNumberOfParallelRequests = 1;
+	if (aResults.length > 0 && !isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+		iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
+	}
+
+	return iNumberOfParallelRequests;
+}
+
+async function getNoParallelCalculationsJob() {
+
+	let sSQLstmt =
+		`
+				select FIELD_VALUE
+				from "sap.plc.extensibility::template_application.t_default_values"
+				where FIELD_NAME = 'NUMBER_OF_CALCULATIONS';
+			`;
+	let aResults = await statementExecPromisified(sSQLstmt);
+
+	let iNumberOfParallelRequests = 1;
+	if (aResults.length > 0 && !isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+		iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
+	}
+
+	return iNumberOfParallelRequests;
+
+}
+
+async function getNoParallelVersionsJob() {
+
+	let sSQLstmt =
+		`
+				select FIELD_VALUE
+				from "sap.plc.extensibility::template_application.t_default_values"
+				where FIELD_NAME = 'NUMBER_OF_VERSIONS';
+			`;
+	let aResults = await statementExecPromisified(sSQLstmt);
+
+	let iNumberOfParallelRequests = 1;
+	if (aResults.length > 0 && !isUndefinedNullOrEmptyString(aResults[0].FIELD_VALUE)) {
+		iNumberOfParallelRequests = parseInt(aResults[0].FIELD_VALUE);
+	}
+
+	return iNumberOfParallelRequests;
 }
 
 // ------------------------- Start functions to determine name for new calculation version ---------------------------
@@ -466,13 +539,17 @@ module.exports = {
 	isUndefinedNullOrEmptyString,
 	isUndefinedNullOrEmptyObject,
 	isRequestFromJob,
-	getAllConfigurations,
-	getAllDefaultValues,
 	recursivePropertyFinder,
 	chunkIntoSmallArrays,
 	getDateByPattern,
 	decompressedResultArray,
 	sleep,
 	statementExecPromisified,
+	getAllConfigurations,
+	getAllDefaultValues,
+	getNoParallelJobs,
+	getNoParallelProjectsJob,
+	getNoParallelCalculationsJob,
+	getNoParallelVersionsJob,
 	getOrDetermineNewCalculationVersionName
 };
