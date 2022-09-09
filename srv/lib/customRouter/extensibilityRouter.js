@@ -230,10 +230,6 @@ class ExtensibilityRouter {
 						});
 						// return JOB_ID on the service response (in order to avoid session timeout) and continue execution of the service afterwards
 						response.status(200).send(oMessage);
-					} else {
-						// write entry into t_messages only for online mode
-						let sMessageInfo = `Job with ID '${request.JOB_ID}' started!`;
-						await Message.addLog(request.JOB_ID, sMessageInfo, "message", undefined, sOperation);
 					}
 				}
 			} catch (err) {
