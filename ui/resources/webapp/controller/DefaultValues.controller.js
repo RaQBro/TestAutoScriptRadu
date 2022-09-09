@@ -358,7 +358,7 @@ sap.ui.define([
 				this.handleControlEditableState("inCalcPerjob", false);
 				this.handleControlEditableState("inVersPerjob", false);
 
-				this.setupView();
+				this.initialiseViewLogic();
 			} else {
 
 				MessageHelpers.addMessageToPopover.call(this, this.getResourceBundleText("errorNoAuth"), null, null, "Error",
