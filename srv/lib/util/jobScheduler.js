@@ -585,13 +585,13 @@ class JobSchedulerUtil {
 		};
 		let aBusinessObjects = [{
 			"BUSINESS_OBJECT": "PROJECT_ID",
-			"VALUE": "NUMBER_OF_PROJECTS"
+			"VALUE": "NUMBER_OF_PROJECTS_IN_ONE_JOB"
 		}, {
 			"BUSINESS_OBJECT": "CALCULATION_ID",
-			"VALUE": "NUMBER_OF_CALCULATIONS"
+			"VALUE": "NUMBER_OF_CALCULATIONS_IN_ONE_JOB"
 		}, {
 			"BUSINESS_OBJECT": "CALCULATION_VERSION_ID",
-			"VALUE": "NUMBER_OF_VERSIONS"
+			"VALUE": "NUMBER_OF_VERSIONS_IN_ONE_JOB"
 		}];
 
 		// get from configuration the maximum number of ids from one array

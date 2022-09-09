@@ -8,13 +8,13 @@
 					<Input id="inParalleljobs" type="Number" name="NUMBER_OF_PARALLEL_JOBS" change="onChangeNoParallelJobs" editable="false"
 						visible="{visibilitySettingsModel>/inParalleljobs}"/>
 					<Label text="{i18n>noProjectsPerJob}" visible="{visibilitySettingsModel>/inProjPerjob}"/>
-					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS" change="onChangeNoProjects" editable="false"
+					<Input id="inProjPerjob" type="Number" name="NUMBER_OF_PROJECTS_IN_ONE_JOB" change="onChangeNoProjects" editable="false"
 						visible="{visibilitySettingsModel>/inProjPerjob}"/>
 					<Label text="{i18n>noCalculationsPerJob}" visible="{visibilitySettingsModel>/inCalcPerjob}"/>
-					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS" change="onChangeNoCalculations" editable="false"
+					<Input id="inCalcPerjob" type="Number" name="NUMBER_OF_CALCULATIONS_IN_ONE_JOB" change="onChangeNoCalculations" editable="false"
 						visible="{visibilitySettingsModel>/inCalcPerjob}"/>
 					<Label text="{i18n>noVersionsPerJob}" visible="{visibilitySettingsModel>/inVersPerjob}"/>
-					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS" change="onChangeNoCalculationVersions" editable="false"
+					<Input id="inVersPerjob" type="Number" name="NUMBER_OF_VERSIONS_IN_ONE_JOB" change="onChangeNoCalculationVersions" editable="false"
 						visible="{visibilitySettingsModel>/inVersPerjob}"/>
 				</form:content>
 			</form:SimpleForm>

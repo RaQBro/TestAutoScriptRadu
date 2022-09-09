@@ -297,7 +297,7 @@ async function getNoParallelProjectsJob() {
 		`
 				select FIELD_VALUE
 				from "sap.plc.extensibility::template_application.t_default_values"
-				where FIELD_NAME = 'NUMBER_OF_PROJECTS';
+				where FIELD_NAME = 'NUMBER_OF_PROJECTS_IN_ONE_JOB';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);
 
@@ -315,7 +315,7 @@ async function getNoParallelCalculationsJob() {
 		`
 				select FIELD_VALUE
 				from "sap.plc.extensibility::template_application.t_default_values"
-				where FIELD_NAME = 'NUMBER_OF_CALCULATIONS';
+				where FIELD_NAME = 'NUMBER_OF_CALCULATIONS_IN_ONE_JOB';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);
 
@@ -334,7 +334,7 @@ async function getNoParallelVersionsJob() {
 		`
 				select FIELD_VALUE
 				from "sap.plc.extensibility::template_application.t_default_values"
-				where FIELD_NAME = 'NUMBER_OF_VERSIONS';
+				where FIELD_NAME = 'NUMBER_OF_VERSIONS_IN_ONE_JOB';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);
 

@@ -106,7 +106,7 @@ sap.ui.define([
 
 		setNoProjects: function () {
 
-			let sNoProjectsId = "NUMBER_OF_PROJECTS";
+			let sNoProjectsId = "NUMBER_OF_PROJECTS_IN_ONE_JOB";
 
 			let oView = this.getView();
 			let oNoProjectsControl = oView.byId("inProjPerjob");
@@ -126,7 +126,7 @@ sap.ui.define([
 
 		setNoCalculations: function () {
 
-			let sNoCalculationsId = "NUMBER_OF_CALCULATIONS";
+			let sNoCalculationsId = "NUMBER_OF_CALCULATIONS_IN_ONE_JOB";
 
 			let oView = this.getView();
 			let oNoCalculationsControl = oView.byId("inCalcPerjob");
@@ -146,7 +146,7 @@ sap.ui.define([
 
 		setNoVersions: function () {
 
-			let sNoVersionsId = "NUMBER_OF_VERSIONS";
+			let sNoVersionsId = "NUMBER_OF_VERSIONS_IN_ONE_JOB";
 
 			let oView = this.getView();
 			let oNoVersionsControl = oView.byId("inVersPerjob");
