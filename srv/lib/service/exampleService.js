@@ -14,6 +14,7 @@ const _ = require("underscore");
  * @name exampleService.js
  */
 
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DatabaseClass = require(global.appRoot + "/lib/util/dbPromises.js");
 const JobScheduler = require(global.appRoot + "/lib/util/jobScheduler.js");
 
@@ -189,6 +190,8 @@ function doService() {
 				await Message.addLog(iJobId, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
 
 				let oVersion = await StandardPlcService.openCalculationVersion(1);
+
+				await helpers.sleep(5000);
 
 				if (oVersion !== undefined) {
 					await StandardPlcService.closeCalculationVersion(1);
