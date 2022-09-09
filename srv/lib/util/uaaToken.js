@@ -1,6 +1,7 @@
 /*eslint-env node, es6 */
 "use strict";
 
+const _ = require("underscore");
 const xsenv = require("@sap/xsenv");
 const axios = require("axios");
 const qs = require("qs");
@@ -114,8 +115,19 @@ class UAAToken {
 	 * Used to call the auth token service in order to get a new access token for the application user by using:
 	 *		- the plc client id and client secret from XSUAA service
 	 * The retrieved token is saved into the global variable
+	 * The token is retrived only if configuration CHECK_TECHNICAL_USER_PLC_TOKEN === true
 	 */
 	async retrieveApplicationUserToken(request) {
+
+		let aConfiguration = await helpers.getAllConfigurations();
+
+		let oCheckTechnicalUserPlcToken = _.find(aConfiguration, (item) => {
+			return item.FIELD_NAME === "CHECK_TECHNICAL_USER_PLC_TOKEN";
+		});
+
+		if (!(oCheckTechnicalUserPlcToken !== undefined && oCheckTechnicalUserPlcToken.FIELD_VALUE === "true")) {
+			return;
+		}
 
 		if (this.hasApplicationUserValidToken()) {
 			return;
