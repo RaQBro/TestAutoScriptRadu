@@ -30,6 +30,7 @@ modules:
       - name: tapp_db
       - name: tapp_hdi_db
       - name: tapp-uaa-service
+      - name: xsac-plc-uaa-service
       - name: jobScheduler
       - name: secureStore
       
@@ -57,6 +58,9 @@ resources:
       service-name: xsac-plc-db-service
     properties:
       plc-standard-grantor-service: '${service-name}'
+      
+  - name: xsac-plc-uaa-service
+    type: org.cloudfoundry.existing-service
       
   - name: tapp-uaa-service
     type: org.cloudfoundry.existing-service

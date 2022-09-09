@@ -228,7 +228,6 @@ class JobSchedulerUtil {
 
 		let sRunUserId = null;
 		let sRequestUserId = null;
-		let sClientId = null;
 		let iWebRequest = null;
 		let sJobStatus = null;
 		let sJobTimestamp = null;
@@ -268,10 +267,9 @@ class JobSchedulerUtil {
 			sJobStartTimestamp = sJobTimestamp;
 		} else {
 			let ApplicationSettingsUtil = new ApplicationSettings();
-			sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
 			sRunUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable();
-			if (helpers.isUndefinedNullOrEmptyString(sClientId) || helpers.isUndefinedNullOrEmptyString(sRunUserId)) {
-				let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
+			if (helpers.isUndefinedNullOrEmptyString(sRunUserId)) {
+				let sDeveloperInfo = "Please provide technical user and password into administration section of application!";
 				throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 			}
 			if (helpers.isRequestFromJob(request)) {

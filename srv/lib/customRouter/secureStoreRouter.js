@@ -68,7 +68,7 @@ class SecureStoreRouter {
 			SecureStoreService.insertKey(sKey, sValue).then(function (result) {
 				ApplicationSettingsUtil.upsertApplicationSettingsIntoTable(sKey, sFieldName).then(function () {
 					// generate new technical user token (if new user or new password)
-					if (sFieldName === "TECHNICAL_USER" || sFieldName === "CLIENT_ID") {
+					if (sFieldName === "TECHNICAL_USER") {
 						let UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
 						let UAAToken = new UaaToken();
 						UAAToken.retrieveTechnicalUserToken();

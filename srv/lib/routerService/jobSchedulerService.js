@@ -115,10 +115,9 @@ class JobSchedulerService {
 
 		let ApplicationSettingsUtil = new ApplicationSettings();
 
-		let sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
 		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
-			let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
+		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
+			let sDeveloperInfo = "Please provide technical user and password into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 		}
 
@@ -162,10 +161,9 @@ class JobSchedulerService {
 
 		let ApplicationSettingsUtil = new ApplicationSettings();
 
-		let sClientId = await ApplicationSettingsUtil.getClientIdFromTable();
 		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
-		if (helpers.isUndefinedOrNull(sClientId) || helpers.isUndefinedOrNull(sTechnicalUser)) {
-			let sDeveloperInfo = "Please provide a client id and technical user into administration section of application!";
+		if (helpers.isUndefinedOrNull(sTechnicalUser)) {
+			let sDeveloperInfo = "Please provide technical user and password into administration section of application!";
 			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
 		}
 

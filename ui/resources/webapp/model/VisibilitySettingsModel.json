@@ -1,7 +1,5 @@
 {
 	"applicationSettings": {
-		"clientId": true,
-		"clientSecret": true,
 		"technicalUsername": true,
 		"technicalPassword": true
 	},

@@ -54,12 +54,9 @@ class Service {
 
 		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
 		let sTechnicalPassword = await SecureStoreService.retrieveKey(sTechnicalUser, true);
-		let sPlcClientId = await ApplicationSettingsUtil.getClientIdFromTable();
-		let sPlcClientSecret = await SecureStoreService.retrieveKey(sPlcClientId, true);
 
 		let UAAToken = new UaaToken();
-		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser,
-			sTechnicalPassword, sPlcClientId, sPlcClientSecret);
+		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser, sTechnicalPassword);
 
 		return sTechnicalUserAccessToken;
 	}
@@ -74,12 +71,9 @@ class Service {
 		let oBodyRequest = request.body;
 		let sTechnicalUser = oBodyRequest.TECHNICAL_USER_NAME;
 		let sTechnicalPassword = oBodyRequest.TECHNICAL_USER_PASSWORD;
-		let sPlcClientId = oBodyRequest.CLIENT_ID;
-		let sPlcClientSecret = oBodyRequest.CLIENT_SECRET;
 
 		let UAAToken = new UaaToken();
-		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser,
-			sTechnicalPassword, sPlcClientId, sPlcClientSecret);
+		let sTechnicalUserAccessToken = await UAAToken.checkTechnicalUserToken(sTechnicalUser, sTechnicalPassword);
 		return sTechnicalUserAccessToken;
 	}
 

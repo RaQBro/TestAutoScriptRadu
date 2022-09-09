@@ -213,7 +213,7 @@ sap.ui.define([
 			BackendConnector.doGet("GET_DEFAULT_VALUES", onSuccess, onError, true);
 		},
 
-		/** @function used to get the technical user and client id
+		/** @function used to get the application settings (the technical user and technical password)
 		 */
 		getApplicationSettings: function (sViewName) {
 			let oController = this;
@@ -397,16 +397,14 @@ sap.ui.define([
 			}
 		},
 
-		generateTechnicalUserPlcToken: function (sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
+		generateTechnicalUserPlcToken: function (sTechnicalUser, sTechnicalPassword) {
 
 			let bWithSuccess;
 
 			let oController = this,
 				data = {
 					"TECHNICAL_USER_NAME": sTechnicalUser,
-					"TECHNICAL_USER_PASSWORD": sTechnicalPassword,
-					"CLIENT_ID": sPlcClientId,
-					"CLIENT_SECRET": sPlcClientSecret
+					"TECHNICAL_USER_PASSWORD": sTechnicalPassword
 				};
 
 			let onSuccess = function () {

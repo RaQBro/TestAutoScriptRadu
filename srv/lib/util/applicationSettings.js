@@ -4,12 +4,12 @@
 /**
  * @fileOverview
  * 
- * Helper functions used to get/set technical user and client id  into application settings table
- * A value for TECHNICAL_USER/CLIENT_ID property will be set when a technical user and client id is maintained into secure store:
- *		- insert into secure store => key property from secure store will be set for TECHNICAL_USER/CLIENT_ID property
- *		- delete from secure store => null value will be set for TECHNICAL_USER/CLIENT_ID property
- * null value is the default value of TECHNICAL_USER/CLIENT_ID property from application settings table
- * null value is returned in case no technical user / client id is maintained into secure store
+ * Helper functions used to get/set technical user into application settings table
+ * A value for TECHNICAL_USER property will be set when a technical user is maintained into secure store:
+ *		- insert into secure store => key property from secure store will be set for TECHNICAL_USER property
+ *		- delete from secure store => null value will be set for TECHNICAL_USER property
+ * null value is the default value of TECHNICAL_USER property from application settings table
+ * null value is returned in case no technical user is maintained into secure store
  * 
  * @name applicationSettings.js
  */
@@ -55,39 +55,9 @@ class ApplicationSettingsUtil {
 	}
 
 	/** @function
-	 * Used to retrieve from t_application_settings the value of CLIENT_ID
+	 * Used to upsert into t_application_settings the value of TECHNICAL_USER
 	 * 
-	 * @default sClientId = null
-	 * @return {boolean/null} sClientId - the PLC CLient Id
-	 *  	If CLIENT_ID not found the default value is returned
-	 */
-	async getClientIdFromTable() {
-
-		let hdbClient = await DatabaseClass.createConnection();
-		let connection = new DatabaseClass(hdbClient);
-
-		let statement = await connection.preparePromisified(
-			`
-				select * from "sap.plc.extensibility::template_application.t_application_settings"
-				where FIELD_NAME = 'CLIENT_ID';
-			`
-		);
-		let aResults = await connection.statementExecPromisified(statement, []);
-		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
-
-		let aClientId = aResults.slice();
-
-		let sClientId = null;
-		if (aClientId.length === 1) {
-			sClientId = aClientId[0].FIELD_VALUE;
-		}
-		return sClientId;
-	}
-
-	/** @function
-	 * Used to upsert into t_application_settings the value of TECHNICAL_USER or CLIENT_ID
-	 * 
-	 * @param {string} sValue - the technical user or client id
+	 * @param {string} sValue - the technical user
 	 * @default sTechnicalUser = null
 	 */
 	async upsertApplicationSettingsIntoTable(sValue, sTechnicalName) {

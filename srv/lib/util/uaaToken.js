@@ -1,7 +1,6 @@
 /*eslint-env node, es6 */
 "use strict";
 
-const _ = require("underscore");
 const xsenv = require("@sap/xsenv");
 const axios = require("axios");
 const qs = require("qs");
@@ -36,15 +35,15 @@ class UAAToken {
 	 */
 	constructor() {
 
-		// get UAA service
-		this.uaaService = xsenv.getServices({
+		// get UAA service of PLC
+		this.plcUaaService = xsenv.getServices({
 			uaa: {
-				name: "tapp-uaa-service"
+				name: "xsac-plc-uaa-service"
 			}
 		}).uaa;
 
 		this.plcAuthClient = axios.create({
-			baseURL: this.uaaService.url,
+			baseURL: this.plcUaaService.url,
 			timeout: 5000,
 			method: "POST",
 			maxRedirects: 0
@@ -113,35 +112,12 @@ class UAAToken {
 
 	/** @function
 	 * Used to call the auth token service in order to get a new access token for the application user by using:
-	 *		- the plc client id and client secret from XSUAA service
+	 *		- the plc client id and client secret from XSUAA PLC service
 	 * The retrieved token is saved into the global variable
-	 * The token is retrived only if configuration CHECK_TECHNICAL_USER_PLC_TOKEN === true
 	 */
 	async retrieveApplicationUserToken(request) {
 
 		if (this.hasApplicationUserValidToken()) {
-			return;
-		}
-
-		let aConfiguration = await helpers.getAllConfigurations();
-
-		let oCheckTechnicalUserPlcToken = _.find(aConfiguration, (item) => {
-			return item.FIELD_NAME === "CHECK_TECHNICAL_USER_PLC_TOKEN";
-		});
-
-		if (!(oCheckTechnicalUserPlcToken !== undefined && oCheckTechnicalUserPlcToken.FIELD_VALUE === "true")) {
-			return;
-		}
-
-		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
-		if (helpers.isUndefinedNullOrEmptyString(sPlcClientId)) {
-			let sDeveloperInfo = "Please provide a client id and client secret into administration section of application!";
-			throw new PlcException(Code.GENERAL_ENTITY_NOT_FOUND_ERROR, sDeveloperInfo);
-		}
-
-		let sPlcClientSecret = await this.SecureStoreService.retrieveKey(sPlcClientId, true);
-		if (sPlcClientSecret instanceof PlcException || sPlcClientSecret instanceof Message ||
-			helpers.isUndefinedNullOrEmptyString(sPlcClientSecret)) {
 			return;
 		}
 
@@ -151,7 +127,7 @@ class UAAToken {
 			.request({
 				url: "/oauth/token",
 				data: qs.stringify({
-					"client_id": sPlcClientId,
+					"client_id": that.plcUaaService.clientid,
 					"grant_type": "user_token"
 				}),
 				headers: {
@@ -164,8 +140,8 @@ class UAAToken {
 					.request({
 						url: "/oauth/token",
 						data: qs.stringify({
-							"client_id": sPlcClientId,
-							"client_secret": sPlcClientSecret,
+							"client_id": that.plcUaaService.clientid,
+							"client_secret": that.plcUaaService.clientsecret,
 							"grant_type": "refresh_token",
 							"refresh_token": userTokenResponse.data.refresh_token
 						}),
@@ -186,17 +162,17 @@ class UAAToken {
 
 					})
 					.catch(error => {
-						throw new Error("Exception during access token retrieval: " + JSON.stringify(error));
+						throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, "Exception during access token retrieval.", error);
 					});
 			})
 			.catch(error => {
-				throw new Error("Exception during refresh token retrieval: " + JSON.stringify(error));
+				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, "Exception during refresh token retrieval.", error);
 			});
 	}
 
 	/** @function
 	 * Used to call the auth token service in order to get a new access token for the technical user by using:
-	 *		- the plc client id and client secret from XSUAA service
+	 *		- the plc client id and client secret from XSUAA PLC service
 	 *		- the technical user retrieved from t_application_settings table
 	 *		- the password of technical user retrieved from secure store
 	 * The retrieved token is saved into the global variable
@@ -209,17 +185,6 @@ class UAAToken {
 		}
 
 		if (sTechnicalUser === global.TECHNICAL_USER && this.hasTechnicalUserValidToken()) {
-			return;
-		}
-
-		let sPlcClientId = await this.ApplicationSettingsUtil.getClientIdFromTable();
-		if (helpers.isUndefinedNullOrEmptyString(sPlcClientId)) {
-			return;
-		}
-
-		let sPlcClientSecret = await this.SecureStoreService.retrieveKey(sPlcClientId, true);
-		if (sPlcClientSecret instanceof PlcException || sPlcClientSecret instanceof Message ||
-			helpers.isUndefinedNullOrEmptyString(sPlcClientSecret)) {
 			return;
 		}
 
@@ -236,8 +201,8 @@ class UAAToken {
 				url: "/oauth/token",
 				data: qs.stringify({
 					"grant_type": "password",
-					"client_id": sPlcClientId,
-					"client_secret": sPlcClientSecret,
+					"client_id": that.plcUaaService.clientid,
+					"client_secret": that.plcUaaService.clientsecret,
 					"username": sTechnicalUser,
 					"password": sTechnicalPassword,
 					"response_type": "token"
@@ -260,28 +225,29 @@ class UAAToken {
 				global.TECHNICAL_USER = sTechnicalUser.toUpperCase();
 			})
 			.catch(error => {
-				throw new Error("Exception during refresh token retrieval: " + JSON.stringify(error));
+				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, "Exception during refresh token retrieval.", error);
 			});
 	}
 
 	/** @function
 	 * Used to call the auth token service in order to check if access token for the technical user can be retrieved using:
-	 *		- the plc client id and client secret from XSUAA service
-	 *		- the technical user retrieved from t_application_settings table
-	 *		- the password of technical user retrieved from secure store
+	 *		- the technical user retrieved from t_application_settings table or provided from the UI
+	 *		- the password of technical user retrieved from secure store or provided from the UI
 	 * If some of the values are incorrect the error message will raised. If with success the token is returned.
 	 */
-	async checkTechnicalUserToken(sTechnicalUser, sTechnicalPassword, sPlcClientId, sPlcClientSecret) {
+	async checkTechnicalUserToken(sTechnicalUser, sTechnicalPassword) {
 
 		let sTechnicalUserAccessToken;
+
+		let that = this;
 
 		await this.plcAuthClient
 			.request({
 				url: "/oauth/token",
 				data: qs.stringify({
 					"grant_type": "password",
-					"client_id": sPlcClientId,
-					"client_secret": sPlcClientSecret,
+					"client_id": that.plcUaaService.clientid,
+					"client_secret": that.plcUaaService.clientsecret,
 					"username": sTechnicalUser,
 					"password": sTechnicalPassword,
 					"response_type": "token"
@@ -294,7 +260,9 @@ class UAAToken {
 				sTechnicalUserAccessToken = userTokenResponse.data.access_token;
 			})
 			.catch(error => {
-				throw new Error("Exception during refresh token retrieval: " + JSON.stringify(error));
+				let sDeveloperInfo =
+					"The credentials of Technical User are not correct. Please try again!";
+				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, error);
 			});
 
 		return sTechnicalUserAccessToken;
