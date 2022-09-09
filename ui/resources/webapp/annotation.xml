@@ -52,6 +52,15 @@
 			<Annotations Target="Metadata.job-logsType/IS_ARCHIVED">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobArchivedJob}"/>
 			</Annotations>
+			<Annotations Target="Metadata.job-logsType/JOB_TIMESTAMP">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobTimestamp}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-logsType/HTTP_METHOD">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobHttpMethod}"/>
+			</Annotations>
+			<Annotations Target="Metadata.job-logsType/REQUEST_PARAMETERS">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobRequestParameters}"/>
+			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/TIMESTAMP">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesTimestamp}"/>
 			</Annotations>
@@ -87,15 +96,6 @@
 			</Annotations>
 			<Annotations Target="Metadata.job-messages-archiveType/SEVERITY">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesSeverity}"/>
-			</Annotations>
-			<Annotations Target="Metadata.job-messages-archiveType/JOB_TIMESTAMP">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobTimestamp}"/>
-			</Annotations>
-			<Annotations Target="Metadata.job-messages-archiveType/HTTP_METHOD">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobHttpMethod}"/>
-			</Annotations>
-			<Annotations Target="Metadata.job-messages-archiveType/REQUEST_PARAMETERS">
-				<Annotation Term="Common.Label" String="{@i18n&gt;jobRequestParameters}"/>
 			</Annotations>
 			<Annotations Target="Metadata.job-messages-archiveType/TEXT">
 				<Annotation Term="Common.Label" String="{@i18n&gt;colText}"/>
