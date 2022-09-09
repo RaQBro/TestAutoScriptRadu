@@ -119,6 +119,10 @@ class UAAToken {
 	 */
 	async retrieveApplicationUserToken(request) {
 
+		if (this.hasApplicationUserValidToken()) {
+			return;
+		}
+
 		let aConfiguration = await helpers.getAllConfigurations();
 
 		let oCheckTechnicalUserPlcToken = _.find(aConfiguration, (item) => {
@@ -126,10 +130,6 @@ class UAAToken {
 		});
 
 		if (!(oCheckTechnicalUserPlcToken !== undefined && oCheckTechnicalUserPlcToken.FIELD_VALUE === "true")) {
-			return;
-		}
-
-		if (this.hasApplicationUserValidToken()) {
 			return;
 		}
 
