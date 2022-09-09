@@ -214,8 +214,9 @@ class JobSchedulerUtil {
 	 * JOB_ORDER_NO columns is required if previous jobs stopped during execution but the status is still "Running"
 	 * 
 	 * @param {object} request - web request / job request
+	 * @param {boolean} bStartImmediately - true if the job should start immediately
 	 */
-	async insertJobLogEntryIntoTable(request) {
+	async insertJobLogEntryIntoTable(request, bStartImmediately) {
 
 		let iSapJobId = request.headers["x-sap-job-id"] === undefined ? null : request.headers["x-sap-job-id"];
 		let iSapScheduleId = request.headers["x-sap-job-schedule-id"] === undefined ? null : request.headers["x-sap-job-schedule-id"];
@@ -275,6 +276,10 @@ class JobSchedulerUtil {
 			}
 			if (helpers.isRequestFromJob(request)) {
 				// set status for real jobs
+				sJobStatus = "Running";
+				sJobStartTimestamp = sJobTimestamp;
+			} else if (bStartImmediately === true) {
+				// set status for jobs that needs to start immediately
 				sJobStatus = "Running";
 				sJobStartTimestamp = sJobTimestamp;
 			} else {

@@ -243,8 +243,8 @@ function doService() {
 				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
 
 				// write end of the job into t_messages only for jobs (fake or real)
-				await Message.addLog(request.JOB_ID,
-					`Job with ID '${request.JOB_ID}' ended!`,
+				await Message.addLog(iJobId,
+					`Job with ID '${iJobId}' ended!`,
 					"message", undefined, sOperation);
 
 				if (request.IS_ONLINE_MODE === false) { // only for fake jobs
