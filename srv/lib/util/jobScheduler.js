@@ -201,7 +201,7 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
-	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, REQUEST_USER_ID, RUN_USER_ID  and set as properties in request object
+	 * Used to generate JOB_ID, JOB_TIMESTAMP, IS_ONLINE_MODE, REQUEST_USER_ID, RUN_USER_ID and set as properties in request object
 	 * JOB_TIMESTAMP used to update the log entry with service response body
 	 * REQUEST_USER_ID contains the user that triggered the job (request user id)
 	 * RUN_USER_ID contains the user executing the job (request user id or the technical user)
@@ -351,17 +351,20 @@ class JobSchedulerUtil {
 	}
 
 	/** @function
-	 * Used to get the oldest job from the table with status "Pending"
+	 * Used to return for fake jobs the first pending job and to create a fake request object
 	 * 
-	 * @param {object} request - the job request
-	 * @return {integer} iJobId - the first pending job or undefined (if no pending jobs exists)
+	 * Get the oldest job from the table with status "Pending"
+	 * Select the entry from t_job_log table if pending job exists
+	 * Creates a fake request object containing all properties as were initially added into the real request object
+	 * Also the URL, method, parameters and request body are added to the fake object similar as were defined into the real request object
+	 * 
+	 * @return {object/undefined} - the fake request object or undefined if no pending job
 	 */
-	async getFirstPendingJobId(request) {
+	async getJobFromQueue() {
 
-		if (request.JOB_ID === undefined) {
-			return undefined;
-		}
+		let oRequest; // the fake request object
 
+		// get the oldest job from the table with status "Pending"
 		let sSQLstmt =
 			`
 				select JOB_ID
@@ -371,93 +374,48 @@ class JobSchedulerUtil {
 				order by
 					JOB_TIMESTAMP asc;
 			`;
-		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+		let aJobIdResults = await helpers.statementExecPromisified(sSQLstmt);
 
-		return aResults.length > 0 ? aResults[0].JOB_ID : undefined;
-	}
+		let iJobId = aJobIdResults.length > 0 ? aJobIdResults[0].JOB_ID : undefined;
+		if (iJobId !== undefined) {
 
-	/** @function
-	 * Used to select an entry from t_job_log table based on the input job id
-	 * Creates a fake request object containing all properties as were initially added into the real request object
-	 * Also the URL, method, parameters and request body are added to the fake object similar as were defined into the real request object
-	 * 
-	 * The job log exists since the job id was retrieved previously from the table (no need to check if log exists)
-	 * 
-	 * @param {integer} iJobId - the job id
-	 */
-	async selectJobLogEntry(iJobId) {
-
-		let sSQLstmt =
-			`
+			let sStmt =
+				`
 				select *
 				from "sap.plc.extensibility::template_application.t_job_log"
 				where
 					JOB_ID = '${iJobId}' and
 					JOB_STATUS = 'Pending';
 			`;
-		let aResults = await helpers.statementExecPromisified(sSQLstmt);
+			let aResults = await helpers.statementExecPromisified(sStmt);
 
-		let oJobDetails = aResults[0];
+			let oJobDetails = aResults[0];
 
-		// create oRequest similar as request object
-		let oRequest = {};
-		// add properties as were initially added into request object
-		oRequest.IS_ONLINE_MODE = oJobDetails.IS_ONLINE_MODE === 0 ? false : true;
-		oRequest.REQUEST_USER_ID = oJobDetails.REQUEST_USER_ID;
-		oRequest.RUN_USER_ID = oJobDetails.RUN_USER_ID;
-		oRequest.JOB_TIMESTAMP = oJobDetails.JOB_TIMESTAMP;
-		oRequest.JOB_ID = oJobDetails.JOB_ID;
-		// add user id
-		oRequest.user = {
-			id: oJobDetails.REQUEST_USER_ID
-		};
-		// add request URL
-		oRequest.originalUrl = oJobDetails.JOB_NAME;
-		// add method
-		oRequest.method = oJobDetails.HTTP_METHOD;
-		// add request parameter
-		oRequest.query = JSON.parse(oJobDetails.REQUEST_PARAMETERS);
-		// add request body
-		oRequest.body = JSON.parse(oJobDetails.REQUEST_BODY);
+			// create oRequest similar as request object
+			oRequest = {};
 
-		// return request details
-		return oRequest;
-	}
-
-	/** @function
-	 * Used to return for fake jobs the first pending job and to create a fake request object
-	 * For all other job type the real request object is returned
-	 * 
-	 * @param {object} request - web request / job request
-	 */
-	async getJobFromQueue(request) {
-
-		// check the request type
-		if (helpers.isRequestFromJob(request)) { // real jobs are executed immediately
-			// return the real request object for real jobs
-			return request;
-		} else if (request.JOB_ID === undefined) { // service execution without logging messages
-			// return the real request object for requests without IS_ONLINE_MODE parameter
-			return request;
-		} else {
-			if (request.IS_ONLINE_MODE === false) {
-				// get first pending jobs if exists
-				let iJobId = await this.getFirstPendingJobId(request);
-				// check if pending job
-				if (iJobId !== undefined) {
-					// overwrite the request with the fake request object of the first pending job
-					request = await this.selectJobLogEntry(iJobId);
-					// return the fake request
-					return request;
-				} else {
-					// return the real request object if no pending jobs exists
-					return request;
-				}
-			} else {
-				// return the real request object for requests with parameter IS_ONLINE_MODE=true
-				return request;
-			}
+			// add properties as were initially added into request object
+			oRequest.IS_ONLINE_MODE = oJobDetails.IS_ONLINE_MODE === 0 ? false : true;
+			oRequest.REQUEST_USER_ID = oJobDetails.REQUEST_USER_ID;
+			oRequest.RUN_USER_ID = oJobDetails.RUN_USER_ID;
+			oRequest.JOB_TIMESTAMP = oJobDetails.JOB_TIMESTAMP;
+			oRequest.JOB_ID = oJobDetails.JOB_ID;
+			// add user id
+			oRequest.user = {
+				id: oJobDetails.REQUEST_USER_ID
+			};
+			// add request URL
+			oRequest.originalUrl = oJobDetails.JOB_NAME;
+			// add method
+			oRequest.method = oJobDetails.HTTP_METHOD;
+			// add request parameter
+			oRequest.query = JSON.parse(oJobDetails.REQUEST_PARAMETERS);
+			// add request body
+			oRequest.body = JSON.parse(oJobDetails.REQUEST_BODY);
 		}
+
+		// return fake request object or undefined
+		return oRequest;
 	}
 
 	/** @function

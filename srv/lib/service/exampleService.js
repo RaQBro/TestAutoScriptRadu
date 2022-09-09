@@ -237,7 +237,7 @@ function doService() {
 
 		} finally {
 
-			if (bRunningJobs === false) {
+			if (bRunningJobs === false) { // if current job was executed
 
 				// add service response body to job log entry
 				await JobSchedulerUtil.updateJobLogEntryFromTable(request, iStatusCode, oServiceResponseBody);
@@ -247,16 +247,18 @@ function doService() {
 					`Job with ID '${request.JOB_ID}' ended!`,
 					"message", undefined, sOperation);
 
-				// get next pending job if exists
-				let oNextPendingJob = await JobSchedulerUtil.getJobFromQueue(request);
+				if (request.IS_ONLINE_MODE === false) { // only for fake jobs
 
-				// check if pending job exists
-				if (oNextPendingJob.JOB_ID !== iJobId) {
+					// get next pending job if exists
+					let oNextPendingJob = await JobSchedulerUtil.getJobFromQueue();
 
-					// execute the pending job
-					await this.execute(oNextPendingJob);
+					// check if pending job exists
+					if (oNextPendingJob !== undefined) {
+
+						// execute the pending job
+						await this.execute(oNextPendingJob);
+					}
 				}
-
 			}
 
 			return {
