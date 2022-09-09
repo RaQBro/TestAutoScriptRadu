@@ -11,7 +11,7 @@ const jobsc = require("@sap/jobs-client");
  * Helper functions used to:
  *		- create dynamically the jobs at first run of server.js
  *		- get the value of CREATE_JOBS_AUTOMATICALLY from configuration table
- *  	- update the job run log after execution
+ *		- update the job run log after execution
  *		- update the job log entry from table with service response body
  *		- generate a an autoincrement JOB_ID based on the existing ids
  *		- set JOB_ID and JOB_TIMESTAMP to request
@@ -296,7 +296,10 @@ class JobSchedulerUtil {
 				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_BODY, RESPONSE_BODY,
 				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID, JOB_ORDER_NO )
 				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-						 (select MAX(JOB_ORDER_NO) + 1 from "sap.plc.extensibility::template_application.t_job_log") );
+						(	select 
+								CASE WHEN MAX(JOB_ORDER_NO) IS NULL THEN 1
+								ELSE MAX(JOB_ORDER_NO) + 1 END
+							from "sap.plc.extensibility::template_application.t_job_log") );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
