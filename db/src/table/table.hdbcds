@@ -28,7 +28,7 @@ context template_application {
 
     entity t_job_log {
         key JOB_ID              : Integer64 generated always as identity(start with 1 increment by 1);
-        key JOB_TIMESTAMP       : UTCTimestamp not null;
+        key JOB_TIMESTAMP       : UTCTimestamp not null default current_timestamp;
             START_TIMESTAMP     : UTCTimestamp;
             END_TIMESTAMP       : UTCTimestamp;
             JOB_NAME            : String(5000);
