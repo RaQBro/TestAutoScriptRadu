@@ -979,6 +979,9 @@ class Dispatcher {
 		}, {
 			"name": "compressedResult",
 			"value": "false"
+		}, {
+			"name": "longRunning",
+			"value": "false"
 		}];
 
 		let aBodyData = [{
@@ -1040,6 +1043,9 @@ class Dispatcher {
 		}, {
 			"name": "compressedResult",
 			"value": "false"
+		}, {
+			"name": "longRunning",
+			"value": "false"
 		}];
 
 		let aBodyData = [{
@@ -1097,6 +1103,9 @@ class Dispatcher {
 			"value": "normal"
 		}, {
 			"name": "compressedResult",
+			"value": "false"
+		}, {
+			"name": "longRunning",
 			"value": "false"
 		}];
 
@@ -2121,7 +2130,7 @@ class Dispatcher {
 
 				do {
 					await Helpers.sleep(1000);
-					status = await this.checkTaskStatus(oData.TASK_ID, sProjectId);
+					status = await this.checkTaskStatus(oData.TASK_ID);
 
 					if (status === "CANCELED" || status === "FAILED") {
 						let sMessageInfo = `Task was Canceled/Failed and Project lifecycle costs for project with ID '${sProjectId}' failed to calculate.`;
@@ -2144,10 +2153,9 @@ class Dispatcher {
 	 * Check task status
 	 * 
 	 * @param {string} sTaskId - task id
-	 * @param {string} sProjectId - project id
 	 * @returns {string} - task status or throw error
 	 */
-	async checkTaskStatus(sTaskId, sProjectId) {
+	async checkTaskStatus(sTaskId) {
 
 		let sQueryPath = "tasks";
 		let aParams = [{
@@ -2160,7 +2168,7 @@ class Dispatcher {
 
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get the status of task with ID '${sTaskId}'.`;
-			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
+			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation);
 			return undefined;
 		}
 
@@ -2355,7 +2363,7 @@ class Dispatcher {
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams, aItems);
 		let oResponseBody = oResponse.data;
 
-		if (oResponse.status !== 200) {
+		if (oResponse.status !== 200 && oResponse.status !== 201) {
 			let sDeveloperInfo = `Failed to import items for calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 		} else {
@@ -2365,7 +2373,7 @@ class Dispatcher {
 
 					do {
 						await Helpers.sleep(1000);
-						status = await this.checkTaskStatus(oData.TASK_ID, iVersionId);
+						status = await this.checkTaskStatus(oData.TASK_ID);
 
 						if (status === "CANCELED" || status === "FAILED") {
 							let sMessageInfo = `Task was Canceled/Failed and the items for calculation version with ID '${iVersionId}' failed to import.`;
