@@ -484,9 +484,9 @@ let Code = Object.freeze({
  * Object containing PLC object types
  */
 let PlcObjects = Object.freeze({
-	Project: "PROJECT_ID",
-	Calculation: "CALCULATION_ID",
-	Version: "CALCULATION_VERSION_ID"
+	Project: "PROJECT",
+	Calculation: "CALCULATION",
+	Version: "CALCULATION_VERSION"
 });
 
 /** @class
