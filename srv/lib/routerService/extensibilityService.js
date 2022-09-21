@@ -172,6 +172,41 @@ class Service {
 	}
 
 	/** @function
+	 * Check if there is an active session in plc for the technical user
+	 * 
+	 * @return {boolean} true (active session) / false (expired or no session availble)
+	 */
+	async checkPlcSeession() {
+
+		let ApplicationSettingsUtil = new ApplicationSettings();
+		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
+
+		try {
+
+			let oHdbClient = await DatabaseClass.createConnection();
+			let oConnection = new DatabaseClass(oHdbClient);
+			let oStatement = await oConnection.preparePromisified(
+				`
+				select 
+					CASE
+						WHEN (select VALUE_IN_SECONDS from "sap.plc.db::basis.t_application_timeout" where APPLICATION_TIMEOUT_ID = 'SessionTimeout') > SECONDS_BETWEEN(last_activity_time, current_timestamp)
+							THEN true
+						ELSE false
+					END AS VALID_SESSION
+				from "sap.plc.db::basis.t_session" where session_id = '${sTechnicalUser}'
+				`
+			);
+			let oSession = await oConnection.statementExecPromisified(oStatement, []);
+			oHdbClient.close();
+
+			return oSession !== undefined && oSession.length > 0 ? oSession[0].VALID_SESSION : false;
+		} catch (e) {
+			//TODO: error handling
+			throw e;
+		}
+	}
+
+	/** @function
 	 * Used to maintain default values into t_default_values
 	 */
 	maintainDefaultValues(request) {
