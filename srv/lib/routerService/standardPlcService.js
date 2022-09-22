@@ -2391,7 +2391,7 @@ class Dispatcher {
 					while (status !== "COMPLETED" && status !== "CANCELED" && status !== "FAILED");
 
 					if (status === "COMPLETED") {
-						let sMessageInfo = `Import of item for calculation version with ID '${iVersionId}' have been imported successfully!`;
+						let sMessageInfo = `Import of items for calculation version with ID '${iVersionId}' has been successfully completed!`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 						return true;
 					}
