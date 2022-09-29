@@ -2319,10 +2319,10 @@ class Dispatcher {
 			"name": "compressedResult",
 			"value": "true"
 		}];
-	
+
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "GET", aParams);
 		let oResponseBody = oResponse.data;
-	
+
 		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to get items for calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
@@ -2343,7 +2343,7 @@ class Dispatcher {
 	 * @param {boolean} bLongRunning Synchronous/Asynchronous mode
 	 * @return {object} result / error - PLC response / the error
 	 */
-	 async createItems(iVersionId, aItems, sMode, bLongRunning) {
+	async createItems(iVersionId, aItems, sMode, bLongRunning) {
 
 		let sQueryPath = "items";
 		let aParams = [{
@@ -2367,13 +2367,13 @@ class Dispatcher {
 			if (oResponseBody.head.messages !== undefined) {
 				let sDeveloperInfo = `Failed to import items for calculation version with ID '${iVersionId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
-			} else{
+			} else {
 				let sDeveloperInfo = `Failed to import items for calculation version with ID '${iVersionId}'.`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", undefined, this.Operation, sVersionType, iVersionId);
 			}
 			return false;
 		} else {
-			if(bLongRunning){
+			if (bLongRunning) {
 				for (let oData of oResponseBody.body.transactionaldata) {
 					let status;
 
@@ -2396,7 +2396,7 @@ class Dispatcher {
 						return true;
 					}
 				}
-			}else{
+			} else {
 				await Message.addLog(this.JOB_ID,
 					`Items for calculation version with ID '${iVersionId}' created successfully.`, "message", undefined, this.Operation, sVersionType,
 					iVersionId);

@@ -64,7 +64,7 @@ module.exports = class {
 	}
 
 	callProcedurePromisified(storedProc, inputParams) {
-		
+
 		return new Promise((resolve, reject) => {
 			storedProc(inputParams, (error, outputScalar, ...results) => {
 				if (error) {

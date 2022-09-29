@@ -1,5 +1,5 @@
 {
-    "sap.plc.db.authorization::privileges.v_calculation_read": {},
-    "sap.plc.db.authorization::privileges.v_calculation_version_read": {},
-    "sap.plc.db.authorization::privileges.v_project_read": {}
+	"sap.plc.db.authorization::privileges.v_calculation_read": {},
+	"sap.plc.db.authorization::privileges.v_calculation_version_read": {},
+	"sap.plc.db.authorization::privileges.v_project_read": {}
 }

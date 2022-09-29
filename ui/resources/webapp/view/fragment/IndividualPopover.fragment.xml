@@ -5,8 +5,8 @@
 				press="onHowToPress"/>
 			<StandardListItem class="sapUiSmallMarginBegin sapUiSmallMarginEnd" title="{i18n>cardAboutTitle}" icon="sap-icon://information"
 				type="Active" press="onAboutPress"/>
-			<StandardListItem class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginBottom" title="{i18n>cardSignOut}" icon="sap-icon://log" type="Active"
-				press="onLogoutBtnPress"/>
+			<StandardListItem class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginBottom" title="{i18n>cardSignOut}" icon="sap-icon://log"
+				type="Active" press="onLogoutBtnPress"/>
 		</List>
 	</Popover>
 </core:FragmentDefinition>

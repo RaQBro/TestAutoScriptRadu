@@ -1,5 +1,4 @@
-<mvc:View controllerName="webapp.ui.controller.Messages" xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns:mvc="sap.ui.core.mvc">
+<mvc:View controllerName="webapp.ui.controller.Messages" xmlns="sap.m" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:mvc="sap.ui.core.mvc">
 	<Page showHeader="false" showFooter="false" showNavButton="false" floatingFooter="false" showSubHeader="false">
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">

@@ -13,7 +13,7 @@
 		"source": "^/service/(.*).xsodata/\\$metadata(.*)$",
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"
-	},{
+	}, {
 		"source": "^/standard/plc/(.*)$",
 		"destination": "tapp_srv_api",
 		"authenticationType": "xsuaa"

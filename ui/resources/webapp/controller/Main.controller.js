@@ -200,10 +200,10 @@ sap.ui.define([
 		getBaseUrl: function () {
 
 			if (window.location.href.slice(-1) === "#") {
-                return window.location.href.slice(0, -1);
-            } else {
-                return window.location.href.replace(window.location.hash, "");
-            }
+				return window.location.href.slice(0, -1);
+			} else {
+				return window.location.href.replace(window.location.hash, "");
+			}
 		},
 
 		/** @function called when button the expand the toolPage from the left side*/
