@@ -1,13 +1,13 @@
 {
-	"sap.plc.db::auth.t_application_timeout": {
+	"sap.plc.db::auth.t_auth_project": {
 		"target": {
 			"object": "sap.plc.db::auth.t_auth_project",
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
-	"sap.plc.db::auth.t_auth_project": {
+	"sap.plc.db::basis.t_application_timeout": {
 		"target": {
-			"object": "sap.plc.db::auth.t_auth_project",
+			"object": "sap.plc.db::basis.t_application_timeout",
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},

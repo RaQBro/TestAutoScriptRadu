@@ -1,6 +1,6 @@
 {
-	"sap.plc.db::auth.t_application_timeout": {},
 	"sap.plc.db::auth.t_auth_project": {},
+	"sap.plc.db::basis.t_application_timeout": {},
 	"sap.plc.db::basis.t_calculation": {},
 	"sap.plc.db::basis.t_calculation_version": {},
 	"sap.plc.db::basis.t_calculation_version_temporary": {},
