@@ -2521,7 +2521,7 @@ class Dispatcher {
 	 * @param {array} Items Array
 	 * @return {object} result / error - PLC response / the error
 	 */
-	async disablePriceDeterminationOnItems(iVersionId, aBodyData) {
+	async disablePriceDeterminationOnItems(iVersionId, aItems) {
 
 		let sQueryPath = "items";
 		let aParams = [{
@@ -2532,15 +2532,26 @@ class Dispatcher {
 			"value": "true"
 		}];
 
+		let aBodyData = [];
+		for (let oItem of aItems) {
+			let oItemToDisable = {
+				"ITEM_ID": oItem.ITEM_ID,
+				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID,
+				"IS_DISABLING_PRICE_DETERMINATION": 1
+			};
+			aBodyData.push(oItemToDisable);
+		}
+
 		let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "PUT", aParams, aBodyData);
 		let oResponseBody = oResponse.data;
 
 		if (oResponse.status !== 200) {
-			let sDeveloperInfo = `Failed to update items of calculation version with ID '${iVersionId}'.`;
+			let sDeveloperInfo = `Failed to disable price determination on items of calculation version with ID '${iVersionId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 			return undefined;
 		} else {
-			let sMessageInfo = `${aBodyData.length} item(s) of calculation version with ID '${iVersionId}' were updated with success!`;
+			let sMessageInfo =
+				`Disable price determination for ${aBodyData.length} item(s) of calculation version with ID '${iVersionId}' was done with success!`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 			return true;
 		}
