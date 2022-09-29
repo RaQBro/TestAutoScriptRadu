@@ -119,6 +119,21 @@ function doService() {
 
 		return sCurrentDate;
 	}
+
+	this.executeLogic = async function () {
+
+		let oVersion = await StandardPlcService.openCalculationVersion(1);
+
+		await helpers.sleep(5000);
+
+		if (oVersion !== undefined) {
+			await StandardPlcService.closeCalculationVersion(1);
+		}
+
+		let aStatus = await StandardPlcService.getStatuses();
+		oServiceResponseBody.STATUS = aStatus;
+	};
+
 	// -------------------------- End Functions List ----------------------------
 
 	/** @function
@@ -185,8 +200,8 @@ function doService() {
 			let bValidSession = await ExtensibilityPlcService.checkPlcSeession();
 
 			if (bValidSession) {
-				
-				await handleProject(aBodyData);
+
+				await this.executeLogic();
 			} else {
 
 				let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
@@ -196,16 +211,7 @@ function doService() {
 					oServiceResponseBody.CURRENT_USER = sCurrentUser;
 					await Message.addLog(iJobId, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
 
-					let oVersion = await StandardPlcService.openCalculationVersion(1);
-
-					await helpers.sleep(5000);
-
-					if (oVersion !== undefined) {
-						await StandardPlcService.closeCalculationVersion(1);
-					}
-
-					let aStatus = await StandardPlcService.getStatuses();
-					oServiceResponseBody.STATUS = aStatus;
+					await this.executeLogic();
 				}
 			}
 
