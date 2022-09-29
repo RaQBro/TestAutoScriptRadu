@@ -107,6 +107,18 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_status": {
+		"target": {
+			"object": "sap.plc.db::basis.t_status",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
+	"sap.plc.db::basis.t_status__text": {
+		"target": {
+			"object": "sap.plc.db::basis.t_status__text",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_tag": {
 		"target": {
 			"object": "sap.plc.db::basis.t_tag",
