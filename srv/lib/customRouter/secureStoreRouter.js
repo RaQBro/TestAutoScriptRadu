@@ -2,7 +2,7 @@
 /* eslint new-cap: 0 */
 "use strict";
 
-const express = require("express");
+const expressPromiseRouter = require("express-promise-router");
 
 /**
  * @fileOverview
@@ -30,7 +30,7 @@ class SecureStoreRouter {
 
 	constructor() {
 
-		let router = express.Router();
+		let router = expressPromiseRouter();
 
 		let SecureStoreService = new SecureStore();
 		let ApplicationSettingsUtil = new ApplicationSettings();

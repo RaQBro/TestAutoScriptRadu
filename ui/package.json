@@ -4,7 +4,7 @@
 		"node": "^14.x"
 	},
 	"dependencies": {
-		"@sap/approuter": "10.11.3" // for deploy use 11.2.1
+		"@sap/approuter": "10.11.3"
 	},
 	"scripts": {
 		"start": "node node_modules/@sap/approuter/approuter.js"

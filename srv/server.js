@@ -6,6 +6,7 @@ const xsenv = require("@sap/xsenv");
 const port = process.env.PORT || 3000;
 
 const express = require("express");
+const expressPromiseRouter = require("express-promise-router");
 const xsHDBConn = require("@sap/hdbext");
 
 const xssec = require("@sap/xssec");
@@ -119,6 +120,9 @@ let xsjsApp = xsjs(options);
 
 // initialize Express App for XSA UAA and HDBEXT Middleware
 let expressApp = express();
+let expressPromiseRouterApp = expressPromiseRouter();
+
+expressApp.use(expressPromiseRouterApp);
 
 expressApp.use(bodyParser.urlencoded({
 	extended: true

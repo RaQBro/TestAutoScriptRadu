@@ -2,7 +2,7 @@
 /* eslint new-cap: 0 */
 "use strict";
 
-const express = require("express");
+const expressPromiseRouter = require("express-promise-router");
 
 /**
  * @fileOverview
@@ -32,7 +32,7 @@ class StandardPlcRouter {
 
 	constructor() {
 
-		let router = express.Router();
+		let router = expressPromiseRouter();
 
 		let UAAToken = new UaaToken();
 
