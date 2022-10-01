@@ -63,7 +63,6 @@ class PlcDispatcher {
 
 		let oPrivateRequestClient = axios.create({
 			baseURL: global.plcXsjsUrl,
-			// timeout: 5000,
 			method: sMethod,
 			maxRedirects: 0
 		});
@@ -105,23 +104,38 @@ class PlcDispatcher {
 					oResponse = error.response;
 
 				} else { // unexpected error if response is not an object
-
-					let oDetails = {
-						"requestMethod": sMethod,
-						"requestQueryPath": sQueryPath,
-						"requestParameters": sPrivateParams,
-						"responseCode": error.response.status,
-						"responseMessage": error.response.statusText,
-						"responseBody": error.response.data
-					};
-
+					let oDetails;
 					let sDeveloperInfo;
-					if (bIsOnline === true) {
-						sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
+					
+					if (error.response !== undefined) {
+						oDetails = {
+							"requestMethod": sMethod,
+							"requestQueryPath": sQueryPath,
+							"requestParameters": sPrivateParams,
+							"responseCode": error.response.status,
+							"responseMessage": error.response.statusText,
+							"responseBody": error.response.data
+						};
+
+						if (bIsOnline === true) {
+							sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
+						} else {
+							sDeveloperInfo =
+								"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+						}
 					} else {
-						sDeveloperInfo =
-							"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+						oDetails = {
+							"requestMethod": sMethod,
+							"requestQueryPath": sQueryPath,
+							"requestParameters": sPrivateParams,
+							"responseCode": error.code,
+							"responseMessage": error.message,
+							"responseBody": ""
+						};
+
+						sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
 					}
+
 					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, error);
 				}
 			});
@@ -159,7 +173,6 @@ class PlcDispatcher {
 
 		let oPublicRequestClient = axios.create({
 			baseURL: global.plcPublicApiUrl,
-			// timeout: 5000,
 			method: sMethod,
 			maxRedirects: 0
 		});
@@ -201,23 +214,36 @@ class PlcDispatcher {
 					oResponse = error.response;
 
 				} else { // unexpected error if response is not an object
-
-					let oDetails = {
-						"requestMethod": sMethod,
-						"requestQueryPath": sQueryPath,
-						"requestParameters": sPublicParams,
-						"responseCode": error.response.status,
-						"responseMessage": error.response.statusText,
-						"responseBody": error.response.data
-					};
-
+					let oDetails;
 					let sDeveloperInfo;
-					if (bIsOnline === true) {
-						sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
+
+					if (error.response !== undefined) {
+						oDetails = {
+							"requestMethod": sMethod,
+							"requestQueryPath": sQueryPath,
+							"requestParameters": sPublicParams,
+							"responseCode": error.response.status,
+							"responseMessage": error.response.statusText,
+							"responseBody": error.response.data
+						};
+						if (bIsOnline === true) {
+							sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
+						} else {
+							sDeveloperInfo =
+								"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+						}
 					} else {
-						sDeveloperInfo =
-							"Please check if technical user is maintained and if PLC endpoints are maintained into global environment variables.";
+						oDetails = {
+							"requestMethod": sMethod,
+							"requestQueryPath": sQueryPath,
+							"requestParameters": sPublicParams,
+							"responseCode": error.code,
+							"responseMessage": error.message,
+							"responseBody": ""
+						};
+						sDeveloperInfo = "Unexpected error occured. Please try again or contact your system administrator.";
 					}
+
 					throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, sDeveloperInfo, oDetails, error);
 				}
 			});
