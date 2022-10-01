@@ -107,7 +107,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Create variant for a calculation version
+	 * Create a variant for a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {object} oVariant - the variant details
@@ -154,7 +154,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Save all variants from variant matrix of a calculation version
+	 * Save all variants from the variant matrix of a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {array} aVariantsLastModifiedOn - the last modified timestamp of variants
@@ -180,7 +180,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Delete a variant from variant matrix of a calculation version
+	 * Delete a variant from the variant matrix of a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {integer} iVariantId - the variant ID
@@ -207,7 +207,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Calculate a variant from variant matrix of a calculation version
+	 * Calculate a variant from the variant matrix of a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {integer} iVariantId - the variant ID
@@ -262,7 +262,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Save a calculated variant from variant matrix of a calculation version
+	 * Save a calculated variant from the variant matrix of a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {integer} iVariantId - the variant ID
@@ -592,7 +592,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Create calculation version as copy of another version
+	 * Create calculation version as a copy of another version
 	 * 
 	 * @param {integer} iVersionId - version id to copy
 	 * @return {object} result / error - PLC response / PLC error
@@ -631,7 +631,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Get calculation version from PLC
+	 * Get the calculation version from PLC
 	 * 
 	 * @param {string} iVersionId - the calculation version id
 	 * @return {object} result / error - PLC response / the error
@@ -734,7 +734,7 @@ class Dispatcher {
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {boolean} bCompressedResult - flag if the response should be compressed
 	 * @param {boolean} bGetOnly - flag if the response should contain the version details no matter if it's read-only
-	 * @param {boolean} bNotCloseVersion - flag used in combination with bGetOnly === true. version should not be closed if will be saved as new 
+	 * @param {boolean} bNotCloseVersion - flag used in combination with bGetOnly === true. version should not be closed if it will be saved as new 
 	 * @return {object} result / error - the opened calculation version or throw error
 	 */
 	async openCalculationVersion(iVersionId, bCompressedResult, bGetOnly, bNotCloseVersion) {
@@ -790,12 +790,12 @@ class Dispatcher {
 					}
 					// if version not editable but will be saved as new => version should not be closed
 					if (bGetOnly === true && bNotCloseVersion === true) {
-						if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
+						if (oResponseBody.body !== undefined && oResponseBody.body.transactional data !== undefined &&
 							oResponseBody.body.transactionaldata[0] !== undefined) {
 							// add warning message since version opened in read-only mode
 							if (aUsers !== undefined && aUsers.length > 0) {
 								sMessageInfo =
-									`Calculation version with ID '${iVersionId}' was opened in read-only mode! Locked by User(s): '${aUsers.join(", ")}'`;
+									`Calculation version with ID '${iVersionId}' is read-only! Locked by User(s): '${aUsers.join(", ")}'`;
 								await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 							} else {
 								sMessageInfo = `Calculation version with ID '${iVersionId}' was opened in read-only mode!`;
@@ -917,10 +917,10 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Add a version as reference item into a calculation version
+	 * Add a version as a reference item into a calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
-	 * @param {integer} iItemId - the ID of the item that will be changed into reference item
+	 * @param {integer} iItemId - the ID of the item that will be changed into a reference item
 	 * @param {integer} iReferenceVersionId - the ID of the version that will be referenced
 	 * @return {object} result / error - PLC response / PLC error
 	 */
@@ -1135,7 +1135,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Delete the items from calculation version
+	 * Delete the items from the calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {array} aItemsToDelete - the items to be deleted
@@ -1176,7 +1176,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Deactivate the items from calculation version
+	 * Deactivate the items from the calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {array} aItemsToDelete - the items to be deactivated
@@ -1218,7 +1218,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Update the selected referenced items from calculation version
+	 * Update the selected referenced items from the calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
 	 * @param {array} aItemsToUpdate - the referenced items to be updated
@@ -1688,7 +1688,7 @@ class Dispatcher {
 					return false;
 				} else {
 					let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
-					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, project type, sProjectId);
 
 					return undefined;
 				}
@@ -2296,7 +2296,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * GET all items for a specific caclulation version
+	 * GET all items for a specific calculation version
 	 * 
 	 * @return {object} result / error - PLC response / the error
 	 */
@@ -2335,7 +2335,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Trigger the create of items
+	 * Trigger the creation of items
 	 * 
 	 * @param {string} iVersionId - addin unique guid
 	 * @param {array} aItems Array of Items to be imported
@@ -2441,7 +2441,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * Update a custom field value from root item
+	 * Update a custom field value from the root item
 	 * 
 	 * @param {object} oVersion - the calculation version details
 	 * @param {string} sCustomFieldName - the custom field name
@@ -2632,7 +2632,7 @@ class Dispatcher {
 	}
 
 	/** @function
-	 * GET all masterdata custom fields from PLC
+	 * GET all master data custom fields from PLC
 	 * 
 	 * @return {object} result / error - PLC response / the error
 	 */
