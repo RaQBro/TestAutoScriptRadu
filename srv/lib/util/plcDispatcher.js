@@ -106,7 +106,7 @@ class PlcDispatcher {
 				} else { // unexpected error if response is not an object
 					let oDetails;
 					let sDeveloperInfo;
-					
+
 					if (error.response !== undefined) {
 						oDetails = {
 							"requestMethod": sMethod,

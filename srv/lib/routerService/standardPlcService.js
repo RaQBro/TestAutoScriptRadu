@@ -790,7 +790,7 @@ class Dispatcher {
 					}
 					// if version not editable but will be saved as new => version should not be closed
 					if (bGetOnly === true && bNotCloseVersion === true) {
-						if (oResponseBody.body !== undefined && oResponseBody.body.transactional data !== undefined &&
+						if (oResponseBody.body !== undefined && oResponseBody.body.transactionaldata !== undefined &&
 							oResponseBody.body.transactionaldata[0] !== undefined) {
 							// add warning message since version opened in read-only mode
 							if (aUsers !== undefined && aUsers.length > 0) {
@@ -1688,7 +1688,7 @@ class Dispatcher {
 					return false;
 				} else {
 					let sDeveloperInfo = `Failed to open project with ID '${sProjectId}'.`;
-					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, project type, sProjectId);
+					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sProjectType, sProjectId);
 
 					return undefined;
 				}
