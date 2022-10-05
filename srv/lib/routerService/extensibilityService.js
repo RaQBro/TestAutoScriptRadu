@@ -207,6 +207,71 @@ class Service {
 	}
 
 	/** @function
+	 * Return if the task in timeout
+	 * 
+	 * @return {boolean} bTaskTimeout
+	 */
+	 async checkTaskTimeout(sTaskId, bProject) {
+
+		let sTaskType = bProject ? "PROJECT_CALCULATE_LIFECYCLE_VERSIONS" : "IMPORT_ITEMS";
+
+		try {
+
+			let oHdbClient = await DatabaseClass.createConnection();
+			let oConnection = new DatabaseClass(oHdbClient);
+			let oStatement = await oConnection.preparePromisified(
+				`
+				select
+					*
+				from "sap.plc.db::basis.t_task" 
+				where 
+					task_type = '${sTaskType}' 
+					and task_id = '${sTaskId} 
+					and seconds_between(CREATED_ON, CURRENT_UTCTIMESTAMP) > (select VALUE_IN_SECONDS from "sap.plc.db::basis.t_application_timeout" where APPLICATION_TIMEOUT_ID = 'SessionTimeout')'
+				`
+			);
+			let oTaskStatus = await oConnection.statementExecPromisified(oStatement, []);
+			oHdbClient.close();
+
+			return oTaskStatus !== undefined && oTaskStatus.length > 0 ? true : false;
+		} catch (e) {
+			//TODO: error handling
+			throw e;
+		}
+	}
+
+	/** @function
+	 * Get the status of the task
+	 * 
+	 * @return {string} oTaskStatus - status of the task
+	 */
+	 async getTaskStatus(sTaskId, bProject) {
+
+		let sTaskType = bProject ? "PROJECT_CALCULATE_LIFECYCLE_VERSIONS" : "IMPORT_ITEMS";
+
+		try {
+
+			let oHdbClient = await DatabaseClass.createConnection();
+			let oConnection = new DatabaseClass(oHdbClient);
+			let oStatement = await oConnection.preparePromisified(
+				`
+				select 
+					STATUS
+				from "sap.plc.db::basis.t_task" 
+				where task_type = '${sTaskType}' and task_id = '${sTaskId}'
+				`
+			);
+			let oTaskStatus = await oConnection.statementExecPromisified(oStatement, []);
+			oHdbClient.close();
+
+			return oTaskStatus !== undefined && oTaskStatus.length > 0 ? oTaskStatus[0].STATUS : undefined;
+		} catch (e) {
+			//TODO: error handling
+			throw e;
+		}
+	}
+
+	/** @function
 	 * Used to maintain default values into t_default_values
 	 */
 	maintainDefaultValues(request) {

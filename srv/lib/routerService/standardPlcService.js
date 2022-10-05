@@ -2130,10 +2130,21 @@ class Dispatcher {
 
 				do {
 					await Helpers.sleep(1000);
-					status = await this.checkTaskStatus(oData.TASK_ID);
+					if(await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)){
+						status = await this.checkTaskStatus(oData.TASK_ID);
+					} else {
+						status = await this.ExtensibilityPlcService.getTaskStatus(oData.TASK_ID, true);
+					}
 
+					if(status === undefined) {
+						let sMessageInfo = `Task '${oData.TASK_ID}' to calculatate the lifecycle costs of project with ID '${sProjectId}' not found.`;
+						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
+
+						break;
+					}
+					
 					if (status === "CANCELED" || status === "FAILED") {
-						let sMessageInfo = `Task was Canceled/Failed and Project lifecycle costs for project with ID '${sProjectId}' failed to calculate.`;
+						let sMessageInfo = `Task was Canceled/Failed and lifecycle costs for project with ID '${sProjectId}' failed to calculate.`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
 
 						break;
@@ -2142,7 +2153,7 @@ class Dispatcher {
 				while (status !== "COMPLETED" && status !== "CANCELED" && status !== "FAILED");
 
 				if (status === "COMPLETED") {
-					let sMessageInfo = `Project lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
+					let sMessageInfo = `Lifecycle costs for project with ID '${sProjectId}' have been calculated successfully!`;
 					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sProjectType, sProjectId);
 				}
 			}
@@ -2379,7 +2390,18 @@ class Dispatcher {
 
 					do {
 						await Helpers.sleep(1000);
-						status = await this.checkTaskStatus(oData.TASK_ID);
+						if(await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)){
+							status = await this.checkTaskStatus(oData.TASK_ID);
+						} else {
+							status = await this.ExtensibilityPlcService.getTaskStatus(oData.TASK_ID, true);
+						}
+	
+						if(status === undefined) {
+							let sMessageInfo = `Task '${oData.TASK_ID}' to import items to calculation version with ID '${iVersionId}' not found.`;
+							await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
+	
+							break;
+						}
 
 						if (status === "CANCELED" || status === "FAILED") {
 							let sMessageInfo = `Task was Canceled/Failed and the items for calculation version with ID '${iVersionId}' failed to import.`;
