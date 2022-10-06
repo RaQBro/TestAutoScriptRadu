@@ -211,7 +211,7 @@ class Service {
 	 * 
 	 * @return {boolean} bTaskTimeout
 	 */
-	 async checkTaskTimeout(sTaskId, bProject) {
+	async checkTaskTimeout(sTaskId, bProject) {
 
 		let sTaskType = bProject ? "PROJECT_CALCULATE_LIFECYCLE_VERSIONS" : "IMPORT_ITEMS";
 
@@ -245,7 +245,7 @@ class Service {
 	 * 
 	 * @return {string} oTaskStatus - status of the task
 	 */
-	 async getTaskStatus(sTaskId, bProject) {
+	async getTaskStatus(sTaskId, bProject) {
 
 		let sTaskType = bProject ? "PROJECT_CALCULATE_LIFECYCLE_VERSIONS" : "IMPORT_ITEMS";
 

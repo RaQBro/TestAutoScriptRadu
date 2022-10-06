@@ -2130,19 +2130,19 @@ class Dispatcher {
 
 				do {
 					await helpers.sleep(1000);
-					if(await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)){
+					if (await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)) {
 						status = await this.checkTaskStatus(oData.TASK_ID);
 					} else {
 						status = await this.ExtensibilityPlcService.getTaskStatus(oData.TASK_ID, true);
 					}
 
-					if(status === undefined) {
+					if (status === undefined) {
 						let sMessageInfo = `Task '${oData.TASK_ID}' to calculatate the lifecycle costs of project with ID '${sProjectId}' not found.`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
 
 						break;
 					}
-					
+
 					if (status === "CANCELED" || status === "FAILED") {
 						let sMessageInfo = `Task was Canceled/Failed and lifecycle costs for project with ID '${sProjectId}' failed to calculate.`;
 						await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
@@ -2390,16 +2390,16 @@ class Dispatcher {
 
 					do {
 						await helpers.sleep(1000);
-						if(await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)){
+						if (await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)) {
 							status = await this.checkTaskStatus(oData.TASK_ID);
 						} else {
 							status = await this.ExtensibilityPlcService.getTaskStatus(oData.TASK_ID, true);
 						}
-	
-						if(status === undefined) {
+
+						if (status === undefined) {
 							let sMessageInfo = `Task '${oData.TASK_ID}' to import items to calculation version with ID '${iVersionId}' not found.`;
 							await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, iVersionId);
-	
+
 							break;
 						}
 
