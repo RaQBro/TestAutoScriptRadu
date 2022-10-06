@@ -2398,7 +2398,7 @@ class Dispatcher {
 	
 						if(status === undefined) {
 							let sMessageInfo = `Task '${oData.TASK_ID}' to import items to calculation version with ID '${iVersionId}' not found.`;
-							await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, sProjectId);
+							await Message.addLog(this.JOB_ID, sMessageInfo, "error", undefined, this.Operation, sProjectType, iVersionId);
 	
 							break;
 						}
