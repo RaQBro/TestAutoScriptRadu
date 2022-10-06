@@ -176,7 +176,7 @@ class Service {
 	 * 
 	 * @return {boolean} true (active session) / false (expired or no session availble)
 	 */
-	async checkPlcSeession() {
+	async checkPlcSession() {
 
 		let ApplicationSettingsUtil = new ApplicationSettings();
 		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();

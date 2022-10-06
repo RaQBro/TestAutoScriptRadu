@@ -197,22 +197,25 @@ function doService() {
 			// 	}
 			// }
 
-			let bValidSession = await ExtensibilityPlcService.checkPlcSeession();
+			let bActiveSession = false;
+			let bValidSession = await ExtensibilityPlcService.checkPlcSession();
 
 			if (bValidSession) {
-
-				await this.executeLogic();
+				bActiveSession = true;
 			} else {
-
 				let oInitPlcSession = await StandardPlcService.initPlcSession(sLanguage);
 
 				if (oInitPlcSession !== undefined) {
 					let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
 					oServiceResponseBody.CURRENT_USER = sCurrentUser;
 					await Message.addLog(iJobId, `PLC session open for user ${sCurrentUser}.`, "info", undefined, sOperation);
-
-					await this.executeLogic();
+					bActiveSession = true;
 				}
+			}
+
+			if (bActiveSession) {
+
+				await this.executeLogic();
 			}
 
 			let sCurrentDate = getDateByPattern("DD.MM.YYYY hh:mm:ss");
