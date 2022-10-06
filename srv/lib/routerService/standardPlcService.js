@@ -11,7 +11,7 @@ const _ = require("underscore");
  * @name standardPlcService.js
  */
 
-const Helpers = require(global.appRoot + "/lib/util/helpers.js");
+const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
@@ -2129,7 +2129,7 @@ class Dispatcher {
 				let status;
 
 				do {
-					await Helpers.sleep(1000);
+					await helpers.sleep(1000);
 					if(await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)){
 						status = await this.checkTaskStatus(oData.TASK_ID);
 					} else {
@@ -2389,7 +2389,7 @@ class Dispatcher {
 					let status;
 
 					do {
-						await Helpers.sleep(1000);
+						await helpers.sleep(1000);
 						if(await this.ExtensibilityPlcService.checkTaskTimeout(oData.TASK_ID, true)){
 							status = await this.checkTaskStatus(oData.TASK_ID);
 						} else {

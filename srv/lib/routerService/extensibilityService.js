@@ -227,7 +227,7 @@ class Service {
 				where 
 					task_type = '${sTaskType}' 
 					and task_id = '${sTaskId} 
-					and seconds_between(CREATED_ON, CURRENT_UTCTIMESTAMP) > (select VALUE_IN_SECONDS from "sap.plc.db::basis.t_application_timeout" where APPLICATION_TIMEOUT_ID = 'SessionTimeout')'
+					and seconds_between(CREATED_ON, CURRENT_UTCTIMESTAMP) > (select VALUE_IN_SECONDS from "sap.plc.db::basis.t_application_timeout" where APPLICATION_TIMEOUT_ID = 'SessionTimeout')
 				`
 			);
 			let oTaskStatus = await oConnection.statementExecPromisified(oStatement, []);
