@@ -38,8 +38,8 @@ function doService() {
 
 	// --------------------- Global Constants and Variables ---------------------
 	let iJobId;
-	let iStatusCode = 200; // service response code
-	let oServiceResponseBody = {}; // service response body
+	let iStatusCode; // service response code
+	let oServiceResponseBody; // service response body
 
 	let StandardPlcService;
 	let ExtensibilityPlcService;
@@ -159,6 +159,9 @@ function doService() {
 	this.execute = async function (request) {
 
 		let bRunningJobs = false;
+
+		iStatusCode = 200; // service response code
+		oServiceResponseBody = {}; // service response body
 
 		iJobId = request.JOB_ID; // add job id to global variable
 		StandardPlcService = new StandardPlcDispatcher(request, sOperation);
