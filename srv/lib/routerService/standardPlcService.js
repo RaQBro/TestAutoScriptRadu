@@ -13,6 +13,7 @@ const _ = require("underscore");
 
 const helpers = require(global.appRoot + "/lib/util/helpers.js");
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js");
+const ExtensibilityService = require(global.appRoot + "/lib/routerService/extensibilityService.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
@@ -32,8 +33,10 @@ class Dispatcher {
 	constructor(request, sOperation) {
 
 		this.JOB_ID = request.JOB_ID;
-		this.PlcDispatcher = new DispatcherPlc(request);
 		this.Operation = sOperation;
+
+		this.PlcDispatcher = new DispatcherPlc(request);
+		this.ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
 	}
 
 	/** @function
