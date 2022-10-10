@@ -38,6 +38,7 @@ context template_application {
             IS_ONLINE_MODE      : hana.TINYINT; // True - 1 if online mode / False - 0 if job
             HTTP_METHOD         : String(10);
             REQUEST_PARAMETERS  : String(2000);
+            REQUEST_QUERY       : String(2000);
             REQUEST_BODY        : hana.CLOB;
             RESPONSE_BODY       : hana.CLOB;
             SAP_JOB_ID          : Integer; // null for online mode

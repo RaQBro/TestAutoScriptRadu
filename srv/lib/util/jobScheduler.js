@@ -224,7 +224,8 @@ class JobSchedulerUtil {
 
 		let sJobName = request.originalUrl === undefined ? null : request.originalUrl;
 		let sRequestBody = request.body === undefined ? null : JSON.stringify(request.body);
-		let sRequestParameters = request.query === undefined ? null : JSON.stringify(request.query);
+		let sRequestQuery = request.query === undefined ? null : JSON.stringify(request.query);
+		let sRequestParameters = request.params === undefined ? null : JSON.stringify(request.params);
 
 		let sRunUserId = null;
 		let sRequestUserId = null;
@@ -293,9 +294,9 @@ class JobSchedulerUtil {
 			`
 				insert into "sap.plc.extensibility::template_application.t_job_log"
 				( JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_NAME, JOB_STATUS,
-				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_BODY, RESPONSE_BODY,
+				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_QUERY, REQUEST_BODY, RESPONSE_BODY,
 				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID, JOB_ORDER_NO )
-				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+				values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 						(	select 
 								CASE WHEN MAX(JOB_ORDER_NO) IS NULL THEN 1
 								ELSE MAX(JOB_ORDER_NO) + 1 END
@@ -304,7 +305,7 @@ class JobSchedulerUtil {
 		);
 		await connection.statementExecPromisified(statement, [
 			sJobTimestamp, sJobStartTimestamp, null, sJobName, sJobStatus,
-			sRequestUserId, sRunUserId, iWebRequest, request.method, sRequestParameters, sRequestBody, null,
+			sRequestUserId, sRunUserId, iWebRequest, request.method, sRequestParameters, sRequestQuery, sRequestBody, null,
 			iSapJobId, iSapScheduleId, iSapRunId
 		]);
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
@@ -344,7 +345,7 @@ class JobSchedulerUtil {
 				from "sap.plc.extensibility::template_application.t_job_log"
 				where
 					JOB_STATUS = 'Running' and
-					JOB_ID > 0 and
+					IS_ONLINE_MODE = 0 and
 					JOB_ORDER_NO > 0;
 			`
 		);
@@ -376,7 +377,8 @@ class JobSchedulerUtil {
 				select JOB_ID
 				from "sap.plc.extensibility::template_application.t_job_log"
 				where
-					JOB_STATUS = 'Pending'
+					JOB_STATUS = 'Pending' and
+					IS_ONLINE_MODE = 0
 				order by
 					JOB_TIMESTAMP asc;
 			`;
@@ -415,7 +417,9 @@ class JobSchedulerUtil {
 			// add method
 			oRequest.method = oJobDetails.HTTP_METHOD;
 			// add request parameter
-			oRequest.query = JSON.parse(oJobDetails.REQUEST_PARAMETERS);
+			oRequest.params = JSON.parse(oJobDetails.REQUEST_PARAMETERS);
+			// add request query
+			oRequest.query = JSON.parse(oJobDetails.REQUEST_QUERY);
 			// add request body
 			oRequest.body = JSON.parse(oJobDetails.REQUEST_BODY);
 		}

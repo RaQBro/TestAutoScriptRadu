@@ -37,6 +37,7 @@
 				<Property Name="IS_ONLINE_MODE" Type="Edm.Byte"/>
 				<Property Name="HTTP_METHOD" Type="Edm.String" MaxLength="10"/>
 				<Property Name="REQUEST_PARAMETERS" Type="Edm.String" MaxLength="2000"/>
+				<Property Name="REQUEST_QUERY" Type="Edm.String" MaxLength="2000"/>
 				<Property Name="REQUEST_BODY" Type="Edm.String" MaxLength="2147483647"/>
 				<Property Name="RESPONSE_BODY" Type="Edm.String" MaxLength="2147483647"/>
 				<Property Name="SAP_JOB_ID" Type="Edm.Int32"/>

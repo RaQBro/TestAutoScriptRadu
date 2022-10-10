@@ -61,6 +61,9 @@
 			<Annotations Target="Metadata.job-logsType/REQUEST_PARAMETERS">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobRequestParameters}"/>
 			</Annotations>
+			<Annotations Target="Metadata.job-logsType/REQUEST_QUERY">
+				<Annotation Term="Common.Label" String="{@i18n&gt;jobRequestQuery}"/>
+			</Annotations>
 			<Annotations Target="Metadata.job-messagesType/TIMESTAMP">
 				<Annotation Term="Common.Label" String="{@i18n&gt;jobMessagesTimestamp}"/>
 			</Annotations>
