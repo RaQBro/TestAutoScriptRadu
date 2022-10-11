@@ -20,6 +20,7 @@
 	"sap.plc.db::basis.t_status": {},
 	"sap.plc.db::basis.t_status__text": {},
 	"sap.plc.db::basis.t_tag": {},
+	"sap.plc.db::basis.t_task":{},
 	"sap.plc.db::basis.t_variant": {},
 	"sap.plc.db::basis.t_variant_item": {}
 }

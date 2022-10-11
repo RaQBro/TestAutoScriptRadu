@@ -125,6 +125,12 @@
 			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
 		}
 	},
+	"sap.plc.db::basis.t_task": {
+		"target": {
+			"object": "sap.plc.db::basis.t_task",
+			"schema.configure": "LOGICAL-PLC-STANDARD-GRANTOR/schema"
+		}
+	},
 	"sap.plc.db::basis.t_variant": {
 		"target": {
 			"object": "sap.plc.db::basis.t_variant",
