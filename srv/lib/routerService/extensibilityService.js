@@ -226,7 +226,7 @@ class Service {
 				from "sap.plc.db::basis.t_task" 
 				where 
 					task_type = '${sTaskType}' 
-					and task_id = '${sTaskId} 
+					and task_id = '${sTaskId}'
 					and seconds_between(CREATED_ON, CURRENT_UTCTIMESTAMP) > (select VALUE_IN_SECONDS from "sap.plc.db::basis.t_application_timeout" where APPLICATION_TIMEOUT_ID = 'SessionTimeout')
 				`
 			);

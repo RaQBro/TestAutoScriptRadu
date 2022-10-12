@@ -1242,6 +1242,7 @@ class Dispatcher {
 		for (let oItem of aItemsToUpdate) {
 			let oItemToUpdate = {
 				"ITEM_ID": oItem.ITEM_ID,
+				"CHILD_ITEM_CATEGORY_ID": oItem.ITEM_CATEGORY_ID,
 				"ITEM_CATEGORY_ID": oItem.ITEM_CATEGORY_ID,
 				"CALCULATION_VERSION_ID": oItem.CALCULATION_VERSION_ID,
 				"REFERENCED_CALCULATION_VERSION_ID": oItem.REFERENCED_CALCULATION_VERSION_ID
@@ -2428,6 +2429,7 @@ class Dispatcher {
 				return true;
 			}
 		}
+		return false;
 	}
 
 	/** @function
