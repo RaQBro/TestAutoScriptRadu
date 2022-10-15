@@ -1921,7 +1921,7 @@ class Dispatcher {
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "PATCH", aParams, aLifecycleQuantities);
 		let oResponseBody = oResponse.data;
 
-		if (oResponse.status !== 201) {
+		if (oResponse.status !== 200) {
 			let sDeveloperInfo = `Failed to update lifecycle quantities of project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.error, this.Operation, sProjectType, sProjectId);
 			return undefined;
