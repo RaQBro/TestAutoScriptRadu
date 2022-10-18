@@ -362,6 +362,7 @@ class JobSchedulerUtil {
 	 * 
 	 * Get the oldest job from the table with status "Pending"
 	 * Select the entry from t_job_log table if pending job exists
+	 * Set job status "In Process" for next pending job
 	 * Creates a fake request object containing all properties as were initially added into the real request object
 	 * Also the URL, method, parameters and request body are added to the fake object similar as were defined into the real request object
 	 * 
@@ -371,31 +372,50 @@ class JobSchedulerUtil {
 
 		let oRequest; // the fake request object
 
+		let hdbClient = await DatabaseClass.createConnection();
+		let connection = new DatabaseClass(hdbClient);
+
 		// get the oldest job from the table with status "Pending"
-		let sSQLstmt =
+		let sSQLstmt = await connection.preparePromisified(
 			`
-				select JOB_ID
+				select JOB_ID, JOB_TIMESTAMP
 				from "sap.plc.extensibility::template_application.t_job_log"
 				where
 					JOB_STATUS = 'Pending' and
 					IS_ONLINE_MODE = 0
 				order by
 					JOB_TIMESTAMP asc;
-			`;
-		let aJobIdResults = await helpers.statementExecPromisified(sSQLstmt);
+			`
+		);
+		let aJobIdResults = await connection.statementExecPromisified(sSQLstmt);
 
 		let iJobId = aJobIdResults.length > 0 ? aJobIdResults[0].JOB_ID : undefined;
 		if (iJobId !== undefined) {
 
-			let sStmt =
+			// set job status "In Process"
+			let statement = await connection.preparePromisified(
 				`
-				select *
-				from "sap.plc.extensibility::template_application.t_job_log"
-				where
-					JOB_ID = '${iJobId}' and
-					JOB_STATUS = 'Pending';
-			`;
-			let aResults = await helpers.statementExecPromisified(sStmt);
+					update "sap.plc.extensibility::template_application.t_job_log"
+					set
+						JOB_STATUS = ?
+					where
+						JOB_ID = ? and
+						JOB_TIMESTAMP = ?;
+				`
+			);
+
+			await connection.statementExecPromisified(statement, ["In Process", aJobIdResults[0].JOB_ID, aJobIdResults[0].JOB_TIMESTAMP]);
+
+			let sStmt = await connection.preparePromisified(
+				`
+					select *
+					from "sap.plc.extensibility::template_application.t_job_log"
+					where
+						JOB_ID = '${iJobId}' and
+						JOB_STATUS = 'In Process';
+				`
+			);
+			let aResults = await connection.statementExecPromisified(sStmt);
 
 			let oJobDetails = aResults[0];
 
@@ -423,6 +443,8 @@ class JobSchedulerUtil {
 			// add request body
 			oRequest.body = JSON.parse(oJobDetails.REQUEST_BODY);
 		}
+
+		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 		// return fake request object or undefined
 		return oRequest;
