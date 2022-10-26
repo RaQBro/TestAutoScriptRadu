@@ -112,7 +112,7 @@ class ExtensibilityRouter {
 		});
 
 		/**
-		 * Endpoint for checking if PLC session is active. If not PLC init-session will be performed
+		 * Endpoint for checking if PLC session is active for current user. If not PLC init-session will be performed
 		 */
 		router.get("/check-init-plc-session", function (request, response) {
 

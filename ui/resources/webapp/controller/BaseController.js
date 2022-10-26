@@ -169,7 +169,7 @@ sap.ui.define([
 							sViewName, false, null, oButtonPopover);
 					};
 
-					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
+					BackendConnector.doGet("CHECK_INIT_PLC_SESSION", onSuccess, onError, true);
 				}
 			}
 		},
