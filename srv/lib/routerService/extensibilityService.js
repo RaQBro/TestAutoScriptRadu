@@ -21,6 +21,8 @@ const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
 const Message = MessageLibrary.Message;
 const sVersionType = MessageLibrary.PlcObjects.Version;
 
+const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js");
+
 /** @class
  * @classdesc Extensibility PLC services
  * @name Service 
@@ -40,6 +42,9 @@ class Service {
 		} else {
 			this.userId = request.user.id.toUpperCase(); // request user
 		}
+
+		this.PlcDispatcher = new DispatcherPlc(request);
+
 	}
 
 	/** @function
@@ -172,14 +177,72 @@ class Service {
 	}
 
 	/** @function
-	 * Check if there is an active session in plc for the technical user
+	 * Check if there is an active session in plc exist for the user from request
 	 * 
+	 * @param {object} request - the web request
 	 * @return {boolean} true (active session) / false (expired or no session availble)
 	 */
-	async checkPlcSession() {
+	async checkInitPLCSession(request) {
 
-		let ApplicationSettingsUtil = new ApplicationSettings();
-		let sTechnicalUser = await ApplicationSettingsUtil.getTechnicalUserFromTable();
+		let sMessageInfo;
+		let sUserId = request.user.id.toUpperCase();
+
+		let bValidSession = await this.checkPlcSession(sUserId);
+		if (bValidSession) {
+
+			sMessageInfo = `PLC session open for user ${sUserId}.`;
+
+		} else {
+
+			let oInitPlcSession;
+
+			let sQueryPath = "init-session";
+			let aParams = [{
+				"name": "language",
+				"value": "EN"
+			}];
+
+			let oResponse = await this.PlcDispatcher.dispatchPrivateApi(sQueryPath, "POST", aParams);
+			let oResponseBody = oResponse.data;
+
+			if (oResponse.status !== 200) {
+				sMessageInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
+				await Message.addLog(this.JOB_ID, sMessageInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
+				oInitPlcSession = undefined;
+			} else {
+				sMessageInfo = "Init PLC session with success!";
+				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
+				oInitPlcSession = oResponseBody;
+			}
+
+			if (oInitPlcSession !== undefined) {
+				let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
+				sMessageInfo = `PLC session open for user ${sCurrentUser}.`;
+				await Message.addLog(this.Operation, sMessageInfo, "info", undefined, this.Operation);
+			}
+		}
+
+		let oMessage = new Message(sMessageInfo);
+
+		return oMessage;
+	}
+
+	/** @function
+	 * Check if there is an active session in plc for the technical user or for the user provided as parameter
+	 * 
+	 * @param {string} sUser - optional parameter containing the user to check PLC session
+	 * @return {boolean} true (active session) / false (expired or no session availble)
+	 */
+	async checkPlcSession(sUserId) {
+
+		let sUserIdToCheckSession;
+
+		if (sUserId !== undefined) {
+			sUserIdToCheckSession = sUserId;
+		} else {
+			let ApplicationSettingsUtil = new ApplicationSettings();
+			sUserIdToCheckSession = await ApplicationSettingsUtil.getTechnicalUserFromTable();
+		}
 
 		try {
 
@@ -193,7 +256,7 @@ class Service {
 							THEN true
 						ELSE false
 					END AS VALID_SESSION
-				from "sap.plc.db::basis.t_session" where session_id = '${sTechnicalUser}'
+				from "sap.plc.db::basis.t_session" where session_id = '${sUserIdToCheckSession}'
 				`
 			);
 			let oSession = await oConnection.statementExecPromisified(oStatement, []);
