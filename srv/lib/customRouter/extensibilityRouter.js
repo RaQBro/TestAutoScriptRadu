@@ -9,9 +9,14 @@ const expressPromiseRouter = require("express-promise-router");
  * 
  * Extensibility PLC Router
  * Requests used to call the custom backend services:
+ * 
  *		- GET /extensibility/plc/application-token
+ *		- POST /extensibility/plc/generate-technical-user-plc-token
+ *		- GET /extensibility/plc/check-technical-user-plc-token
+ *		- GET /extensibility/plc/check-init-plc-session
  *		- GET /extensibility/plc/user-plc-token
  *		- GET /extensibility/plc/user-details
+ *		- GET /extensibility/plc/check-authorization
  *		- GET /extensibility/plc/application-routes
  *		- POST /extensibility/plc/maintain-default-values
  *		- GET /extensibility/plc/get-all-projects
@@ -19,9 +24,8 @@ const expressPromiseRouter = require("express-promise-router");
  *							- undefined or true if online mode (web request) - no entries in logs/messages if undefined for web request
  *							- false if fake background job (web request)
  *							- must be undefined in case of background job (job request) - with entries in logs/messages for job request
- *		- GET /extensibility/plc/check-authorization
+ *		- GET /extensibility/plc/archive-logs-messages
  *		- GET /extensibility/plc/logout-service
- *							
  * 
  * @name extensibilityRouter.js
  */
@@ -101,6 +105,21 @@ class ExtensibilityRouter {
 				response.status(200).type(sContentType).send({
 					"technicalUserPlcToken": result
 				});
+			}).catch(async function (err) {
+				let oPlcException = await PlcException.createPlcException(err);
+				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);
+			});
+		});
+
+		/**
+		 * Endpoint for checking if PLC session is active. If not PLC init-session will be performed
+		 */
+		router.get("/check-init-plc-session", function (request, response) {
+
+			let ExtensibilityPlcService = new ExtensibilityService(request, sOperation);
+
+			ExtensibilityPlcService.checkInitPLCSession(request).then(function (result) {
+				response.status(200).type(sContentType).send(result);
 			}).catch(async function (err) {
 				let oPlcException = await PlcException.createPlcException(err);
 				response.type(sContentType).status(oPlcException.code.responseCode).send(oPlcException);

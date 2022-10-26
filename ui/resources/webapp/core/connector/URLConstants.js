@@ -7,6 +7,7 @@ sap.ui.define([], function () {
 	let userDetails = "/extensibility/plc/user-details";
 	let jobDetails = "/scheduler/job/get-all-jobs";
 	let initPlcSession = "/standard/plc/init-session";
+	let checkInitPlcSession = "/extensibility/plc/check-init-plc-session";
 	let plcLogout = "/standard/plc/logout-session";
 	let archiveJobLogsMessages = "/extensibility/plc/archive-logs-messages?IS_ONLINE_MODE=false&ARCHIVE_DATE={DATE}";
 	let getConfig = "/service/odataService.xsodata/configuration?$format=json";
@@ -30,6 +31,7 @@ sap.ui.define([], function () {
 		GET_USER_DETAILS: userDetails,
 		GET_ALL_JOBS: jobDetails,
 		INIT_PLC_SESSION: initPlcSession,
+		CHECK_INIT_PLC_SESSION: checkInitPlcSession,
 		GET_CONFIGURATION: getConfig,
 		GET_DEFAULT_VALUES: getDefaultValues,
 		GET_APPLICATION_SETTINGS: getApplicationSettings,
