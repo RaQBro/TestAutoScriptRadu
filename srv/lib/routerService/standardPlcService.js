@@ -1423,11 +1423,15 @@ class Dispatcher {
 	 */
 	async getStatuses() {
 
+		let noEntries = 1000;
 		let sQueryPath = "statuses";
 		let aParams = [{
 			"name": "skip",
 			"value": 0
 		}, {
+			"name": "top",
+			"value": noEntries
+		},{
 			"name": "expand",
 			"value": "texts"
 		}];
@@ -1720,10 +1724,14 @@ class Dispatcher {
 	 */
 	async getLifecycleConfigurations(sProjectId) {
 
+		let noEntries = 1000;
 		let sQueryPath = `lifecycleConfigurations/${sProjectId}`;
 		let aParams = [{
 			"name": "skip",
 			"value": 0
+		},{
+			"name": "top",
+			"value": noEntries
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
@@ -1847,10 +1855,14 @@ class Dispatcher {
 	 */
 	async getLifecycleQuantities(sProjectId) {
 
+		let noEntries = 1000;
 		let sQueryPath = `lifecycleQuantities/${sProjectId}`;
 		let aParams = [{
 			"name": "skip",
 			"value": 0
+		},{
+			"name": "top",
+			"value": noEntries
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
