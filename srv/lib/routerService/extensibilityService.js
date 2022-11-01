@@ -85,13 +85,13 @@ class Service {
 	/** @function
 	 * Get token from UAA of PLC for current user
 	 * 
-	 * @return {string} APPLICATION_USER_ACCESS_TOKEN - user access token
+	 * @return {string} sApplicationUserToken - user access token
 	 */
 	async getUserPlcToken(request) {
 
 		let UAAToken = new UaaToken();
-		await UAAToken.retrieveApplicationUserToken(request);
-		return UAAToken.APPLICATION_USER_ACCESS_TOKEN;
+		let sApplicationUserToken = await UAAToken.retrieveApplicationUserToken(request);
+		return sApplicationUserToken;
 	}
 
 	/** @function
@@ -190,7 +190,7 @@ class Service {
 		let bValidSession = await this.checkPlcSession(sUserId);
 		if (bValidSession) {
 
-			sMessageInfo = `PLC session open for user ${sUserId}.`;
+			sMessageInfo = `PLC session already opened and valid for user ${sUserId}.`;
 
 		} else {
 
