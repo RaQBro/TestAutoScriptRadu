@@ -301,6 +301,10 @@ sap.ui.define([
 			return new sap.ui.model.json.JSONModel(data);
 		},
 
+		removePopoverMessages: function () {
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+		},
+
 		getVisibilitySettingsModel: function (view) {
 
 			let fullModel = this.getOwnerComponent().getModel("visibilitySettingsModel");
