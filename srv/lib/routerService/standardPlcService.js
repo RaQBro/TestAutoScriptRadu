@@ -1365,13 +1365,15 @@ class Dispatcher {
 
 					return true;
 				} else {
-					let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+					let sDeveloperInfo =
+						`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen or used in other calculation version(s).`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 					return undefined;
 				}
 			} else {
-				let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+				let sDeveloperInfo =
+					`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen or used in other calculation version(s).`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 				return undefined;
@@ -1431,7 +1433,7 @@ class Dispatcher {
 		}, {
 			"name": "top",
 			"value": noEntries
-		},{
+		}, {
 			"name": "expand",
 			"value": "texts"
 		}];
@@ -1729,7 +1731,7 @@ class Dispatcher {
 		let aParams = [{
 			"name": "skip",
 			"value": 0
-		},{
+		}, {
 			"name": "top",
 			"value": noEntries
 		}];
@@ -1860,7 +1862,7 @@ class Dispatcher {
 		let aParams = [{
 			"name": "skip",
 			"value": 0
-		},{
+		}, {
 			"name": "top",
 			"value": noEntries
 		}];
