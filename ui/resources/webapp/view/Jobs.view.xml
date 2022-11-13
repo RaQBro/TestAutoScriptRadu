@@ -4,7 +4,7 @@
 		<content>
 			<VBox id="vboxMessages" fitContainer="true">
 				<smartTable:SmartTable id="stJobs" entitySet="job-logs" tableType="ResponsiveTable" useTablePersonalisation="true"
-					initialise="onInitialiseSmartTable" showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfEntries}"
+					initialise="onInitialiseSmartTable" showTablePersonalisation="true" useVariantManagement="false" header="{i18n>numberOfJobsEntries}"
 					showRowCount="true" useExportToExcel="true" enableAutoBinding="true" beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true"
 					initiallyVisibleFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP,TIME_TAKEN"
 					requestAtLeastFields="JOB_ID,JOB_STATUS,JOB_NAME,REQUEST_USER_ID,START_TIMESTAMP,END_TIMESTAMP,IS_ONLINE_MODE,TIME_TAKEN,IS_ARCHIVED,JOB_TIMESTAMP">
