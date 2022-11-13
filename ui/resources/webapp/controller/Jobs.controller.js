@@ -42,6 +42,9 @@ sap.ui.define([
 			this.getView().setModel(this.getOwnerComponent().getModel("serviceModel"));
 
 			this.setSideContentSelectedKey(this.sViewName);
+
+			// refresh smart table
+			this.onRefreshEntries();
 		},
 
 		onInitialiseSmartTable: function () {
