@@ -18,7 +18,10 @@ const ApplicationSettings = require(global.appRoot + "/lib/util/applicationSetti
 const SecureStore = require(global.appRoot + "/lib/routerService/secureStoreService.js");
 
 const MessageLibrary = require(global.appRoot + "/lib/util/message.js");
+const Code = MessageLibrary.Code;
 const Message = MessageLibrary.Message;
+const PlcException = MessageLibrary.PlcException;
+
 const sVersionType = MessageLibrary.PlcObjects.Version;
 
 const DispatcherPlc = require(global.appRoot + "/lib/util/plcDispatcher.js");
@@ -184,17 +187,22 @@ class Service {
 	 */
 	async checkInitPLCSession(request) {
 
-		let sMessageInfo;
-		let sUserId = request.user.id.toUpperCase();
+		let sUserId;
+		let oMessage;
 
-		let bValidSession = await this.checkPlcSession(sUserId);
+		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === false)) {
+			let ApplicationSettingsUtil = new ApplicationSettings();
+			sUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable(); // technical user
+		} else {
+			sUserId = request.user.id.toUpperCase(); // request user
+		}
+
+		let bValidSession = await this.checkPlcSession(request);
 		if (bValidSession) {
 
-			sMessageInfo = `PLC session already opened and valid for user ${sUserId}.`;
+			oMessage = new Message(`PLC session already opened and valid for user ${sUserId}.`);
 
 		} else {
-
-			let oInitPlcSession;
 
 			let sQueryPath = "init-session";
 			let aParams = [{
@@ -206,23 +214,12 @@ class Service {
 			let oResponseBody = oResponse.data;
 
 			if (oResponse.status !== 200) {
-				sMessageInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
-				await Message.addLog(this.JOB_ID, sMessageInfo, "error", oResponseBody.head.messages, this.Operation, undefined, undefined);
-				oInitPlcSession = undefined;
+				let sDeveloperInfo = "Failed to initialize session with PLC. If this error persists, please contact your system administrator!";
+				throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 			} else {
-				sMessageInfo = "Init PLC session with success!";
-				await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, undefined, undefined);
-				oInitPlcSession = oResponseBody;
-			}
-
-			if (oInitPlcSession !== undefined) {
-				let sCurrentUser = oInitPlcSession.body.CURRENTUSER.ID;
-				sMessageInfo = `PLC session open for user ${sCurrentUser}.`;
-				await Message.addLog(this.Operation, sMessageInfo, "info", undefined, this.Operation);
+				oMessage = new Message(`PLC session open for user ${oResponseBody.body.CURRENTUSER.ID}.`);
 			}
 		}
-
-		let oMessage = new Message(sMessageInfo);
 
 		return oMessage;
 	}
@@ -233,40 +230,38 @@ class Service {
 	 * @param {string} sUser - optional parameter containing the user to check PLC session
 	 * @return {boolean} true (active session) / false (expired or no session availble)
 	 */
-	async checkPlcSession(sUserId) {
+	async checkPlcSession(request) {
 
-		let sUserIdToCheckSession;
+		let sUserId;
 
-		if (sUserId !== undefined) {
-			sUserIdToCheckSession = sUserId;
-		} else {
+		if (helpers.isRequestFromJob(request) || (request.IS_ONLINE_MODE !== undefined && request.IS_ONLINE_MODE === false)) {
 			let ApplicationSettingsUtil = new ApplicationSettings();
-			sUserIdToCheckSession = await ApplicationSettingsUtil.getTechnicalUserFromTable();
+			sUserId = await ApplicationSettingsUtil.getTechnicalUserFromTable(); // technical user
+		} else {
+			sUserId = request.user.id.toUpperCase(); // request user
 		}
 
-		try {
-
-			let oHdbClient = await DatabaseClass.createConnection();
-			let oConnection = new DatabaseClass(oHdbClient);
-			let oStatement = await oConnection.preparePromisified(
-				`
+		let oHdbClient = await DatabaseClass.createConnection();
+		let oConnection = new DatabaseClass(oHdbClient);
+		let oStatement = await oConnection.preparePromisified(
+			`
 				select 
 					CASE
-						WHEN (select VALUE_IN_SECONDS from "sap.plc.db::basis.t_application_timeout" where APPLICATION_TIMEOUT_ID = 'SessionTimeout') > SECONDS_BETWEEN(last_activity_time, current_timestamp)
+						WHEN (
+								select VALUE_IN_SECONDS
+								from "sap.plc.db::basis.t_application_timeout"
+								where APPLICATION_TIMEOUT_ID = 'SessionTimeout') > SECONDS_BETWEEN(last_activity_time, current_timestamp
+							  )
 							THEN true
 						ELSE false
 					END AS VALID_SESSION
-				from "sap.plc.db::basis.t_session" where session_id = '${sUserIdToCheckSession}'
-				`
-			);
-			let oSession = await oConnection.statementExecPromisified(oStatement, []);
-			oHdbClient.close();
+				from "sap.plc.db::basis.t_session" where session_id = '${sUserId}'
+			`
+		);
+		let oSession = await oConnection.statementExecPromisified(oStatement, []);
+		oHdbClient.close();
 
-			return oSession !== undefined && oSession.length > 0 ? oSession[0].VALID_SESSION : false;
-		} catch (e) {
-			//TODO: error handling
-			throw e;
-		}
+		return oSession !== undefined && oSession.length > 0 ? oSession[0].VALID_SESSION : false;
 	}
 
 	/** @function
