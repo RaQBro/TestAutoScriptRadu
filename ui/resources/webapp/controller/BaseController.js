@@ -169,7 +169,7 @@ sap.ui.define([
 							sViewName, false, null, oButtonPopover);
 					};
 
-					BackendConnector.doGet("INIT_PLC_SESSION", onSuccess, onError, true);
+					BackendConnector.doGet("CHECK_INIT_PLC_SESSION", onSuccess, onError, true);
 				}
 			}
 		},
@@ -299,6 +299,10 @@ sap.ui.define([
 			let data = fullModel.oData[view] || fullModel.oData.default || {};
 
 			return new sap.ui.model.json.JSONModel(data);
+		},
+
+		removePopoverMessages: function () {
+			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 
 		getVisibilitySettingsModel: function (view) {

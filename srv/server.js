@@ -36,6 +36,7 @@ global.plcWebUrl = process.env.SAP_PLC_WEB;
 global.plcXsjsUrl = process.env.SAP_PLC_XSJS;
 global.plcPublicApiUrl = process.env.SAP_PLC_PUBLIC_API;
 global.appUserToken = {};
+global.appUserTokenExpire = {};
 
 //For local development and usage only !!!
 //xsenv.loadEnv();

@@ -52,8 +52,6 @@ class UAAToken {
 		this.ApplicationSettingsUtil = new ApplicationSettings();
 		this.SecureStoreService = new SecureStore();
 
-		this.APPLICATION_USER_ACCESS_TOKEN = null;
-		this.APPLICATION_USER_TOKEN_EXPIRE = null;
 		this.TECHNICAL_USER_ACCESS_TOKEN = null;
 		this.TECHNICAL_USER_TOKEN_EXPIRE = null;
 	}
@@ -63,20 +61,23 @@ class UAAToken {
 	 * 
 	 * @return {boolean} isValid - true / false
 	 */
-	hasApplicationUserValidToken() {
+	hasApplicationUserValidToken(sCurrentUser) {
 
 		let isValid = false;
+		let dApplicationUserTokenExpire = global.appUserTokenExpire[sCurrentUser];
 
-		if (this.APPLICATION_USER_TOKEN_EXPIRE !== null) {
+		if (dApplicationUserTokenExpire !== undefined) {
 
 			let ticksPerSecond = 1000;
 
 			let nowCheck = new Date();
 			let nowCheckTicks = nowCheck.getTime() + ticksPerSecond * 120;
 
-			let tokenExpireTicks = this.APPLICATION_USER_TOKEN_EXPIRE.getTime();
+			let tokenExpireTicks = dApplicationUserTokenExpire.getTime();
 
-			if (tokenExpireTicks > nowCheckTicks && this.APPLICATION_USER_ACCESS_TOKEN !== null && this.APPLICATION_USER_ACCESS_TOKEN.length > 10) {
+			let sApplicationUserToken = global.appUserToken[sCurrentUser];
+
+			if (tokenExpireTicks > nowCheckTicks && sApplicationUserToken !== undefined && sApplicationUserToken.length > 10) {
 				isValid = true;
 			}
 		}
@@ -117,8 +118,10 @@ class UAAToken {
 	 */
 	async retrieveApplicationUserToken(request) {
 
-		if (this.hasApplicationUserValidToken()) {
-			return;
+		let sCurrentUser = request.user.id.toUpperCase();
+
+		if (this.hasApplicationUserValidToken(sCurrentUser)) {
+			return global.appUserToken[sCurrentUser];
 		}
 
 		let that = this;
@@ -153,12 +156,9 @@ class UAAToken {
 						let expire = new Date();
 						expire.setSeconds(expire.getSeconds() + parseInt(refreshTokenResponse.data.expires_in));
 
-						this.APPLICATION_USER_ACCESS_TOKEN = refreshTokenResponse.data.access_token;
-						this.APPLICATION_USER_TOKEN_EXPIRE = expire;
-
-						// add bearer token to global variable for this user
-						let sCurrentUser = request.user.id.toUpperCase();
+						// add bearer token and expire date to global variable for this user
 						global.appUserToken[sCurrentUser] = refreshTokenResponse.data.access_token;
+						global.appUserTokenExpire[sCurrentUser] = expire;
 
 					})
 					.catch(error => {
@@ -168,6 +168,8 @@ class UAAToken {
 			.catch(error => {
 				throw new PlcException(Code.GENERAL_UNEXPECTED_EXCEPTION, "Exception during refresh token retrieval.", error);
 			});
+
+		return global.appUserToken[sCurrentUser];
 	}
 
 	/** @function

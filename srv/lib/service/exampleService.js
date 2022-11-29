@@ -201,7 +201,7 @@ function doService() {
 			// }
 
 			let bActiveSession = false;
-			let bValidSession = await ExtensibilityPlcService.checkPlcSession();
+			let bValidSession = await ExtensibilityPlcService.checkPlcSession(request);
 
 			if (bValidSession) {
 				bActiveSession = true;

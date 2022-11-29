@@ -163,7 +163,7 @@ sap.ui.define([
 				return oDefaultValue.FIELD_NAME === "RTE";
 			});
 
-			sRTE = oRTE !== null && oRTE !== undefined ? oRTE.FIELD_VALUE : "";
+			sRTE = oRTE !== null && oRTE !== undefined ? oRTE.FIELD_DESCRIPTION : "";
 
 			oEvent.getSource().getContent()[0].setHtmlText(sRTE);
 		},

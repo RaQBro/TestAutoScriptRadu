@@ -366,23 +366,27 @@ sap.ui.define([
 			}
 		},
 
-		onChangeNoParallelJobs: function () {
+		onChangeNoParallelJobs: function (oEvent) {
 
+			this.validateInput(oEvent.getSource());
 			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
-		onChangeNoProjects: function () {
+		onChangeNoProjects: function (oEvent) {
 
+			this.validateInput(oEvent.getSource());
 			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
-		onChangeNoCalculations: function () {
+		onChangeNoCalculations: function (oEvent) {
 
+			this.validateInput(oEvent.getSource());
 			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 
-		onChangeNoCalculationVersions: function () {
+		onChangeNoCalculationVersions: function (oEvent) {
 
+			this.validateInput(oEvent.getSource());
 			this.toolBarMessagesModel.setProperty("/saveEnabled", true);
 		},
 

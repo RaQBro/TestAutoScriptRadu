@@ -1365,13 +1365,15 @@ class Dispatcher {
 
 					return true;
 				} else {
-					let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+					let sDeveloperInfo =
+						`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen or used in other calculation version(s).`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 					return undefined;
 				}
 			} else {
-				let sDeveloperInfo = `Failed to delete calculation version with ID '${iVersionId}'.`;
+				let sDeveloperInfo =
+					`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen or used in other calculation version(s).`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 				return undefined;
@@ -1423,10 +1425,14 @@ class Dispatcher {
 	 */
 	async getStatuses() {
 
+		let noEntries = 1000;
 		let sQueryPath = "statuses";
 		let aParams = [{
 			"name": "skip",
 			"value": 0
+		}, {
+			"name": "top",
+			"value": noEntries
 		}, {
 			"name": "expand",
 			"value": "texts"
@@ -1720,10 +1726,14 @@ class Dispatcher {
 	 */
 	async getLifecycleConfigurations(sProjectId) {
 
+		let noEntries = 1000;
 		let sQueryPath = `lifecycleConfigurations/${sProjectId}`;
 		let aParams = [{
 			"name": "skip",
 			"value": 0
+		}, {
+			"name": "top",
+			"value": noEntries
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
@@ -1847,10 +1857,14 @@ class Dispatcher {
 	 */
 	async getLifecycleQuantities(sProjectId) {
 
+		let noEntries = 1000;
 		let sQueryPath = `lifecycleQuantities/${sProjectId}`;
 		let aParams = [{
 			"name": "skip",
 			"value": 0
+		}, {
+			"name": "top",
+			"value": noEntries
 		}];
 
 		let oResponse = await this.PlcDispatcher.dispatchPublicApi(sQueryPath, "GET", aParams);
