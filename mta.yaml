@@ -1,6 +1,6 @@
 ID: template-application
 _schema-version: '2.1'
-version: 0.0.1
+version: 0.202212.8
 
 modules:
   - name: tapp_db
