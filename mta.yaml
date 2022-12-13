@@ -9,7 +9,7 @@ modules:
     requires:
       - name: tapp_hdi_db
         properties:
-          TARGET_CONTAINER: '~{hdi-container-name}'
+          TARGET_CONTAINER: '~{service-name}'
       - name: plc_standard_grantor
         group: SERVICE_REPLACEMENTS
         properties:
@@ -49,8 +49,12 @@ modules:
 resources:
   - name: tapp_hdi_db
     properties:
-      hdi-container-name: '${service-name}'
+      service-name: '${service-name}'
     type: com.sap.xs.hdi-container
+    parameters:
+      config:
+        schema: SAP_PLC_TEMPLATE_APPLICATION
+        makeUniqueName: true 
     
   - name: plc_standard_grantor
     type: org.cloudfoundry.existing-service
@@ -70,4 +74,3 @@ resources:
     
   - name: secureStore
     type: org.cloudfoundry.existing-service
-      
