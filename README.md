@@ -55,7 +55,20 @@ To create a new XSA Project (naming convention: **test-project-application**):
    - 6.6. Replace all "**Template Application**" witn new name (e.g. "**Test Project Application**")
    - 6.7. Manually replace all "**template_application**" with new name (e.g. "**test_project_application**") in **srv/lib/service/odataService.xsodata** file
 
-7. Open **mta.yaml** file:
+7. For a new application (**never deployed**), in order to create the **DB Schema** with prefix name **"SAP_PLC_"** apply the following changes:
+     - **!!! Make sure you replace schena name SAP_PLC_TEMPLATE_APPLICATION with new name (e.g. "SAP_PLC_TEST_PROJECT_APPLICATION")**
+
+	> 				  - name: xxx_hdi_db
+	> 				    properties:
+	> 				      service-name: '${service-name}'
+	> 				    type: com.sap.xs.hdi-container
+	> 				    parameters:
+	> 				      config:
+	> 				        schema: SAP_PLC_TEMPLATE_APPLICATION
+	> 				        makeUniqueName: true
+
+
+8. Open **mta.yaml** file:
      - For **Local/WebIDE development** change the type of the  **xxx-uaa-service** to **org.cloudfoundry.existing-service**:
 
 	> 				  - name: xxx-uaa-service
@@ -70,10 +83,7 @@ To create a new XSA Project (naming convention: **test-project-application**):
 	> 				    properties:  
 	> 				      service-name: '${service-name}'
 
-8. For a new application (**never deployed**), in order to create the **DB Schema** with prefix name **"SAP_PLC_"** apply changes from commit: **!!! Make sure you replace schena name SAP_PLC_TEMPLATE_APPLICATION with new name (e.g. "SAP_PLC_TEST_PROJECT_APPLICATION")**
-https://github.tools.sap/plc-template/template-application/commit/f2eff50ed3f92c1c74e4db564b7997ce9c483786
-
-9. Create XSUAA service instance: **!!! Open xs-security.json file and rename the xsappname value to your application name**
+9. Create **XSUAA** service instance:
    - 8.1. Download the **xs-security.json** file (right click on the file and press **Export**)
    - 8.2. From **xsa-cockpit => Organization => Space => Service Marketplace (Left Menu) => Authorization and Trust Management Service => Instances => New Instance**:
 	> 	- Plan: **Space**
@@ -83,7 +93,7 @@ https://github.tools.sap/plc-template/template-application/commit/f2eff50ed3f92c
 	> 	- Instance Name: **xxx-uaa-service**
 
 
-10. Test application:
+10. **Test** application:
 	- 10.1. build db module
 	- 10.2. build srv module
 	- 10.3. run srv module
