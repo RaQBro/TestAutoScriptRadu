@@ -48,7 +48,7 @@ To create a new XSA Project (naming convention: **test-project-application**):
 
 6. Replace in all project files: **!!! Make sure you search for the exact name (Case Sensitive Search) and do not Match the Whole Word !!! (right side panel in Web IDE, near the Git panel)**
    - 6.1. Search for term "**tapp_**"  => replace all with xxx_ (e.g. "**tpa_**" from test-project-application)
-   - 6.2. Search for term “**app-**”  => replace all with xxx- (e.g. "**tpa-**" from test-project-application)	
+   - 6.2. Search for term "**tapp_**"  => replace all with xxx- (e.g. "**tpa-**" from test-project-application)	
    - 6.3. Replace all "**TEMPLATE_APPLICATION**" with new name (e.g. "**TEST_PROJECT_APPLICATION**")
    - 6.4. Replace all "**template_application"** with new name (e.g. "**test_project_application**")
    - 6.5. Replace all "**template-application**" with new name (e.g. "**test-project-application**")
