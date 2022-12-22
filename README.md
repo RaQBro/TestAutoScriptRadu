@@ -3,7 +3,7 @@
 
 To create a new XSA Project (naming convention: **test-project-application**):
 
-1. Create a new **repository** into the target git organisation:
+1. Create a new **repository** into the target git organization:
 
 	> 	- Repository name: **test-project-application**
 	> 	- Type: **Internal**
