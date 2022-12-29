@@ -9,9 +9,9 @@ from "sap.plc.db::basis.t_account" as account
 left outer join "sap.plc.db::basis.t_account__text" as account_txt
 	on account.ACCOUNT_ID = account_txt.ACCOUNT_ID and
 	account.CONTROLLING_AREA_ID = account_txt.CONTROLLING_AREA_ID
-where account._valid_to is null 
+where account._valid_to is null
 	and account_txt._valid_to is null
 	and (account_txt.LANGUAGE = 'EN' or account_txt.LANGUAGE is null)
-order by 
+order by
 	account.ACCOUNT_ID,
 	account.CONTROLLING_AREA_ID;

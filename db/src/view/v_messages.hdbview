@@ -1,6 +1,6 @@
 VIEW "sap.plc.extensibility::template_application.v_messages"
 AS
-SELECT 
+SELECT
 	TIMESTAMP,
 	JOB_ID,
 	SEVERITY,
@@ -10,4 +10,4 @@ SELECT
 	PLC_OBJECT_TYPE,
 	PLC_OBJECT_ID,
 	DETAILS
-FROM "sap.plc.extensibility::template_application.t_messages"
+FROM "sap.plc.extensibility::template_application.t_messages";
