@@ -129,10 +129,11 @@ class Service {
 		let statement = await connection.preparePromisified(
 			`
 			select
-				CALCULATION_VERSION_ID,
-				IS_WRITEABLE,
-				VERSION_ID,
-				IS_FROZEN
+				vCalcVersRead.USER_ID,
+				versions.CALCULATION_VERSION_ID,
+				versions.IS_WRITEABLE,
+				versions.VERSION_ID,
+				versions.IS_FROZEN
 			from (
 				select
 					calcVersion.CALCULATION_VERSION_ID,
@@ -148,7 +149,11 @@ class Service {
 							where item.item_category_id = 10
 								group by item.referenced_calculation_version_id) item
 						on item.VERSION_ID = calcVersion.CALCULATION_VERSION_ID
-			) where CALCULATION_VERSION_ID = ${iVersionId};
+			) as versions
+			inner join "sap.plc.db.authorization::privileges.v_calculation_version_read" as vCalcVersRead
+				on vCalcVersRead.CALCULATION_VERSION_ID = versions.CALCULATION_VERSION_ID
+			where versions.CALCULATION_VERSION_ID = ${iVersionId}
+				and vCalcVersRead.USER_ID = '${this.userId}';
 			`
 		);
 
@@ -156,8 +161,9 @@ class Service {
 		hdbClient.close(); // hdbClient connection must be closed if created from DatabaseClass, not required if created from request.db
 
 		let aIsTouchableVersions = aResultIsTouchableVersions.slice();
-		if (aIsTouchableVersions[0] !== undefined) {
+		if (aIsTouchableVersions.length > 0) {
 			let oTouchableVersion = aIsTouchableVersions[0];
+
 			if (
 				(oTouchableVersion.IS_WRITEABLE === null || oTouchableVersion.IS_WRITEABLE === 1 || oTouchableVersion.IS_WRITEABLE === "1") &&
 				(oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
@@ -166,14 +172,21 @@ class Service {
 			) {
 				bIsTouchable = true;
 			}
+
 			let bIsFrozen = oTouchableVersion.IS_FROZEN === 0 || oTouchableVersion.IS_FROZEN === "0" || oTouchableVersion.IS_FROZEN === "null" ||
 				oTouchableVersion.IS_FROZEN === null || oTouchableVersion.IS_FROZEN === undefined ? false : true;
 			let bIsWritable = bIsFrozen === true ? false : (oTouchableVersion.IS_WRITEABLE === null || oTouchableVersion.IS_WRITEABLE === 1 ||
 				oTouchableVersion.IS_WRITEABLE === "1" ? true : false);
+
 			await Message.addLog(this.JOB_ID,
 				"Calculation Version with ID '" + iVersionId + "': Is Touchable = " + bIsTouchable +
 				". Is Writable = " + bIsWritable + ". Is Frozen = " + bIsFrozen + ".",
 				"message", undefined, this.Operation, sVersionType, iVersionId);
+		} else {
+
+			await Message.addLog(this.JOB_ID,
+				`User with ID '${this.userId}' does not have any privilege for calculation version with ID '${iVersionId}'`,
+				"error", undefined, this.Operation, sVersionType, iVersionId);
 		}
 
 		return bIsTouchable;
