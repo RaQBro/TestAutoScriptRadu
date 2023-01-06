@@ -21,7 +21,7 @@ const expressPromiseRouter = require("express-promise-router");
  *		- POST /extensibility/plc/maintain-default-values
  *		- GET /extensibility/plc/get-all-projects
  *		- GET /extensibility/plc/example-service?IS_ONLINE_MODE=true/false
- *							- undefined or true if online mode (web request) - no entries in logs/messages if undefined for web request
+ *							- true if online mode (web request)
  *							- false if fake background job (web request)
  *							- must be undefined in case of background job (job request) - with entries in logs/messages for job request
  *		- GET /extensibility/plc/archive-logs-messages
