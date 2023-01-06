@@ -2,14 +2,13 @@
 	"role": {
 		"name": "tapp_power_user",
 		"schema_privileges": [{
-			"privileges": ["SELECT METADATA",
-				"SELECT CDS METADATA",
-				"SELECT",
-				"INSERT",
-				"EXECUTE",
+			"privileges": [
+				"CREATE ANY",
 				"DELETE",
-				"UPDATE",
-				"CREATE TEMPORARY TABLE"
+				"EXECUTE",
+				"INSERT",
+				"SELECT",
+				"UPDATE"
 			]
 		}]
 	}
