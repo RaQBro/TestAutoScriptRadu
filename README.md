@@ -44,7 +44,9 @@ To create a new XSA Project (naming convention: **test-project-application**):
 
 4. Clone the repository into **WebIDE**.
 
-5. Rename file "**db\src\role\tapp_power_user.hdbrole**" from db module => **xxx_power_user.hdbrole**.
+5. Rename files:
+   - 5.1. "**db\src\role\tapp_power_user.hdbrole**" from db module => **xxx_power_user.hdbrole**.
+   - 5.2. "**db\src\role\tapp_power_user_g.hdbrole**" from db module => **xxx_power_user_g.hdbrole**.
 
 6. Replace in all project files: **!!! Make sure you search for the exact name (Case Sensitive Search) and do not Match the Whole Word !!! (right side panel in Web IDE, near the Git panel)**
    - 6.1. Search for term "**tapp_**"  => replace all with xxx_ (e.g. "**tpa_**" from test-project-application)
