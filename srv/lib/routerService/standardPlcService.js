@@ -1354,26 +1354,26 @@ class Dispatcher {
 		if (oResponse.status !== 200) {
 			if (oResponseBody.head.messages !== undefined && oResponseBody.head.messages.length > 0) {
 				let aErrorMessages = _.filter(oResponseBody.head.messages, function (oMessage) {
-					return oMessage.code === "CALCULATIONVERSION_IS_SINGLE_ERROR" || oMessage.code === "DELETE_CURRENT_VERSION_ERROR";
+					return oMessage.code === "CALCULATIONVERSION_IS_SINGLE_ERROR";
 				});
 				if (aErrorMessages.length > 0 && iCalculationId !== undefined) {
 					sMessageInfo =
 						`The calculation version with ID '${iVersionId}' is the single version of the calculation with ID '${iCalculationId}'!`;
-					await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
+					await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 					// delete calculation
 					await this.deleteCalculation(iCalculationId);
 
 					return true;
 				} else {
 					let sDeveloperInfo =
-						`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen or used in other calculation version(s).`;
+						`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen, current or used in other calculation version(s).`;
 					await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 					return undefined;
 				}
 			} else {
 				let sDeveloperInfo =
-					`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen or used in other calculation version(s).`;
+					`Failed to delete calculation version with ID '${iVersionId}'. Check if the version is open, frozen, current or used in other calculation version(s).`;
 				await Message.addLog(this.JOB_ID, sDeveloperInfo, "error", oResponseBody.head.messages, this.Operation, sVersionType, iVersionId);
 
 				return undefined;
