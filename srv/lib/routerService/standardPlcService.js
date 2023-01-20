@@ -1383,7 +1383,7 @@ class Dispatcher {
 			}
 		} else {
 			sMessageInfo =
-				`Calculation version with ID '${iVersionId}' and Name '${sVersionName}' was deleted with success from Calculation wtih Name '${sCalculationName}' and Project with ID '${sProjectId}'.`;
+				`Calculation version with ID '${iVersionId}' and Name '${sVersionName}' was deleted with success from Calculation with Name '${sCalculationName}' and Project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 
 			return true;
