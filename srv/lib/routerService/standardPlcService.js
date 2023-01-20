@@ -1335,10 +1335,13 @@ class Dispatcher {
 	 * Delete calculation version
 	 * 
 	 * @param {integer} iVersionId - the calculation version ID
+	 * @param {string} sVersionName - the calculation version Name
 	 * @param {integer} iCalculationId - the calculation ID
+	 * @param {string} sCalculationName - the calculation Name
+	 * @param {string} sProjectId - the project ID
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async deleteCalculationVersion(iVersionId, iCalculationId) {
+	async deleteCalculationVersion(iVersionId, sVersionName, iCalculationId, sCalculationName, sProjectId) {
 
 		let sQueryPath = "calculation-versions";
 		let aParams = [];
@@ -1361,7 +1364,7 @@ class Dispatcher {
 						`The calculation version with ID '${iVersionId}' is the single version of the calculation with ID '${iCalculationId}'!`;
 					await Message.addLog(this.JOB_ID, sMessageInfo, "warning", undefined, this.Operation, sVersionType, iVersionId);
 					// delete calculation
-					await this.deleteCalculation(iCalculationId);
+					await this.deleteCalculation(iCalculationId, sCalculationName, sProjectId);
 
 					return true;
 				} else {
@@ -1379,7 +1382,8 @@ class Dispatcher {
 				return undefined;
 			}
 		} else {
-			sMessageInfo = `Calculation version with ID '${iVersionId}' was deleted with success!`;
+			sMessageInfo =
+				`Calculation version with ID '${iVersionId}' and Name '${sVersionName}' was deleted with success from Calculation wtih Name '${sCalculationName}' and Project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sVersionType, iVersionId);
 
 			return true;
@@ -1390,9 +1394,11 @@ class Dispatcher {
 	 * Delete calculation
 	 * 
 	 * @param {integer} iCalculationId - the calculation ID
+	 * @param {string} sCalculationName - the calculation Name
+	 * @param {string} sProjectId - the project ID
 	 * @return {object} result / error - PLC response / PLC error
 	 */
-	async deleteCalculation(iCalculationId) {
+	async deleteCalculation(iCalculationId, sCalculationName, sProjectId) {
 
 		let sQueryPath = "calculations";
 		let aParams = [];
@@ -1411,7 +1417,8 @@ class Dispatcher {
 				iCalculationId);
 			return undefined;
 		} else {
-			sMessageInfo = `Calculation with ID '${iCalculationId}' was deleted with success!`;
+			sMessageInfo =
+				`Calculation with ID '${iCalculationId}' and Name '${sCalculationName}' was deleted with success from Project with ID '${sProjectId}'.`;
 			await Message.addLog(this.JOB_ID, sMessageInfo, "message", undefined, this.Operation, sCalculationType, iCalculationId);
 
 			return true;
