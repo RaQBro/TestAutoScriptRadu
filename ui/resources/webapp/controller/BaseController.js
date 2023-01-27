@@ -246,6 +246,25 @@ sap.ui.define([
 			BackendConnector.doGet("GET_ALL_JOBS", onSuccess, onError, true);
 		},
 
+		/** @function used to get the number of running jobs
+		 */
+		getRunningJobs: function (sViewName) {
+			let iNumberOfRunningJobs;
+
+			let oController = this;
+			let onSuccess = function (oData) {
+				iNumberOfRunningJobs = oData.d.results.length;
+			};
+			let onError = function () {
+				let oButtonPopover = oController.byId("buttonMessagePopover");
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetRunningJobs"), null, null, "Error",
+					sViewName, false, null, oButtonPopover);
+			};
+			BackendConnector.doGet("GET_RUNNING_JOBS", onSuccess, onError, true);
+
+			return iNumberOfRunningJobs;
+		},
+
 		/** @function used to logout from PLC
 		 */
 		plcLogout: function () {
@@ -432,6 +451,79 @@ sap.ui.define([
 			BackendConnector.doPost(url, data, onSuccess, onError, true);
 
 			return bWithSuccess;
+		},
+
+		onCheckRunningJobsDialog: function () {
+
+			let oView = this.getView();
+			let oController = oView.getController();
+
+			let aApplicationSettings = sap.ui.getCore().aApplicationSettings;
+			let oTechnicalUser = _.find(aApplicationSettings, (item) => {
+				return item.FIELD_NAME === "TECHNICAL_USER";
+			});
+			if (oTechnicalUser.FIELD_VALUE === null) {
+				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("infoTextTechnicalUser"), null, null,
+					"Warning", oController.getViewName("fixedItem"), false, null, oController.oButtonPopover);
+				return;
+			}
+
+			let iNumberOfRunningJobs = this.getRunningJobs(this.getViewName("item"));
+			if (iNumberOfRunningJobs === undefined) {
+				return;
+			}
+
+			if (iNumberOfRunningJobs === 0) {
+				// continue execution
+				this.onOfflinePress();
+				return;
+			}
+
+			let sWarningTextKey = "numberOfRunningJobsStart";
+			let iNoOfRunningJobs = iNumberOfRunningJobs;
+
+			let oDefaultNoParallelJobs = _.find(sap.ui.getCore().aDefaultValues, function (oDefaultValue) {
+				return oDefaultValue.FIELD_NAME === "NUMBER_OF_PARALLEL_JOBS";
+			});
+
+			if (oDefaultNoParallelJobs !== null && oDefaultNoParallelJobs !== undefined) {
+				if (iNumberOfRunningJobs >= parseInt(oDefaultNoParallelJobs.FIELD_VALUE)) {
+					sWarningTextKey = "numberOfRunningJobsPending";
+					iNoOfRunningJobs = parseInt(oDefaultNoParallelJobs.FIELD_VALUE);
+				}
+			}
+
+			if (!this.oRunningDialog) {
+				// create warning dialog
+				this.oRunningDialog = new sap.m.Dialog({
+					type: MobileLibrary.DialogType.Message,
+					title: "Warning",
+					state: CoreLibrary.ValueState.Warning,
+					closeOnNavigation: false,
+					content: new sap.m.Text({
+						text: this.getResourceBundleText(sWarningTextKey, [iNoOfRunningJobs])
+					}),
+					beginButton: new sap.m.Button({
+						type: MobileLibrary.ButtonType.Emphasized,
+						text: this.getResourceBundleText("Confirm"),
+						press: function () {
+							this.oRunningDialog.close();
+							// continue execution
+							this.onOfflinePress();
+						}.bind(this)
+					}),
+					endButton: new sap.m.Button({
+						text: this.getResourceBundleText("Cancel"),
+						press: function () {
+							this.oRunningDialog.close();
+						}.bind(this)
+					})
+				});
+			}
+
+			// open dialog
+			this.oRunningDialog.open();
+
 		},
 
 		createErrorDialogWithResourceBundleText: function (sResourceBundleKey) {

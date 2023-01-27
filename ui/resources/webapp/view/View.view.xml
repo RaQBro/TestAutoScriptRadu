@@ -4,7 +4,7 @@
 		<content>
 			<form:SimpleForm id="View" editable="true" layout="ColumnLayout" title="{i18n>jobStartView}">
 				<Button id="jobStartOnlineBtn" text="{i18n>jobOnlineBtn}" visible="true" press="onOnlinePress" type="Emphasized" enabled="true"/>
-				<Button id="jobStartOfflineBtn" text="{i18n>jobOfflineBtn}" visible="true" press="onOfflinePress" type="Emphasized" enabled="true"/>
+				<Button id="jobStartOfflineBtn" text="{i18n>jobOfflineBtn}" visible="true" press="onCheckRunningJobsDialog" type="Emphasized" enabled="true"/>
 			</form:SimpleForm>
 		</content>
 		<footer>
