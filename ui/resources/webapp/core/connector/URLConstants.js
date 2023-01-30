@@ -6,6 +6,8 @@ sap.ui.define([], function () {
 	let projectsGetUrl = "/extensibility/plc/get-all-projects";
 	let userDetails = "/extensibility/plc/user-details";
 	let jobDetails = "/scheduler/job/get-all-jobs";
+	let runningJobs =
+		"/service/odataService.xsodata/job-logs?$format=json&$filter=JOB_STATUS eq 'Running' and IS_ONLINE_MODE eq 0 and JOB_ORDER_NO gt 0 &$select=JOB_ID";
 	let initPlcSession = "/standard/plc/init-session";
 	let checkInitPlcSession = "/extensibility/plc/check-init-plc-session";
 	let plcLogout = "/standard/plc/logout-session";
@@ -30,6 +32,7 @@ sap.ui.define([], function () {
 		PROJECTS: projectsGetUrl,
 		GET_USER_DETAILS: userDetails,
 		GET_ALL_JOBS: jobDetails,
+		GET_RUNNING_JOBS: runningJobs,
 		INIT_PLC_SESSION: initPlcSession,
 		CHECK_INIT_PLC_SESSION: checkInitPlcSession,
 		GET_CONFIGURATION: getConfig,
