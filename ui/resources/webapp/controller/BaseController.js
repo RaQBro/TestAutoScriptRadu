@@ -223,8 +223,7 @@ sap.ui.define([
 			let onError = function () {
 				let oButtonPopover = oController.byId("buttonMessagePopover");
 				MessageHelpers.addMessageToPopover.call(this, oController.getResourceBundleText("errorGetApplicationSettings"), null, null,
-					"Error",
-					sViewName, false, null, oButtonPopover);
+					"Error", sViewName, false, null, oButtonPopover);
 			};
 			BackendConnector.doGet("GET_APPLICATION_SETTINGS", onSuccess, onError, true);
 		},
