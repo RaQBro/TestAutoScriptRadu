@@ -1,12 +1,12 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
-	<Dialog id="aboutDialog" title="{i18n>aboutDialogTitle}" contentWidth="40rem" draggable="false" horizontalScrolling="false"
-		verticalScrolling="false">
+	<Dialog id="aboutDialog" title="{i18n>aboutDialogTitle}" contentWidth="40rem" draggable="false" horizontalScrolling="true"
+		verticalScrolling="true">
 		<content>
 			<VBox class="sapUiSmallMargin">
 				<f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="{i18n>application}" adjustLabelSpan="false"
 					singleContainerFullSize="false">
 					<f:content>
-						<l:HorizontalLayout class="sapUiContentPadding">
+						<l:HorizontalLayout class="sapUiContentPadding" allowWrapping="true">
 							<l:VerticalLayout width="15rem">
 								<Label text="{i18n>frameworkId}"/>
 								<Text id="frameID" text="{aboutModel>/frameId}"/>
@@ -21,7 +21,7 @@
 				<f:SimpleForm editable="false" title="{i18n>environment}" layout="ResponsiveGridLayout" singleContainerFullSize="false"
 					adjustLabelSpan="false">
 					<f:content>
-						<l:HorizontalLayout id="envHL" class="sapUiContentPadding">
+						<l:HorizontalLayout id="envHL" class="sapUiContentPadding" allowWrapping="true">
 							<l:VerticalLayout id="envVL1" width="15rem">
 								<Label text="{i18n>dType}"/>
 								<Text id="inputDevice" text="{aboutModel>/dType}"/>
