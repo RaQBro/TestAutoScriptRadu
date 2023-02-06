@@ -87,6 +87,7 @@ sap.ui.define([
 			}
 
 			this._busyDialog.then(function (oBusyDialog) {
+				jQuery.sap.syncStyleClass(oView.getController().getContentDensityClass(), oView, oBusyDialog);
 				oBusyDialog.open();
 			}.bind());
 		},
@@ -248,7 +249,7 @@ sap.ui.define([
 		/** @function used to get the number of running jobs
 		 */
 		getRunningJobs: function (sViewName) {
-        
+
 			let iNumberOfRunningJobs;
 
 			let oController = this;
@@ -305,7 +306,7 @@ sap.ui.define([
 		},
 
 		getContentDensityClass: function () {
-        
+
 			if (!this._sContentDensityClass) {
 				if (!sap.ui.Device.support.touch) {
 					this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
@@ -325,7 +326,7 @@ sap.ui.define([
 		},
 
 		removePopoverMessages: function () {
-        
+
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 
@@ -526,6 +527,7 @@ sap.ui.define([
 				});
 			}
 
+			jQuery.sap.syncStyleClass(this.getView().getController().getContentDensityClass(), this.getView(), this.oRunningDialog);
 			// open dialog
 			this.oRunningDialog.open();
 
@@ -557,6 +559,7 @@ sap.ui.define([
 				});
 			}
 
+			jQuery.sap.syncStyleClass(this.getView().getController().getContentDensityClass(), this.getView(), this.oErrorDialog);
 			// open dialog
 			this.oErrorDialog.open();
 		}

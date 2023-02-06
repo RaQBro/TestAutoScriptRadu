@@ -123,6 +123,8 @@ sap.ui.define([
 			}
 
 			this._oAboutDialog.then(function (oAboutDialog) {
+				jQuery.sap.syncStyleClass(oView.getController().getContentDensityClass(), oView, oAboutDialog);
+
 				oAboutDialog.open();
 			}.bind());
 		},
@@ -152,6 +154,8 @@ sap.ui.define([
 			}
 
 			this._oHowToDialog.then(function (oHowToDialog) {
+				jQuery.sap.syncStyleClass(oView.getController().getContentDensityClass(), oView, oHowToDialog);
+
 				oHowToDialog.open();
 			}.bind());
 		},
