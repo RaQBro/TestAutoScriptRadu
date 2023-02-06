@@ -248,6 +248,7 @@ sap.ui.define([
 		/** @function used to get the number of running jobs
 		 */
 		getRunningJobs: function (sViewName) {
+        
 			let iNumberOfRunningJobs;
 
 			let oController = this;
@@ -304,9 +305,13 @@ sap.ui.define([
 		},
 
 		getContentDensityClass: function () {
-
+        
 			if (!this._sContentDensityClass) {
-				this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
+				if (!sap.ui.Device.support.touch) {
+					this._sContentDensityClass = Constants.CONTENT_DENSITY.COMPACT;
+				} else {
+					this._sContentDensityClass = Constants.CONTENT_DENSITY.COZY;
+				}
 			}
 			return this._sContentDensityClass;
 		},
@@ -320,6 +325,7 @@ sap.ui.define([
 		},
 
 		removePopoverMessages: function () {
+        
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 

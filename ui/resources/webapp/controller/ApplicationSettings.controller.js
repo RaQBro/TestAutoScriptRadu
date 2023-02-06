@@ -269,6 +269,8 @@ sap.ui.define([
 				}
 
 				this._oArchiveDialog.then(function (oArchiveDialog) {
+					jQuery.sap.syncStyleClass(oView.getController().getOwnerComponent().getContentDensityClass(), this.getView(), this._oArchiveDialog);
+
 					oArchiveDialog.open();
 				}.bind());
 			} else {
