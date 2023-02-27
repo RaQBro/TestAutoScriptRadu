@@ -1,7 +1,7 @@
 /*eslint no-console: 0*/
 "use strict";
 
-const xsjs = require("@sap/xsjs");
+const xsjs = require("@sap/async-xsjs");
 const xsenv = require("@sap/xsenv");
 const port = process.env.PORT || 3000;
 
@@ -117,6 +117,7 @@ try {
 }
 
 // initialize xsjs server
+
 let xsjsApp = xsjs(options);
 
 // initialize Express App for XSA UAA and HDBEXT Middleware
@@ -153,13 +154,16 @@ expressApp.use("/scheduler/job", RouterJobScheduler);
 expressApp.use("/secure/store", RouterSecureStore);
 expressApp.use("/standard/plc", RouterStandardPlc);
 
-// add xsjs to express
-expressApp.use(xsjsApp);
+async function startExpressApp(_port) {
+	// add xsjs to express
+	expressApp.use(await xsjsApp);
+	// start app listen
+	expressApp.listen(_port, function () {
+		console.log("Server listening on port %d", _port);
+	});
+}
 
-// start app listen
-expressApp.listen(port, function () {
-	console.log("Server listening on port %d", port);
-});
+startExpressApp(port);
 
 // token lifecycle at 1 minute (get & refresh)
 let UaaToken = require(global.appRoot + "/lib/util/uaaToken.js");
