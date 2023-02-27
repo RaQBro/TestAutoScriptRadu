@@ -4,7 +4,7 @@
 		"@sap/hdbext": "latest",
 		"@sap/jobs-client": "latest",
 		"@sap/xsenv": "latest",
-		"@sap/xsjs": "latest",
+		"@sap/async-xsjs": "latest",
 		"@sap/xssec": "latest",
 		"async": "latest",
 		"axios": "latest",
@@ -14,17 +14,18 @@
 		"passport": "latest",
 		"qs": "latest",
 		"underscore": "latest"
+
 	},
 	"description": "Template Application",
 	"devDependencies": {},
 	"engines": {
-		"node": "^14.x"
+		"node": "^16.18"
 	},
 	"files": [],
 	"main": "server.js",
 	"name": "tapp_srv",
 	"scripts": {
-		"start": "node server.js"
+		"start": "node --experimental-vm-modules server.js"
 	},
 	"version": "1.0.0"
 }
