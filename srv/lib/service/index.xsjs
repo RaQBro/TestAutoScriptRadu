@@ -9,8 +9,4 @@
 
 $.response.contentType = "text/plain";
 
-$.response.setBody("Hello World");
-
-export default {
-	select
-};
+$.response.setBody("Hello Template Application");
