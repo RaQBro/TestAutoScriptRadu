@@ -29,14 +29,38 @@ sap.ui.define([
 			return oFloatFormat.format(value);
 		},
 
-		getDateByPattern: function (sPattern, dDatePicker) {
-
-			function addZero(i) {
-				if (i < 10) {
-					i = "0" + i;
-				}
-				return i;
+		addZero: function addZero(i) {
+			if (i < 10) {
+				i = "0" + i;
 			}
+			return i;
+		},
+
+		formatDateByPattern: function (sPattern, sInputDate) {
+
+			let dDate = new Date(sInputDate);
+			let iYear = dDate.getFullYear();
+			let sMonth = addZero(dDate.getMonth() + 1);
+			let sDate = addZero(dDate.getDate());
+			let sHours = addZero(dDate.getHours());
+			let sMinutes = addZero(dDate.getMinutes());
+			let sSeconds = addZero(dDate.getSeconds());
+
+			let sReturnedDate = "";
+
+			switch (sPattern) {
+			case "DD-MM-YYYY hh:mm:ss":
+				sReturnedDate = sDate + "-" + sMonth + "-" + iYear + " " + sHours + ":" + sMinutes + ":" + sSeconds;
+				break;
+			case "YYYY-MM-DD":
+				sReturnedDate = iYear + "-" + sMonth + "-" + sDate;
+				break;
+			}
+
+			return sReturnedDate;
+		},
+
+		getDateByPattern: function (sPattern, dDatePicker) {
 
 			let dDate = new Date();
 
@@ -107,5 +131,4 @@ sap.ui.define([
 			return sCurrentDate;
 		}
 	};
-
 });
