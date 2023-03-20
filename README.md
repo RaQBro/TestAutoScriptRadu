@@ -7,58 +7,51 @@ To create a new XSA Project (naming convention: **test-project-application**):
 
 	> 	- Repository name: **test-project-application**
 	> 	- Type: **Internal**
-	> 	- **Add a README file**
+	> 	- **DO NOT** "Add a README file"
 
-2. Rename the newly created **main** branch:
+2. Push **Template Application** code into the new repository:
 
-	> 	- Click on **main** branch
-	> 	- Click on **View all branches** link
-	> 	- Click on **Rename** button
-	> 	- Change branch name into **master**
-
-3. Push **Template Application** code into the new repository:
-
+	>  - Clone locally the empty repository
 	>	```
 	>	git clone https://[GitHub URL]/[Organization Name]/test-project-application.git
+	>	```
 	>	
+	>  - Add **Template Application** repository as remote
+	>	
+	>	```
 	>	git remote add orig https://github.tools.sap/plc-template/template-application.git
 	>	
-	>	git fetch orig master
+	>	git fetch orig main
 	>	
-	>	git pull orig master --allow-unrelated-histories
-	>	```
-	>	
-	>  - Resolve conflicts from **README.md** file:
-	>	
-	>	```
-	>	git add README.md
-	>	
-	>	git commit -m "Initial commit from Template Application"
+	>	git pull orig main
 	>	```
 	>	
 	>  - Upload local repository content into the new repository:
 	>	
 	>	```
-	>	git push -u origin master
+	>	git push -u origin main
 	>	```
 
-4. Clone the repository into **WebIDE**.
+3. Clone the repository into **WebIDE**.
 
-5. Rename files:
-   - 5.1. "**db\src\role\tapp_power_user.hdbrole**" from db module => **xxx_power_user.hdbrole**.
-   - 5.2. "**db\src\role\tapp_power_user_g.hdbrole**" from db module => **xxx_power_user_g.hdbrole**.
+4. Rename files:
 
-6. Replace in all project files: **!!! Make sure you search for the exact name (Case Sensitive Search) and do not Match the Whole Word !!! (right side panel in Web IDE, near the Git panel)**
-   - 6.1. Search for term "**tapp_**"  => replace all with xxx_ (e.g. "**tpa_**" from test-project-application)
-   - 6.2. Search for term "**tapp-**"  => replace all with xxx- (e.g. "**tpa-**" from test-project-application)	
-   - 6.3. Replace all "**TEMPLATE_APPLICATION**" with new name (e.g. "**TEST_PROJECT_APPLICATION**")
-   - 6.4. Replace all "**template_application"** with new name (e.g. "**test_project_application**")
-   - 6.5. Replace all "**template-application**" with new name (e.g. "**test-project-application**")
-   - 6.6. Replace all "**Template Application**" with new name (e.g. "**Test Project Application**")
-   - 6.7. Manually replace all "**template_application**" with the new name (e.g. "**test_project_application**") in **srv/lib/service/odataService.xsodata** file
+   - 4.1. "**db\src\role\tapp_power_user.hdbrole**" from db module => **xxx_power_user.hdbrole**.
+   - 4.2. "**db\src\role\tapp_power_user_g.hdbrole**" from db module => **xxx_power_user_g.hdbrole**.
 
-7. For a new application (**never deployed**), in order to create the **DB Schema** with prefix name **"SAP_PLC_"** apply the following changes:
-     - **!!! Make sure you replace schema name SAP_PLC_TEMPLATE_APPLICATION with new name (e.g. "SAP_PLC_TEST_PROJECT_APPLICATION")**
+5. Replace in all project files: **!!! Make sure you search for the exact name (Case Sensitive Search) and do not Match the Whole Word !!! (right side panel in Web IDE, near the Git panel)**
+
+   - 5.1. Search for term "**tapp_**"  => replace all with xxx_ (e.g. "**tpa_**" from test-project-application)
+   - 5.2. Search for term "**tapp-**"  => replace all with xxx- (e.g. "**tpa-**" from test-project-application)	
+   - 5.3. Replace all "**TEMPLATE_APPLICATION**" with new name (e.g. "**TEST_PROJECT_APPLICATION**")
+   - 5.4. Replace all "**template_application"** with new name (e.g. "**test_project_application**")
+   - 5.5. Replace all "**template-application**" with new name (e.g. "**test-project-application**")
+   - 5.6. Replace all "**Template Application**" with new name (e.g. "**Test Project Application**")
+   - 5.7. Manually replace all "**template_application**" with the new name (e.g. "**test_project_application**") in **srv/lib/service/odataService.xsodata** file
+
+6. Open **mta.yaml** file:
+
+   - 6.1. For a new application (**never deployed**), in order to create the **DB Schema** with prefix name **"SAP_PLC_"** apply the following changes and **make sure you replace schema name SAP_PLC_TEMPLATE_APPLICATION with new name (e.g. "SAP_PLC_TEST_PROJECT_APPLICATION")**:
 
 	> 				  - name: xxx_hdi_db
 	> 				    properties:
@@ -68,15 +61,33 @@ To create a new XSA Project (naming convention: **test-project-application**):
 	> 				      config:
 	> 				        schema: SAP_PLC_TEMPLATE_APPLICATION
 	> 				        makeUniqueName: true
-
-
-8. Open **mta.yaml** file:
-     - For **Local/WebIDE development** change the type of the  **xxx-uaa-service** to **org.cloudfoundry.existing-service**:
+   
+   - 6.2. For **Local/WebIDE development** change the type of the  **xxx-uaa-service** to **org.cloudfoundry.existing-service**:
 
 	> 				  - name: xxx-uaa-service
 	> 				    type: org.cloudfoundry.existing-service
 
-     - For **Deployment** before creating the **.mtar file** change **xxx-uaa-service** resource as below:
+7. Create **XSUAA** service instance:
+
+   - 7.1. Download the **xs-security.json** file (right-click on the file and press **Export**)
+   - 7.2. From **xsa-cockpit => Organization => Space => Service Marketplace (Left Menu) => Authorization and Trust Management Service => Instances => New Instance**:
+	> 	- Plan: **Space**
+	> 		- Next
+	> 	- Specify Parameters: Add the previously downloaded **xs-security.json** file
+	> 		- Next
+	> 	- Instance Name: **xxx-uaa-service**
+
+8. **Test** application:
+
+   - 8.1. build db module
+   - 8.2. build srv module
+   - 8.3. run srv module
+   - 8.4. build ui module
+   - 8.5. run ui module
+
+9. For application **Deployment** before creating the **.mtar file**:
+
+   - 9.1. Open **mta.yaml** file and change **xxx-uaa-service** resource as below:
 
 	> 				  - name: xxx-uaa-service
 	> 				    type: com.sap.xs.uaa-space
@@ -85,22 +96,13 @@ To create a new XSA Project (naming convention: **test-project-application**):
 	> 				    properties:  
 	> 				      service-name: '${service-name}'
 
-9. Create **XSUAA** service instance:
-   - 8.1. Download the **xs-security.json** file (right-click on the file and press **Export**)
-   - 8.2. From **xsa-cockpit => Organization => Space => Service Marketplace (Left Menu) => Authorization and Trust Management Service => Instances => New Instance**:
-	> 	- Plan: **Space**
-	> 		- Next
-	> 	- Specify Parameters: Add the previously downloaded **xs-security.json** file
-	> 		- Next
-	> 	- Instance Name: **xxx-uaa-service**
+   - 9.2. Open **ui\package.json** file and change value of **"@sap/approuter"** as below:
 
+	> 				  "@sap/approuter": "11.2.1"
 
-10. **Test** application:
-	- 10.1. build db module
-	- 10.2. build srv module
-	- 10.3. run srv module
-	- 10.4. build ui module
-	- 10.5. run ui module
+   - 9.3. Create **.mtar file**
+   - 9.4. **Deploy** the application
+
 
 **Add Global Environment Variables (SPACE Specific) to store the plc endpoints (xsjs, publicApi and web) !!! Can be done only with xs cli**
 Documentation: <https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/6842b2e341b643d0bd912ab2df96165e.html>
@@ -130,11 +132,11 @@ A technical user is required to execute jobs and is stored in the **t_applicatio
 >	```
 >	git fetch origin
 >	
->	git pull origin master
+>	git pull origin main
 >	
 >	git fetch orig
 >	
->	git pull orig master --no-ff
+>	git pull orig main --no-ff
 >	```
 >	
 >  - Resolve conflicts if exists:
@@ -148,5 +150,5 @@ A technical user is required to execute jobs and is stored in the **t_applicatio
 >  - Upload local repository content into the repository:
 >	
 >	```
->	git push origin master
+>	git push origin main
 >	```
