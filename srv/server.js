@@ -98,7 +98,7 @@ try {
 try {
 	options = Object.assign(options, xsenv.getServices({
 		uaa: {
-			name: "tapp-uaa-service"
+			name: "tas-uaa-service"
 		}
 	}));
 } catch (err) {
@@ -137,7 +137,7 @@ expressApp.use(bodyParser.raw());
 // authentication Module Configuration
 passport.use("JWT", new xssec.JWTStrategy(xsenv.getServices({
 	uaa: {
-		name: "tapp-uaa-service"
+		name: "tas-uaa-service"
 	}
 }).uaa));
 expressApp.use(passport.initialize());

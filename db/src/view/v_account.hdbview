@@ -1,4 +1,4 @@
-VIEW "sap.plc.extensibility::template_application.v_account"
+VIEW "sap.plc.extensibility::TestAutoScriptRadu.v_account"
 AS
 select distinct
 	account.ACCOUNT_ID,

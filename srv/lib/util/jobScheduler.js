@@ -124,7 +124,7 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				select * 
-				from "sap.plc.extensibility::template_application.t_configuration"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_configuration"
 				where 
 					FIELD_NAME = 'CREATE_JOBS_AUTOMATICALLY';
 			`
@@ -297,7 +297,7 @@ class JobSchedulerUtil {
 		let connection = new DatabaseClass(hdbClient);
 		let statement = await connection.preparePromisified(
 			`
-				insert into "sap.plc.extensibility::template_application.t_job_log"
+				insert into "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 				( GUID, JOB_TIMESTAMP, START_TIMESTAMP, END_TIMESTAMP, JOB_NAME, JOB_STATUS,
 				  REQUEST_USER_ID, RUN_USER_ID, IS_ONLINE_MODE, HTTP_METHOD, REQUEST_PARAMETERS, REQUEST_QUERY, REQUEST_BODY, RESPONSE_BODY,
 				  SAP_JOB_ID, SAP_JOB_SCHEDULE_ID, SAP_JOB_RUN_ID, JOB_ORDER_NO )
@@ -305,7 +305,7 @@ class JobSchedulerUtil {
 						(	select 
 								CASE WHEN MAX(JOB_ORDER_NO) IS NULL THEN 1
 								ELSE MAX(JOB_ORDER_NO) + 1 END
-							from "sap.plc.extensibility::template_application.t_job_log") );
+							from "sap.plc.extensibility::TestAutoScriptRadu.t_job_log") );
 			`
 		);
 		await connection.statementExecPromisified(statement, [
@@ -320,7 +320,7 @@ class JobSchedulerUtil {
 			`
 				select 
 					JOB_ID 
-				from "sap.plc.extensibility::template_application.t_job_log"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 				where 
 					GUID = '${sUniqueId}' and
 					JOB_TIMESTAMP = '${sJobTimestamp}';
@@ -352,7 +352,7 @@ class JobSchedulerUtil {
 			`
 				select 
 					top ${iNumberOfParallelJobs} JOB_ID
-				from "sap.plc.extensibility::template_application.t_job_log"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 				where
 					JOB_STATUS = 'Running' and
 					IS_ONLINE_MODE = 0 and
@@ -392,7 +392,7 @@ class JobSchedulerUtil {
 					GUID, 
 					JOB_ID, 
 					JOB_TIMESTAMP
-				from "sap.plc.extensibility::template_application.t_job_log"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 				where
 					JOB_STATUS = 'Pending' and
 					IS_ONLINE_MODE = 0
@@ -408,7 +408,7 @@ class JobSchedulerUtil {
 			// set job status "In Process"
 			let statement = await connection.preparePromisified(
 				`
-					update "sap.plc.extensibility::template_application.t_job_log"
+					update "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 					set
 						JOB_STATUS = ?
 					where
@@ -423,7 +423,7 @@ class JobSchedulerUtil {
 			let sStmt = await connection.preparePromisified(
 				`
 					select *
-					from "sap.plc.extensibility::template_application.t_job_log"
+					from "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 					where
 						GUID = '${aJobIdResults[0].GUID}' and
 						JOB_ID = '${iJobId}' and
@@ -478,7 +478,7 @@ class JobSchedulerUtil {
 
 		let statement =
 			`
-				update "sap.plc.extensibility::template_application.t_job_log"
+				update "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 				set 
 					JOB_STATUS = ?, 
 					START_TIMESTAMP = CURRENT_UTCTIMESTAMP
@@ -516,7 +516,7 @@ class JobSchedulerUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				update "sap.plc.extensibility::template_application.t_job_log"
+				update "sap.plc.extensibility::TestAutoScriptRadu.t_job_log"
 				set 
 					RESPONSE_BODY = ?, 
 					JOB_STATUS = ?, 
@@ -543,7 +543,7 @@ class JobSchedulerUtil {
 		let statement = await connection.preparePromisified(
 			`
 				select * 
-				from "sap.plc.extensibility::template_application.t_messages"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_messages"
 				where 
 					JOB_ID = ?;
 			`
@@ -568,7 +568,7 @@ class JobSchedulerUtil {
 			`
 				select 
 					count(*) as COUNT 
-				from "sap.plc.extensibility::template_application.t_messages"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_messages"
 				where 
 					SEVERITY = 'Error' and 
 					JOB_ID = ?;
@@ -579,7 +579,7 @@ class JobSchedulerUtil {
 			`
 				select 
 					count(*) as COUNT 
-				from "sap.plc.extensibility::template_application.t_messages"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_messages"
 				where 
 					SEVERITY = 'Warning' and 
 					JOB_ID = ?;

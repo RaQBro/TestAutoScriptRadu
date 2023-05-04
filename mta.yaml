@@ -1,13 +1,13 @@
-ID: template-application
+ID: TestAutoScriptRadu
 _schema-version: '2.1'
 version: 0.202303.1
 
 modules:
-  - name: tapp_db
+  - name: tas_db
     type: hdb
     path: db
     requires:
-      - name: tapp_hdi_db
+      - name: tas_hdi_db
         properties:
           TARGET_CONTAINER: '~{service-name}'
       - name: plc_standard_grantor
@@ -16,41 +16,45 @@ modules:
           key: LOGICAL-PLC-STANDARD-GRANTOR
           service: '~{plc-standard-grantor-service}'
           
-  - name: tapp_srv
+  - name: tas_srv
     type: nodejs
     path: srv
     provides:
-      - name: tapp_srv_api
+      - name: tas_srv_api
         properties:
           url: '${default-url}'
     properties:
       SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"*"}]'
       OPTIMIZE_MEMORY: true
     requires:
-      - name: tapp_db
-      - name: tapp_hdi_db
-      - name: tapp-uaa-service
+      - name: tas_db
+      - name: tas_hdi_db
+      - name: tas-uaa-service
       - name: xsac-plc-uaa-service
       - name: jobScheduler
       - name: secureStore
       
-  - name: tapp_ui
+  - name: tas_ui
     type: html5
     path: ui
     requires:
-      - name: tapp-uaa-service
-      - name: tapp_srv_api
+      - name: tas-uaa-service
+      - name: tas_srv_api
         group: destinations
         properties:
-          name: tapp_srv_api
+          name: tas_srv_api
           url: '~{url}'
           forwardAuthToken: true
           
 resources:
-  - name: tapp_hdi_db
+  - name: tas_hdi_db
     properties:
       service-name: '${service-name}'
     type: com.sap.xs.hdi-container
+    parameters:
+      config:
+        schema: SAP_PLC_TESTAUTOSCRIPTRADU
+        makeUniqueName: true 
     
   - name: plc_standard_grantor
     type: org.cloudfoundry.existing-service
@@ -62,7 +66,7 @@ resources:
   - name: xsac-plc-uaa-service
     type: org.cloudfoundry.existing-service
     
-  - name: tapp-uaa-service
+  - name: tas-uaa-service
     type: org.cloudfoundry.existing-service
     
   - name: jobScheduler

@@ -80,7 +80,7 @@ class JobSchedulerService {
 	async getJobByName(sJobName) {
 
 		if (helpers.isUndefinedNullOrEmptyString(sJobName)) {
-			let sDeveloperInfo = "Please provide URL parameter JOB_NAME. E.g.: ?JOB_NAME=template_application_job";
+			let sDeveloperInfo = "Please provide URL parameter JOB_NAME. E.g.: ?JOB_NAME=TestAutoScriptRadu_job";
 			throw new PlcException(Code.GENERAL_VALIDATION_ERROR, sDeveloperInfo);
 		}
 

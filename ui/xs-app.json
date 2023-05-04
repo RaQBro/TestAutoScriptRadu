@@ -7,27 +7,27 @@
 	},
 	"routes": [{
 		"source": "^/service/(.*).xsodata/(.*)$",
-		"destination": "tapp_srv_api",
+		"destination": "tas_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/service/(.*).xsodata/\\$metadata(.*)$",
-		"destination": "tapp_srv_api",
+		"destination": "tas_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/standard/plc/(.*)$",
-		"destination": "tapp_srv_api",
+		"destination": "tas_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/extensibility/plc/(.*)$",
-		"destination": "tapp_srv_api",
+		"destination": "tas_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/scheduler/job/(.*)$",
-		"destination": "tapp_srv_api",
+		"destination": "tas_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/secure/store/(.*)$",
-		"destination": "tapp_srv_api",
+		"destination": "tas_srv_api",
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/webapp/auth/logoff.html$",

@@ -6,7 +6,7 @@
 		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="template-application.ui.resources.annotation.default">
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="TestAutoScriptRadu.ui.resources.annotation.default">
 			<Annotations Target="Metadata.job-logsType/IS_ONLINE_MODE">
 				<Annotation Term="Common.Label" String="{@i18n&gt;colIsOnline}"/>
 			</Annotations>

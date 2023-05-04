@@ -10,7 +10,7 @@ const expressPromiseRouter = require("express-promise-router");
  * Job Scheduler Router
  * Requests used to get existing background jobs and to create new schedules for jobs:
  *		- GET /scheduler/job/get-all-jobs
- *		- GET /scheduler/job/get-job-by-name?JOB_NAME=TEMPLATE_APPLICATION_JOB
+ *		- GET /scheduler/job/get-job-by-name?JOB_NAME=TESTAUTOSCRIPTRADU_JOB
  *		- POST /scheduler/job/add-new-schedule?JOB_ID=123 + body data @see /config.js file for examples
  *		- POST /scheduler/job/add-schedules?JOB_ID=123 + body data: {
  *			"PROJECT_ID": ["P1", "P2"],

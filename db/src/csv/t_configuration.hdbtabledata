@@ -1,7 +1,7 @@
 {
 	"format_version": 1,
 	"imports": [{
-		"target_table": "sap.plc.extensibility::template_application.t_configuration",
+		"target_table": "sap.plc.extensibility::TestAutoScriptRadu.t_configuration",
 		"source_data": {
 			"data_type": "CSV",
 			"file_name": "t_configuration.csv",

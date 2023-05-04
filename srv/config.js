@@ -20,8 +20,8 @@ module.exports.oConfig = {
 
 // Jobs configurations
 module.exports.aJobs = [{
-	"name": "TEMPLATE_APPLICATION_JOB",
-	"description": "Template Application Job",
+	"name": "TESTAUTOSCRIPTRADU_JOB",
+	"description": "Testautoscriptradu Job",
 	"httpMethod": "GET",
 	"active": true,
 	"startTime": helpers.nowPlusSecondstoISOString(0),

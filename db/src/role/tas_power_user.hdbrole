@@ -1,6 +1,6 @@
 {
 	"role": {
-		"name": "tapp_power_user",
+		"name": "tas_power_user",
 		"schema_privileges": [{
 			"privileges": [
 				"CREATE ANY",

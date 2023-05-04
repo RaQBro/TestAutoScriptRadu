@@ -248,7 +248,7 @@ async function getAllConfigurations() {
 	let connection = new DatabaseClass(hdbClient);
 	let statement = await connection.preparePromisified(
 		`
-			select * from "sap.plc.extensibility::template_application.t_configuration";
+			select * from "sap.plc.extensibility::TestAutoScriptRadu.t_configuration";
 		`
 	);
 	let aResults = await connection.statementExecPromisified(statement, []);
@@ -265,7 +265,7 @@ async function getAllDefaultValues() {
 	let connection = new DatabaseClass(hdbClient);
 	let statement = await connection.preparePromisified(
 		`
-			select * from "sap.plc.extensibility::template_application.t_default_values";
+			select * from "sap.plc.extensibility::TestAutoScriptRadu.t_default_values";
 		`
 	);
 	let aResults = await connection.statementExecPromisified(statement, []);
@@ -278,7 +278,7 @@ async function getNoParallelJobs() {
 	let sSQLstmt =
 		`
 				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_PARALLEL_JOBS';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);
@@ -296,7 +296,7 @@ async function getNoParallelProjectsJob() {
 	let sSQLstmt =
 		`
 				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_PROJECTS_IN_ONE_JOB';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);
@@ -314,7 +314,7 @@ async function getNoParallelCalculationsJob() {
 	let sSQLstmt =
 		`
 				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_CALCULATIONS_IN_ONE_JOB';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);
@@ -333,7 +333,7 @@ async function getNoParallelVersionsJob() {
 	let sSQLstmt =
 		`
 				select FIELD_VALUE
-				from "sap.plc.extensibility::template_application.t_default_values"
+				from "sap.plc.extensibility::TestAutoScriptRadu.t_default_values"
 				where FIELD_NAME = 'NUMBER_OF_VERSIONS_IN_ONE_JOB';
 			`;
 	let aResults = await statementExecPromisified(sSQLstmt);

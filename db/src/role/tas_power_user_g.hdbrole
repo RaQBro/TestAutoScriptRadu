@@ -1,0 +1,13 @@
+{
+	"role": {
+		"name": "tas_power_user_g#",
+		"schema_privileges": [{
+			"privileges_with_grant_option": [
+				"EXECUTE",
+				"INSERT",
+				"SELECT",
+				"UPDATE"
+			]
+		}]
+	}
+}

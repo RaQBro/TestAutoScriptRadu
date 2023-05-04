@@ -40,7 +40,7 @@ class SecureStoreService {
 
 		let oInputParams = {
 			KEY: sKey,
-			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
+			STORE_NAME: "TESTAUTOSCRIPTRADU_STORE",
 			FOR_XS_APPLICATIONUSER: true
 		};
 		let client = await this.getSecureStore();
@@ -109,7 +109,7 @@ class SecureStoreService {
 		let oInputParams = {
 			KEY: sKey,
 			VALUE: Buffer.from(sValue),
-			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
+			STORE_NAME: "TESTAUTOSCRIPTRADU_STORE",
 			FOR_XS_APPLICATIONUSER: true
 		};
 		let client = await this.getSecureStore();
@@ -150,7 +150,7 @@ class SecureStoreService {
 		}
 		let oInputParams = {
 			KEY: sKey,
-			STORE_NAME: "TEMPLATE_APPLICATION_STORE",
+			STORE_NAME: "TESTAUTOSCRIPTRADU_STORE",
 			FOR_XS_APPLICATIONUSER: true
 		};
 		let client = await this.getSecureStore();

@@ -38,7 +38,7 @@ class ApplicationSettingsUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				select * from "sap.plc.extensibility::template_application.t_application_settings"
+				select * from "sap.plc.extensibility::TestAutoScriptRadu.t_application_settings"
 				where FIELD_NAME = 'TECHNICAL_USER';
 			`
 		);
@@ -69,7 +69,7 @@ class ApplicationSettingsUtil {
 
 		let statement = await connection.preparePromisified(
 			`
-				upsert "sap.plc.extensibility::template_application.t_application_settings" values ( ?, ? )
+				upsert "sap.plc.extensibility::TestAutoScriptRadu.t_application_settings" values ( ?, ? )
 				where FIELD_NAME = '${sTechnicalName}';
 			`
 		);

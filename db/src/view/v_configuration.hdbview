@@ -1,6 +1,6 @@
-VIEW "sap.plc.extensibility::template_application.v_configuration"
+VIEW "sap.plc.extensibility::TestAutoScriptRadu.v_configuration"
 AS
 SELECT
 	FIELD_NAME,
 	FIELD_VALUE
-FROM "sap.plc.extensibility::template_application.t_configuration";
+FROM "sap.plc.extensibility::TestAutoScriptRadu.t_configuration";

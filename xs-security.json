@@ -1,5 +1,5 @@
 {
-	"xsappname": "template-application",
+	"xsappname": "TestAutoScriptRadu",
 	"scopes": [{
 		"name": "$XSAPPNAME.DV_Display",
 		"description": "Display Default Values data"

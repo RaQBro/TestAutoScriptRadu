@@ -8,7 +8,7 @@ const expressPromiseRouter = require("express-promise-router");
  * @fileOverview
  * 
  * Secure Store Router
- * Requests used to maintain into the TEMPLATE_APPLICATION_STORE secure store the password of technical user:
+ * Requests used to maintain into the TESTAUTOSCRIPTRADU_STORE secure store the password of technical user:
  *		- GET /secure/store/retrieve?KEY=TECHNICAL_USER_NAME
  *		- POST /secure/store/insert?KEY=TECHNICAL_USER_NAME + body data: { "VALUE": "password" }
  *		- GET /secure/store/delete?KEY=TECHNICAL_USER_NAME

@@ -8,14 +8,14 @@ AS
 
 BEGIN
 
-	DELETE FROM "sap.plc.extensibility::template_application.t_default_values"
+	DELETE FROM "sap.plc.extensibility::TestAutoScriptRadu.t_default_values"
 	WHERE FIELD_NAME IN (
 							SELECT DISTINCT 
 								FIELD_NAME 
 							FROM :INPUT_TABLE
 						);
 	
-	UPSERT "sap.plc.extensibility::template_application.t_default_values" (FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION) 
+	UPSERT "sap.plc.extensibility::TestAutoScriptRadu.t_default_values" (FIELD_NAME, FIELD_VALUE, FIELD_DESCRIPTION) 
 		SELECT 
 			FIELD_NAME, 
 			FIELD_VALUE, 

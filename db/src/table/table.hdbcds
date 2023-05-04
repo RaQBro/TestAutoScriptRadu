@@ -1,6 +1,6 @@
 namespace sap.plc.extensibility;
 
-context template_application {
+context TestAutoScriptRadu {
     entity t_configuration {
         key FIELD_NAME  : String(500);
             FIELD_VALUE : String(500);

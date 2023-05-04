@@ -9,4 +9,4 @@
 
 $.response.contentType = "text/plain";
 
-$.response.setBody("Hello Template Application");
+$.response.setBody("Hello Testautoscriptradu");

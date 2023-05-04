@@ -1,5 +1,5 @@
 
-# XSA Template Application
+# XSA Testautoscriptradu
 
 To create a new XSA Project (naming convention: **test-project-application**):
 
@@ -9,17 +9,17 @@ To create a new XSA Project (naming convention: **test-project-application**):
 	> 	- Type: **Internal**
 	> 	- **DO NOT** "Add a README file"
 
-2. Push **Template Application** code into the new repository:
+2. Push **Testautoscriptradu** code into the new repository:
 
 	>  - Clone locally the empty repository
 	>	```
 	>	git clone https://[GitHub URL]/[Organization Name]/test-project-application.git
 	>	```
 	>	
-	>  - Add **Template Application** repository as remote
+	>  - Add **Testautoscriptradu** repository as remote
 	>	
 	>	```
-	>	git remote add orig https://github.tools.sap/plc-template/template-application.git
+	>	git remote add orig https://github.tools.sap/plc-template/TestAutoScriptRadu.git
 	>	
 	>	git fetch orig main
 	>	
@@ -36,22 +36,22 @@ To create a new XSA Project (naming convention: **test-project-application**):
 
 4. Rename files:
 
-   - 4.1. "**db\src\role\tapp_power_user.hdbrole**" from db module => **xxx_power_user.hdbrole**.
-   - 4.2. "**db\src\role\tapp_power_user_g.hdbrole**" from db module => **xxx_power_user_g.hdbrole**.
+   - 4.1. "**db\src\role\tas_power_user.hdbrole**" from db module => **xxx_power_user.hdbrole**.
+   - 4.2. "**db\src\role\tas_power_user_g.hdbrole**" from db module => **xxx_power_user_g.hdbrole**.
 
 5. Replace in all project files: **!!! Make sure you search for the exact name (Case Sensitive Search) and do not Match the Whole Word !!! (right side panel in Web IDE, near the Git panel)**
 
-   - 5.1. Search for term "**tapp_**"  => replace all with xxx_ (e.g. "**tpa_**" from test-project-application)
-   - 5.2. Search for term "**tapp-**"  => replace all with xxx- (e.g. "**tpa-**" from test-project-application)	
-   - 5.3. Replace all "**TEMPLATE_APPLICATION**" with new name (e.g. "**TEST_PROJECT_APPLICATION**")
-   - 5.4. Replace all "**template_application"** with new name (e.g. "**test_project_application**")
-   - 5.5. Replace all "**template-application**" with new name (e.g. "**test-project-application**")
-   - 5.6. Replace all "**Template Application**" with new name (e.g. "**Test Project Application**")
-   - 5.7. Manually replace all "**template_application**" with the new name (e.g. "**test_project_application**") in **srv/lib/service/odataService.xsodata** file
+   - 5.1. Search for term "**tas_**"  => replace all with xxx_ (e.g. "**tpa_**" from test-project-application)
+   - 5.2. Search for term "**tas-**"  => replace all with xxx- (e.g. "**tpa-**" from test-project-application)	
+   - 5.3. Replace all "**TESTAUTOSCRIPTRADU**" with new name (e.g. "**TEST_PROJECT_APPLICATION**")
+   - 5.4. Replace all "**TestAutoScriptRadu"** with new name (e.g. "**test_project_application**")
+   - 5.5. Replace all "**TestAutoScriptRadu**" with new name (e.g. "**test-project-application**")
+   - 5.6. Replace all "**Testautoscriptradu**" with new name (e.g. "**Test Project Application**")
+   - 5.7. Manually replace all "**TestAutoScriptRadu**" with the new name (e.g. "**test_project_application**") in **srv/lib/service/odataService.xsodata** file
 
 6. Open **mta.yaml** file:
 
-   - 6.1. For a new application (**never deployed**), in order to create the **DB Schema** with prefix name **"SAP_PLC_"** apply the following changes and **make sure you replace schema name SAP_PLC_TEMPLATE_APPLICATION with new name (e.g. "SAP_PLC_TEST_PROJECT_APPLICATION")**:
+   - 6.1. For a new application (**never deployed**), in order to create the **DB Schema** with prefix name **"SAP_PLC_"** apply the following changes and **make sure you replace schema name SAP_PLC_TESTAUTOSCRIPTRADU with new name (e.g. "SAP_PLC_TEST_PROJECT_APPLICATION")**:
 
 	> 				  - name: xxx_hdi_db
 	> 				    properties:
@@ -59,7 +59,7 @@ To create a new XSA Project (naming convention: **test-project-application**):
 	> 				    type: com.sap.xs.hdi-container
 	> 				    parameters:
 	> 				      config:
-	> 				        schema: SAP_PLC_TEMPLATE_APPLICATION
+	> 				        schema: SAP_PLC_TESTAUTOSCRIPTRADU
 	> 				        makeUniqueName: true
    
    - 6.2. For **Local/WebIDE development** change the type of the  **xxx-uaa-service** to **org.cloudfoundry.existing-service**:
@@ -127,7 +127,7 @@ Description of default configuration values:
 A technical user is required to execute jobs and is stored in the **t_application_settings** table. The FIELD_NAME is **TECHNICAL_USER**, and the initial value is **null**. A value for the TECHNICAL_USER row will be set when a technical user is maintained in the secure store. **Do not set a value !!!**
 
 
-**Update the repository code with the latest changes from Template Application**:
+**Update the repository code with the latest changes from Testautoscriptradu**:
 
 >	```
 >	git fetch origin
@@ -144,7 +144,7 @@ A technical user is required to execute jobs and is stored in the **t_applicatio
 >	```
 >	git add .
 >	
->	git commit -m "Merge with Template Application"
+>	git commit -m "Merge with Testautoscriptradu"
 >	```
 >	
 >  - Upload local repository content into the repository:
